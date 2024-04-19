@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
 }
 
+@Suppress("MagicNumber")
 android {
     namespace = "com.datadog.kmp.android.sample"
     compileSdk = 34

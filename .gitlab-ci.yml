@@ -14,6 +14,7 @@ variables:
 stages:
   - ci-image
   - info
+  - analysis
   - test
 
 # CI IMAGE
@@ -27,7 +28,7 @@ ci-image:
   script:
     - docker buildx build --tag $CI_IMAGE_DOCKER --label target=build -f Dockerfile.gitlab --push .
 
-ENV info:
+env-info:
   stage: info
   when: manual
   tags:
@@ -47,7 +48,25 @@ ENV info:
     - bundler --version
     - python3 -V
 
-Sample app build (iOS):
+# Analysis - Android
+
+static-analysis:
+  stage: analysis
+  variables:
+    DETEKT_PUBLIC_API: "false"
+    DETEKT_CUSTOM_RULES_BUILD_TASK: ""
+    DETEKT_CUSTOM_RULES_JAR_PATH: ""
+    DETEKT_CUSTOM_RULES_YML_PATH: ""
+    DETEKT_GENERATE_CLASSPATH_BUILD_TASK: "printSdkDebugRuntimeClasspath"
+    DETEKT_CLASSPATH_FILE_PATH: ""
+    FLAVORED_ANDROID_LINT: ""
+  trigger:
+    include: "https://gitlab-templates.ddbuild.io/mobile/v25558398-8517309a/static-analysis.yml"
+    strategy: depend
+
+# Test
+
+sample-app-build-ios:
   stage: test
   tags: [ "mac-ventura-preview" ]
   timeout: 1h
@@ -56,7 +75,7 @@ Sample app build (iOS):
   script:
     - xcodebuild -project sample/iosApp/iosApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme iosApp build | xcbeautify
 
-Sample app build (Android):
+sample-app-build-android:
   stage: test
   tags: [ "arch:amd64" ]
   image: $CI_IMAGE_DOCKER
