@@ -48,9 +48,17 @@ env-info:
     - bundler --version
     - python3 -V
 
-# Analysis - Android
+# Analysis
 
-static-analysis:
+static-analysis-ios:
+  stage: analysis
+  tags: [ "mac-ventura-preview" ]
+  timeout: 1h
+  script:
+#    - ./tools/lint/run-linter.sh
+    - ./tools/license/check-license.sh
+
+static-analysis-android:
   stage: analysis
   variables:
     DETEKT_PUBLIC_API: "false"
