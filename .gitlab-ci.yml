@@ -1,0 +1,67 @@
+# SETUP
+
+variables:
+  CURRENT_CI_IMAGE: "1"
+  CI_IMAGE_DOCKER: registry.ddbuild.io/ci/dd-sdk-kotlin-multiplatform:$CURRENT_CI_IMAGE
+  GIT_DEPTH: 5
+
+  DD_SERVICE: "dd-sdk-kotlin-multiplatform"
+  DD_ENV_TESTS: "ci"
+  DD_CIVISIBILITY_ENABLED: "true"
+  DD_INSIDE_CI: "true"
+  DD_COMMON_AGENT_CONFIG: "dd.env=ci,dd.trace.enabled=false,dd.jmx.fetch.enabled=false"
+
+stages:
+  - ci-image
+  - info
+  - test
+
+# CI IMAGE
+
+ci-image:
+  stage: ci-image
+  when: manual
+  except: [ tags, schedules ]
+  tags: [ "arch:amd64" ]
+  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/docker:24.0.4-gbi-focal
+  script:
+    - docker buildx build --tag $CI_IMAGE_DOCKER --label target=build -f Dockerfile.gitlab --push .
+
+ENV info:
+  stage: info
+  when: manual
+  tags:
+    - mac-ventura-preview
+  allow_failure: true # do not block GH PRs
+  script:
+    - system_profiler SPSoftwareDataType # system info
+    - xcodebuild -version
+    - xcode-select -p # default Xcode
+    - ls /Applications/ | grep Xcode # other Xcodes
+    - xcodebuild -project sample/iosApp/iosApp.xcodeproj -scheme iosApp -showdestinations -quiet # installed iOS destinations
+    - xcbeautify --version
+    - swiftlint --version
+    - carthage version
+    - gh --version
+    - brew -v
+    - bundler --version
+    - python3 -V
+
+Sample app build (iOS):
+  stage: test
+  tags: [ "mac-ventura-preview" ]
+  timeout: 1h
+  variables:
+    BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.0.1"
+  script:
+    - xcodebuild -project sample/iosApp/iosApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme iosApp build | xcbeautify
+
+Sample app build (Android):
+  stage: test
+  tags: [ "arch:amd64" ]
+  image: $CI_IMAGE_DOCKER
+  timeout: 1h
+  script:
+    - rm -rf ~/.gradle/daemon/
+    - export DD_AGENT_HOST="$BUILDENV_HOST_IP"
+    - GRADLE_OPTS="-Xmx4096m" ./gradlew :sample:androidApp:assembleDebug --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_TRACER_FOLDER/dd-java-agent.jar=$DD_COMMON_AGENT_CONFIG
