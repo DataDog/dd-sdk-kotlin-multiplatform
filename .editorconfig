@@ -1,0 +1,10 @@
+# Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
+# This product includes software developed at Datadog (https://www.datadoghq.com/).
+# Copyright 2016-Present Datadog, Inc.
+
+[*.{kt,kts}]
+ktlint_code_style = android_studio
+ij_kotlin_allow_trailing_comma_on_call_site = false
+ij_kotlin_allow_trailing_comma = false
+ij_kotlin_imports_layout=*,java.**,javax.**,kotlin.**,^
+max_line_length = 120
