@@ -39,6 +39,7 @@ kotlin {
     }
 }
 
+@Suppress("MagicNumber")
 android {
     namespace = "com.datadog.kmp.sample"
     compileSdk = 34

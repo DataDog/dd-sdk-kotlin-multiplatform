@@ -11,3 +11,8 @@ plugins {
     alias(libs.plugins.kotlinAndroid).apply(false)
     alias(libs.plugins.kotlinMultiplatform).apply(false)
 }
+
+/**
+ * Task necessary to be compliant with the shared Android static analysis pipeline
+ */
+tasks.register("checkGeneratedFiles") { }

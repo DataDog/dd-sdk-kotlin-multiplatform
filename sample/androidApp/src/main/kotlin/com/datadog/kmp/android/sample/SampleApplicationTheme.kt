@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@Suppress("MagicNumber")
 @Composable
 fun SampleApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
