@@ -22,5 +22,5 @@ kotlin {
 }
 
 android {
-    namespace = "com.datadog.kmp.sample"
+    namespace = "com.datadog.kmp.core"
 }

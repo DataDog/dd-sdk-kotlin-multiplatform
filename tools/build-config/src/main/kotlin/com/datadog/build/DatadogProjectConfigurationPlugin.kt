@@ -14,7 +14,9 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("unused")
@@ -43,32 +45,62 @@ class DatadogProjectConfigurationPlugin : Plugin<Project> {
 // region Kotlin
 
 private fun Project.applyKotlinConfig(configExtension: DatadogBuildConfigExtension) {
+    kotlinExtension.apply {
+        sourceSets.all {
+            languageSettings {
+                languageVersion = configExtension.kotlinVersionOrDefault.version
+                apiVersion = configExtension.kotlinVersionOrDefault.version
+            }
+        }
+    }
     taskConfig<KotlinCompile> {
         compilerOptions {
             jvmTarget.set(configExtension.jvmTargetOrDefault)
             allWarningsAsErrors.set(true)
-            apiVersion.set(configExtension.kotlinVersionOrDefault)
-            languageVersion.set(configExtension.kotlinVersionOrDefault)
         }
     }
 }
 
-private fun Project.applyKotlinMultiplatformConfig(extension: DatadogBuildConfigExtension) {
+private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuildConfigExtension) {
     extensions.getByType(KotlinMultiplatformExtension::class.java)
         .apply {
             androidTarget {
                 compilations.all {
                     kotlinOptions {
-                        jvmTarget = extension.jvmTargetOrDefault.target
+                        jvmTarget = configExtension.jvmTargetOrDefault.target
                     }
+                }
+            }
+            // TODO RUM-4231 Add other Apple targets (tvOS, watchOS, etc.)
+            val appleTargets = listOf(
+                iosX64(),
+                iosArm64(),
+                iosSimulatorArm64()
+            )
+            appleTargets.forEach {
+                it.binaries.framework {
+                    baseName = "shared"
+                    isStatic = true
                 }
             }
             targets.all {
                 compilations.all {
                     kotlinOptions {
-                        apiVersion = extension.kotlinVersionOrDefault.version
-                        languageVersion = extension.kotlinVersionOrDefault.version
+                        if (this is KotlinJvmOptions) {
+                            jvmTarget = configExtension.jvmTargetOrDefault.target
+                        }
+                        apiVersion = configExtension.kotlinVersionOrDefault.version
+                        languageVersion = configExtension.kotlinVersionOrDefault.version
                         allWarningsAsErrors = true
+                    }
+                }
+            }
+            afterEvaluate {
+                // is not taken into account in KMP by some reason if without afterEvaluate
+                sourceSets.all {
+                    languageSettings {
+                        languageVersion = configExtension.kotlinVersionOrDefault.version
+                        apiVersion = configExtension.kotlinVersionOrDefault.version
                     }
                 }
             }
@@ -147,6 +179,8 @@ private fun CommonExtension<*, *, *, *, *, *>.lintConfigure() {
         checkReleaseBuilds = false
         checkGeneratedSources = true
         ignoreTestSources = true
+        // GradleDependency check: A newer version of com.foo.bar than x.x.x is available: y.y.y
+        disable += "GradleDependency"
     }
 }
 
