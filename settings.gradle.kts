@@ -5,7 +5,10 @@ pluginManagement {
         gradlePluginPortal()
         mavenCentral()
     }
+    includeBuild("./tools/build-config")
 }
+
+rootProject.name = "dd-sdk-kotlin-multiplatform"
 
 dependencyResolutionManagement {
     repositories {

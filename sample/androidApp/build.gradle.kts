@@ -7,18 +7,13 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    id("datadog-build-config")
 }
 
-@Suppress("MagicNumber")
 android {
     namespace = "com.datadog.kmp.android.sample"
-    compileSdk = 34
     defaultConfig {
         applicationId = "com.datadog.kmp.android.sample"
-        minSdk = 21
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
     }
     buildFeatures {
         compose = true
@@ -26,22 +21,13 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
+    lint {
+        disable += "MonochromeLauncherIcon"
     }
 }
 
