@@ -16,7 +16,7 @@ kotlin {
     targets.all {
         if (this is KotlinNativeTarget) {
             binaries.framework {
-                baseName = "shared"
+                baseName = "sharedLib"
                 isStatic = true
             }
         }
