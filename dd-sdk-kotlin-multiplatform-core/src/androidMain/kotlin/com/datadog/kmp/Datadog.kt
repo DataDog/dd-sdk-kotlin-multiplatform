@@ -4,15 +4,13 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp.sample
+package com.datadog.kmp
 
-import com.datadog.kmp.Datadog
+import android.util.Log
+import com.datadog.android.Datadog as DatadogAndroid
 
-class Greeting {
-    private val platform: Platform = getPlatform()
-
-    fun greet(): String {
-        Datadog.setVerbosity()
-        return "Hello, ${platform.name}!"
+actual object Datadog {
+    actual fun setVerbosity() {
+        DatadogAndroid.setVerbosity(Log.DEBUG)
     }
 }

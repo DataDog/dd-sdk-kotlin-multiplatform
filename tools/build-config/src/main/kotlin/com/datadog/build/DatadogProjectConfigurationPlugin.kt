@@ -72,23 +72,21 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
                 }
             }
             // TODO RUM-4231 Add other Apple targets (tvOS, watchOS, etc.)
-            val appleTargets = listOf(
-                iosX64(),
-                iosArm64(),
-                iosSimulatorArm64()
-            )
-            appleTargets.forEach {
-                it.binaries.framework {
-                    baseName = "shared"
-                    isStatic = true
-                }
-            }
+            iosX64()
+            iosArm64()
+            iosSimulatorArm64()
+
             targets.all {
                 compilations.all {
                     kotlinOptions {
                         if (this is KotlinJvmOptions) {
                             jvmTarget = configExtension.jvmTargetOrDefault.target
                         }
+                        // https://kotlinlang.org/docs/components-stability.html#current-stability-of-kotlin-components
+                        // https://youtrack.jetbrains.com/issue/KT-61573
+                        // expect/actual classes are in beta since 1.7.20 (and they still are as of 1.9.23), but we
+                        // are going to use them anyway
+                        freeCompilerArgs += "-Xexpect-actual-classes"
                         apiVersion = configExtension.kotlinVersionOrDefault.version
                         languageVersion = configExtension.kotlinVersionOrDefault.version
                         allWarningsAsErrors = true

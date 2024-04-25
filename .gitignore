@@ -24,9 +24,13 @@ config/*
 
 # XCode
 xcuserdata
+Package.resolved
 
 # .log
 *.log
 
 gh_token
 sdk_classpath
+
+# Generated .podspec files
+**/*.podspec

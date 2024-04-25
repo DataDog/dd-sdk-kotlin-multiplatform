@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 /*
  * Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
  * This product includes software developed at Datadog (https://www.datadoghq.com/).
@@ -11,9 +13,17 @@ plugins {
 }
 
 kotlin {
+    targets.all {
+        if (this is KotlinNativeTarget) {
+            binaries.framework {
+                baseName = "shared"
+                isStatic = true
+            }
+        }
+    }
     sourceSets {
         commonMain.dependencies {
-            // put your multiplatform dependencies here
+            implementation(projects.ddSdkKotlinMultiplatformCore)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
