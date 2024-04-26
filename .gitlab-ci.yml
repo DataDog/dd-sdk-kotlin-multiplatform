@@ -31,8 +31,7 @@ ci-image:
 env-info:
   stage: info
   when: manual
-  tags:
-    - mac-ventura-preview
+  tags: [ "macos:sonoma" ]
   allow_failure: true # do not block GH PRs
   script:
     - system_profiler SPSoftwareDataType # system info
@@ -52,7 +51,7 @@ env-info:
 
 static-analysis-ios:
   stage: analysis
-  tags: [ "mac-ventura-preview" ]
+  tags: [ "macos:sonoma" ]
   timeout: 1h
   script:
 #    - ./tools/lint/run-linter.sh
@@ -76,10 +75,10 @@ static-analysis-android:
 
 sample-app-build-ios:
   stage: test
-  tags: [ "mac-ventura-preview" ]
+  tags: [ "macos:sonoma" ]
   timeout: 1h
   variables:
-    BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.0.1"
+    BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.4"
   script:
     - xcodebuild -project sample/iosApp/iosApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme iosApp build | xcbeautify --preserve-unbeautified
 
