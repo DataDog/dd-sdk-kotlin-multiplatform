@@ -5,9 +5,15 @@
  */
 
 import SwiftUI
+import sharedLib
 
 @main
 struct iOSApp: App {
+
+	init() {
+		UtilsKt.doInitDatadog(context: nil)
+	}
+
 	var body: some Scene {
 		WindowGroup {
 			ContentView()

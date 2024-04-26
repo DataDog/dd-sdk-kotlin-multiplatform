@@ -6,13 +6,10 @@
 
 package com.datadog.kmp.sample
 
-import com.datadog.kmp.Datadog
-
 class Greeting {
     private val platform: Platform = getPlatform()
 
     fun greet(): String {
-        Datadog.setVerbosity()
         return "Hello, ${platform.name}!"
     }
 }

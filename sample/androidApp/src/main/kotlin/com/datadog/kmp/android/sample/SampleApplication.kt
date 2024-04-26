@@ -4,19 +4,15 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-import SwiftUI
-import sharedLib
+package com.datadog.kmp.android.sample
 
-struct ContentView: View {
-	let greet = Greeting().greet()
+import android.app.Application
+import com.datadog.kmp.sample.initDatadog
 
-	var body: some View {
-		Text(greet)
-	}
-}
+class SampleApplication : Application() {
 
-struct ContentView_Previews: PreviewProvider {
-	static var previews: some View {
-		ContentView()
-	}
+    override fun onCreate() {
+        super.onCreate()
+        initDatadog(this)
+    }
 }

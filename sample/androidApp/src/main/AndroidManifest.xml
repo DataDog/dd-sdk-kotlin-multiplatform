@@ -9,6 +9,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".SampleApplication"
         android:icon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
