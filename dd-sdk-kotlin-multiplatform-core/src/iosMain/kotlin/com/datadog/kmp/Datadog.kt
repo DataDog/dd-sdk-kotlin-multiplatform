@@ -4,8 +4,6 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-@file:OptIn(ExperimentalForeignApi::class)
-
 package com.datadog.kmp
 
 import cocoapods.DatadogObjc.DDBatchProcessingLevelHigh
@@ -31,10 +29,10 @@ import com.datadog.kmp.core.configuration.BatchSize
 import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.core.configuration.UploadFrequency
 import com.datadog.kmp.privacy.TrackingConsent
-import kotlinx.cinterop.ExperimentalForeignApi
 import cocoapods.DatadogObjc.DDDatadog as DatadogIOS
 
 actual object Datadog {
+
     actual var verbosity: LogLevel?
         get() = DatadogIOS.verbosityLevel().toLogLevel
         set(value) = DatadogIOS.setVerbosityLevel(value.native)
@@ -46,6 +44,33 @@ actual object Datadog {
         trackingConsent: TrackingConsent
     ) {
         DatadogIOS.initializeWithConfiguration(configuration.native, trackingConsent.native)
+    }
+
+    actual fun setTrackingConsent(consent: TrackingConsent) {
+        DatadogIOS.setTrackingConsentWithConsent(consent.native)
+    }
+
+    actual fun setUserInfo(
+        id: String?,
+        name: String?,
+        email: String?,
+        extraInfo: Map<String, Any?>
+    ) {
+        DatadogIOS.setUserInfoWithId(
+            id,
+            name,
+            email,
+            extraInfo.mapKeys {
+                // in reality in ObjC it is extraInfo: [String: Any], but KMP generates the
+                // signature extraInfo: Map<kotlin.Any?, *>, erasing String type
+                @Suppress("USELESS_CAST")
+                it.key as Any
+            }
+        )
+    }
+
+    actual fun clearAllData() {
+        DatadogIOS.clearAllData()
     }
 }
 

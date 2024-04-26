@@ -40,4 +40,33 @@ expect object Datadog {
         configuration: Configuration,
         trackingConsent: TrackingConsent
     )
+
+    /**
+     * Sets the tracking consent regarding the data collection for this instance of the Datadog SDK.
+     *
+     * @param consent which can take one of the values
+     * ([TrackingConsent.PENDING], [TrackingConsent.GRANTED], [TrackingConsent.NOT_GRANTED])
+     */
+    fun setTrackingConsent(consent: TrackingConsent)
+
+    /**
+     * Sets the user information.
+     *
+     * @param id (nullable) a unique user identifier (relevant to your business domain)
+     * @param name (nullable) the user name or alias
+     * @param email (nullable) the user email
+     * @param extraInfo additional information. An extra information can be
+     * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
+     */
+    fun setUserInfo(
+        id: String? = null,
+        name: String? = null,
+        email: String? = null,
+        extraInfo: Map<String, Any?> = emptyMap()
+    )
+
+    /**
+     * Clears all unsent data in all registered features.
+     */
+    fun clearAllData()
 }

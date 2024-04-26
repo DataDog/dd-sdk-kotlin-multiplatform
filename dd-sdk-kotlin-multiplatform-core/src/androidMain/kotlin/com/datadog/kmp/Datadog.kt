@@ -22,6 +22,7 @@ import com.datadog.android.core.configuration.UploadFrequency as UploadFrequency
 import com.datadog.android.privacy.TrackingConsent as TrackingConsentAndroid
 
 actual object Datadog {
+
     actual var verbosity: LogLevel?
         get() = DatadogAndroid.getVerbosity().toLogLevel
         set(value) = DatadogAndroid.setVerbosity(value.native)
@@ -33,6 +34,23 @@ actual object Datadog {
     ) {
         requireNotNull(context)
         DatadogAndroid.initialize(context as Context, configuration.native, trackingConsent.native)
+    }
+
+    actual fun setTrackingConsent(consent: TrackingConsent) {
+        DatadogAndroid.setTrackingConsent(consent.native)
+    }
+
+    actual fun setUserInfo(
+        id: String?,
+        name: String?,
+        email: String?,
+        extraInfo: Map<String, Any?>
+    ) {
+        DatadogAndroid.setUserInfo(id, name, email, extraInfo)
+    }
+
+    actual fun clearAllData() {
+        DatadogAndroid.clearAllData()
     }
 }
 
