@@ -76,6 +76,12 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
             iosArm64()
             iosSimulatorArm64()
 
+            sourceSets.all {
+                if (name.startsWith("ios")) {
+                    languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+                }
+            }
+
             targets.all {
                 compilations.all {
                     kotlinOptions {

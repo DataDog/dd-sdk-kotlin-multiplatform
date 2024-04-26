@@ -11,6 +11,7 @@ import com.datadog.kmp.LogLevel
 import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.privacy.TrackingConsent
 
+@Suppress("MagicNumber")
 fun initDatadog(context: Any? = null) {
     Datadog.verbosity = LogLevel.DEBUG
 
@@ -20,4 +21,10 @@ fun initDatadog(context: Any? = null) {
     ).build()
 
     Datadog.initialize(context = context, configuration = configuration, trackingConsent = TrackingConsent.GRANTED)
+
+    Datadog.setUserInfo(
+        name = "Random User",
+        email = "user@example.com",
+        extraInfo = mapOf("age" to 42, "location" to "universe")
+    )
 }
