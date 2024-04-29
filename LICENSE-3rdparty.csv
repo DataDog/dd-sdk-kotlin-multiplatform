@@ -1,0 +1,22 @@
+Component,Origin,License,Copyright
+import,androidx.activity,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.annotation,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.arch.core,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.collection,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.compose.animation,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.compose.foundation,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.compose.material,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.compose.material3,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.compose.runtime,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.compose.ui,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.core,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.lifecycle,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.savedstate,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.versionedparcelable,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,com.datadoghq,Apache-2.0,Copyright 2019-Present Datadog, Inc.
+import,org.jetbrains,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors
+import,org.jetbrains.kotlin,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors
+import,org.jetbrains.kotlinx,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors
+import(test),junit,EPL-1.0,Copyright © 2002-2024 JUnit
+import(test),org.hamcrest,BSD-3-Clause,Copyright (c) 2000-2015 www.hamcrest.org
+build,androidx.compose.compiler,Apache-2.0,Copyright 2019 The Android Open Source Project

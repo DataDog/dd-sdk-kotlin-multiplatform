@@ -46,6 +46,7 @@ env-info:
     - brew -v
     - bundler --version
     - python3 -V
+    - java --version
 
 # Analysis
 
@@ -70,6 +71,14 @@ static-analysis-android:
   trigger:
     include: "https://gitlab-templates.ddbuild.io/mobile/v25558398-8517309a/static-analysis.yml"
     strategy: depend
+
+analysis:licenses:
+  tags: [ "arch:amd64" ]
+  image: $CI_IMAGE_DOCKER
+  stage: analysis
+  timeout: 30m
+  script:
+    - GRADLE_OPTS="-Xmx3072m" ./gradlew checkDependencyLicences --stacktrace --no-daemon
 
 # Test
 

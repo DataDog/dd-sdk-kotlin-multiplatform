@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
     id("datadog-build-config")
+    alias(libs.plugins.dependencyLicense)
 }
 
 android {
