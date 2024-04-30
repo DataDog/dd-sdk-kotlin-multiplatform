@@ -8,6 +8,7 @@ androidx-activityCompose = "1.8.0"
 datadog-android = "2.8.0"
 # TODO RUM-4282 Cannot use 2.7.0 and above, because KMP plugin breaks if there is privacy manifest included
 datadog-ios = "2.6.0"
+dependencyLicense = "0.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -27,3 +28,4 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+dependencyLicense = { id = "com.datadoghq.dependency-license", version.ref = "dependencyLicense" }
