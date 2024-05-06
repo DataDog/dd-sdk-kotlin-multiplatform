@@ -185,6 +185,8 @@ private fun CommonExtension<*, *, *, *, *, *>.lintConfigure() {
         ignoreTestSources = true
         // GradleDependency check: A newer version of com.foo.bar than x.x.x is available: y.y.y
         disable += "GradleDependency"
+        // AndroidGradlePluginVersion: A newer version of com.android.tools.build:gradle than x.x.x is available: y.y.y
+        disable += "AndroidGradlePluginVersion"
     }
 }
 
