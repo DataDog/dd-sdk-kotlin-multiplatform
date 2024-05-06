@@ -401,7 +401,7 @@
 			repositoryURL = "https://github.com/DataDog/dd-sdk-ios";
 			requirement = {
 				kind = exactVersion;
-				version = 2.6.0;
+				version = 2.10.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
