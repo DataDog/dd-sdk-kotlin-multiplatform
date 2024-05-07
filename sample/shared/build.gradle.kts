@@ -25,6 +25,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.ddSdkKotlinMultiplatformCore)
+            implementation(projects.features.ddSdkKotlinMultiplatformLogs)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

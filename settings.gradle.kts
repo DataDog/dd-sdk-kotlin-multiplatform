@@ -20,3 +20,4 @@ dependencyResolutionManagement {
 include(":sample:androidApp")
 include(":sample:shared")
 include(":dd-sdk-kotlin-multiplatform-core")
+include(":features:dd-sdk-kotlin-multiplatform-logs")
