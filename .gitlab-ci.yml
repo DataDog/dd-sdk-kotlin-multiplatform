@@ -89,6 +89,8 @@ sample-app-build-ios:
   variables:
     BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.4"
   script:
+    # temporary workaround for RUM-4282
+    - ./gradlew :dd-sdk-kotlin-multiplatform-core:podBuildDatadogObjcIphonesimulator
     - xcodebuild -project sample/iosApp/iosApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme iosApp build | xcbeautify --preserve-unbeautified
 
 sample-app-build-android:
