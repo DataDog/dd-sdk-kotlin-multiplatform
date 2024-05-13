@@ -36,6 +36,10 @@ actual object Datadog {
         DatadogAndroid.initialize(context as Context, configuration.native, trackingConsent.native)
     }
 
+    actual fun isInitialized(): Boolean {
+        return DatadogAndroid.isInitialized()
+    }
+
     actual fun setTrackingConsent(consent: TrackingConsent) {
         DatadogAndroid.setTrackingConsent(consent.native)
     }
@@ -49,8 +53,16 @@ actual object Datadog {
         DatadogAndroid.setUserInfo(id, name, email, extraInfo)
     }
 
+    actual fun addUserExtraInfo(extraInfo: Map<String, Any?>) {
+        DatadogAndroid.addUserProperties(extraInfo)
+    }
+
     actual fun clearAllData() {
         DatadogAndroid.clearAllData()
+    }
+
+    actual fun stopInstance() {
+        DatadogAndroid.stopInstance()
     }
 }
 

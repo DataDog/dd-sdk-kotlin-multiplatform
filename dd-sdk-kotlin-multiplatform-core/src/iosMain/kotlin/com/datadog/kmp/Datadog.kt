@@ -46,6 +46,10 @@ actual object Datadog {
         DatadogIOS.initializeWithConfiguration(configuration.native, trackingConsent.native)
     }
 
+    actual fun isInitialized(): Boolean {
+        return DatadogIOS.isInitialized()
+    }
+
     actual fun setTrackingConsent(consent: TrackingConsent) {
         DatadogIOS.setTrackingConsentWithConsent(consent.native)
     }
@@ -60,17 +64,20 @@ actual object Datadog {
             id,
             name,
             email,
-            extraInfo.mapKeys {
-                // in reality in ObjC it is extraInfo: [String: Any], but KMP generates the
-                // signature extraInfo: Map<kotlin.Any?, *>, erasing String type
-                @Suppress("USELESS_CAST")
-                it.key as Any
-            }
+            extraInfo.eraseKeyType()
         )
+    }
+
+    actual fun addUserExtraInfo(extraInfo: Map<String, Any?>) {
+        DatadogIOS.addUserExtraInfo(extraInfo.eraseKeyType())
     }
 
     actual fun clearAllData() {
         DatadogIOS.clearAllData()
+    }
+
+    actual fun stopInstance() {
+        DatadogIOS.stopInstance()
     }
 }
 
@@ -143,3 +150,13 @@ private val DatadogSite.native: DDSite
         DatadogSite.EU1 -> DDSite.eu1()
         DatadogSite.AP1 -> DDSite.ap1()
     }
+
+private fun Map<String, Any?>.eraseKeyType(): Map<Any?, *> {
+    return mapKeys {
+        // in reality in ObjC it is [String: Any], but KMP generates the
+        // signature extraInfo: Map<kotlin.Any?, *>, erasing String type,
+        // so we have to do that
+        @Suppress("USELESS_CAST")
+        it.key as Any
+    }
+}

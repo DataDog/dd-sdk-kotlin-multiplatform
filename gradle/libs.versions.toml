@@ -6,7 +6,7 @@ compose-compiler = "1.5.12"
 compose-material3 = "1.1.2"
 androidx-activityCompose = "1.8.0"
 datadog-android = "2.8.0"
-datadog-ios = "2.10.0"
+datadog-ios = "2.11.0"
 dependencyLicense = "0.2"
 
 [libraries]
