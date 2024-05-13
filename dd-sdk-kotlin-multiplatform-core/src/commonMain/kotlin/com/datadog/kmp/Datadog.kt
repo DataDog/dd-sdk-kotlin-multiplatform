@@ -42,6 +42,12 @@ expect object Datadog {
     )
 
     /**
+     * Checks if SDK instance is initialized.
+     * @return whenever the instance is initialized or not.
+     */
+    fun isInitialized(): Boolean
+
+    /**
      * Sets the tracking consent regarding the data collection for this instance of the Datadog SDK.
      *
      * @param consent which can take one of the values
@@ -66,7 +72,23 @@ expect object Datadog {
     )
 
     /**
+     * Sets additional information for the user.
+     *
+     * If properties had originally been set with [setUserInfo], they will be preserved.
+     * In the event of a conflict on key, the new property will prevail.
+     *
+     * @param extraInfo additional information. An extra information can be
+     * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
+     */
+    fun addUserExtraInfo(extraInfo: Map<String, Any?>)
+
+    /**
      * Clears all unsent data in all registered features.
      */
     fun clearAllData()
+
+    /**
+     * Stop the initialized SDK instance.
+     */
+    fun stopInstance()
 }
