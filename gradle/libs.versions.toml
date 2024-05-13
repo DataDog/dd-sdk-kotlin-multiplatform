@@ -20,6 +20,7 @@ compose-material3 = { module = "androidx.compose.material3:material3", version.r
 android-tools = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 datadog-android-core = { module = "com.datadoghq:dd-sdk-android-core", version.ref = "datadog-android" }
+datadog-android-logs = { module = "com.datadoghq:dd-sdk-android-logs", version.ref = "datadog-android" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
