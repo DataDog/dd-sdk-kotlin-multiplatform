@@ -20,9 +20,9 @@ expect object Datadog {
      * Messages with a priority level equal or above the given level will be sent to the platform-specific
      * logging output (Android - Logcat, iOS - debugger console).
      *
-     * @see [LogLevel]
+     * @see [SdkLogVerbosity]
      */
-    var verbosity: LogLevel?
+    var verbosity: SdkLogVerbosity?
 
     /**
      * Initializes an instance of the Datadog SDK.

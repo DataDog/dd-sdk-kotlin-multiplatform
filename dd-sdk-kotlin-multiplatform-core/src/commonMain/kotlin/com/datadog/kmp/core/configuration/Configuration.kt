@@ -44,8 +44,7 @@ internal constructor(
      * package name, e.g.: com.example.android)
      */
     @Suppress("TooManyFunctions")
-    class Builder
-    constructor(
+    class Builder(
         private val clientToken: String,
         private val env: String,
         private val variant: String = NO_VARIANT,

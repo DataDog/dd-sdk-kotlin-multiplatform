@@ -27,6 +27,7 @@ kotlin {
 
         framework {
             baseName = "DatadogKMPLogs"
+            isStatic = true
         }
     }
 
@@ -36,6 +37,11 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+        iosMain.dependencies {
+            // need to have it to use DatadogObjC bindings generated in Core module, to avoid generating it here as well;
+            // could be in common dependencies as well, but so far we need only iOS part
+            implementation(projects.ddSdkKotlinMultiplatformCore)
         }
     }
 }

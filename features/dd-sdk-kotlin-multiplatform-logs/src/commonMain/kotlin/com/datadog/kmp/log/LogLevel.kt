@@ -4,29 +4,34 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp
+package com.datadog.kmp.log
 
 /**
- * Log levels for SDK logging.
+ * Log levels for the controlling remote logs threshold.
  */
 enum class LogLevel {
     /**
-     * Debug level.
+     * Debug log level.
      */
     DEBUG,
 
     /**
-     * Warning level.
+     * Info log level.
+     */
+    INFO,
+
+    /**
+     * Warning log level.
      */
     WARN,
 
     /**
-     * Error level.
+     * Error log level.
      */
     ERROR,
 
     /**
-     * Critical level.
+     * Critical log level.
      */
     CRITICAL
 }

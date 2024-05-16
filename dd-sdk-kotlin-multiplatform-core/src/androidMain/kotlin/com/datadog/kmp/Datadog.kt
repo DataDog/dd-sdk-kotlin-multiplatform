@@ -23,8 +23,8 @@ import com.datadog.android.privacy.TrackingConsent as TrackingConsentAndroid
 
 actual object Datadog {
 
-    actual var verbosity: LogLevel?
-        get() = DatadogAndroid.getVerbosity().toLogLevel
+    actual var verbosity: SdkLogVerbosity?
+        get() = DatadogAndroid.getVerbosity().toSdkLogVerbosity
         set(value) = DatadogAndroid.setVerbosity(value.native)
 
     actual fun initialize(
@@ -66,21 +66,21 @@ actual object Datadog {
     }
 }
 
-private val LogLevel?.native: Int
+private val SdkLogVerbosity?.native: Int
     get() = when (this) {
-        LogLevel.DEBUG -> AndroidLog.DEBUG
-        LogLevel.WARN -> AndroidLog.WARN
-        LogLevel.ERROR -> AndroidLog.ERROR
-        LogLevel.CRITICAL -> AndroidLog.ASSERT
+        SdkLogVerbosity.DEBUG -> AndroidLog.DEBUG
+        SdkLogVerbosity.WARN -> AndroidLog.WARN
+        SdkLogVerbosity.ERROR -> AndroidLog.ERROR
+        SdkLogVerbosity.CRITICAL -> AndroidLog.ASSERT
         null -> Int.MAX_VALUE
     }
 
-private val Int.toLogLevel: LogLevel?
+private val Int.toSdkLogVerbosity: SdkLogVerbosity?
     get() = when (this) {
-        AndroidLog.DEBUG -> LogLevel.DEBUG
-        AndroidLog.WARN -> LogLevel.WARN
-        AndroidLog.ERROR -> LogLevel.ERROR
-        AndroidLog.ASSERT -> LogLevel.CRITICAL
+        AndroidLog.DEBUG -> SdkLogVerbosity.DEBUG
+        AndroidLog.WARN -> SdkLogVerbosity.WARN
+        AndroidLog.ERROR -> SdkLogVerbosity.ERROR
+        AndroidLog.ASSERT -> SdkLogVerbosity.CRITICAL
         else -> null
     }
 

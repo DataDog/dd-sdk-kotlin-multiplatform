@@ -19,16 +19,16 @@ kotlin {
             binaries.framework {
                 baseName = "sharedLib"
                 isStatic = true
+                // without that Logger type variable declared in this module will have a different type
+                // from the Swift side compared to the one declared in Logs module
+                export(projects.features.ddSdkKotlinMultiplatformLogs)
             }
         }
     }
     sourceSets {
         commonMain.dependencies {
             implementation(projects.ddSdkKotlinMultiplatformCore)
-            implementation(projects.features.ddSdkKotlinMultiplatformLogs)
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
+            api(projects.features.ddSdkKotlinMultiplatformLogs)
         }
     }
 }
