@@ -33,8 +33,8 @@ import cocoapods.DatadogObjc.DDDatadog as DatadogIOS
 
 actual object Datadog {
 
-    actual var verbosity: LogLevel?
-        get() = DatadogIOS.verbosityLevel().toLogLevel
+    actual var verbosity: SdkLogVerbosity?
+        get() = DatadogIOS.verbosityLevel().toSdkLogVerbosity
         set(value) = DatadogIOS.setVerbosityLevel(value.native)
 
     actual fun initialize(
@@ -81,21 +81,21 @@ actual object Datadog {
     }
 }
 
-private val LogLevel?.native: Long
+private val SdkLogVerbosity?.native: Long
     get() = when (this) {
-        LogLevel.DEBUG -> DDSDKVerbosityLevelDebug
-        LogLevel.WARN -> DDSDKVerbosityLevelWarn
-        LogLevel.ERROR -> DDSDKVerbosityLevelError
-        LogLevel.CRITICAL -> DDSDKVerbosityLevelCritical
+        SdkLogVerbosity.DEBUG -> DDSDKVerbosityLevelDebug
+        SdkLogVerbosity.WARN -> DDSDKVerbosityLevelWarn
+        SdkLogVerbosity.ERROR -> DDSDKVerbosityLevelError
+        SdkLogVerbosity.CRITICAL -> DDSDKVerbosityLevelCritical
         null -> DDSDKVerbosityLevelNone
     }
 
-private val Long.toLogLevel: LogLevel?
+private val Long.toSdkLogVerbosity: SdkLogVerbosity?
     get() = when (this) {
-        DDSDKVerbosityLevelDebug -> LogLevel.DEBUG
-        DDSDKVerbosityLevelWarn -> LogLevel.WARN
-        DDSDKVerbosityLevelError -> LogLevel.ERROR
-        DDSDKVerbosityLevelCritical -> LogLevel.CRITICAL
+        DDSDKVerbosityLevelDebug -> SdkLogVerbosity.DEBUG
+        DDSDKVerbosityLevelWarn -> SdkLogVerbosity.WARN
+        DDSDKVerbosityLevelError -> SdkLogVerbosity.ERROR
+        DDSDKVerbosityLevelCritical -> SdkLogVerbosity.CRITICAL
         else -> null
     }
 
