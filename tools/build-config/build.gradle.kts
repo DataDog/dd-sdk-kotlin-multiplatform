@@ -53,5 +53,9 @@ gradlePlugin {
             id = "api-surface"
             implementationClass = "com.datadog.build.plugin.apisurface.ApiSurfacePlugin"
         }
+        register("TransitiveDependenciesPlugin") {
+            id = "transitive-dependencies"
+            implementationClass = "com.datadog.build.plugin.transdeps.TransitiveDependenciesPlugin"
+        }
     }
 }
