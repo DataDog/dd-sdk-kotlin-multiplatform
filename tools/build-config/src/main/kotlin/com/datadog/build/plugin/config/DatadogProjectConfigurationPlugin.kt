@@ -4,15 +4,16 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.build
+package com.datadog.build.plugin.config
 
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import com.datadog.build.AndroidConfig
+import com.datadog.build.utils.taskConfig
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -204,14 +205,6 @@ private fun CommonExtension<*, *, *, *, *, *>.packagingConfigure() {
 }
 
 // endregion
-
-inline fun <reified T : Task> Project.taskConfig(
-    crossinline configure: T.() -> Unit
-) {
-    afterEvaluate {
-        tasks.withType(T::class.java) { configure() }
-    }
-}
 
 private fun JvmTarget.toJavaVersion(): JavaVersion {
     // list only LTS releases

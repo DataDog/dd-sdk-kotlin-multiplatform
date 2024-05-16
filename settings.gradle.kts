@@ -4,6 +4,12 @@ pluginManagement {
         google()
         gradlePluginPortal()
         mavenCentral()
+        maven {
+            setUrl("https://jitpack.io")
+            mavenContent {
+                includeGroupByRegex("com\\.github\\..*")
+            }
+        }
     }
     includeBuild("./tools/build-config")
 }

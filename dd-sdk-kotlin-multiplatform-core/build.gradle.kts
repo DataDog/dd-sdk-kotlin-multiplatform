@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     id("datadog-build-config")
     alias(libs.plugins.dependencyLicense)
+    id("api-surface")
 }
 
 kotlin {

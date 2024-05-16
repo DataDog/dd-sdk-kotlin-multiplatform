@@ -14,14 +14,22 @@ plugins {
     alias(libs.plugins.dependencyLicense) apply false
 }
 
-allprojects {
-    repositories {
-        mavenCentral()
-        google()
-    }
-}
-
 /**
  * Task necessary to be compliant with the shared Android static analysis pipeline
  */
 tasks.register("checkGeneratedFiles") { }
+
+fun registerApiSurfaceAggregationTask(aggregationTaskName: String, projectTaskName: String) {
+    tasks.register(aggregationTaskName) {
+        val aggregationTask = this
+        allprojects.forEach {
+            it.pluginManager.withPlugin("api-surface") {
+                val projectTask = it.tasks.named(projectTaskName)
+                aggregationTask.dependsOn(projectTask)
+            }
+        }
+    }
+}
+
+registerApiSurfaceAggregationTask("checkApiSurfaceChangesAll", "checkApiSurfaceChanges")
+registerApiSurfaceAggregationTask("generateApiSurfaceAll", "generateApiSurface")
