@@ -90,7 +90,7 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
                         }
                         // https://kotlinlang.org/docs/components-stability.html#current-stability-of-kotlin-components
                         // https://youtrack.jetbrains.com/issue/KT-61573
-                        // expect/actual classes are in beta since 1.7.20 (and they still are as of 1.9.23), but we
+                        // expect/actual classes are in beta since 1.7.20 (and they still are as of 1.9.24), but we
                         // are going to use them anyway
                         freeCompilerArgs += "-Xexpect-actual-classes"
                         apiVersion = configExtension.kotlinVersionOrDefault.version
