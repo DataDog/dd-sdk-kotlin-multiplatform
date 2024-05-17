@@ -35,11 +35,42 @@ fun registerPluginSpecificAggregationTask(
     }
 }
 
-registerPluginSpecificAggregationTask("checkApiSurfaceChangesAll", "checkApiSurfaceChanges", "api-surface")
-registerPluginSpecificAggregationTask("generateApiSurfaceAll", "generateApiSurface", "api-surface")
+registerPluginSpecificAggregationTask(
+    "checkApiSurfaceChangesAll",
+    "checkApiSurfaceChanges",
+    "api-surface"
+)
+registerPluginSpecificAggregationTask(
+    "generateApiSurfaceAll",
+    "generateApiSurface",
+    "api-surface"
+)
 
 registerPluginSpecificAggregationTask(
     "listTransitiveDependenciesAll",
     "listTransitiveDependencies",
     "transitive-dependencies"
 )
+
+val publishableProjects = listOf(
+    projects.ddSdkKotlinMultiplatformCore,
+    projects.features.ddSdkKotlinMultiplatformLogs
+)
+
+val jvmUnitTestDebugAllTask = tasks.register("jvmUnitTestDebugAll") {
+    val subProjectsTestTasks = publishableProjects.map {
+        "${it.identityPath.path}:testDebugUnitTest"
+    }
+    dependsOn(subProjectsTestTasks)
+}
+
+val jvmUnitTestReleaseAllTask = tasks.register("jvmUnitTestReleaseAll") {
+    val subProjectsTestTasks = publishableProjects.map {
+        "${it.identityPath.path}:testReleaseUnitTest"
+    }
+    dependsOn(subProjectsTestTasks)
+}
+
+tasks.register("jvmUnitTestAll") {
+    dependsOn(jvmUnitTestDebugAllTask, jvmUnitTestReleaseAllTask)
+}
