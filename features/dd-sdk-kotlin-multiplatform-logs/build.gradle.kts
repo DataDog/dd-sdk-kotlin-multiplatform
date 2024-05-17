@@ -13,6 +13,7 @@ plugins {
     id("datadog-build-config")
     alias(libs.plugins.dependencyLicense)
     id("api-surface")
+    id("transitive-dependencies")
 }
 
 kotlin {
@@ -33,6 +34,9 @@ kotlin {
     }
 
     sourceSets {
+        androidMain.dependencies {
+            implementation(libs.datadog.android.logs)
+        }
         commonMain.dependencies {
             // put your multiplatform dependencies here
         }
@@ -49,8 +53,4 @@ kotlin {
 
 android {
     namespace = "com.datadog.kmp.log"
-
-    dependencies {
-        implementation(libs.datadog.android.logs)
-    }
 }

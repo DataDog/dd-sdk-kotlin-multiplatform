@@ -14,6 +14,7 @@ plugins {
     id("datadog-build-config")
     alias(libs.plugins.dependencyLicense)
     id("api-surface")
+    id("transitive-dependencies")
 }
 
 kotlin {
@@ -52,6 +53,9 @@ kotlin {
     }
 
     sourceSets {
+        androidMain.dependencies {
+            implementation(libs.datadog.android.core)
+        }
         commonMain.dependencies {
             // put your multiplatform dependencies here
         }
@@ -86,8 +90,4 @@ fun applyXCode15BuildWorkaroundForDatadogPods() {
 
 android {
     namespace = "com.datadog.kmp"
-
-    dependencies {
-        implementation(libs.datadog.android.core)
-    }
 }

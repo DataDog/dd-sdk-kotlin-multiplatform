@@ -19,11 +19,15 @@ plugins {
  */
 tasks.register("checkGeneratedFiles") { }
 
-fun registerApiSurfaceAggregationTask(aggregationTaskName: String, projectTaskName: String) {
+fun registerPluginSpecificAggregationTask(
+    aggregationTaskName: String,
+    projectTaskName: String,
+    pluginName: String
+) {
     tasks.register(aggregationTaskName) {
         val aggregationTask = this
         allprojects.forEach {
-            it.pluginManager.withPlugin("api-surface") {
+            it.pluginManager.withPlugin(pluginName) {
                 val projectTask = it.tasks.named(projectTaskName)
                 aggregationTask.dependsOn(projectTask)
             }
@@ -31,5 +35,11 @@ fun registerApiSurfaceAggregationTask(aggregationTaskName: String, projectTaskNa
     }
 }
 
-registerApiSurfaceAggregationTask("checkApiSurfaceChangesAll", "checkApiSurfaceChanges")
-registerApiSurfaceAggregationTask("generateApiSurfaceAll", "generateApiSurface")
+registerPluginSpecificAggregationTask("checkApiSurfaceChangesAll", "checkApiSurfaceChanges", "api-surface")
+registerPluginSpecificAggregationTask("generateApiSurfaceAll", "generateApiSurface", "api-surface")
+
+registerPluginSpecificAggregationTask(
+    "listTransitiveDependenciesAll",
+    "listTransitiveDependencies",
+    "transitive-dependencies"
+)
