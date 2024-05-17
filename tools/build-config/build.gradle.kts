@@ -13,12 +13,19 @@ plugins {
 repositories {
     google()
     mavenCentral()
+    maven {
+        setUrl("https://jitpack.io")
+        mavenContent {
+            includeGroupByRegex("com\\.github\\..*")
+        }
+    }
 }
 
 dependencies {
     compileOnly(gradleApi())
     compileOnly(libs.android.tools)
     compileOnly(libs.kotlin.gradle.plugin)
+    implementation(libs.kotlinGrammarParser)
 }
 
 tasks.validatePlugins {
@@ -40,7 +47,11 @@ gradlePlugin {
     plugins {
         register("DatadogProjectConfigurationPlugin") {
             id = "datadog-build-config"
-            implementationClass = "com.datadog.build.DatadogProjectConfigurationPlugin"
+            implementationClass = "com.datadog.build.plugin.config.DatadogProjectConfigurationPlugin"
+        }
+        register("ApiSurfacePlugin") {
+            id = "api-surface"
+            implementationClass = "com.datadog.build.plugin.apisurface.ApiSurfacePlugin"
         }
     }
 }

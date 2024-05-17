@@ -107,14 +107,14 @@ internal constructor(
 
     // endregion
 
-    companion object {
+    private companion object {
 
         /**
          * Value to use if application doesn't have flavors.
          */
         private const val NO_VARIANT: String = ""
 
-        internal val DEFAULT_CORE_CONFIG = Core(
+        private val DEFAULT_CORE_CONFIG = Core(
             batchSize = BatchSize.MEDIUM,
             uploadFrequency = UploadFrequency.AVERAGE,
             site = DatadogSite.US1,
