@@ -69,7 +69,7 @@ static-analysis-android:
     DETEKT_CLASSPATH_FILE_PATH: ""
     FLAVORED_ANDROID_LINT: ""
   trigger:
-    include: "https://gitlab-templates.ddbuild.io/mobile/v25558398-8517309a/static-analysis.yml"
+    include: "https://gitlab-templates.ddbuild.io/mobile/v34704799-def748fb/static-analysis.yml"
     strategy: depend
 
 analysis:licenses:

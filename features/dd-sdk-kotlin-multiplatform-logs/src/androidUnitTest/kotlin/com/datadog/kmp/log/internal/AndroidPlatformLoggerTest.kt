@@ -30,7 +30,6 @@ import org.mockito.quality.Strictness
 )
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ForgeConfiguration(BaseConfigurator::class)
-@Suppress("FunctionNaming", "TooManyFunctions")
 internal class AndroidPlatformLoggerTest {
 
     private lateinit var testedPlatformLogger: AndroidPlatformLogger
