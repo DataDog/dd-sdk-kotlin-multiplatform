@@ -82,6 +82,23 @@ analysis:licenses:
 
 # Test
 
+jvm-unit-test:
+  stage: test
+  tags: [ "arch:amd64" ]
+  image: $CI_IMAGE_DOCKER
+  timeout: 1h
+  script:
+    - rm -rf ~/.gradle/daemon/
+    - export DD_AGENT_HOST="$BUILDENV_HOST_IP"
+    - GRADLE_OPTS="-Xmx4096m" ./gradlew jvmUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_TRACER_FOLDER/dd-java-agent.jar=$DD_COMMON_AGENT_CONFIG
+  artifacts:
+    when: always
+    expire_in: 1 week
+    reports:
+      junit:
+        - "**/build/test-results/testDebugUnitTest/*.xml"
+        - "**/build/test-results/testReleaseUnitTest/*.xml"
+
 sample-app-build-ios:
   stage: test
   tags: [ "macos:sonoma" ]

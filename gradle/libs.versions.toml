@@ -10,6 +10,16 @@ datadog-ios = "2.11.0"
 dependencyLicense = "0.2"
 kotlinGrammarParser = "0.1.0"
 
+# JUnit 5
+jUnitJupiter = "5.10.2"
+jUnitPlatform = "1.10.2"
+jUnitMockitoExt = "5.12.0"
+
+# Test tools
+assertJ = "3.18.1"
+elmyr = "1.4.0"
+mockitoKotlin = "5.3.1"
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -24,6 +34,19 @@ datadog-android-core = { module = "com.datadoghq:dd-sdk-android-core", version.r
 datadog-android-logs = { module = "com.datadoghq:dd-sdk-android-logs", version.ref = "datadog-android" }
 kotlinGrammarParser = { module = "com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm", version.ref = "kotlinGrammarParser" }
 
+# JUnit 5 (JVM only)
+jUnitPlatform = { module = "org.junit.platform:junit-platform-launcher", version.ref = "jUnitPlatform" }
+jUnitJupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jUnitJupiter" }
+jUnitMockitoExt = { module = "org.mockito:mockito-junit-jupiter", version.ref = "jUnitMockitoExt" }
+
+# Test tools (JVM only)
+assertJ = { module = "org.assertj:assertj-core", version.ref = "assertJ" }
+elmyr = { module = "fr.xgouchet.elmyr:core", version.ref = "elmyr" }
+elmyrInject = { module = "fr.xgouchet.elmyr:inject", version.ref = "elmyr" }
+elmyrJUnit5 = { module = "fr.xgouchet.elmyr:junit5", version.ref = "elmyr" }
+elmyrJVM = { module = "fr.xgouchet.elmyr:jvm", version.ref = "elmyr" }
+mockitoKotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -31,3 +54,20 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 dependencyLicense = { id = "com.datadoghq.dependency-license", version.ref = "dependencyLicense" }
+
+[bundles]
+
+jUnit5 = [
+    "jUnitPlatform",
+    "jUnitJupiter",
+    "jUnitMockitoExt"
+]
+
+jvmTestTools = [
+    "assertJ",
+    "elmyr",
+    "elmyrInject",
+    "elmyrJUnit5",
+    "elmyrJVM",
+    "mockitoKotlin"
+]
