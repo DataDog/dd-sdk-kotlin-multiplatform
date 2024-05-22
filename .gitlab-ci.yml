@@ -99,6 +99,21 @@ jvm-unit-test:
         - "**/build/test-results/testDebugUnitTest/*.xml"
         - "**/build/test-results/testReleaseUnitTest/*.xml"
 
+ios-unit-test:
+  stage: test
+  tags: [ "macos:sonoma" ]
+  image: $CI_IMAGE_DOCKER
+  timeout: 1h
+  script:
+    # TODO RUM-4602 Datadog Java Agent fails to start (macOS problem? arm64 problem?)
+    - ./gradlew iosUnitTestAll
+  artifacts:
+    when: always
+    expire_in: 1 week
+    reports:
+      junit:
+        - "**/build/test-results/iosSimulatorArm64Test/*.xml"
+
 sample-app-build-ios:
   stage: test
   tags: [ "macos:sonoma" ]
