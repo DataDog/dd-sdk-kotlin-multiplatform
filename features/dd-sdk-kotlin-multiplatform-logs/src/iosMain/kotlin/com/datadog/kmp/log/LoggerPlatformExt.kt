@@ -63,3 +63,21 @@ fun Logger.error(message: String, error: NSError, attributes: Map<String, Any?> 
 fun Logger.critical(message: String, error: NSError, attributes: Map<String, Any?> = emptyMap()) {
     (platformLogger as IOSPlatformLogger).critical(message, error, attributes)
 }
+
+/**
+ * Sends a log message with a given priority.
+ * @param priority the log priority.
+ * @param message the message to be logged
+ * @param error an error to be logged with a message
+ * @param attributes a map of attributes to include only for this message. If an attribute with
+ * the same key already exist in this logger, it will be overridden (just for this message)
+ */
+fun Logger.log(priority: LogLevel, message: String, error: NSError, attributes: Map<String, Any?> = emptyMap()) {
+    when (priority) {
+        LogLevel.DEBUG -> debug(message, error, attributes)
+        LogLevel.INFO -> info(message, error, attributes)
+        LogLevel.WARN -> warn(message, error, attributes)
+        LogLevel.ERROR -> error(message, error, attributes)
+        LogLevel.CRITICAL -> critical(message, error, attributes)
+    }
+}

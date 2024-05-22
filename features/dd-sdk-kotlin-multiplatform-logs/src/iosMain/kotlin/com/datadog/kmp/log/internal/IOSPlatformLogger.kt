@@ -73,6 +73,17 @@ internal open class IOSPlatformLogger : PlatformLogger {
         }
     }
 
+    override fun log(priority: LogLevel, message: String, throwable: Throwable?, attributes: Map<String, Any?>) {
+        // no log method in ObjC API, so this
+        when (priority) {
+            LogLevel.DEBUG -> debug(message, throwable, attributes)
+            LogLevel.INFO -> info(message, throwable, attributes)
+            LogLevel.WARN -> warn(message, throwable, attributes)
+            LogLevel.ERROR -> error(message, throwable, attributes)
+            LogLevel.CRITICAL -> critical(message, throwable, attributes)
+        }
+    }
+
     override fun addAttribute(key: String, value: Any?) {
         nativeLogger.addAttributeForKey(key, value)
     }

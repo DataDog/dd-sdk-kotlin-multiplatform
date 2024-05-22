@@ -113,4 +113,24 @@ class LoggerPlatformExtTest {
             mockPlatformLogger.critical(fakeMessage, fakeError, fakeAttributes)
         }
     }
+
+    // kotlin.IllegalStateException: KClass for Objective-C classes is not supported yet
+    // https://youtrack.jetbrains.com/issue/KT-62997, target is 2.0.20
+    @Ignore
+    @Test
+    fun `M call platform logger+info W log+info with NSError`() {
+        // Given
+        val fakePriority = LogLevel.INFO
+        val fakeMessage = "fake critical message"
+        val fakeError = NSError()
+        val fakeAttributes = mapOf("custom" to "attribute")
+
+        // When
+        testedLogger.log(fakePriority, fakeMessage, fakeError, fakeAttributes)
+
+        // Then
+        verify {
+            mockPlatformLogger.info(fakeMessage, fakeError, fakeAttributes)
+        }
+    }
 }

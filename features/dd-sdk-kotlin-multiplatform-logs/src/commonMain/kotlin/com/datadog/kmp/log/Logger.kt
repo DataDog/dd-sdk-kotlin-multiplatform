@@ -102,6 +102,24 @@ class Logger internal constructor(internal val platformLogger: PlatformLogger) {
         platformLogger.critical(message, throwable, attributes)
     }
 
+    /**
+     * Sends a log message with a given priority.
+     * @param priority the log priority
+     * @param message the message to be logged
+     * @param throwable a (nullable) throwable to be logged with the message. If you want to log platform-specific
+     * error type, check extension methods available in platform-specific source sets.
+     * @param attributes a map of attributes to include only for this message. If an attribute with
+     * the same key already exist in this logger, it will be overridden (just for this message)
+     */
+    fun log(
+        priority: LogLevel,
+        message: String,
+        throwable: Throwable? = null,
+        attributes: Map<String, Any?> = emptyMap()
+    ) {
+        platformLogger.log(priority, message, throwable, attributes)
+    }
+
     // endregion
 
     // region Context Information (attributes, tags)

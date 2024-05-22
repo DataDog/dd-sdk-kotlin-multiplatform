@@ -21,6 +21,8 @@ internal interface PlatformLogger {
 
     fun critical(message: String, throwable: Throwable?, attributes: Map<String, Any?>)
 
+    fun log(priority: LogLevel, message: String, throwable: Throwable?, attributes: Map<String, Any?>)
+
     fun addAttribute(key: String, value: Any?)
 
     fun removeAttribute(key: String)

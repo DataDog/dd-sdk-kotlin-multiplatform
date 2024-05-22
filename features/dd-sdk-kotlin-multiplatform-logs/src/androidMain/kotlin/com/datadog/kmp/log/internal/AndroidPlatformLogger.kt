@@ -32,6 +32,10 @@ internal class AndroidPlatformLogger(private val nativeLogger: NativeLogger) : P
         nativeLogger.wtf(message, throwable, attributes)
     }
 
+    override fun log(priority: LogLevel, message: String, throwable: Throwable?, attributes: Map<String, Any?>) {
+        nativeLogger.log(priority.native, message, throwable, attributes)
+    }
+
     override fun addAttribute(key: String, value: Any?) {
         nativeLogger.addAttribute(key, value)
     }

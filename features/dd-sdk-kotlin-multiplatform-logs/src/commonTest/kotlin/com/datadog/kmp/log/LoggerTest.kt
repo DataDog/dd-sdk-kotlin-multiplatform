@@ -98,6 +98,23 @@ class LoggerTest {
     }
 
     @Test
+    fun `M call platform logger+log W log`() {
+        // Given
+        val fakePriority = LogLevel.INFO
+        val fakeMessage = "fake info message"
+        val fakeThrowable = RuntimeException()
+        val fakeAttributes = mapOf("custom" to "attribute")
+
+        // When
+        testedLogger.log(fakePriority, fakeMessage, fakeThrowable, fakeAttributes)
+
+        // Then
+        verify {
+            mockPlatformLogger.log(fakePriority, fakeMessage, fakeThrowable, fakeAttributes)
+        }
+    }
+
+    @Test
     fun `M call platform logger+addAttribute W addAttribute`() {
         // Given
         val fakeKey = "fakeKey"
