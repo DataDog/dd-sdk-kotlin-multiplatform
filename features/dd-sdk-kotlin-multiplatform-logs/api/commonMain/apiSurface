@@ -10,6 +10,7 @@ class com.datadog.kmp.log.Logger
   fun warn(String, Throwable? = null, Map<String, Any?> = emptyMap())
   fun error(String, Throwable? = null, Map<String, Any?> = emptyMap())
   fun critical(String, Throwable? = null, Map<String, Any?> = emptyMap())
+  fun log(LogLevel, String, Throwable? = null, Map<String, Any?> = emptyMap())
   fun addAttribute(String, Any?)
   fun removeAttribute(String)
   fun addTag(String, String)

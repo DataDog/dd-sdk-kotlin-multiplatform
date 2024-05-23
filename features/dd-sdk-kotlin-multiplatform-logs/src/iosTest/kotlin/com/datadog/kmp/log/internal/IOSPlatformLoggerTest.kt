@@ -7,6 +7,7 @@
 package com.datadog.kmp.log.internal
 
 import cocoapods.DatadogObjc.DDLogger
+import com.datadog.kmp.log.LogLevel
 import dev.mokkery.verify
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -96,6 +97,22 @@ class IOSPlatformLoggerTest {
         // Then
         verify {
             mockNativeLogger.critical(fakeMessage, fakeAttributes.eraseKeyType())
+        }
+    }
+
+    @Test
+    fun `M call native logger+info W log+info`() {
+        // Given
+        val fakePriority = LogLevel.INFO
+        val fakeMessage = "fake info message"
+        val fakeAttributes = mapOf("custom" to "attribute")
+
+        // When
+        testedPlatformLogger.log(fakePriority, fakeMessage, throwable = null, fakeAttributes)
+
+        // Then
+        verify {
+            mockNativeLogger.info(fakeMessage, fakeAttributes.eraseKeyType())
         }
     }
 

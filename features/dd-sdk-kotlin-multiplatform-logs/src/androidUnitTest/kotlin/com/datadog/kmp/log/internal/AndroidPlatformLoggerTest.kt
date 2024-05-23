@@ -6,11 +6,14 @@
 
 package com.datadog.kmp.log.internal
 
+import android.util.Log
 import com.datadog.android.log.Logger
+import com.datadog.kmp.log.LogLevel
 import com.datadog.tools.unit.forge.BaseConfigurator
 import com.datadog.tools.unit.forge.aThrowable
 import com.datadog.tools.unit.forge.exhaustiveAttributes
 import fr.xgouchet.elmyr.Forge
+import fr.xgouchet.elmyr.annotation.Forgery
 import fr.xgouchet.elmyr.annotation.StringForgery
 import fr.xgouchet.elmyr.junit5.ForgeConfiguration
 import fr.xgouchet.elmyr.junit5.ForgeExtension
@@ -136,6 +139,35 @@ internal class AndroidPlatformLoggerTest {
 
         // Then
         verify(mockNativeLogger).wtf(
+            fakeMessage,
+            fakeThrowable,
+            fakeAttributes
+        )
+    }
+
+    @Test
+    fun `M call native logger+log W log()`(
+        @Forgery fakePriority: LogLevel,
+        @StringForgery fakeMessage: String,
+        forge: Forge
+    ) {
+        // Given
+        val fakeThrowable = forge.aNullable { aThrowable() }
+        val fakeAttributes = forge.exhaustiveAttributes()
+
+        // When
+        testedPlatformLogger.log(fakePriority, fakeMessage, fakeThrowable, fakeAttributes)
+
+        // Then
+        val expectedLogPriority = when (fakePriority) {
+            LogLevel.DEBUG -> Log.DEBUG
+            LogLevel.INFO -> Log.INFO
+            LogLevel.WARN -> Log.WARN
+            LogLevel.ERROR -> Log.ERROR
+            LogLevel.CRITICAL -> Log.ASSERT
+        }
+        verify(mockNativeLogger).log(
+            expectedLogPriority,
             fakeMessage,
             fakeThrowable,
             fakeAttributes
