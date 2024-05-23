@@ -18,7 +18,7 @@ import com.datadog.kmp.log.internal.platformLoggerBuilder
  * You can have multiple loggers configured in your application, each with their own settings.
  */
 @Suppress("TooManyFunctions")
-class Logger private constructor(internal val platformLogger: PlatformLogger) {
+class Logger internal constructor(internal val platformLogger: PlatformLogger) {
 
     // region Log
 

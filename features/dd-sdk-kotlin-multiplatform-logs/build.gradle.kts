@@ -5,6 +5,7 @@
  */
 
 import com.datadog.build.AndroidConfig
+import dev.mokkery.MockMode
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -14,6 +15,7 @@ plugins {
     alias(libs.plugins.dependencyLicense)
     id("api-surface")
     id("transitive-dependencies")
+    alias(libs.plugins.mokkery)
 }
 
 kotlin {
@@ -30,6 +32,13 @@ kotlin {
         framework {
             baseName = "DatadogKMPLogs"
             isStatic = true
+        }
+
+        // need to link it only for the tests so far (maybe this will change
+        // later with SDK setup changes)
+        pod("DatadogObjc") {
+            linkOnly = true
+            version = libs.versions.datadog.ios.get()
         }
     }
 
@@ -53,4 +62,9 @@ kotlin {
 
 android {
     namespace = "com.datadog.kmp.log"
+}
+
+mokkery {
+    defaultMockMode = MockMode.autofill
+    ignoreFinalMembers = true
 }

@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.kotlinCocoapods) apply false
     alias(libs.plugins.dependencyLicense) apply false
+    alias(libs.plugins.mokkery) apply false
 }
 
 /**
@@ -71,6 +72,14 @@ val jvmUnitTestReleaseAllTask = tasks.register("jvmUnitTestReleaseAll") {
     dependsOn(subProjectsTestTasks)
 }
 
+// will cover Android-specific tests + tests from common source set
 tasks.register("jvmUnitTestAll") {
     dependsOn(jvmUnitTestDebugAllTask, jvmUnitTestReleaseAllTask)
+}
+
+tasks.register("iosUnitTestAll") {
+    val subProjectsTestTasks = publishableProjects.map {
+        "${it.identityPath.path}:iosSimulatorArm64Test"
+    }
+    dependsOn(subProjectsTestTasks)
 }

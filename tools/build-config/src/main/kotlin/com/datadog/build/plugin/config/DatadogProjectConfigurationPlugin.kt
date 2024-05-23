@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
+import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("unused")
@@ -92,6 +94,15 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
             }
 
             targets.all {
+                if (this is KotlinNativeTargetWithTests<*>) {
+                    testRuns.all {
+                        if (this is KotlinNativeSimulatorTestRun) {
+                            // Need to find a way to be more precise, to specify OS runtime version. Should be
+                            // aligned with what is in CI file.
+                            deviceId = "iPhone 15 Pro Max"
+                        }
+                    }
+                }
                 compilations.all {
                     kotlinOptions {
                         if (this is KotlinJvmOptions) {

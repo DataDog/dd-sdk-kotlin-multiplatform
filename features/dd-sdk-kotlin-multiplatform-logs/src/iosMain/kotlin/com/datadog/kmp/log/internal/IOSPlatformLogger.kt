@@ -18,7 +18,18 @@ import com.datadog.kmp.log.LogLevel
 import platform.Foundation.NSError
 import platform.Foundation.NSLocalizedDescriptionKey
 
-internal class IOSPlatformLogger(private val nativeLogger: DDLogger) : PlatformLogger {
+// open for mocking
+internal open class IOSPlatformLogger : PlatformLogger {
+
+    private val nativeLogger: DDLogger
+
+    // only for tests, default constructor should exist for mocking
+    @Suppress("unused")
+    constructor() : this(nativeLogger = DDLogger.createWith(DDLoggerConfiguration.default()))
+
+    constructor(nativeLogger: DDLogger) {
+        this.nativeLogger = nativeLogger
+    }
 
     // region PlatformLogger
 
@@ -90,23 +101,24 @@ internal class IOSPlatformLogger(private val nativeLogger: DDLogger) : PlatformL
 
     // region iOS-specific methods
 
-    fun debug(message: String, error: NSError, attributes: Map<String, Any?>) {
+    // open for mocking
+    open fun debug(message: String, error: NSError, attributes: Map<String, Any?>) {
         nativeLogger.debug(message, error, attributes.eraseKeyType())
     }
 
-    fun info(message: String, error: NSError, attributes: Map<String, Any?>) {
+    open fun info(message: String, error: NSError, attributes: Map<String, Any?>) {
         nativeLogger.info(message, error, attributes.eraseKeyType())
     }
 
-    fun warn(message: String, error: NSError, attributes: Map<String, Any?>) {
+    open fun warn(message: String, error: NSError, attributes: Map<String, Any?>) {
         nativeLogger.warn(message, error, attributes.eraseKeyType())
     }
 
-    fun error(message: String, error: NSError, attributes: Map<String, Any?>) {
+    open fun error(message: String, error: NSError, attributes: Map<String, Any?>) {
         nativeLogger.error(message, error, attributes.eraseKeyType())
     }
 
-    fun critical(message: String, error: NSError, attributes: Map<String, Any?>) {
+    open fun critical(message: String, error: NSError, attributes: Map<String, Any?>) {
         nativeLogger.critical(message, error, attributes.eraseKeyType())
     }
 
@@ -161,22 +173,24 @@ internal class IOSPlatformLogger(private val nativeLogger: DDLogger) : PlatformL
 }
 
 internal actual fun platformLoggerBuilder(): PlatformLogger.Builder =
-    IOSPlatformLogger.Builder(
-        // even though ObjC API has default values defined, KMP binding is not picking them;
-        // keep it aligned with the signature in DatadogObjc
-        DDLoggerConfiguration(
-            service = null,
-            name = null,
-            networkInfoEnabled = false,
-            bundleWithRumEnabled = true,
-            bundleWithTraceEnabled = true,
-            remoteSampleRate = 100.toFloat(),
-            remoteLogThreshold = LogLevel.DEBUG.native,
-            printLogsToConsole = false
-        )
-    )
+    IOSPlatformLogger.Builder(DDLoggerConfiguration.default())
 
 // region support methods
+
+internal fun DDLoggerConfiguration.Companion.default(): DDLoggerConfiguration {
+    // even though ObjC API has default values defined, KMP binding is not picking them;
+    // keep it aligned with the signature in DatadogObjc
+    return DDLoggerConfiguration(
+        service = null,
+        name = null,
+        networkInfoEnabled = false,
+        bundleWithRumEnabled = true,
+        bundleWithTraceEnabled = true,
+        remoteSampleRate = 100.toFloat(),
+        remoteLogThreshold = LogLevel.DEBUG.native,
+        printLogsToConsole = false
+    )
+}
 
 private val LogLevel.native: DDLogLevel
     get() = when (this) {
