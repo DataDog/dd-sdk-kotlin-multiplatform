@@ -33,6 +33,7 @@ android-tools = { module = "com.android.tools.build:gradle", version.ref = "agp"
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 datadog-android-core = { module = "com.datadoghq:dd-sdk-android-core", version.ref = "datadog-android" }
 datadog-android-logs = { module = "com.datadoghq:dd-sdk-android-logs", version.ref = "datadog-android" }
+datadog-android-rum = { module = "com.datadoghq:dd-sdk-android-rum", version.ref = "datadog-android" }
 kotlinGrammarParser = { module = "com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm", version.ref = "kotlinGrammarParser" }
 
 # JUnit 5 (JVM only)

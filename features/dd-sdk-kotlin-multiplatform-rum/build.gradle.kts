@@ -1,0 +1,63 @@
+/*
+ * Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
+ * This product includes software developed at Datadog (https://www.datadoghq.com/).
+ * Copyright 2016-Present Datadog, Inc.
+ */
+
+import com.datadog.build.AndroidConfig
+
+plugins {
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinCocoapods)
+    alias(libs.plugins.androidLibrary)
+    id("datadog-build-config")
+    alias(libs.plugins.dependencyLicense)
+    id("api-surface")
+    id("transitive-dependencies")
+}
+
+kotlin {
+
+    cocoapods {
+        // cannot use noPodSpec, because of https://youtrack.jetbrains.com/issue/KT-63331
+        // so what is below for podspec description is just a fake thing to make tooling happy
+        version = AndroidConfig.VERSION.toString()
+        // need to build with XCode 15
+        ios.deploymentTarget = "12.0"
+        name = "DatadogKMPRUM"
+        summary = "Official Datadog KMP RUM SDK for iOS."
+
+        framework {
+            baseName = "DatadogKMPRUM"
+            isStatic = true
+        }
+
+        // need to link it only for the tests so far (maybe this will change
+        // later with SDK setup changes)
+        pod("DatadogObjc") {
+            linkOnly = true
+            version = libs.versions.datadog.ios.get()
+        }
+    }
+
+    sourceSets {
+        androidMain.dependencies {
+            implementation(libs.datadog.android.rum)
+        }
+        androidUnitTest.dependencies {
+            implementation(libs.bundles.jUnit5)
+            implementation(libs.bundles.jvmTestTools)
+            implementation(projects.tools.unit.jvm)
+        }
+        commonMain.dependencies {
+            api(projects.ddSdkKotlinMultiplatformCore)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+    }
+}
+
+android {
+    namespace = "com.datadog.kmp.rum"
+}
