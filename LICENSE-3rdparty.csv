@@ -10,9 +10,14 @@ import,androidx.compose.material3,Apache-2.0,Copyright 2018 The Android Open Sou
 import,androidx.compose.runtime,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.compose.ui,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.core,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.customview,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.fragment,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.lifecycle,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.loader,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.navigation,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.savedstate,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.versionedparcelable,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.viewpager,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,com.datadoghq,Apache-2.0,Copyright 2019-Present Datadog, Inc.
 import,org.jetbrains,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors
 import,org.jetbrains.kotlin,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors

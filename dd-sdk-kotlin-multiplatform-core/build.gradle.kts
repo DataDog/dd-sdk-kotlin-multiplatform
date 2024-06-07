@@ -1,5 +1,4 @@
 import com.datadog.build.AndroidConfig
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodGenTask
 
 /*
  * Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
@@ -46,10 +45,6 @@ kotlin {
             )
             version = libs.versions.datadog.ios.get()
         }
-
-        // XCode 15 requires IPHONEOS_DEPLOYMENT_TARGET = 12 at least
-        // filed https://youtrack.jetbrains.com/issue/KT-67757
-        applyXCode15BuildWorkaroundForDatadogPods()
     }
 
     sourceSets {
@@ -61,29 +56,6 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
-        }
-    }
-}
-
-fun applyXCode15BuildWorkaroundForDatadogPods() {
-    tasks.withType<PodGenTask>().configureEach {
-        doLast {
-            val file = project.layout.buildDirectory
-                .file("cocoapods/synthetic/ios/Podfile")
-                .get()
-                .asFile
-            val lines = file.readLines()
-            val output = file.bufferedWriter()
-
-            output.use {
-                for (line in lines) {
-                    output.write(
-                        line.replace(" 11 ", " 12 ")
-                            .replace("{11}", "{12}")
-                    )
-                    output.write(("\n"))
-                }
-            }
         }
     }
 }

@@ -12,6 +12,9 @@ import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.log.Logger
 import com.datadog.kmp.log.Logs
 import com.datadog.kmp.privacy.TrackingConsent
+import com.datadog.kmp.rum.Rum
+import com.datadog.kmp.rum.configuration.RumConfiguration
+import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 
 @Suppress("MagicNumber")
 fun initDatadog(context: Any? = null) {
@@ -26,6 +29,22 @@ fun initDatadog(context: Any? = null) {
 
     Logs.enable()
 
+    val rumConfiguration = RumConfiguration.Builder("fake-app-id")
+        .setSessionSampleRate(100f)
+        .setTelemetrySampleRate(100f)
+        .setVitalsUpdateFrequency(VitalsUpdateFrequency.AVERAGE)
+        .trackBackgroundEvents(true)
+        .setSessionListener { sessionId, isDiscarded ->
+            applicationLogger.info("New session $sessionId ${if (isDiscarded) "was discarded" else "started"}")
+        }
+        .trackLongTasks()
+        .trackFrustrations(true)
+        .apply {
+            platformSpecificSetup(this)
+        }
+        .build()
+    Rum.enable(rumConfiguration)
+
     Datadog.setUserInfo(
         name = "Random User",
         email = "user@example.com",
@@ -38,6 +57,7 @@ val applicationLogger by lazy {
         .setName("kmp-logger")
         .setNetworkInfoEnabled(true)
         .setService("kmp-shared")
+        .setPrintLogsToConsole(true)
         .build()
 }
 
@@ -52,3 +72,5 @@ fun logErrorWithThrowable() {
         attributes = mapOf("custom" to "attribute")
     )
 }
+
+internal expect fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder)

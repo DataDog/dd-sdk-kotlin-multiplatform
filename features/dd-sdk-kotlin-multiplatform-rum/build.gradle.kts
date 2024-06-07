@@ -5,6 +5,7 @@
  */
 
 import com.datadog.build.AndroidConfig
+import dev.mokkery.MockMode
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -14,6 +15,7 @@ plugins {
     alias(libs.plugins.dependencyLicense)
     id("api-surface")
     id("transitive-dependencies")
+    alias(libs.plugins.mokkery)
 }
 
 kotlin {
@@ -43,6 +45,8 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.datadog.android.rum)
+            implementation(libs.androidx.fragment)
+            implementation(libs.androidx.navigation.runtime)
         }
         androidUnitTest.dependencies {
             implementation(libs.bundles.jUnit5)
@@ -56,8 +60,21 @@ kotlin {
             implementation(libs.kotlin.test)
         }
     }
+
+    configurations.androidMainImplementation {
+        // this is because we have to use FragmentX 1.5.1 (because 1.4.x ships Lint rules which are not
+        // compatible with AGP 8.4.+), and it brings these dependencies. We can strip them out, because since Kotlin
+        // 1.8 everything is in the main stdlib.
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+    }
 }
 
 android {
     namespace = "com.datadog.kmp.rum"
+}
+
+mokkery {
+    defaultMockMode = MockMode.autofill
+    ignoreFinalMembers = true
 }
