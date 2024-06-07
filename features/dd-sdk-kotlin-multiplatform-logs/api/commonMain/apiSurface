@@ -28,7 +28,7 @@ class com.datadog.kmp.log.Logger
     fun setBundleWithTraceEnabled(Boolean): Builder
     fun setBundleWithRumEnabled(Boolean): Builder
     fun setRemoteSampleRate(Float): Builder
-object com.datadog.kmp.log.Logs
+expect object com.datadog.kmp.log.Logs
   fun enable()
   fun addAttribute(String, Any?)
   fun removeAttribute(String)

@@ -83,6 +83,8 @@ class KotlinFileVisitor {
 
         // Modifiers
         if (node.isDeprecated()) description.append("DEPRECATED ")
+        if (node.isActual()) description.append("actual ")
+        if (node.isExpect()) description.append("expect ")
         if (node.isDataClass()) description.append("data ")
         if (node.isSealed()) description.append("sealed ")
         if (node.isProtected()) description.append("protected ")
@@ -90,7 +92,12 @@ class KotlinFileVisitor {
         if (node.isAbstract()) description.append("abstract ")
 
         when {
-            node.hasChildTerminal("INTERFACE") -> description.append("interface ")
+            node.hasChildTerminal("INTERFACE") -> {
+                if (node.hasChildTerminal("FUN")) {
+                    description.append("fun ")
+                }
+                description.append("interface ")
+            }
             node.isEnum() -> description.append("enum ")
             node.isAnnotation() -> description.append("annotation ")
             else -> description.append("$type ")
@@ -163,6 +170,8 @@ class KotlinFileVisitor {
 
         // Modifiers
         if (node.isDeprecated()) description.append("DEPRECATED ")
+        if (node.isActual()) description.append("actual ")
+        if (node.isExpect()) description.append("expect ")
         if (node.isOverride()) description.append("override ")
         if (node.isProtected()) description.append("protected ")
         if (node.isOpen()) description.append("open ")
@@ -378,6 +387,14 @@ class KotlinFileVisitor {
 
     private fun AstNode.isConst(): Boolean {
         return hasModifier("propertyModifier", "CONST")
+    }
+
+    private fun AstNode.isExpect(): Boolean {
+        return hasModifier("platformModifier", "EXPECT")
+    }
+
+    private fun AstNode.isActual(): Boolean {
+        return hasModifier("platformModifier", "ACTUAL")
     }
 
     private fun AstNode.hasModifier(group: String, modifier: String): Boolean {

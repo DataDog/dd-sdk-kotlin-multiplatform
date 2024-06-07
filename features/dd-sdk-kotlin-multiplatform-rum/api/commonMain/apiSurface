@@ -1,4 +1,4 @@
-object com.datadog.kmp.rum.Rum
+expect object com.datadog.kmp.rum.Rum
   fun enable(com.datadog.kmp.rum.configuration.RumConfiguration)
 class com.datadog.kmp.rum.configuration.RumConfiguration
   class Builder
@@ -11,7 +11,7 @@ class com.datadog.kmp.rum.configuration.RumConfiguration
     fun setVitalsUpdateFrequency(VitalsUpdateFrequency): Builder
     fun setSessionListener(RumSessionListener): Builder
     fun build(): RumConfiguration
-interface com.datadog.kmp.rum.configuration.RumSessionListener
+fun interface com.datadog.kmp.rum.configuration.RumSessionListener
   fun onSessionStarted(String, Boolean)
 enum com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
   - FREQUENT

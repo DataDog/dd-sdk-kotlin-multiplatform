@@ -1,5 +1,5 @@
-object com.datadog.kmp.rum.Rum
-  fun enable(com.datadog.kmp.rum.configuration.RumConfiguration)
+actual object com.datadog.kmp.rum.Rum
+  actual fun enable(com.datadog.kmp.rum.configuration.RumConfiguration)
 fun RumConfiguration.Builder.trackNonFatalAnrs(Boolean): RumConfiguration.Builder
 fun RumConfiguration.Builder.useViewTrackingStrategy(com.datadog.kmp.rum.tracking.ViewTrackingStrategy?): RumConfiguration.Builder
 fun RumConfiguration.Builder.trackUserInteractions(Array<com.datadog.kmp.rum.tracking.ViewAttributesProvider> = emptyArray(), com.datadog.kmp.rum.tracking.InteractionPredicate = NoOpInteractionPredicate()): RumConfiguration.Builder
@@ -36,7 +36,7 @@ class com.datadog.kmp.rum.tracking.NavigationViewTrackingStrategy : ViewTracking
   constructor(Int, Boolean, ComponentPredicate<androidx.navigation.NavDestination> = AcceptAllNavDestinations())
   override fun register(android.content.Context)
   override fun unregister(android.content.Context?)
-interface com.datadog.kmp.rum.tracking.ViewAttributesProvider
+fun interface com.datadog.kmp.rum.tracking.ViewAttributesProvider
   fun extractAttributes(android.view.View, MutableMap<String, Any?>)
 interface com.datadog.kmp.rum.tracking.ViewTrackingStrategy
   fun register(android.content.Context)

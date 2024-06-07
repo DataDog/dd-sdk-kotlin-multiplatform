@@ -12,7 +12,7 @@ import com.datadog.android.rum.RumAttributes
 /**
  * Provides the extra attributes for the  as Map<String,Any?>.
  */
-interface ViewAttributesProvider {
+fun interface ViewAttributesProvider {
 
     /**
      * Add extra attributes to the default attributes Map.

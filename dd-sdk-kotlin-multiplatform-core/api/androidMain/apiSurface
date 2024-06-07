@@ -1,9 +1,9 @@
-object com.datadog.kmp.Datadog
+actual object com.datadog.kmp.Datadog
   var verbosity: SdkLogVerbosity?
-  fun initialize(Any?, com.datadog.kmp.core.configuration.Configuration, com.datadog.kmp.privacy.TrackingConsent)
-  fun isInitialized(): Boolean
-  fun setTrackingConsent(com.datadog.kmp.privacy.TrackingConsent)
-  fun setUserInfo(String?, String?, String?, Map<String, Any?>)
-  fun addUserExtraInfo(Map<String, Any?>)
-  fun clearAllData()
-  fun stopInstance()
+  actual fun initialize(Any?, com.datadog.kmp.core.configuration.Configuration, com.datadog.kmp.privacy.TrackingConsent)
+  actual fun isInitialized(): Boolean
+  actual fun setTrackingConsent(com.datadog.kmp.privacy.TrackingConsent)
+  actual fun setUserInfo(String?, String?, String?, Map<String, Any?>)
+  actual fun addUserExtraInfo(Map<String, Any?>)
+  actual fun clearAllData()
+  actual fun stopInstance()
