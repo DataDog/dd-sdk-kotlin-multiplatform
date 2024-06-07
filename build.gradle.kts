@@ -54,9 +54,9 @@ registerPluginSpecificAggregationTask(
 )
 
 val publishableProjects = listOf(
-    projects.ddSdkKotlinMultiplatformCore,
-    projects.features.ddSdkKotlinMultiplatformLogs,
-    projects.features.ddSdkKotlinMultiplatformRum
+    projects.core,
+    projects.features.logs,
+    projects.features.rum
 )
 
 val jvmUnitTestDebugAllTask = tasks.register("jvmUnitTestDebugAll") {

@@ -21,15 +21,15 @@ kotlin {
                 isStatic = true
                 // without that Logger type variable declared in this module will have a different type
                 // from the Swift side compared to the one declared in Logs module
-                export(projects.features.ddSdkKotlinMultiplatformLogs)
+                export(projects.features.logs)
             }
         }
     }
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.ddSdkKotlinMultiplatformCore)
-            api(projects.features.ddSdkKotlinMultiplatformLogs)
-            api(projects.features.ddSdkKotlinMultiplatformRum)
+            implementation(projects.core)
+            api(projects.features.logs)
+            api(projects.features.rum)
         }
     }
 }
