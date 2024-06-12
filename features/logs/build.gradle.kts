@@ -52,7 +52,7 @@ kotlin {
             implementation(projects.tools.unit.jvm)
         }
         commonMain.dependencies {
-            api(projects.ddSdkKotlinMultiplatformCore)
+            api(projects.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

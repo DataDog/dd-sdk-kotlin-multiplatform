@@ -25,7 +25,7 @@ dependencyResolutionManagement {
 
 include(":sample:androidApp")
 include(":sample:shared")
-include(":dd-sdk-kotlin-multiplatform-core")
-include(":features:dd-sdk-kotlin-multiplatform-logs")
-include(":features:dd-sdk-kotlin-multiplatform-rum")
+include(":core")
+include(":features:logs")
+include(":features:rum")
 include(":tools:unit:jvm")
