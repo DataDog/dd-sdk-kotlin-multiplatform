@@ -4,7 +4,7 @@ fun Logger.warn(String, platform.Foundation.NSError, Map<String, Any?> = emptyMa
 fun Logger.error(String, platform.Foundation.NSError, Map<String, Any?> = emptyMap())
 fun Logger.critical(String, platform.Foundation.NSError, Map<String, Any?> = emptyMap())
 fun Logger.log(LogLevel, String, platform.Foundation.NSError, Map<String, Any?> = emptyMap())
-object com.datadog.kmp.log.Logs
-  fun enable()
-  fun addAttribute(String, Any?)
-  fun removeAttribute(String)
+actual object com.datadog.kmp.log.Logs
+  actual fun enable()
+  actual fun addAttribute(String, Any?)
+  actual fun removeAttribute(String)

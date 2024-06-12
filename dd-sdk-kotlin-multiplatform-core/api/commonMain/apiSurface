@@ -1,4 +1,4 @@
-object com.datadog.kmp.Datadog
+expect object com.datadog.kmp.Datadog
   var verbosity: SdkLogVerbosity?
   fun initialize(Any? = null, com.datadog.kmp.core.configuration.Configuration, com.datadog.kmp.privacy.TrackingConsent)
   fun isInitialized(): Boolean
