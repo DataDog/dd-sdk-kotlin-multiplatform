@@ -1,0 +1,43 @@
+object com.datadog.kmp.rum.Rum
+  fun enable(com.datadog.kmp.rum.configuration.RumConfiguration)
+fun RumConfiguration.Builder.trackNonFatalAnrs(Boolean): RumConfiguration.Builder
+fun RumConfiguration.Builder.useViewTrackingStrategy(com.datadog.kmp.rum.tracking.ViewTrackingStrategy?): RumConfiguration.Builder
+fun RumConfiguration.Builder.trackUserInteractions(Array<com.datadog.kmp.rum.tracking.ViewAttributesProvider> = emptyArray(), com.datadog.kmp.rum.tracking.InteractionPredicate = NoOpInteractionPredicate()): RumConfiguration.Builder
+class com.datadog.kmp.rum.tracking.AcceptAllActivities : ComponentPredicate<android.app.Activity>
+  override fun accept(android.app.Activity): Boolean
+  override fun getViewName(android.app.Activity): String?
+class com.datadog.kmp.rum.tracking.AcceptAllDefaultFragments : ComponentPredicate<android.app.Fragment>
+  override fun accept(android.app.Fragment): Boolean
+  override fun getViewName(android.app.Fragment): String?
+class com.datadog.kmp.rum.tracking.AcceptAllNavDestinations : ComponentPredicate<androidx.navigation.NavDestination>
+  override fun accept(androidx.navigation.NavDestination): Boolean
+  override fun getViewName(androidx.navigation.NavDestination): String?
+class com.datadog.kmp.rum.tracking.AcceptAllSupportFragments : ComponentPredicate<androidx.fragment.app.Fragment>
+  override fun accept(androidx.fragment.app.Fragment): Boolean
+  override fun getViewName(androidx.fragment.app.Fragment): String?
+class com.datadog.kmp.rum.tracking.ActivityViewTrackingStrategy : ViewTrackingStrategy
+  constructor(Boolean, ComponentPredicate<android.app.Activity> = AcceptAllActivities())
+  override fun register(android.content.Context)
+  override fun unregister(android.content.Context?)
+interface com.datadog.kmp.rum.tracking.ComponentPredicate<T>
+  fun accept(T): Boolean
+  fun getViewName(T): String?
+class com.datadog.kmp.rum.tracking.FragmentViewTrackingStrategy : ViewTrackingStrategy
+  constructor(Boolean, ComponentPredicate<androidx.fragment.app.Fragment> = AcceptAllSupportFragments(), ComponentPredicate<android.app.Fragment> = AcceptAllDefaultFragments())
+  override fun register(android.content.Context)
+  override fun unregister(android.content.Context?)
+interface com.datadog.kmp.rum.tracking.InteractionPredicate
+  fun getTargetName(Any): String?
+class com.datadog.kmp.rum.tracking.MixedViewTrackingStrategy : ViewTrackingStrategy
+  constructor(Boolean, ComponentPredicate<android.app.Activity> = AcceptAllActivities(), ComponentPredicate<androidx.fragment.app.Fragment> = AcceptAllSupportFragments(), ComponentPredicate<android.app.Fragment> = AcceptAllDefaultFragments())
+  override fun register(android.content.Context)
+  override fun unregister(android.content.Context?)
+class com.datadog.kmp.rum.tracking.NavigationViewTrackingStrategy : ViewTrackingStrategy
+  constructor(Int, Boolean, ComponentPredicate<androidx.navigation.NavDestination> = AcceptAllNavDestinations())
+  override fun register(android.content.Context)
+  override fun unregister(android.content.Context?)
+interface com.datadog.kmp.rum.tracking.ViewAttributesProvider
+  fun extractAttributes(android.view.View, MutableMap<String, Any?>)
+interface com.datadog.kmp.rum.tracking.ViewTrackingStrategy
+  fun register(android.content.Context)
+  fun unregister(android.content.Context?)

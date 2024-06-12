@@ -1,12 +1,14 @@
 [versions]
-agp = "8.4.0"
+agp = "8.4.1"
 kotlin = "1.9.24"
 compose = "1.6.6"
 compose-compiler = "1.5.14"
 compose-material3 = "1.1.2"
+androidx-fragment = "1.5.1"
+androidx-navigation = "2.3.0"
 androidx-activityCompose = "1.8.0"
-datadog-android = "2.8.0"
-datadog-ios = "2.11.0"
+datadog-android = "2.10.1"
+datadog-ios = "2.12.0"
 dependencyLicense = "0.2"
 kotlinGrammarParser = "0.1.0"
 
@@ -23,6 +25,8 @@ mokkery = "1.9.24-1.7.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "androidx-fragment" }
+androidx-navigation-runtime = { module = "androidx.navigation:navigation-runtime", version.ref = "androidx-navigation" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }

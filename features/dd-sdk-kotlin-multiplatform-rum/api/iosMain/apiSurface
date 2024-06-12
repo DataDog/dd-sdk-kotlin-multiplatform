@@ -1,0 +1,16 @@
+object com.datadog.kmp.rum.Rum
+  fun enable(com.datadog.kmp.rum.configuration.RumConfiguration)
+fun RumConfiguration.Builder.trackUiKitViews(com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate = DefaultUIKitRUMViewsPredicate()): RumConfiguration.Builder
+fun RumConfiguration.Builder.trackUiKitActions(com.datadog.kmp.rum.tracking.UIKitRUMActionsPredicate = DefaultUIKitRUMActionsPredicate()): RumConfiguration.Builder
+class com.datadog.kmp.rum.tracking.DefaultUIKitRUMActionsPredicate : UIKitRUMActionsPredicate
+  override fun createAction(platform.UIKit.UIView): RumAction?
+class com.datadog.kmp.rum.tracking.DefaultUIKitRUMViewsPredicate : UIKitRUMViewsPredicate
+  override fun createView(platform.UIKit.UIViewController): RumView?
+data class com.datadog.kmp.rum.tracking.RumAction
+  constructor(String, Map<String, Any?>)
+data class com.datadog.kmp.rum.tracking.RumView
+  constructor(String, Map<String, Any?>)
+interface com.datadog.kmp.rum.tracking.UIKitRUMActionsPredicate
+  fun createAction(platform.UIKit.UIView): RumAction?
+interface com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
+  fun createView(platform.UIKit.UIViewController): RumView?

@@ -29,6 +29,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.ddSdkKotlinMultiplatformCore)
             api(projects.features.ddSdkKotlinMultiplatformLogs)
+            api(projects.features.ddSdkKotlinMultiplatformRum)
         }
     }
 }

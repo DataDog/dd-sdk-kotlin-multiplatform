@@ -1,0 +1,20 @@
+object com.datadog.kmp.rum.Rum
+  fun enable(com.datadog.kmp.rum.configuration.RumConfiguration)
+class com.datadog.kmp.rum.configuration.RumConfiguration
+  class Builder
+    constructor(String)
+    fun setSessionSampleRate(Float): Builder
+    fun setTelemetrySampleRate(Float): Builder
+    fun trackLongTasks(Long = DEFAULT_LONG_TASK_THRESHOLD_MS): Builder
+    fun trackBackgroundEvents(Boolean): Builder
+    fun trackFrustrations(Boolean): Builder
+    fun setVitalsUpdateFrequency(VitalsUpdateFrequency): Builder
+    fun setSessionListener(RumSessionListener): Builder
+    fun build(): RumConfiguration
+interface com.datadog.kmp.rum.configuration.RumSessionListener
+  fun onSessionStarted(String, Boolean)
+enum com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
+  - FREQUENT
+  - AVERAGE
+  - RARE
+  - NEVER
