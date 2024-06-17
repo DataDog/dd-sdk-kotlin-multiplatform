@@ -8,7 +8,7 @@ androidx-fragment = "1.5.1"
 androidx-navigation = "2.3.0"
 androidx-activityCompose = "1.8.0"
 datadog-android = "2.10.1"
-datadog-ios = "2.12.0"
+datadog-ios = "2.13.0"
 dependencyLicense = "0.2"
 kotlinGrammarParser = "0.1.0"
 

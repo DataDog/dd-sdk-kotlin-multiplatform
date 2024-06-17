@@ -4,9 +4,8 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp.rum.configuration.tracking
+package com.datadog.kmp.rum.tracking
 
-import com.datadog.kmp.rum.tracking.DefaultUIKitRUMActionsPredicate
 import platform.UIKit.UIView
 import kotlin.test.Test
 import kotlin.test.assertEquals

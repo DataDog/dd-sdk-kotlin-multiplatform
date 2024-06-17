@@ -19,9 +19,7 @@ class LoggerPlatformExtTest {
 
     private val testedLogger = Logger(mockPlatformLogger)
 
-    // kotlin.IllegalStateException: KClass for Objective-C classes is not supported yet
-    // https://youtrack.jetbrains.com/issue/KT-62997, target is 2.0.20
-    @Ignore
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call platform logger+debug W debug with NSError`() {
         // Given
@@ -38,9 +36,7 @@ class LoggerPlatformExtTest {
         }
     }
 
-    // kotlin.IllegalStateException: KClass for Objective-C classes is not supported yet
-    // https://youtrack.jetbrains.com/issue/KT-62997, target is 2.0.20
-    @Ignore
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call platform logger+info W info with NSError`() {
         // Given
@@ -57,9 +53,7 @@ class LoggerPlatformExtTest {
         }
     }
 
-    // kotlin.IllegalStateException: KClass for Objective-C classes is not supported yet
-    // https://youtrack.jetbrains.com/issue/KT-62997, target is 2.0.20
-    @Ignore
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call platform logger+warn W warn with NSError`() {
         // Given
@@ -76,9 +70,7 @@ class LoggerPlatformExtTest {
         }
     }
 
-    // kotlin.IllegalStateException: KClass for Objective-C classes is not supported yet
-    // https://youtrack.jetbrains.com/issue/KT-62997, target is 2.0.20
-    @Ignore
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call platform logger+error W error with NSError`() {
         // Given
@@ -95,9 +87,7 @@ class LoggerPlatformExtTest {
         }
     }
 
-    // kotlin.IllegalStateException: KClass for Objective-C classes is not supported yet
-    // https://youtrack.jetbrains.com/issue/KT-62997, target is 2.0.20
-    @Ignore
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call platform logger+critical W critical with NSError`() {
         // Given
@@ -114,9 +104,7 @@ class LoggerPlatformExtTest {
         }
     }
 
-    // kotlin.IllegalStateException: KClass for Objective-C classes is not supported yet
-    // https://youtrack.jetbrains.com/issue/KT-62997, target is 2.0.20
-    @Ignore
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call platform logger+info W log+info with NSError`() {
         // Given
