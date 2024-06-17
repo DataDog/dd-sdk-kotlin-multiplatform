@@ -17,12 +17,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.datadog.kmp.sample.logErrorWithThrowable
 import com.datadog.kmp.sample.logInfo
+import com.datadog.kmp.sample.trackAction
+import com.datadog.kmp.sample.trackView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,14 +45,24 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun LoggingView() {
+    LaunchedEffect(null) {
+        trackView("Logging view")
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(top = 32.dp)
     ) {
-        Button(onClick = { logInfo() }) {
+        Button(onClick = {
+            trackAction("Log info")
+            logInfo()
+        }) {
             Text(text = "Log info")
         }
-        Button(onClick = { logErrorWithThrowable() }) {
+        Button(onClick = {
+            trackAction("Log error")
+            logErrorWithThrowable()
+        }) {
             Text(text = "Log error with Throwable")
         }
     }
