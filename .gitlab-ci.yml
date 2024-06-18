@@ -106,6 +106,7 @@ ios-unit-test:
   timeout: 1h
   script:
     # TODO RUM-4602 Datadog Java Agent fails to start (macOS problem? arm64 problem?)
+    - pod repo update
     - ./gradlew iosUnitTestAll
   artifacts:
     when: always
@@ -122,6 +123,7 @@ sample-app-build-ios:
     BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.4"
   script:
     # temporary workaround for RUM-4282
+    - pod repo update
     - ./gradlew :core:podBuildDatadogObjcIphonesimulator
     - xcodebuild -project sample/iosApp/iosApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme iosApp build | xcbeautify --preserve-unbeautified
 
