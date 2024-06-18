@@ -21,12 +21,33 @@ import com.datadog.android.core.configuration.Configuration as ConfigurationAndr
 import com.datadog.android.core.configuration.UploadFrequency as UploadFrequencyAndroid
 import com.datadog.android.privacy.TrackingConsent as TrackingConsentAndroid
 
+/**
+ * This class initializes the Datadog SDK, and sets up communication with the server.
+ */
 actual object Datadog {
 
+    /**
+     * Verbosity of the Datadog SDK.
+     *
+     * Messages with a priority level equal or above the given level will be sent to the platform-specific
+     * logging output (Android - Logcat, iOS - debugger console).
+     *
+     * @see [SdkLogVerbosity]
+     */
     actual var verbosity: SdkLogVerbosity?
         get() = DatadogAndroid.getVerbosity().toSdkLogVerbosity
         set(value) = DatadogAndroid.setVerbosity(value.native)
 
+    /**
+     * Initializes an instance of the Datadog SDK.
+     * @param context your application context (applicable only for Android)
+     * @param configuration the configuration for the SDK library
+     * @param trackingConsent as the initial state of the tracking consent flag
+     * @see [Configuration]
+     * @see [TrackingConsent]
+     * @throws IllegalArgumentException if the env name is using illegal characters and your
+     * application is in debug mode otherwise returns null and stops initializing the SDK (applicable only for Android)
+     */
     actual fun initialize(
         context: Any?,
         configuration: Configuration,
@@ -36,14 +57,33 @@ actual object Datadog {
         DatadogAndroid.initialize(context as Context, configuration.native, trackingConsent.native)
     }
 
+    /**
+     * Checks if SDK instance is initialized.
+     * @return whenever the instance is initialized or not.
+     */
     actual fun isInitialized(): Boolean {
         return DatadogAndroid.isInitialized()
     }
 
+    /**
+     * Sets the tracking consent regarding the data collection for this instance of the Datadog SDK.
+     *
+     * @param consent which can take one of the values
+     * ([TrackingConsent.PENDING], [TrackingConsent.GRANTED], [TrackingConsent.NOT_GRANTED])
+     */
     actual fun setTrackingConsent(consent: TrackingConsent) {
         DatadogAndroid.setTrackingConsent(consent.native)
     }
 
+    /**
+     * Sets the user information.
+     *
+     * @param id (nullable) a unique user identifier (relevant to your business domain)
+     * @param name (nullable) the user name or alias
+     * @param email (nullable) the user email
+     * @param extraInfo additional information. An extra information can be
+     * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
+     */
     actual fun setUserInfo(
         id: String?,
         name: String?,
@@ -53,14 +93,29 @@ actual object Datadog {
         DatadogAndroid.setUserInfo(id, name, email, extraInfo)
     }
 
+    /**
+     * Sets additional information for the user.
+     *
+     * If properties had originally been set with [setUserInfo], they will be preserved.
+     * In the event of a conflict on key, the new property will prevail.
+     *
+     * @param extraInfo additional information. An extra information can be
+     * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
+     */
     actual fun addUserExtraInfo(extraInfo: Map<String, Any?>) {
         DatadogAndroid.addUserProperties(extraInfo)
     }
 
+    /**
+     * Clears all unsent data in all registered features.
+     */
     actual fun clearAllData() {
         DatadogAndroid.clearAllData()
     }
 
+    /**
+     * Stop the initialized SDK instance.
+     */
     actual fun stopInstance() {
         DatadogAndroid.stopInstance()
     }
