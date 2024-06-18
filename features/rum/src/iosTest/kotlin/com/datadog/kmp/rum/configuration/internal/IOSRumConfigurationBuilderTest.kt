@@ -17,11 +17,15 @@ import com.datadog.kmp.rum.tracking.RumAction
 import com.datadog.kmp.rum.tracking.RumView
 import com.datadog.kmp.rum.tracking.UIKitRUMActionsPredicate
 import com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
+import com.datadog.kmp.rum.utils.exhaustiveAttributes
+import com.datadog.kmp.rum.utils.randomBoolean
+import com.datadog.kmp.rum.utils.randomEnumValue
+import com.datadog.kmp.rum.utils.randomFloat
+import com.datadog.kmp.rum.utils.randomLong
 import dev.mokkery.mock
 import dev.mokkery.verify
 import platform.UIKit.UIView
 import platform.UIKit.UIViewController
-import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -186,31 +190,4 @@ class IOSRumConfigurationBuilderTest {
         // Then
         assertSame(fakeNativeRumConfiguration, nativeConfiguration)
     }
-
-    // region private
-
-    private fun randomBoolean(): Boolean = Random.nextBoolean()
-
-    private fun randomFloat(from: Float = -Float.MAX_VALUE, until: Float = Float.MAX_VALUE): Float =
-        Random.nextDouble(from.toDouble(), until.toDouble()).toFloat()
-
-    private fun randomLong(from: Long = Long.MIN_VALUE, until: Long = Long.MAX_VALUE): Long =
-        Random.nextLong(from, until)
-
-    private inline fun <reified T : Enum<T>> randomEnumValue(): T {
-        val values = enumValues<T>()
-        return values[Random.nextInt(values.size)]
-    }
-
-    private fun exhaustiveAttributes(): Map<String, Any?> {
-        return mapOf(
-            "string-key" to "value",
-            "long-key" to randomLong(),
-            "float-key" to randomFloat(),
-            "object-key" to Any(),
-            "null-key" to null
-        )
-    }
-
-    // endregion
 }

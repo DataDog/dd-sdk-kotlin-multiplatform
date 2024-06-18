@@ -1,5 +1,61 @@
 expect object com.datadog.kmp.rum.Rum
   fun enable(com.datadog.kmp.rum.configuration.RumConfiguration)
+enum com.datadog.kmp.rum.RumActionType
+  - TAP
+  - SCROLL
+  - SWIPE
+  - CLICK
+  - BACK
+  - CUSTOM
+object com.datadog.kmp.rum.RumAttributes
+  const val ERROR_FINGERPRINT: String
+enum com.datadog.kmp.rum.RumErrorSource
+  - NETWORK
+  - SOURCE
+  - LOGGER
+  - WEBVIEW
+interface com.datadog.kmp.rum.RumMonitor
+  fun getCurrentSessionId((String?) -> Unit)
+  fun startView(Any, String, Map<String, Any?> = emptyMap())
+  fun stopView(Any, Map<String, Any?> = emptyMap())
+  fun addAction(RumActionType, String, Map<String, Any?>)
+  fun startAction(RumActionType, String, Map<String, Any?>)
+  fun stopAction(RumActionType, String, Map<String, Any?> = emptyMap())
+  fun startResource(String, RumResourceMethod, String, Map<String, Any?> = emptyMap())
+  fun stopResource(String, Int?, Long?, RumResourceKind, Map<String, Any?>)
+  fun stopResourceWithError(String, Int?, String, Throwable, Map<String, Any?> = emptyMap())
+  fun addError(String, RumErrorSource, Throwable?, Map<String, Any?>)
+  fun addTiming(String)
+  fun addFeatureFlagEvaluation(String, Any)
+  fun addFeatureFlagEvaluations(Map<String, Any>)
+  fun addAttribute(String, Any?)
+  fun removeAttribute(String)
+  fun stopSession()
+  var debug: Boolean
+  companion object 
+    fun get(): RumMonitor
+enum com.datadog.kmp.rum.RumResourceKind
+  - BEACON
+  - FETCH
+  - XHR
+  - DOCUMENT
+  - NATIVE
+  - IMAGE
+  - JS
+  - FONT
+  - CSS
+  - MEDIA
+  - OTHER
+enum com.datadog.kmp.rum.RumResourceMethod
+  - POST
+  - GET
+  - HEAD
+  - PUT
+  - DELETE
+  - PATCH
+  - TRACE
+  - OPTIONS
+  - CONNECT
 class com.datadog.kmp.rum.configuration.RumConfiguration
   class Builder
     constructor(String)

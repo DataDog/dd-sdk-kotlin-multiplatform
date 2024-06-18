@@ -4,9 +4,8 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp.rum.configuration.tracking
+package com.datadog.kmp.rum.tracking
 
-import com.datadog.kmp.rum.tracking.DefaultUIKitRUMViewsPredicate
 import kotlinx.cinterop.BetaInteropApi
 import platform.UIKit.UIViewController
 import kotlin.test.Test

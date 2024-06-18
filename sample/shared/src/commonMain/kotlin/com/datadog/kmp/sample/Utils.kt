@@ -7,12 +7,15 @@
 package com.datadog.kmp.sample
 
 import com.datadog.kmp.Datadog
+import com.datadog.kmp.DatadogSite
 import com.datadog.kmp.SdkLogVerbosity
 import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.log.Logger
 import com.datadog.kmp.log.Logs
 import com.datadog.kmp.privacy.TrackingConsent
 import com.datadog.kmp.rum.Rum
+import com.datadog.kmp.rum.RumActionType
+import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 
@@ -21,15 +24,17 @@ fun initDatadog(context: Any? = null) {
     Datadog.verbosity = SdkLogVerbosity.DEBUG
 
     val configuration = Configuration.Builder(
-        clientToken = "foobar",
+        clientToken = LibraryConfig.DD_CLIENT_TOKEN,
         env = "prod"
-    ).build()
+    )
+        .useSite(DatadogSite.US1)
+        .build()
 
     Datadog.initialize(context = context, configuration = configuration, trackingConsent = TrackingConsent.GRANTED)
 
     Logs.enable()
 
-    val rumConfiguration = RumConfiguration.Builder("fake-app-id")
+    val rumConfiguration = RumConfiguration.Builder(LibraryConfig.DD_APPLICATION_ID)
         .setSessionSampleRate(100f)
         .setTelemetrySampleRate(100f)
         .setVitalsUpdateFrequency(VitalsUpdateFrequency.AVERAGE)
@@ -48,7 +53,7 @@ fun initDatadog(context: Any? = null) {
     Datadog.setUserInfo(
         name = "Random User",
         email = "user@example.com",
-        extraInfo = mapOf("age" to 42, "location" to "universe")
+        extraInfo = mapOf("age" to 42, "location" to "universe", "null-attribute" to null)
     )
 }
 
@@ -69,7 +74,26 @@ fun logErrorWithThrowable() {
     applicationLogger.error(
         "Logging error with Throwable",
         throwable = RuntimeException("Just for logging!"),
-        attributes = mapOf("custom" to "attribute")
+        attributes = mapOf(
+            "custom" to "attribute",
+            "null-attribute" to null
+        )
+    )
+}
+
+fun trackView(viewName: String) {
+    RumMonitor.get().startView(
+        viewName,
+        viewName,
+        mapOf("custom-view-attribute" to "view-attribute-value", "nullable-view-attribute" to null)
+    )
+}
+
+fun trackAction(actionName: String) {
+    RumMonitor.get().addAction(
+        RumActionType.TAP,
+        actionName,
+        mapOf("custom-action-attribute" to "action-attribute-value", "nullable-action-attribute" to null)
     )
 }
 

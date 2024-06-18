@@ -11,7 +11,10 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Button(action: UtilsKt.logInfo) {
+            Button(action: {
+                UtilsKt.trackAction(actionName: "Log info")
+                UtilsKt.logInfo()
+            }) {
                 Text("Log info")
                     .padding()
                     .background(Color.blue)
@@ -19,7 +22,10 @@ struct ContentView: View {
                     .cornerRadius(8)
             }
 
-            Button(action: UtilsKt.logErrorWithThrowable) {
+            Button(action: {
+                UtilsKt.trackAction(actionName: "Log error with Throwable")
+                UtilsKt.logErrorWithThrowable()
+            }) {
                 Text("Log error with Throwable")
                     .padding()
                     .background(Color.red)
@@ -27,13 +33,19 @@ struct ContentView: View {
                     .cornerRadius(8)
             }
 
-            Button(action: logErrorWithError) {
+            Button(action: {
+                UtilsKt.trackAction(actionName: "Log error with Error")
+                logErrorWithError()
+            }) {
                 Text("Log error with Error")
                     .padding()
                     .background(Color.brown)
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
+        }
+        .onAppear {
+            UtilsKt.trackView(viewName: "Logging view")
         }
         .padding()
     }
