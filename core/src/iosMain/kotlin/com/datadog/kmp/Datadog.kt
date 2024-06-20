@@ -31,12 +31,31 @@ import com.datadog.kmp.core.configuration.UploadFrequency
 import com.datadog.kmp.privacy.TrackingConsent
 import cocoapods.DatadogObjc.DDDatadog as DatadogIOS
 
+/**
+ * This class initializes the Datadog SDK, and sets up communication with the server.
+ */
 actual object Datadog {
 
+    /**
+     * Verbosity of the Datadog SDK.
+     *
+     * Messages with a priority level equal or above the given level will be sent to the platform-specific
+     * logging output (Android - Logcat, iOS - debugger console).
+     *
+     * @see [SdkLogVerbosity]
+     */
     actual var verbosity: SdkLogVerbosity?
         get() = DatadogIOS.verbosityLevel().toSdkLogVerbosity
         set(value) = DatadogIOS.setVerbosityLevel(value.native)
 
+    /**
+     * Initializes an instance of the Datadog SDK.
+     * @param context your application context (applicable only for Android)
+     * @param configuration the configuration for the SDK library
+     * @param trackingConsent as the initial state of the tracking consent flag
+     * @see [Configuration]
+     * @see [TrackingConsent]
+     */
     actual fun initialize(
         // unused
         context: Any?,
@@ -46,14 +65,33 @@ actual object Datadog {
         DatadogIOS.initializeWithConfiguration(configuration.native, trackingConsent.native)
     }
 
+    /**
+     * Checks if SDK instance is initialized.
+     * @return whenever the instance is initialized or not.
+     */
     actual fun isInitialized(): Boolean {
         return DatadogIOS.isInitialized()
     }
 
+    /**
+     * Sets the tracking consent regarding the data collection for this instance of the Datadog SDK.
+     *
+     * @param consent which can take one of the values
+     * ([TrackingConsent.PENDING], [TrackingConsent.GRANTED], [TrackingConsent.NOT_GRANTED])
+     */
     actual fun setTrackingConsent(consent: TrackingConsent) {
         DatadogIOS.setTrackingConsentWithConsent(consent.native)
     }
 
+    /**
+     * Sets the user information.
+     *
+     * @param id (nullable) a unique user identifier (relevant to your business domain)
+     * @param name (nullable) the user name or alias
+     * @param email (nullable) the user email
+     * @param extraInfo additional information. An extra information can be
+     * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
+     */
     actual fun setUserInfo(
         id: String?,
         name: String?,
@@ -68,14 +106,29 @@ actual object Datadog {
         )
     }
 
+    /**
+     * Sets additional information for the user.
+     *
+     * If properties had originally been set with [setUserInfo], they will be preserved.
+     * In the event of a conflict on key, the new property will prevail.
+     *
+     * @param extraInfo additional information. An extra information can be
+     * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
+     */
     actual fun addUserExtraInfo(extraInfo: Map<String, Any?>) {
         DatadogIOS.addUserExtraInfo(extraInfo.eraseKeyType())
     }
 
+    /**
+     * Clears all unsent data in all registered features.
+     */
     actual fun clearAllData() {
         DatadogIOS.clearAllData()
     }
 
+    /**
+     * Stop the initialized SDK instance.
+     */
     actual fun stopInstance() {
         DatadogIOS.stopInstance()
     }
