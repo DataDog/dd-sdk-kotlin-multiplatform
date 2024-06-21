@@ -12,6 +12,7 @@
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		F62442D32BD93E950006A6C5 /* DatadogObjc in Frameworks */ = {isa = PBXBuildFile; productRef = F62442D22BD93E950006A6C5 /* DatadogObjc */; };
+		F63791D92C25CBDB000608AA /* DatadogCrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = F63791D82C25CBDB000608AA /* DatadogCrashReporting */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F63791D92C25CBDB000608AA /* DatadogCrashReporting in Frameworks */,
 				F62442D32BD93E950006A6C5 /* DatadogObjc in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -112,6 +114,7 @@
 			name = iosApp;
 			packageProductDependencies = (
 				F62442D22BD93E950006A6C5 /* DatadogObjc */,
+				F63791D82C25CBDB000608AA /* DatadogCrashReporting */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -401,7 +404,7 @@
 			repositoryURL = "https://github.com/DataDog/dd-sdk-ios";
 			requirement = {
 				kind = exactVersion;
-				version = 2.11.0;
+				version = 2.13.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -411,6 +414,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F62442D12BD93E950006A6C5 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogObjc;
+		};
+		F63791D82C25CBDB000608AA /* DatadogCrashReporting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F62442D12BD93E950006A6C5 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
+			productName = DatadogCrashReporting;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

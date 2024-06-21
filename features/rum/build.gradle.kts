@@ -40,6 +40,10 @@ kotlin {
             linkOnly = true
             version = libs.versions.datadog.ios.get()
         }
+        pod("DatadogCrashReporting") {
+            linkOnly = true
+            version = libs.versions.datadog.ios.get()
+        }
     }
 
     sourceSets {

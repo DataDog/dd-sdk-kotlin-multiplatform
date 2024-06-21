@@ -1,8 +1,7 @@
 [versions]
 agp = "8.5.0"
-kotlin = "1.9.24"
+kotlin = "2.0.20-Beta1"
 compose = "1.6.6"
-compose-compiler = "1.5.14"
 compose-material3 = "1.1.2"
 androidx-fragment = "1.5.1"
 androidx-navigation = "2.3.0"
@@ -21,7 +20,7 @@ jUnitMockitoExt = "5.12.0"
 assertJ = "3.18.1"
 elmyr = "1.4.0"
 mockitoKotlin = "5.3.1"
-mokkery = "1.9.24-1.7.0"
+mokkery = "2.1.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -61,6 +60,7 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 dependencyLicense = { id = "com.datadoghq.dependency-license", version.ref = "dependencyLicense" }
 mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [bundles]
 

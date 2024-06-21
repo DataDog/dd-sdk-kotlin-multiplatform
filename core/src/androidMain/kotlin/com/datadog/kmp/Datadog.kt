@@ -151,6 +151,7 @@ private val Configuration.native: ConfigurationAndroid
             .setBatchSize(coreConfig.batchSize.native)
             .setUploadFrequency(coreConfig.uploadFrequency.native)
             .setBatchProcessingLevel(coreConfig.batchProcessingLevel.native)
+            .setCrashReportsEnabled(coreConfig.trackCrashes)
             .build()
     }
 

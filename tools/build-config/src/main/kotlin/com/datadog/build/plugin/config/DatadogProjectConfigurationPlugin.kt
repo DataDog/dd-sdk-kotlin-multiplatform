@@ -60,7 +60,15 @@ private fun Project.applyKotlinConfig(configExtension: DatadogBuildConfigExtensi
     taskConfig<KotlinCompile> {
         compilerOptions {
             jvmTarget.set(configExtension.jvmTargetOrDefault)
-            allWarningsAsErrors.set(true)
+            // there are few warnings coming from the fact that the JetBrains Compose Compiler is the new one, but AGP
+            // is still using old values for the configuration
+            // w: intrinsicRemember is deprecated. Use
+            // plugin:androidx.compose.compiler.plugins.kotlin:featureFlag=IntrinsicRemember instead
+            // w: nonSkippingGroupOptimization is deprecated. Use
+            // plugin:androidx.compose.compiler.plugins.kotlin:featureFlag=OptimizeNonSkippingGroups instead
+            // w: experimentalStrongSkipping is deprecated. Use
+            // plugin:androidx.compose.compiler.plugins.kotlin:featureFlag=StrongSkipping instead
+            allWarningsAsErrors.set(project.name != "androidApp")
         }
     }
     taskConfig<Test> {

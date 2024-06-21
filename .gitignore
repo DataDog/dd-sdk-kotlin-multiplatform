@@ -1,6 +1,7 @@
-# IntelliJ
+# IntelliJ + Kotlin
 *.iml
 .idea/**
+.kotlin/
 
 # Android Studio 3+
 .navigation/

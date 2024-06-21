@@ -6,6 +6,7 @@
 
 package com.datadog.kmp
 
+import cocoapods.DatadogCrashReporting.DDCrashReporter
 import cocoapods.DatadogObjc.DDBatchProcessingLevelHigh
 import cocoapods.DatadogObjc.DDBatchProcessingLevelLow
 import cocoapods.DatadogObjc.DDBatchProcessingLevelMedium
@@ -63,6 +64,10 @@ actual object Datadog {
         trackingConsent: TrackingConsent
     ) {
         DatadogIOS.initializeWithConfiguration(configuration.native, trackingConsent.native)
+
+        if (configuration.coreConfig.trackCrashes) {
+            DDCrashReporter.enable()
+        }
     }
 
     /**

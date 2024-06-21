@@ -24,7 +24,7 @@ androidx.versionedparcelable:versionedparcelable:1.1.1          :   30 Kb
 androidx.viewpager:viewpager:1.0.0                              :   52 Kb
 com.datadoghq:dd-sdk-android-core:2.10.1                        :  682 Kb
 com.datadoghq:dd-sdk-android-rum:2.10.1                         : 1580 Kb
-org.jetbrains.kotlin:kotlin-stdlib:1.9.24                       : 1678 Kb
+org.jetbrains.kotlin:kotlin-stdlib:2.0.20-Beta1                 : 1691 Kb
 org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1          :   19 Kb
 org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1         : 1457 Kb
 org.jetbrains:annotations:13.0                                  :   17 Kb
