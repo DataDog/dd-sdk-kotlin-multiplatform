@@ -5,7 +5,6 @@
  */
 
 import com.datadog.build.AndroidConfig
-import dev.mokkery.MockMode
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -15,7 +14,8 @@ plugins {
     alias(libs.plugins.dependencyLicense)
     id("api-surface")
     id("transitive-dependencies")
-    alias(libs.plugins.mokkery)
+// TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
+//    alias(libs.plugins.mokkery)
 }
 
 kotlin {
@@ -60,6 +60,8 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            // TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
+            implementation("dev.mokkery:mokkery-runtime:${libs.versions.mokkery.get()}")
         }
     }
 }
@@ -68,7 +70,8 @@ android {
     namespace = "com.datadog.kmp.log"
 }
 
-mokkery {
-    defaultMockMode = MockMode.autofill
-    ignoreFinalMembers = true
-}
+// TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
+// mokkery {
+//    defaultMockMode = MockMode.autofill
+//    ignoreFinalMembers = true
+// }

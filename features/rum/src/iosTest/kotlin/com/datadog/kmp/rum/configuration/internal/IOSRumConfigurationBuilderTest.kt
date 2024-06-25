@@ -26,10 +26,13 @@ import dev.mokkery.mock
 import dev.mokkery.verify
 import platform.UIKit.UIView
 import platform.UIKit.UIViewController
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
+// TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
+@Ignore
 class IOSRumConfigurationBuilderTest {
 
     private val fakeNativeRumConfiguration = DDRUMConfiguration("fake-app-id")

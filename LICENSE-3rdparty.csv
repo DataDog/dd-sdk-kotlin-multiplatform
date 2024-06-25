@@ -24,6 +24,7 @@ import,org.jetbrains.kotlin,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and 
 import,org.jetbrains.kotlinx,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors
 import(test),com.android.tools.utp,Apache-2.0,Copyright 2018 The Android Open Source Project
 import(test),com.google.testing.platform,"Android Software Development Kit License Agreement",Copyright 2018 The Android Open Source Project
+import(test),dev.drewhamilton.poko,Apache-2.0,Copyright 2020 Drew Hamilton
 import(test),dev.mokkery,Apache-2.0,__
 import(test),fr.xgouchet.elmyr,MIT,Copyright 2017-2019 Xavier F. Gouchet
 import(test),junit,EPL-1.0,Copyright © 2002-2024 JUnit
