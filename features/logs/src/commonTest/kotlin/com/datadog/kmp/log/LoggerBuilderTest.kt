@@ -11,9 +11,12 @@ import dev.mokkery.answering.calls
 import dev.mokkery.every
 import dev.mokkery.mock
 import dev.mokkery.verify
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertSame
 
+// TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
+@Ignore
 class LoggerBuilderTest {
 
     private val mockPlatformLoggerBuilder = mock<PlatformLogger.Builder>()

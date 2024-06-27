@@ -35,6 +35,7 @@ data class com.datadog.kmp.core.configuration.Configuration
     fun setBatchSize(BatchSize): Builder
     fun setUploadFrequency(UploadFrequency): Builder
     fun setBatchProcessingLevel(BatchProcessingLevel): Builder
+    fun trackCrashes(Boolean): Builder
 enum com.datadog.kmp.core.configuration.UploadFrequency
   - FREQUENT
   - AVERAGE

@@ -27,7 +27,8 @@ internal constructor(
         val batchSize: BatchSize,
         val uploadFrequency: UploadFrequency,
         val site: DatadogSite,
-        val batchProcessingLevel: BatchProcessingLevel
+        val batchProcessingLevel: BatchProcessingLevel,
+        val trackCrashes: Boolean
     )
 
     // region Builder
@@ -103,6 +104,16 @@ internal constructor(
             coreConfig = coreConfig.copy(batchProcessingLevel = batchProcessingLevel)
             return this
         }
+
+        /**
+         * Controls if Android (JVM)/iOS crashes are tracked or not. Default value is `true`.
+         *
+         * @param enabled whether crashes are tracked and sent to Datadog
+         */
+        fun trackCrashes(enabled: Boolean): Builder {
+            coreConfig = coreConfig.copy(trackCrashes = enabled)
+            return this
+        }
     }
 
     // endregion
@@ -118,7 +129,8 @@ internal constructor(
             batchSize = BatchSize.MEDIUM,
             uploadFrequency = UploadFrequency.AVERAGE,
             site = DatadogSite.US1,
-            batchProcessingLevel = BatchProcessingLevel.MEDIUM
+            batchProcessingLevel = BatchProcessingLevel.MEDIUM,
+            trackCrashes = true
         )
     }
 }

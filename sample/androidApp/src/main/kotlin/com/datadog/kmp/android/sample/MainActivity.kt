@@ -65,6 +65,11 @@ fun LoggingView() {
         }) {
             Text(text = "Log error with Throwable")
         }
+        Button(onClick = {
+            throw IllegalStateException("crash!")
+        }) {
+            Text(text = "Crash")
+        }
     }
 }
 

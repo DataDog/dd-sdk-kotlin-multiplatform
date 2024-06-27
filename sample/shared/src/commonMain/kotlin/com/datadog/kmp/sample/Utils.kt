@@ -9,7 +9,10 @@ package com.datadog.kmp.sample
 import com.datadog.kmp.Datadog
 import com.datadog.kmp.DatadogSite
 import com.datadog.kmp.SdkLogVerbosity
+import com.datadog.kmp.core.configuration.BatchProcessingLevel
+import com.datadog.kmp.core.configuration.BatchSize
 import com.datadog.kmp.core.configuration.Configuration
+import com.datadog.kmp.core.configuration.UploadFrequency
 import com.datadog.kmp.log.Logger
 import com.datadog.kmp.log.Logs
 import com.datadog.kmp.privacy.TrackingConsent
@@ -27,7 +30,11 @@ fun initDatadog(context: Any? = null) {
         clientToken = LibraryConfig.DD_CLIENT_TOKEN,
         env = "prod"
     )
+        .trackCrashes(true)
         .useSite(DatadogSite.US1)
+        .setBatchSize(BatchSize.MEDIUM)
+        .setUploadFrequency(UploadFrequency.AVERAGE)
+        .setBatchProcessingLevel(BatchProcessingLevel.MEDIUM)
         .build()
 
     Datadog.initialize(context = context, configuration = configuration, trackingConsent = TrackingConsent.GRANTED)
@@ -95,6 +102,18 @@ fun trackAction(actionName: String) {
         actionName,
         mapOf("custom-action-attribute" to "action-attribute-value", "nullable-action-attribute" to null)
     )
+}
+
+@Suppress("unused")
+@Throws(RuntimeException::class)
+fun triggerCheckedException() {
+    triggerUncheckedException()
+}
+
+@Suppress("unused", "TooGenericExceptionThrown")
+fun triggerUncheckedException() {
+    val cause = IllegalStateException("sample crash")
+    throw RuntimeException(cause)
 }
 
 internal expect fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder)

@@ -6,16 +6,24 @@
 
 import SwiftUI
 import sharedLib
+import DatadogRUM
 
 struct ContentView: View {
+
+    static let LOG_INFO_LABEL = "Log info"
+    static let LOG_ERROR_WITH_THROWABLE_LABEL = "Log error with Throwable"
+    static let LOG_ERROR_WITH_ERROR_LABEL = "Log error with Error"
+    static let RUM_LOGS_CHECKED_KMP_ERROR_LABEL = "RUM + Logs: checked KMP exception"
+    static let NATIVE_CRASH_LABEL = "Native crash"
+    static let CRASH_VIA_UNCHECKED_KMP_LABEL = "Crash: unchecked KMP exception"
 
     var body: some View {
         VStack {
             Button(action: {
-                UtilsKt.trackAction(actionName: "Log info")
+                UtilsKt.trackAction(actionName: ContentView.LOG_INFO_LABEL)
                 UtilsKt.logInfo()
             }) {
-                Text("Log info")
+                Text(ContentView.LOG_INFO_LABEL)
                     .padding()
                     .background(Color.blue)
                     .foregroundColor(.white)
@@ -23,10 +31,10 @@ struct ContentView: View {
             }
 
             Button(action: {
-                UtilsKt.trackAction(actionName: "Log error with Throwable")
+                UtilsKt.trackAction(actionName: ContentView.LOG_ERROR_WITH_THROWABLE_LABEL)
                 UtilsKt.logErrorWithThrowable()
             }) {
-                Text("Log error with Throwable")
+                Text(ContentView.LOG_ERROR_WITH_THROWABLE_LABEL)
                     .padding()
                     .background(Color.red)
                     .foregroundColor(.white)
@@ -34,12 +42,50 @@ struct ContentView: View {
             }
 
             Button(action: {
-                UtilsKt.trackAction(actionName: "Log error with Error")
+                UtilsKt.trackAction(actionName: ContentView.LOG_ERROR_WITH_ERROR_LABEL)
                 logErrorWithError()
             }) {
-                Text("Log error with Error")
+                Text(ContentView.LOG_ERROR_WITH_ERROR_LABEL)
                     .padding()
                     .background(Color.brown)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+
+            Button(action: {
+                UtilsKt.trackAction(actionName: ContentView.RUM_LOGS_CHECKED_KMP_ERROR_LABEL)
+                do {
+                    try UtilsKt.triggerCheckedException()
+                } catch {
+                    RUMMonitor.shared().addError(error: error, source: RUMErrorSource.source)
+                    UtilsKt.applicationLogger.error(message: "Caught KMP boundary error", error: error)
+                }
+            }) {
+                Text(ContentView.RUM_LOGS_CHECKED_KMP_ERROR_LABEL)
+                    .padding()
+                    .background(Color.orange)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+
+            Button(action: {
+                UtilsKt.trackAction(actionName: ContentView.NATIVE_CRASH_LABEL)
+                fatalError()
+            }) {
+                Text(ContentView.NATIVE_CRASH_LABEL)
+                    .padding()
+                    .background(Color.black)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+
+            Button(action: {
+                UtilsKt.trackAction(actionName: ContentView.CRASH_VIA_UNCHECKED_KMP_LABEL)
+                UtilsKt.triggerUncheckedException()
+            }) {
+                Text(ContentView.CRASH_VIA_UNCHECKED_KMP_LABEL)
+                    .padding()
+                    .background(Color.purple)
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
