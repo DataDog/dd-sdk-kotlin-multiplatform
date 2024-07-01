@@ -19,6 +19,9 @@ import,androidx.savedstate,Apache-2.0,Copyright 2018 The Android Open Source Pro
 import,androidx.versionedparcelable,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.viewpager,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,com.datadoghq,Apache-2.0,Copyright 2019-Present Datadog, Inc.
+import,com.squareup.okhttp3,Apache-2.0,"Copyright 2019 Square, Inc"
+import,com.squareup.okio,Apache-2.0,"Copyright 2013 Square, Inc"
+import,io.ktor,Apache-2.0,Copyright 2000-2023 JetBrains s.r.o.
 import,org.jetbrains,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors
 import,org.jetbrains.kotlin,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors
 import,org.jetbrains.kotlinx,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors
@@ -39,3 +42,4 @@ import(test),org.mockito,MIT,Copyright (c) 2007 Mockito contributors
 import(test),org.mockito.kotlin,MIT,"Copyright (c) 2016 Niek Haarman, Copyright (c) 2007 Mockito contributors"
 import(test),org.opentest4j,Apache-2.0,Copyright 2015-2018 the original author or authors
 build,androidx.compose.compiler,Apache-2.0,Copyright 2019 The Android Open Source Project
+build,org.slf4j,MIT,"Copyright (c) 2004-2022 QOS.ch Sarl (Switzerland)"

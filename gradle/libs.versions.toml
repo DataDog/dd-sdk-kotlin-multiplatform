@@ -11,6 +11,9 @@ datadog-ios = "2.13.0"
 dependencyLicense = "0.2"
 kotlinGrammarParser = "0.1.0"
 
+ktor = "2.3.11"
+kotlinxCoroutines = "1.8.1"
+
 # JUnit 5
 jUnitJupiter = "5.10.2"
 jUnitPlatform = "1.10.2"
@@ -38,6 +41,14 @@ datadog-android-core = { module = "com.datadoghq:dd-sdk-android-core", version.r
 datadog-android-logs = { module = "com.datadoghq:dd-sdk-android-logs", version.ref = "datadog-android" }
 datadog-android-rum = { module = "com.datadoghq:dd-sdk-android-rum", version.ref = "datadog-android" }
 kotlinGrammarParser = { module = "com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm", version.ref = "kotlinGrammarParser" }
+
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-Test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 
 # JUnit 5 (JVM only)
 jUnitPlatform = { module = "org.junit.platform:junit-platform-launcher", version.ref = "jUnitPlatform" }
