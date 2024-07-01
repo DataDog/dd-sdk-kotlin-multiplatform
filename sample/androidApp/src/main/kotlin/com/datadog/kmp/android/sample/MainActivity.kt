@@ -24,6 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.datadog.kmp.sample.logErrorWithThrowable
 import com.datadog.kmp.sample.logInfo
+import com.datadog.kmp.sample.network.startGetRequest
+import com.datadog.kmp.sample.network.startPostRequest
 import com.datadog.kmp.sample.trackAction
 import com.datadog.kmp.sample.trackView
 
@@ -69,6 +71,20 @@ fun LoggingView() {
             throw IllegalStateException("crash!")
         }) {
             Text(text = "Crash")
+        }
+
+        Button(onClick = {
+            trackAction("Start GET request")
+            startGetRequest("https://httpbin.org/get")
+        }) {
+            Text(text = "Trigger GET request ")
+        }
+
+        Button(onClick = {
+            trackAction("Start POST request")
+            startPostRequest("https://httpbin.org/post", "Some payload")
+        }) {
+            Text(text = "Trigger POST request ")
         }
     }
 }
