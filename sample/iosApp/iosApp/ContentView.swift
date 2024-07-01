@@ -8,14 +8,15 @@ import SwiftUI
 import sharedLib
 import DatadogRUM
 
-struct ContentView: View {
-
+internal struct ContentView: View {
     static let LOG_INFO_LABEL = "Log info"
     static let LOG_ERROR_WITH_THROWABLE_LABEL = "Log error with Throwable"
     static let LOG_ERROR_WITH_ERROR_LABEL = "Log error with Error"
     static let RUM_LOGS_CHECKED_KMP_ERROR_LABEL = "RUM + Logs: checked KMP exception"
     static let NATIVE_CRASH_LABEL = "Native crash"
     static let CRASH_VIA_UNCHECKED_KMP_LABEL = "Crash: unchecked KMP exception"
+    static let GET_REQUEST_LABEL = "Start GET request"
+    static let POST_REQUEST_LABEL = "Start POST request"
 
     var body: some View {
         VStack {
@@ -89,6 +90,28 @@ struct ContentView: View {
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
+
+            Button(action: {
+                UtilsKt.trackAction(actionName: ContentView.GET_REQUEST_LABEL)
+                NetworkUtilsKt.startGetRequest(url: "https://httpbin.org/get")
+            }) {
+                Text(ContentView.GET_REQUEST_LABEL)
+                    .padding()
+                    .background(Color.orange)
+                    .foregroundColor(Color.black)
+                    .cornerRadius(8)
+            }
+
+            Button(action: {
+                UtilsKt.trackAction(actionName: ContentView.POST_REQUEST_LABEL)
+                NetworkUtilsKt.startPostRequest(url: "https://httpbin.org/post", payload: "This is a payload")
+            }) {
+                Text(ContentView.POST_REQUEST_LABEL)
+                    .padding()
+                    .background(Color.orange)
+                    .foregroundColor(Color.black)
+                    .cornerRadius(8)
+            }
         }
         .onAppear {
             UtilsKt.trackView(viewName: "Logging view")
@@ -97,7 +120,7 @@ struct ContentView: View {
     }
 }
 
-private enum RuntimeError : Error {
+private enum RuntimeError: Error {
     case error(message: String)
 }
 
@@ -110,7 +133,7 @@ private func logErrorWithError() {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+internal struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
