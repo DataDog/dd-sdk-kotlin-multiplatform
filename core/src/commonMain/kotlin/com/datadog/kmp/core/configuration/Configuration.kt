@@ -108,7 +108,8 @@ internal constructor(
         /**
          * Controls if Android (JVM)/iOS crashes are tracked or not. Default value is `true`.
          *
-         * @param enabled whether crashes are tracked and sent to Datadog
+         * @param enabled whether crashes are tracked and sent to Datadog. Crash reporting should be enabled to be
+         * able to symbolicate non-crash errors on iOS.
          */
         fun trackCrashes(enabled: Boolean): Builder {
             coreConfig = coreConfig.copy(trackCrashes = enabled)

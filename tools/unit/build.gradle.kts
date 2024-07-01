@@ -5,11 +5,16 @@
  */
 
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.dependencyLicense)
+    id("datadog-build-config")
 }
 
-dependencies {
-    implementation(libs.bundles.jUnit5)
-    implementation(libs.bundles.jvmTestTools)
+kotlin {
+    sourceSets {
+        jvmMain.dependencies {
+            implementation(libs.bundles.jUnit5)
+            implementation(libs.bundles.jvmTestTools)
+        }
+    }
 }

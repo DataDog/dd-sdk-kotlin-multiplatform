@@ -37,6 +37,10 @@ import cocoapods.DatadogObjc.DDRUMResourceTypeMedia
 import cocoapods.DatadogObjc.DDRUMResourceTypeNative
 import cocoapods.DatadogObjc.DDRUMResourceTypeOther
 import cocoapods.DatadogObjc.DDRUMResourceTypeXhr
+import com.datadog.kmp.internal.createNSErrorFromMessage
+import com.datadog.kmp.internal.createNSErrorFromThrowable
+import com.datadog.kmp.internal.eraseKeyType
+import com.datadog.kmp.internal.withIncludeBinaryImages
 import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumMonitor
@@ -44,7 +48,6 @@ import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
 import platform.Foundation.NSError
 import platform.Foundation.NSHTTPURLResponse
-import platform.Foundation.NSLocalizedDescriptionKey
 import platform.Foundation.NSNumber
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLResponse
@@ -71,34 +74,34 @@ internal class RumMonitorAdapter(
 
     override fun startView(key: Any, name: String, attributes: Map<String, Any?>) {
         if (key is UIViewController) {
-            nativeRumMonitor.startViewWithViewController(key, name, attributes.eraseKeyType())
+            nativeRumMonitor.startViewWithViewController(key, name, eraseKeyType(attributes))
         } else {
-            nativeRumMonitor.startViewWithKey(key.toString(), name, attributes.eraseKeyType())
+            nativeRumMonitor.startViewWithKey(key.toString(), name, eraseKeyType(attributes))
         }
     }
 
     override fun stopView(key: Any, attributes: Map<String, Any?>) {
         if (key is UIViewController) {
-            nativeRumMonitor.stopViewWithViewController(key, attributes.eraseKeyType())
+            nativeRumMonitor.stopViewWithViewController(key, eraseKeyType(attributes))
         } else {
-            nativeRumMonitor.stopViewWithKey(key.toString(), attributes.eraseKeyType())
+            nativeRumMonitor.stopViewWithKey(key.toString(), eraseKeyType(attributes))
         }
     }
 
     override fun addAction(type: RumActionType, name: String, attributes: Map<String, Any?>) {
-        nativeRumMonitor.addActionWithType(type.native, name, attributes.eraseKeyType())
+        nativeRumMonitor.addActionWithType(type.native, name, eraseKeyType(attributes))
     }
 
     override fun startAction(type: RumActionType, name: String, attributes: Map<String, Any?>) {
-        nativeRumMonitor.startActionWithType(type.native, name, attributes.eraseKeyType())
+        nativeRumMonitor.startActionWithType(type.native, name, eraseKeyType(attributes))
     }
 
     override fun stopAction(type: RumActionType, name: String, attributes: Map<String, Any?>) {
-        nativeRumMonitor.stopActionWithType(type.native, name, attributes.eraseKeyType())
+        nativeRumMonitor.stopActionWithType(type.native, name, eraseKeyType(attributes))
     }
 
     override fun startResource(key: String, method: RumResourceMethod, url: String, attributes: Map<String, Any?>) {
-        nativeRumMonitor.startResourceWithResourceKey(key, method.native, url, attributes.eraseKeyType())
+        nativeRumMonitor.startResourceWithResourceKey(key, method.native, url, eraseKeyType(attributes))
     }
 
     override fun stopResource(
@@ -113,7 +116,7 @@ internal class RumMonitorAdapter(
             statusCode.asNSNumber,
             kind.native,
             size.asNSNumber,
-            attributes.eraseKeyType()
+            eraseKeyType(attributes)
         )
     }
 
@@ -134,9 +137,9 @@ internal class RumMonitorAdapter(
         }
         nativeRumMonitor.stopResourceWithErrorWithResourceKey(
             key,
-            toNsError(throwable, message),
+            createNSErrorFromThrowable(throwable, message),
             response,
-            attributes.eraseKeyType()
+            eraseKeyType(withIncludeBinaryImages(attributes))
         )
     }
 
@@ -146,14 +149,17 @@ internal class RumMonitorAdapter(
         throwable: Throwable?,
         attributes: Map<String, Any?>
     ) {
-        // iOS addError signature doesn't allow nullable NSError argument, while similar API on Android allows
-        // nullable Throwable
-        val error = if (throwable != null) {
-            toNsError(throwable, message)
+        val (error, resolvedAttributes) = if (throwable != null) {
+            createNSErrorFromThrowable(throwable, message) to withIncludeBinaryImages(attributes)
         } else {
-            NSError.errorWithDomain("Error", 0, mapOf(NSLocalizedDescriptionKey to message))
+            createNSErrorFromMessage(message) to attributes
         }
-        nativeRumMonitor.addErrorWithError(error, source.native, attributes.eraseKeyType())
+
+        nativeRumMonitor.addErrorWithError(
+            error,
+            source.native,
+            eraseKeyType(resolvedAttributes)
+        )
     }
 
     override fun addTiming(name: String) {
@@ -193,21 +199,26 @@ internal class RumMonitorAdapter(
         metrics: NSURLSessionTaskMetrics,
         attributes: Map<String, Any?>
     ) {
-        nativeRumMonitor.addResourceMetricsWithResourceKey(key, metrics, attributes.eraseKeyType())
+        nativeRumMonitor.addResourceMetricsWithResourceKey(key, metrics, eraseKeyType(attributes))
     }
 
     // endregion
 
     fun stopResource(key: String, response: NSURLResponse, size: Long?, attributes: Map<String, Any?>) {
-        nativeRumMonitor.stopResourceWithResourceKey(key, response, size.asNSNumber, attributes.eraseKeyType())
+        nativeRumMonitor.stopResourceWithResourceKey(key, response, size.asNSNumber, eraseKeyType(attributes))
     }
 
     fun stopResourceWithError(key: String, error: NSError, response: NSURLResponse?, attributes: Map<String, Any?>) {
-        nativeRumMonitor.stopResourceWithErrorWithResourceKey(key, error, response, attributes.eraseKeyType())
+        nativeRumMonitor.stopResourceWithErrorWithResourceKey(
+            key,
+            error,
+            response,
+            eraseKeyType(withIncludeBinaryImages(attributes))
+        )
     }
 
     fun stopResourceWithError(key: String, message: String, response: NSURLResponse?, attributes: Map<String, Any?>) {
-        nativeRumMonitor.stopResourceWithErrorWithResourceKey(key, message, response, attributes.eraseKeyType())
+        nativeRumMonitor.stopResourceWithErrorWithResourceKey(key, message, response, eraseKeyType(attributes))
     }
 
     fun addError(
@@ -215,7 +226,7 @@ internal class RumMonitorAdapter(
         error: NSError,
         attributes: Map<String, Any?>
     ) {
-        nativeRumMonitor.addErrorWithError(error, source.native, attributes.eraseKeyType())
+        nativeRumMonitor.addErrorWithError(error, source.native, eraseKeyType(withIncludeBinaryImages(attributes)))
     }
 
     // endregion
@@ -282,25 +293,3 @@ private val Int?.asNSNumber: NSNumber?
 
 private val Long?.asNSNumber: NSNumber?
     get() = if (this != null) NSNumber.numberWithLong(this) else null
-
-private fun Map<String, Any?>.eraseKeyType(): Map<Any?, Any?> = mapKeys {
-    @Suppress("USELESS_CAST")
-    it.key as Any
-}
-
-// TODO RUM-4491 This is temporary, we need to have a proper conversion between Throwable and Error
-private fun toNsError(throwable: Throwable, userMessage: String? = null): NSError {
-    val userInfo = mutableMapOf<Any?, Any>()
-    userInfo["KotlinException"] = throwable
-    val message = if (userMessage != null && !throwable.message.isNullOrBlank()) {
-        "${userMessage}\n${throwable.message}"
-    } else if (throwable.message.isNullOrBlank()) {
-        userMessage
-    } else {
-        throwable.message
-    }
-    if (message != null) {
-        userInfo[NSLocalizedDescriptionKey] = message
-    }
-    return NSError.errorWithDomain("KotlinException", 0, userInfo.ifEmpty { null })
-}

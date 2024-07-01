@@ -4,7 +4,9 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp.rum.utils
+@file:Suppress("TooManyFunctions")
+
+package com.datadog.tools.random
 
 import kotlin.random.Random
 
@@ -57,7 +59,7 @@ fun randomException(): Exception {
         IndexOutOfBoundsException(errorMessage),
         ArithmeticException(errorMessage),
         IllegalStateException(errorMessage),
-        ArrayIndexOutOfBoundsException(errorMessage),
+        IndexOutOfBoundsException(errorMessage),
         NullPointerException(errorMessage),
         UnsupportedOperationException(errorMessage)
     ).randomElement()

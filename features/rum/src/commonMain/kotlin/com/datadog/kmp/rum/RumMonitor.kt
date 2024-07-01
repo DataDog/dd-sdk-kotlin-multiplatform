@@ -180,7 +180,7 @@ interface RumMonitor {
         message: String,
         source: RumErrorSource,
         throwable: Throwable?,
-        attributes: Map<String, Any?>
+        attributes: Map<String, Any?> = emptyMap()
     )
 
     /**

@@ -81,14 +81,19 @@ private fun Project.applyKotlinConfig(configExtension: DatadogBuildConfigExtensi
 }
 
 private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuildConfigExtension) {
+    val projectToApply = this
     extensions.getByType(KotlinMultiplatformExtension::class.java)
         .apply {
-            androidTarget {
-                compilations.all {
-                    kotlinOptions {
-                        jvmTarget = configExtension.jvmTargetOrDefault.target
+            if (!projectToApply.displayName.contains("tools")) {
+                androidTarget {
+                    compilations.all {
+                        kotlinOptions {
+                            jvmTarget = configExtension.jvmTargetOrDefault.target
+                        }
                     }
                 }
+            } else {
+                jvm()
             }
             // TODO RUM-4231 Add other Apple targets (tvOS, watchOS, etc.)
             iosX64()

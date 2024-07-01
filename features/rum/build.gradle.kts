@@ -55,7 +55,7 @@ kotlin {
         androidUnitTest.dependencies {
             implementation(libs.bundles.jUnit5)
             implementation(libs.bundles.jvmTestTools)
-            implementation(projects.tools.unit.jvm)
+            implementation(projects.tools.unit)
         }
         commonMain.dependencies {
             api(projects.core)
@@ -64,6 +64,9 @@ kotlin {
             implementation(libs.kotlin.test)
             // TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
             implementation("dev.mokkery:mokkery-runtime:${libs.versions.mokkery.get()}")
+        }
+        iosTest.dependencies {
+            implementation(projects.tools.unit)
         }
     }
 

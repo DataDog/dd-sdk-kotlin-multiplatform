@@ -17,11 +17,11 @@ import com.datadog.kmp.rum.tracking.RumAction
 import com.datadog.kmp.rum.tracking.RumView
 import com.datadog.kmp.rum.tracking.UIKitRUMActionsPredicate
 import com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
-import com.datadog.kmp.rum.utils.exhaustiveAttributes
-import com.datadog.kmp.rum.utils.randomBoolean
-import com.datadog.kmp.rum.utils.randomEnumValue
-import com.datadog.kmp.rum.utils.randomFloat
-import com.datadog.kmp.rum.utils.randomLong
+import com.datadog.tools.random.exhaustiveAttributes
+import com.datadog.tools.random.randomBoolean
+import com.datadog.tools.random.randomEnumValue
+import com.datadog.tools.random.randomFloat
+import com.datadog.tools.random.randomLong
 import dev.mokkery.mock
 import dev.mokkery.verify
 import platform.UIKit.UIView

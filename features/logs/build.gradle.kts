@@ -53,7 +53,7 @@ kotlin {
         androidUnitTest.dependencies {
             implementation(libs.bundles.jUnit5)
             implementation(libs.bundles.jvmTestTools)
-            implementation(projects.tools.unit.jvm)
+            implementation(projects.tools.unit)
         }
         commonMain.dependencies {
             api(projects.core)
