@@ -58,7 +58,8 @@ val publishableProjects = listOf(
     projects.core,
     projects.features.logs,
     projects.features.rum,
-    projects.features.webview
+    projects.features.webview,
+    projects.integrations.ktor
 )
 
 val jvmUnitTestDebugAllTask = tasks.register("jvmUnitTestDebugAll") {

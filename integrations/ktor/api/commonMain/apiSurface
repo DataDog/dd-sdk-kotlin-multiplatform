@@ -1,0 +1,1 @@
+val DatadogKtorPlugin: io.ktor.client.plugins.api.ClientPlugin<Unit>
