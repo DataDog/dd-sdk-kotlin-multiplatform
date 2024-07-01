@@ -14,9 +14,11 @@ import cocoapods.DatadogObjc.DDLogLevelInfo
 import cocoapods.DatadogObjc.DDLogLevelWarn
 import cocoapods.DatadogObjc.DDLogger
 import cocoapods.DatadogObjc.DDLoggerConfiguration
+import com.datadog.kmp.internal.createNSErrorFromThrowable
+import com.datadog.kmp.internal.eraseKeyType
+import com.datadog.kmp.internal.withIncludeBinaryImages
 import com.datadog.kmp.log.LogLevel
 import platform.Foundation.NSError
-import platform.Foundation.NSLocalizedDescriptionKey
 
 // open for mocking
 internal open class IOSPlatformLogger : PlatformLogger {
@@ -35,41 +37,61 @@ internal open class IOSPlatformLogger : PlatformLogger {
 
     override fun debug(message: String, throwable: Throwable?, attributes: Map<String, Any?>) {
         if (throwable != null) {
-            nativeLogger.debug(message, throwable.asNSError(), attributes.eraseKeyType())
+            nativeLogger.debug(
+                message,
+                createNSErrorFromThrowable(throwable),
+                eraseKeyType(withIncludeBinaryImages(attributes))
+            )
         } else {
-            nativeLogger.debug(message, attributes.eraseKeyType())
+            nativeLogger.debug(message, eraseKeyType(attributes))
         }
     }
 
     override fun info(message: String, throwable: Throwable?, attributes: Map<String, Any?>) {
         if (throwable != null) {
-            nativeLogger.info(message, throwable.asNSError(), attributes.eraseKeyType())
+            nativeLogger.info(
+                message,
+                createNSErrorFromThrowable(throwable),
+                eraseKeyType(withIncludeBinaryImages(attributes))
+            )
         } else {
-            nativeLogger.info(message, attributes.eraseKeyType())
+            nativeLogger.info(message, eraseKeyType(attributes))
         }
     }
 
     override fun warn(message: String, throwable: Throwable?, attributes: Map<String, Any?>) {
         if (throwable != null) {
-            nativeLogger.warn(message, throwable.asNSError(), attributes.eraseKeyType())
+            nativeLogger.warn(
+                message,
+                createNSErrorFromThrowable(throwable),
+                eraseKeyType(withIncludeBinaryImages(attributes))
+            )
         } else {
-            nativeLogger.warn(message, attributes.eraseKeyType())
+            nativeLogger.warn(message, eraseKeyType(attributes))
         }
     }
 
     override fun error(message: String, throwable: Throwable?, attributes: Map<String, Any?>) {
         if (throwable != null) {
-            nativeLogger.error(message, throwable.asNSError(), attributes.eraseKeyType())
+            nativeLogger.error(
+                message,
+                createNSErrorFromThrowable(throwable),
+                eraseKeyType(withIncludeBinaryImages(attributes))
+            )
         } else {
-            nativeLogger.error(message, attributes.eraseKeyType())
+            nativeLogger.error(message, eraseKeyType(attributes))
         }
     }
 
     override fun critical(message: String, throwable: Throwable?, attributes: Map<String, Any?>) {
         if (throwable != null) {
-            nativeLogger.critical(message, throwable.asNSError(), attributes.eraseKeyType())
+            nativeLogger.critical(
+                message,
+                createNSErrorFromThrowable(throwable),
+                eraseKeyType(withIncludeBinaryImages(attributes))
+            )
         } else {
-            nativeLogger.critical(message, attributes.eraseKeyType())
+            nativeLogger.critical(message, eraseKeyType(attributes))
         }
     }
 
@@ -114,23 +136,23 @@ internal open class IOSPlatformLogger : PlatformLogger {
 
     // open for mocking
     open fun debug(message: String, error: NSError, attributes: Map<String, Any?>) {
-        nativeLogger.debug(message, error, attributes.eraseKeyType())
+        nativeLogger.debug(message, error, eraseKeyType(withIncludeBinaryImages(attributes)))
     }
 
     open fun info(message: String, error: NSError, attributes: Map<String, Any?>) {
-        nativeLogger.info(message, error, attributes.eraseKeyType())
+        nativeLogger.info(message, error, eraseKeyType(withIncludeBinaryImages(attributes)))
     }
 
     open fun warn(message: String, error: NSError, attributes: Map<String, Any?>) {
-        nativeLogger.warn(message, error, attributes.eraseKeyType())
+        nativeLogger.warn(message, error, eraseKeyType(withIncludeBinaryImages(attributes)))
     }
 
     open fun error(message: String, error: NSError, attributes: Map<String, Any?>) {
-        nativeLogger.error(message, error, attributes.eraseKeyType())
+        nativeLogger.error(message, error, eraseKeyType(withIncludeBinaryImages(attributes)))
     }
 
     open fun critical(message: String, error: NSError, attributes: Map<String, Any?>) {
-        nativeLogger.critical(message, error, attributes.eraseKeyType())
+        nativeLogger.critical(message, error, eraseKeyType(withIncludeBinaryImages(attributes)))
     }
 
     // endregion
@@ -211,26 +233,5 @@ private val LogLevel.native: DDLogLevel
         LogLevel.ERROR -> DDLogLevelError
         LogLevel.CRITICAL -> DDLogLevelCritical
     }
-
-// TODO RUM-4491 This is temporary, we need to have a proper conversion between Throwable and Error
-private fun Throwable.asNSError(): NSError {
-    val userInfo = mutableMapOf<Any?, Any>()
-    userInfo["KotlinException"] = this
-    val message = message
-    if (message != null) {
-        userInfo[NSLocalizedDescriptionKey] = message
-    }
-    return NSError.errorWithDomain("KotlinException", 0, userInfo)
-}
-
-private fun Map<String, Any?>.eraseKeyType(): Map<Any?, *> {
-    return mapKeys {
-        // in reality in ObjC it is [String: Any], but KMP generates the
-        // signature extraInfo: Map<kotlin.Any?, *>, erasing String type,
-        // so we have to do that
-        @Suppress("USELESS_CAST")
-        it.key as Any
-    }
-}
 
 // endregion

@@ -16,7 +16,7 @@ interface DatadogBuildConfigExtension {
 }
 
 internal val DatadogBuildConfigExtension.jvmTargetOrDefault
-    get() = jvmTarget.getOrElse(JvmTarget.JVM_11)
+    get() = jvmTarget.getOrElse(JvmTarget.JVM_17)
 
 internal val DatadogBuildConfigExtension.kotlinVersionOrDefault
-    get() = kotlinVersion.getOrElse(KotlinVersion.KOTLIN_1_7)
+    get() = kotlinVersion.getOrElse(KotlinVersion.KOTLIN_1_9)

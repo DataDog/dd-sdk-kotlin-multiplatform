@@ -1,4 +1,5 @@
 import com.datadog.build.AndroidConfig
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 /*
  * Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
@@ -28,6 +29,14 @@ kotlin {
 
         framework {
             baseName = "DatadogKMPCore"
+        }
+
+        targets.all {
+            if (this is KotlinNativeTarget && konanTarget.family.isAppleFamily) {
+                compilations.getByName("main") {
+                    cinterops.create("DDBinaryImages")
+                }
+            }
         }
 
         val compilerOptionFlag = "-compiler-option"
@@ -65,6 +74,9 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+        iosTest.dependencies {
+            implementation(projects.tools.unit)
         }
     }
 }
