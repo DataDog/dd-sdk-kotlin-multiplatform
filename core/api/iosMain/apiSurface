@@ -7,7 +7,11 @@ actual object com.datadog.kmp.Datadog
   actual fun addUserExtraInfo(Map<String, Any?>)
   actual fun clearAllData()
   actual fun stopInstance()
+const val INCLUDE_BINARY_IMAGES: String
+const val RUM_ERROR_IS_CRASH: String
+const val LOG_ERROR_IS_CRASH: String
 fun withIncludeBinaryImages(Map<String, Any?>): Map<String, Any?>
 fun <K, V> eraseKeyType(Map<K, V>): Map<Any?, V>
 fun createNSErrorFromThrowable(Throwable, String? = null): platform.Foundation.NSError
 fun createNSErrorFromMessage(String): platform.Foundation.NSError
+fun addDatadogUnhandledExceptionHook((Throwable) -> Unit)

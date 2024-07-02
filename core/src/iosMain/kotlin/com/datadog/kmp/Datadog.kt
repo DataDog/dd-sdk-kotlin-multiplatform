@@ -30,6 +30,7 @@ import com.datadog.kmp.core.configuration.BatchSize
 import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.core.configuration.UploadFrequency
 import com.datadog.kmp.privacy.TrackingConsent
+import kotlin.concurrent.Volatile
 import cocoapods.DatadogObjc.DDDatadog as DatadogIOS
 
 /**
@@ -49,6 +50,9 @@ actual object Datadog {
         get() = DatadogIOS.verbosityLevel().toSdkLogVerbosity
         set(value) = DatadogIOS.setVerbosityLevel(value.native)
 
+    @Volatile
+    internal actual var isCrashReportingEnabled: Boolean = false
+
     /**
      * Initializes an instance of the Datadog SDK.
      * @param context your application context (applicable only for Android)
@@ -67,6 +71,7 @@ actual object Datadog {
 
         if (configuration.coreConfig.trackCrashes) {
             DDCrashReporter.enable()
+            isCrashReportingEnabled = true
         }
     }
 

@@ -18,7 +18,7 @@ import kotlin.experimental.ExperimentalNativeApi
  * Creates instance of [NSError] from a given [Throwable] instance with a provided stacktrace. If there is
  * a custom user message, it will be added to the error as well.
  *
- * **NOTE**: This is a part of internal API and shouldn't be used.
+ * **NOTE**: This is a part of internal API and shouldn't be used outside of the SDK classes.
  *
  * @param throwable [Throwable] instance to create [NSError] from.
  * @param message Optional user-provided message.
@@ -41,7 +41,7 @@ fun createNSErrorFromThrowable(throwable: Throwable, message: String? = null): N
 /**
  * Creates instance of [NSError] with a message attached.
  *
- * **NOTE**: This is a part of internal API and shouldn't be used.
+ * **NOTE**: This is a part of internal API and shouldn't be used outside of the SDK classes.
  *
  * @param message message to attache to the error.
  */

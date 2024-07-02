@@ -40,6 +40,8 @@ enum com.datadog.kmp.core.configuration.UploadFrequency
   - FREQUENT
   - AVERAGE
   - RARE
+object com.datadog.kmp.internal.InternalProxy
+  val isCrashReportingEnabled: Boolean
 enum com.datadog.kmp.privacy.TrackingConsent
   - GRANTED
   - NOT_GRANTED
