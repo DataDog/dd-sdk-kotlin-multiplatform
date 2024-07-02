@@ -11,6 +11,7 @@ import com.datadog.kmp.core.configuration.BatchProcessingLevel
 import com.datadog.kmp.core.configuration.BatchSize
 import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.core.configuration.UploadFrequency
+import com.datadog.kmp.internal.InternalAttributes
 import com.datadog.kmp.privacy.TrackingConsent
 import android.util.Log as AndroidLog
 import com.datadog.android.Datadog as DatadogAndroid
@@ -156,6 +157,12 @@ private val Configuration.native: ConfigurationAndroid
             .setUploadFrequency(coreConfig.uploadFrequency.native)
             .setBatchProcessingLevel(coreConfig.batchProcessingLevel.native)
             .setCrashReportsEnabled(coreConfig.trackCrashes)
+            .setAdditionalConfiguration(
+                mapOf(
+                    InternalAttributes.SOURCE_ATTRIBUTE,
+                    InternalAttributes.SDK_VERSION_ATTRIBUTE
+                )
+            )
             .build()
     }
 
