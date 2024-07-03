@@ -38,6 +38,9 @@ actual object Datadog {
         get() = DatadogAndroid.getVerbosity().toSdkLogVerbosity
         set(value) = DatadogAndroid.setVerbosity(value.native)
 
+    @Volatile
+    internal actual var isCrashReportingEnabled: Boolean = false
+
     /**
      * Initializes an instance of the Datadog SDK.
      * @param context your application context (applicable only for Android)
@@ -55,6 +58,7 @@ actual object Datadog {
     ) {
         requireNotNull(context)
         DatadogAndroid.initialize(context as Context, configuration.native, trackingConsent.native)
+        isCrashReportingEnabled = configuration.coreConfig.trackCrashes
     }
 
     /**

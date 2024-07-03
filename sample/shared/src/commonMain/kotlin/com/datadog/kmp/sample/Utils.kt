@@ -60,7 +60,13 @@ fun initDatadog(context: Any? = null) {
     Datadog.setUserInfo(
         name = "Random User",
         email = "user@example.com",
-        extraInfo = mapOf("age" to 42, "location" to "universe", "null-attribute" to null)
+        extraInfo = mapOf(
+            "age" to 42,
+            "location" to "universe",
+            "boolean-attribute" to true,
+            "null-attribute" to null,
+            "boolean-attribute" to true
+        )
     )
 }
 
@@ -92,7 +98,11 @@ fun trackView(viewName: String) {
     RumMonitor.get().startView(
         viewName,
         viewName,
-        mapOf("custom-view-attribute" to "view-attribute-value", "nullable-view-attribute" to null)
+        mapOf(
+            "custom-view-attribute" to "view-attribute-value",
+            "boolean-view-attribute" to true,
+            "nullable-view-attribute" to null
+        )
     )
 }
 
@@ -100,7 +110,11 @@ fun trackAction(actionName: String) {
     RumMonitor.get().addAction(
         RumActionType.TAP,
         actionName,
-        mapOf("custom-action-attribute" to "action-attribute-value", "nullable-action-attribute" to null)
+        mapOf(
+            "custom-action-attribute" to "action-attribute-value",
+            "boolean-action-attribute" to true,
+            "nullable-action-attribute" to null
+        )
     )
 }
 

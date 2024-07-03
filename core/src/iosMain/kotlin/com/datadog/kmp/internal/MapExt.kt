@@ -6,12 +6,25 @@
 
 package com.datadog.kmp.internal
 
-private const val INCLUDE_BINARY_IMAGES = "_dd.error.include_binary_images"
+/**
+ * Internal flag to include binary images with an error with sent to Datadog.
+ */
+const val INCLUDE_BINARY_IMAGES: String = "_dd.error.include_binary_images"
+
+/**
+ * Internal flag to treat RUM error as crash.
+ */
+const val RUM_ERROR_IS_CRASH: String = "_dd.error.is_crash"
+
+/**
+ * Internal flag to treat Log error as crash.
+ */
+const val LOG_ERROR_IS_CRASH: String = "_dd.error_log.is_crash"
 
 /**
  * Adds an internal flag to include binary images.
  *
- * **NOTE**: This is a part of internal API and shouldn't be used.
+ * **NOTE**: This is a part of internal API and shouldn't be used outside of the SDK classes.
  *
  * @param attributes attributes to process.
  * @return Attributes with a flag to include binary images.
@@ -25,7 +38,7 @@ fun withIncludeBinaryImages(attributes: Map<String, Any?>): Map<String, Any?> {
 /**
  * Removes key type.
  *
- * **NOTE**: This is a part of internal API and shouldn't be used.
+ * **NOTE**: This is a part of internal API and shouldn't be used outside of the SDK classes.
  *
  * @param K key type.
  * @param V value type.

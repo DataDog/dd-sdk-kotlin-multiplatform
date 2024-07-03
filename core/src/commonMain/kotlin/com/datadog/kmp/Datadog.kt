@@ -24,6 +24,8 @@ expect object Datadog {
      */
     var verbosity: SdkLogVerbosity?
 
+    internal var isCrashReportingEnabled: Boolean
+
     /**
      * Initializes an instance of the Datadog SDK.
      * @param context your application context (applicable only for Android)
