@@ -5,6 +5,8 @@
  */
 
 import com.datadog.build.AndroidConfig
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.Family
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -26,11 +28,11 @@ kotlin {
         version = AndroidConfig.VERSION.toString()
         // need to build with XCode 15
         ios.deploymentTarget = "12.0"
-        name = "DatadogKMPRUM"
-        summary = "Official Datadog KMP RUM SDK for iOS."
+        name = "DatadogKMPWebView"
+        summary = "Official Datadog KMP WebView tracking SDK for iOS."
 
         framework {
-            baseName = "DatadogKMPRUM"
+            baseName = "DatadogKMPWebView"
             isStatic = true
         }
 
@@ -44,43 +46,40 @@ kotlin {
             linkOnly = true
             version = libs.versions.datadog.ios.get()
         }
+        pod("DatadogWebViewTracking") {
+            // TODO RUM-5208 by some reason ootb bindings for DatadogWebViewTracking are not generated correctly, so
+            //  we go with a custom header (see custom cinterop below)
+            linkOnly = true
+            version = libs.versions.datadog.ios.get()
+        }
+    }
+
+    targets.all {
+        if (this is KotlinNativeTarget && konanTarget.family == Family.IOS) {
+            compilations.getByName("main") {
+                cinterops.create("DatadogWebView") {
+                    includeDirs("$projectDir/src/nativeInterop/cinterop/DatadogWebViewTracking")
+                }
+            }
+        }
     }
 
     sourceSets {
         androidMain.dependencies {
-            implementation(libs.datadog.android.rum)
-            implementation(libs.androidx.fragment)
-            implementation(libs.androidx.navigation.runtime.forSdk)
-        }
-        androidUnitTest.dependencies {
-            implementation(libs.bundles.jUnit5)
-            implementation(libs.bundles.jvmTestTools)
-            implementation(projects.tools.unit)
+            implementation(libs.datadog.android.webview)
         }
         commonMain.dependencies {
             api(projects.core)
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            // TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
-            implementation("dev.mokkery:mokkery-runtime:${libs.versions.mokkery.get()}")
-        }
         iosTest.dependencies {
+            implementation(libs.kotlin.test)
             implementation(projects.tools.unit)
         }
-    }
-
-    configurations.androidMainImplementation {
-        // this is because we have to use FragmentX 1.5.1 (because 1.4.x ships Lint rules which are not
-        // compatible with AGP 8.4.+), and it brings these dependencies. We can strip them out, because since Kotlin
-        // 1.8 everything is in the main stdlib.
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
     }
 }
 
 android {
-    namespace = "com.datadog.kmp.rum"
+    namespace = "com.datadog.kmp.webview"
 }
 
 // TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+

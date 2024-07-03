@@ -13,6 +13,7 @@
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		F62442D32BD93E950006A6C5 /* DatadogObjc in Frameworks */ = {isa = PBXBuildFile; productRef = F62442D22BD93E950006A6C5 /* DatadogObjc */; };
 		F63791D92C25CBDB000608AA /* DatadogCrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = F63791D82C25CBDB000608AA /* DatadogCrashReporting */; };
+		F64846962C347887000AC3A0 /* DatadogWebViewTracking in Frameworks */ = {isa = PBXBuildFile; productRef = F64846952C347887000AC3A0 /* DatadogWebViewTracking */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F64846962C347887000AC3A0 /* DatadogWebViewTracking in Frameworks */,
 				F63791D92C25CBDB000608AA /* DatadogCrashReporting in Frameworks */,
 				F62442D32BD93E950006A6C5 /* DatadogObjc in Frameworks */,
 			);
@@ -115,6 +117,7 @@
 			packageProductDependencies = (
 				F62442D22BD93E950006A6C5 /* DatadogObjc */,
 				F63791D82C25CBDB000608AA /* DatadogCrashReporting */,
+				F64846952C347887000AC3A0 /* DatadogWebViewTracking */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -419,6 +422,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F62442D12BD93E950006A6C5 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogCrashReporting;
+		};
+		F64846952C347887000AC3A0 /* DatadogWebViewTracking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F62442D12BD93E950006A6C5 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
+			productName = DatadogWebViewTracking;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

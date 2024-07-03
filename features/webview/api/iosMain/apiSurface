@@ -1,0 +1,3 @@
+object com.datadog.kmp.webview.WebViewTracking
+  fun enable(platform.WebKit.WKWebView, Set<String>, Float = 100f)
+  fun disable(platform.WebKit.WKWebView)

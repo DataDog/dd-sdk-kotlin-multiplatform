@@ -57,7 +57,8 @@ registerPluginSpecificAggregationTask(
 val publishableProjects = listOf(
     projects.core,
     projects.features.logs,
-    projects.features.rum
+    projects.features.rum,
+    projects.features.webview
 )
 
 val jvmUnitTestDebugAllTask = tasks.register("jvmUnitTestDebugAll") {

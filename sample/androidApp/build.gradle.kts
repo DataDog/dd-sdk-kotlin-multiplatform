@@ -36,5 +36,10 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.datadog.android.compose)
+    // has to be here, because compose module above has some classes from Android RUM in public API and
+    // compose module has RUM as "implementation", not "api". This is mentioned in README
+    implementation(libs.datadog.android.rum)
     debugImplementation(libs.compose.ui.tooling)
 }

@@ -1,0 +1,2 @@
+object com.datadog.kmp.webview.WebViewTracking
+  fun enable(android.webkit.WebView, Set<String>, Float = 100f)

@@ -22,6 +22,18 @@ import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 
+const val HOME_SCREEN_NAME = "Home"
+const val LOGS_SCREEN_NAME = "Logs"
+const val CRASH_SCREEN_NAME = "Crash"
+const val RUM_SCREEN_NAME = "RUM"
+const val WEBVIEW_SCREEN_NAME = "WebView"
+
+internal val WEB_VIEW_TRACKING_ALLOWED_HOSTS = setOf("datadoghq.dev")
+const val WEB_VIEW_TRACKING_LOAD_URL = "https://datadoghq.dev/browser-sdk-test-playground/" +
+    "?client_token=${LibraryConfig.DD_CLIENT_TOKEN}" +
+    "&application_id=${LibraryConfig.DD_APPLICATION_ID}" +
+    "&site=datadoghq.com"
+
 @Suppress("MagicNumber")
 fun initDatadog(context: Any? = null) {
     Datadog.verbosity = SdkLogVerbosity.DEBUG
@@ -130,4 +142,6 @@ fun triggerUncheckedException() {
     throw RuntimeException(cause)
 }
 
+expect fun startWebViewTracking(webView: Any)
+expect fun stopWebViewTracking(webView: Any)
 internal expect fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder)

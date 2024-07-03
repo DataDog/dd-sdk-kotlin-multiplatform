@@ -7,17 +7,63 @@
 import SwiftUI
 import sharedLib
 import DatadogRUM
+import WebKit
 
 internal struct ContentView: View {
     static let LOG_INFO_LABEL = "Log info"
     static let LOG_ERROR_WITH_THROWABLE_LABEL = "Log error with Throwable"
     static let LOG_ERROR_WITH_ERROR_LABEL = "Log error with Error"
-    static let RUM_LOGS_CHECKED_KMP_ERROR_LABEL = "RUM + Logs: checked KMP exception"
+    static let LOGS_CHECKED_KMP_ERROR_LABEL = "Log checked KMP exception"
+    static let RUM_CHECKED_KMP_ERROR_LABEL = "Add error: checked KMP exception"
     static let NATIVE_CRASH_LABEL = "Native crash"
     static let CRASH_VIA_UNCHECKED_KMP_LABEL = "Crash: unchecked KMP exception"
     static let GET_REQUEST_LABEL = "Start GET request"
     static let POST_REQUEST_LABEL = "Start POST request"
 
+    var body: some View {
+        NavigationView {
+            VStack {
+                NavigationLink(destination: LoggingView()) {
+                    Text("LOGS")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+
+                NavigationLink(destination: CrashView()) {
+                    Text("CRASH")
+                        .padding()
+                        .background(Color.red)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+
+                NavigationLink(destination: RumView()) {
+                    Text("RUM")
+                        .padding()
+                        .background(Color.brown)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+
+                NavigationLink(destination: WebTrackingView()) {
+                    Text("WEBVIEW")
+                        .padding()
+                        .background(Color.black)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+            }
+            .onAppear {
+                UtilsKt.trackView(viewName: UtilsKt.HOME_SCREEN_NAME)
+            }
+            .padding()
+        }
+    }
+}
+
+internal struct LoggingView: View {
     var body: some View {
         VStack {
             Button(action: {
@@ -54,21 +100,30 @@ internal struct ContentView: View {
             }
 
             Button(action: {
-                UtilsKt.trackAction(actionName: ContentView.RUM_LOGS_CHECKED_KMP_ERROR_LABEL)
+                UtilsKt.trackAction(actionName: ContentView.LOGS_CHECKED_KMP_ERROR_LABEL)
                 do {
                     try UtilsKt.triggerCheckedException()
                 } catch {
-                    RUMMonitor.shared().addError(error: error, source: RUMErrorSource.source)
                     UtilsKt.applicationLogger.error(message: "Caught KMP boundary error", error: error)
                 }
             }) {
-                Text(ContentView.RUM_LOGS_CHECKED_KMP_ERROR_LABEL)
+                Text(ContentView.LOGS_CHECKED_KMP_ERROR_LABEL)
                     .padding()
                     .background(Color.orange)
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
+        }
+        .onAppear {
+            UtilsKt.trackView(viewName: UtilsKt.LOGS_SCREEN_NAME)
+        }
+        .padding()
+    }
+}
 
+internal struct CrashView: View {
+    var body: some View {
+        VStack {
             Button(action: {
                 UtilsKt.trackAction(actionName: ContentView.NATIVE_CRASH_LABEL)
                 fatalError()
@@ -87,6 +142,31 @@ internal struct ContentView: View {
                 Text(ContentView.CRASH_VIA_UNCHECKED_KMP_LABEL)
                     .padding()
                     .background(Color.purple)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+        }
+        .onAppear {
+            UtilsKt.trackView(viewName: UtilsKt.CRASH_SCREEN_NAME)
+        }
+        .padding()
+    }
+}
+
+internal struct RumView: View {
+    var body: some View {
+        VStack {
+            Button(action: {
+                UtilsKt.trackAction(actionName: ContentView.RUM_CHECKED_KMP_ERROR_LABEL)
+                do {
+                    try UtilsKt.triggerCheckedException()
+                } catch {
+                    RUMMonitor.shared().addError(error: error, source: RUMErrorSource.source)
+                }
+            }) {
+                Text(ContentView.RUM_CHECKED_KMP_ERROR_LABEL)
+                    .padding()
+                    .background(Color.orange)
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
@@ -114,9 +194,39 @@ internal struct ContentView: View {
             }
         }
         .onAppear {
-            UtilsKt.trackView(viewName: "Logging view")
+            UtilsKt.trackView(viewName: UtilsKt.RUM_SCREEN_NAME)
         }
         .padding()
+    }
+}
+
+internal struct WebTrackingView: View {
+    var body: some View {
+        let view = SwiftUIWebView()
+
+        view.onAppear {
+            UtilsKt.trackView(viewName: UtilsKt.WEBVIEW_SCREEN_NAME)
+            Utils_iosKt.startWebViewTracking(webView: view.webView)
+        }
+        .onDisappear {
+            Utils_iosKt.stopWebViewTracking(webView: view.webView)
+        }
+        .padding()
+    }
+}
+
+struct SwiftUIWebView: UIViewRepresentable {
+    let webView: WKWebView
+
+    init() {
+        webView = WKWebView(frame: .zero)
+    }
+
+    func makeUIView(context: Context) -> WKWebView {
+        return webView
+    }
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        webView.load(URLRequest(url: URL(string: UtilsKt.WEB_VIEW_TRACKING_LOAD_URL)!))
     }
 }
 
@@ -128,7 +238,6 @@ private func logErrorWithError() {
     do {
         throw RuntimeError.error(message: "Example error message")
     } catch {
-        // TODO RUM-4491 Make sure we are able to capture a stacktrace
         UtilsKt.applicationLogger.error(message: "Logging error with Error", error: error)
     }
 }
