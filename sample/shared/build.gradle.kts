@@ -67,6 +67,7 @@ kotlin {
             implementation(projects.core)
             api(projects.features.logs)
             api(projects.features.rum)
+            api(projects.features.webview)
 
             implementation(libs.ktor.client.core)
             implementation(libs.kotlinx.coroutines.core)

@@ -6,7 +6,7 @@ compose-material3 = "1.1.2"
 androidx-fragment = "1.5.1"
 androidx-navigation = "2.3.0"
 androidx-activityCompose = "1.8.0"
-datadog-android = "2.10.1"
+datadog-android = "2.11.0"
 datadog-ios = "2.13.0"
 dependencyLicense = "0.2"
 kotlinGrammarParser = "0.1.0"
@@ -40,6 +40,7 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 datadog-android-core = { module = "com.datadoghq:dd-sdk-android-core", version.ref = "datadog-android" }
 datadog-android-logs = { module = "com.datadoghq:dd-sdk-android-logs", version.ref = "datadog-android" }
 datadog-android-rum = { module = "com.datadoghq:dd-sdk-android-rum", version.ref = "datadog-android" }
+datadog-android-webview = { module = "com.datadoghq:dd-sdk-android-webview", version.ref = "datadog-android" }
 kotlinGrammarParser = { module = "com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm", version.ref = "kotlinGrammarParser" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
