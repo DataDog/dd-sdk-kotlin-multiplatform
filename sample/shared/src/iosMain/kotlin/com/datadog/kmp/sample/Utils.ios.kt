@@ -9,6 +9,15 @@ package com.datadog.kmp.sample
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.trackUiKitActions
 import com.datadog.kmp.rum.configuration.trackUiKitViews
+import com.datadog.kmp.webview.WebViewTracking
+import platform.WebKit.WKWebView
+
+actual fun startWebViewTracking(webView: Any) {
+    WebViewTracking.enable(webView as WKWebView, WEB_VIEW_TRACKING_ALLOWED_HOSTS)
+}
+actual fun stopWebViewTracking(webView: Any) {
+    WebViewTracking.disable(webView as WKWebView)
+}
 
 internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder) {
     with(rumConfigurationBuilder) {

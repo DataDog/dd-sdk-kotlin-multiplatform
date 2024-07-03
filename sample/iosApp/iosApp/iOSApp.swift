@@ -9,7 +9,6 @@ import sharedLib
 
 @main
 struct iOSApp: App {
-
 	init() {
 		UtilsKt.doInitDatadog(context: nil)
 	}

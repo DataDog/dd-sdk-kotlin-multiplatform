@@ -50,7 +50,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.datadog.android.rum)
             implementation(libs.androidx.fragment)
-            implementation(libs.androidx.navigation.runtime)
+            implementation(libs.androidx.navigation.runtime.forSdk)
         }
         androidUnitTest.dependencies {
             implementation(libs.bundles.jUnit5)
