@@ -4,7 +4,7 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-import com.datadog.build.AndroidConfig
+import com.datadog.build.ProjectConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -23,7 +23,7 @@ kotlin {
     cocoapods {
         // cannot use noPodSpec, because of https://youtrack.jetbrains.com/issue/KT-63331
         // so what is below for podspec description is just a fake thing to make tooling happy
-        version = AndroidConfig.VERSION.toString()
+        version = ProjectConfig.VERSION.name
         // need to build with XCode 15
         ios.deploymentTarget = "12.0"
         name = "DatadogKMPKtor"
@@ -52,12 +52,21 @@ kotlin {
             api(projects.features.rum)
             api(libs.ktor.client.core)
             api(libs.uuid)
+            api(libs.kotlinx.datetime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             // TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
             implementation("dev.mokkery:mokkery-runtime:${libs.versions.mokkery.get()}")
         }
+    }
+
+    configurations.androidMainImplementation {
+        // this is because we have to use FragmentX 1.5.1 (because 1.4.x ships Lint rules which are not
+        // compatible with AGP 8.4.+), and it brings these dependencies. We can strip them out, because since Kotlin
+        // 1.8 everything is in the main stdlib.
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
     }
 }
 

@@ -6,6 +6,7 @@
 
 package com.datadog.kmp.sample.network
 
+import com.datadog.kmp.ktor.TracingHeaderType
 import com.datadog.kmp.ktor.datadogKtorPlugin
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -22,7 +23,14 @@ object NetworkClient {
 
     private val client = HttpClient {
         followRedirects = true
-        install(datadogKtorPlugin())
+        install(
+            datadogKtorPlugin(
+                tracedHosts = mapOf(
+                    "httpbin.org" to setOf(TracingHeaderType.DATADOG)
+                ),
+                traceSamplingRate = 100f
+            )
+        )
     }
 
     suspend fun get(

@@ -34,6 +34,12 @@ nexusPublishing {
  */
 tasks.register("checkGeneratedFiles") { }
 
+/**
+ * Creates a task aggregating a task on all projects.
+ * @param aggregationTaskName the name of the aggregating task
+ * @param projectTaskName the name of the task to aggregate from each module
+ * @param pluginName the name of the plugin to expect on modules
+ */
 fun registerPluginSpecificAggregationTask(
     aggregationTaskName: String,
     projectTaskName: String,
