@@ -14,6 +14,19 @@ plugins {
     alias(libs.plugins.dependencyLicense) apply false
     alias(libs.plugins.mokkery) apply false
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.nexusPublish)
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            val sonatypeUsername = System.getenv("OSSRH_USERNAME")
+            val sonatypePassword = System.getenv("OSSRH_PASSWORD")
+            stagingProfileId.set("378eecbbe2cf9")
+            if (sonatypeUsername != null) username.set(sonatypeUsername)
+            if (sonatypePassword != null) password.set(sonatypePassword)
+        }
+    }
 }
 
 /**

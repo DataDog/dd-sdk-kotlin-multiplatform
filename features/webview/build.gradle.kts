@@ -4,7 +4,7 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-import com.datadog.build.AndroidConfig
+import com.datadog.build.ProjectConfig
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Family
 
@@ -18,6 +18,10 @@ plugins {
     id("transitive-dependencies")
 // TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
 //    alias(libs.plugins.mokkery)
+
+    // publishing
+    `maven-publish`
+    signing
 }
 
 kotlin {
@@ -25,7 +29,7 @@ kotlin {
     cocoapods {
         // cannot use noPodSpec, because of https://youtrack.jetbrains.com/issue/KT-63331
         // so what is below for podspec description is just a fake thing to make tooling happy
-        version = AndroidConfig.VERSION.name
+        version = ProjectConfig.VERSION.name
         // need to build with XCode 15
         ios.deploymentTarget = "12.0"
         name = "DatadogKMPWebView"
@@ -87,3 +91,7 @@ android {
 //    defaultMockMode = MockMode.autofill
 //    ignoreFinalMembers = true
 // }
+
+datadogBuildConfig {
+    pomDescription = "The WebView tracking feature to use with the Datadog monitoring library for Kotlin Multiplatform."
+}

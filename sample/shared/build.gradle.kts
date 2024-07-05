@@ -56,6 +56,10 @@ kotlin {
             binaries.framework {
                 baseName = "sharedLib"
                 isStatic = true
+
+                // uncomment this block and comment out block below to check published artifacts fetching
+                // export("${ProjectConfig.GROUP_ID}:dd-sdk-kotlin-multiplatform-logs:${ProjectConfig.VERSION.name}")
+
                 // without that Logger type variable declared in this module will have a different type
                 // from the Swift side compared to the one declared in Logs module
                 export(projects.features.logs)
@@ -64,6 +68,13 @@ kotlin {
     }
     sourceSets {
         commonMain.dependencies {
+            // uncomment this block and comment out block below to check published artifacts fetching
+            // val version = ProjectConfig.VERSION.name
+            // implementation("${ProjectConfig.GROUP_ID}:dd-sdk-kotlin-multiplatform-core:$version")
+            // api("${ProjectConfig.GROUP_ID}:dd-sdk-kotlin-multiplatform-logs:$version")
+            // api("${ProjectConfig.GROUP_ID}:dd-sdk-kotlin-multiplatform-rum:$version")
+            // api("${ProjectConfig.GROUP_ID}:dd-sdk-kotlin-multiplatform-webview:$version")
+
             implementation(projects.core)
             api(projects.features.logs)
             api(projects.features.rum)

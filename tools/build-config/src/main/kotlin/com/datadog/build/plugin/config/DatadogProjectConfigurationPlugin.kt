@@ -9,39 +9,52 @@ package com.datadog.build.plugin.config
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
-import com.datadog.build.AndroidConfig
+import com.datadog.build.ProjectConfig
 import com.datadog.build.utils.taskConfig
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.withType
+import org.gradle.plugins.signing.SigningExtension
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-@Suppress("unused")
 class DatadogProjectConfigurationPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        val extension = target.extensions.create("datadogBuildConfig", DatadogBuildConfigExtension::class.java)
+        val extension = target.extensions.create<DatadogBuildConfigExtension>("datadogBuildConfig")
         target.pluginManager.withPlugin("com.android.application") {
-            target.logger.info("Found Android Application Plugin, applying configuration")
+            target.logger.info("Found Android Application Plugin in project ${target.path}, applying configuration")
             target.applyKotlinConfig(extension)
             target.applyApplicationAndroidConfig(extension)
         }
 
         target.pluginManager.withPlugin("com.android.library") {
-            target.logger.info("Found Android Library Plugin, applying configuration")
+            target.logger.info("Found Android Library Plugin in project ${target.path}, applying configuration")
             target.applyKotlinConfig(extension)
             target.applyLibraryAndroidConfig(extension)
         }
 
         target.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
-            target.logger.info("Found Kotlin Multiplatform Plugin, applying configuration")
+            target.logger.info("Found Kotlin Multiplatform Plugin in project ${target.path}, applying configuration")
             target.applyKotlinMultiplatformConfig(extension)
+        }
+
+        target.pluginManager.withPlugin("org.gradle.maven-publish") {
+            target.logger.info("Found Maven Publish Plugin in project ${target.path}, applying configuration")
+            target.applyPublishingConfig(extension)
         }
     }
 }
@@ -80,16 +93,15 @@ private fun Project.applyKotlinConfig(configExtension: DatadogBuildConfigExtensi
     }
 }
 
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuildConfigExtension) {
     val projectToApply = this
-    extensions.getByType(KotlinMultiplatformExtension::class.java)
+    extensions.getByType<KotlinMultiplatformExtension>()
         .apply {
             if (!projectToApply.displayName.contains("tools")) {
                 androidTarget {
-                    compilations.all {
-                        kotlinOptions {
-                            jvmTarget = configExtension.jvmTargetOrDefault.target
-                        }
+                    compilerOptions {
+                        jvmTarget.set(configExtension.jvmTargetOrDefault)
                     }
                 }
             } else {
@@ -116,19 +128,19 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
                         }
                     }
                 }
-                compilations.all {
-                    kotlinOptions {
-                        if (this is KotlinJvmOptions) {
-                            jvmTarget = configExtension.jvmTargetOrDefault.target
+                if (this is HasConfigurableKotlinCompilerOptions<*>) {
+                    compilerOptions {
+                        if (this is KotlinJvmCompilerOptions) {
+                            jvmTarget.set(configExtension.jvmTargetOrDefault)
                         }
                         // https://kotlinlang.org/docs/components-stability.html#current-stability-of-kotlin-components
                         // https://youtrack.jetbrains.com/issue/KT-61573
                         // expect/actual classes are in beta since 1.7.20 (and they still are as of 1.9.24), but we
                         // are going to use them anyway
-                        freeCompilerArgs += "-Xexpect-actual-classes"
-                        apiVersion = configExtension.kotlinVersionOrDefault.version
-                        languageVersion = configExtension.kotlinVersionOrDefault.version
-                        allWarningsAsErrors = true
+                        freeCompilerArgs.add("-Xexpect-actual-classes")
+                        apiVersion.set(configExtension.kotlinVersionOrDefault)
+                        languageVersion.set(configExtension.kotlinVersionOrDefault)
+                        allWarningsAsErrors.set(true)
                     }
                 }
             }
@@ -149,21 +161,21 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
 // region Android
 
 private fun Project.applyApplicationAndroidConfig(configExtension: DatadogBuildConfigExtension) {
-    extensions.getByType(BaseAppModuleExtension::class.java)
+    extensions.getByType<BaseAppModuleExtension>()
         .apply {
             val javaVersion = configExtension.jvmTargetOrDefault.toJavaVersion()
             compileOptions {
                 sourceCompatibility = javaVersion
                 targetCompatibility = javaVersion
             }
-            compileSdk = AndroidConfig.COMPILE_SDK
-            buildToolsVersion = AndroidConfig.BUILD_TOOLS_VERSION
+            compileSdk = ProjectConfig.Android.COMPILE_SDK
+            buildToolsVersion = ProjectConfig.Android.BUILD_TOOLS_VERSION
 
             defaultConfig {
-                minSdk = AndroidConfig.MIN_SDK
-                targetSdk = AndroidConfig.COMPILE_SDK
-                versionCode = AndroidConfig.VERSION.code
-                versionName = AndroidConfig.VERSION.name
+                minSdk = ProjectConfig.Android.MIN_SDK
+                targetSdk = ProjectConfig.Android.COMPILE_SDK
+                versionCode = ProjectConfig.VERSION.code
+                versionName = ProjectConfig.VERSION.name
             }
 
             sourceSets.all {
@@ -181,18 +193,18 @@ private fun Project.applyApplicationAndroidConfig(configExtension: DatadogBuildC
 }
 
 private fun Project.applyLibraryAndroidConfig(configExtension: DatadogBuildConfigExtension) {
-    extensions.getByType(LibraryExtension::class.java)
+    extensions.getByType<LibraryExtension>()
         .apply {
             val javaVersion = configExtension.jvmTargetOrDefault.toJavaVersion()
             compileOptions {
                 sourceCompatibility = javaVersion
                 targetCompatibility = javaVersion
             }
-            compileSdk = AndroidConfig.COMPILE_SDK
-            buildToolsVersion = AndroidConfig.BUILD_TOOLS_VERSION
+            compileSdk = ProjectConfig.Android.COMPILE_SDK
+            buildToolsVersion = ProjectConfig.Android.BUILD_TOOLS_VERSION
 
             defaultConfig {
-                minSdk = AndroidConfig.MIN_SDK
+                minSdk = ProjectConfig.Android.MIN_SDK
             }
 
             sourceSets.all {
@@ -233,6 +245,79 @@ private fun CommonExtension<*, *, *, *, *, *>.packagingConfigure() {
                 "META-INF/{AL2.0,LGPL2.1}"
             )
         }
+    }
+}
+
+// endregion
+
+// region Publishing
+
+private fun Project.applyPublishingConfig(buildConfigExtension: DatadogBuildConfigExtension) {
+    extensions.getByType<KotlinMultiplatformExtension>()
+        .targets
+        .withType<KotlinAndroidTarget> {
+            publishLibraryVariants("release")
+        }
+
+    val publishingExtension = extensions.getByType<PublishingExtension>()
+        .apply {
+            publications.withType<MavenPublication> {
+                groupId = ProjectConfig.GROUP_ID
+                version = ProjectConfig.VERSION.name
+
+                // afterEvaluate here is important
+                afterEvaluate {
+                    artifactId = "dd-sdk-kotlin-multiplatform-$artifactId"
+                }
+
+                pom {
+                    name.set(artifactId)
+                    description.set(
+                        buildConfigExtension.pomDescription.map {
+                            it.ifEmpty {
+                                throw IllegalStateException("Published projects should have a description")
+                            }
+                        }
+                    )
+                    url.set("https://github.com/DataDog/dd-sdk-kotlin-multiplatform/")
+
+                    licenses {
+                        license {
+                            name.set("Apache-2.0")
+                            url.set("https://www.apache.org/licenses/LICENSE-2.0")
+                        }
+                    }
+                    organization {
+                        name.set("Datadog")
+                        url.set("https://www.datadoghq.com/")
+                    }
+                    developers {
+                        developer {
+                            name.set("Datadog")
+                            email.set("info@datadoghq.com")
+                            organization.set("Datadog")
+                            organizationUrl.set("https://www.datadoghq.com/")
+                        }
+                    }
+
+                    scm {
+                        url.set("https://github.com/DataDog/dd-sdk-kotlin-multiplatform/")
+                        connection.set("scm:git:git@github.com:Datadog/dd-sdk-kotlin-multiplatform.git")
+                        developerConnection.set("scm:git:git@github.com:Datadog/dd-sdk-kotlin-multiplatform.git")
+                    }
+                }
+            }
+        }
+
+    afterEvaluate {
+        extensions.getByType<SigningExtension>()
+            .apply {
+                val privateKey = System.getenv("GPG_PRIVATE_KEY")
+                val password = System.getenv("GPG_PASSWORD")
+                isRequired = !hasProperty("dd-skip-signing")
+                useInMemoryPgpKeys(privateKey, password)
+                sign(publishingExtension.publications)
+            }
     }
 }
 

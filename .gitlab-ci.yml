@@ -16,6 +16,7 @@ stages:
   - info
   - analysis
   - test
+  - publish
 
 # CI IMAGE
 
@@ -136,3 +137,57 @@ sample-app-build-android:
     - rm -rf ~/.gradle/daemon/
     - export DD_AGENT_HOST="$BUILDENV_HOST_IP"
     - GRADLE_OPTS="-Xmx4096m" ./gradlew :sample:androidApp:assembleDebug --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_TRACER_FOLDER/dd-java-agent.jar=$DD_COMMON_AGENT_CONFIG
+
+# PUBLISH ARTIFACTS ON MAVEN
+
+publish:release-core:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
+    - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
+    - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_username --with-decryption --query "Parameter.Value" --out text)
+    - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_password --with-decryption --query "Parameter.Value" --out text)
+    - ./gradlew :core:publishToSonatype --stacktrace --no-daemon
+
+publish:release-logs:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
+    - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
+    - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_username --with-decryption --query "Parameter.Value" --out text)
+    - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_password --with-decryption --query "Parameter.Value" --out text)
+    - ./gradlew :features:logs:publishToSonatype --stacktrace --no-daemon
+
+publish:release-rum:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
+    - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
+    - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_username --with-decryption --query "Parameter.Value" --out text)
+    - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_password --with-decryption --query "Parameter.Value" --out text)
+    - ./gradlew :features:rum:publishToSonatype --stacktrace --no-daemon
+
+publish:release-webview:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
+    - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
+    - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_username --with-decryption --query "Parameter.Value" --out text)
+    - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_password --with-decryption --query "Parameter.Value" --out text)
+    - ./gradlew :features:webview:publishToSonatype --stacktrace --no-daemon
