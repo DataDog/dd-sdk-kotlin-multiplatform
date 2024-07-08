@@ -7,6 +7,7 @@
 package com.datadog.kmp.sample
 
 import com.datadog.kmp.rum.configuration.RumConfiguration
+import com.datadog.kmp.rum.configuration.setAppHangThreshold
 import com.datadog.kmp.rum.configuration.trackUiKitActions
 import com.datadog.kmp.rum.configuration.trackUiKitViews
 import com.datadog.kmp.webview.WebViewTracking
@@ -23,5 +24,8 @@ internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfigurat
     with(rumConfigurationBuilder) {
         trackUiKitViews()
         trackUiKitActions()
+        setAppHangThreshold(APP_HANG_THRESHOLD_MS)
     }
 }
+
+const val APP_HANG_THRESHOLD_MS = 100L

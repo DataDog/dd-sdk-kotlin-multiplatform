@@ -51,6 +51,26 @@ fun RumConfiguration.Builder.trackUiKitActions(
     return this
 }
 
+/**
+ * Enables App Hangs monitoring with the given threshold (in milliseconds).
+ *
+ * Only App Hangs that last more than this threshold will be reported. The minimal allowed value for this option is
+ * 100 milliseconds. To disable hangs monitoring, set this parameter to `null`.
+ *
+ * Note: Be cautious when setting the threshold to very small values, as it may lead to excessive reporting of hangs.
+ *       The SDK implements a secondary thread for monitoring App Hangs. To reduce CPU utilization, it tracks hangs
+ *       with a tolerance of 2.5%, meaning that some hangs lasting very close to this threshold may not be reported.
+ *
+ * Note: App Hangs monitoring requires Datadog Crash Reporting to be enabled. Otherwise stack trace will be
+ * not reported in App Hang errors.
+ *
+ * @param thresholdMs App Hangs threshold in milliseconds. Default is `null` (monitoring is disabled).
+ */
+fun RumConfiguration.Builder.setAppHangThreshold(thresholdMs: Long?): RumConfiguration.Builder {
+    nativePlatformBuilder.setAppHangThreshold(thresholdMs)
+    return this
+}
+
 internal actual fun platformConfigurationBuilder(applicationId: String): PlatformRumConfigurationBuilder<Any> =
     IOSRumConfigurationBuilder(applicationId)
 

@@ -186,6 +186,27 @@ class IOSRumConfigurationBuilderTest {
     }
 
     @Test
+    fun `M set app hang threshold W setAppHangThreshold`() {
+        // Given
+        val fakeThresholdMs = randomLong(from = 1L)
+
+        // When
+        testedBuilder.setAppHangThreshold(fakeThresholdMs)
+
+        // Then
+        assertEquals(fakeThresholdMs.toDouble(), fakeNativeRumConfiguration.appHangThreshold() * 1000)
+    }
+
+    @Test
+    fun `M disable app hang threshold W setAppHangThreshold + null value`() {
+        // When
+        testedBuilder.setAppHangThreshold(null)
+
+        // Then
+        assertEquals(0.0, fakeNativeRumConfiguration.appHangThreshold())
+    }
+
+    @Test
     fun `M return native configuration W build`() {
         // When
         val nativeConfiguration = testedBuilder.build()

@@ -120,6 +120,15 @@ internal class IOSRumConfigurationBuilder : PlatformRumConfigurationBuilder<DDRU
         nativeConfiguration.setUiKitActionsPredicate(nativePredicate)
     }
 
+    fun setAppHangThreshold(thresholdMs: Long?) {
+        val thresholdSeconds = if (thresholdMs != null) {
+            thresholdMs.toDouble() / MILLISECONDS_IN_SECOND
+        } else {
+            0.0
+        }
+        nativeConfiguration.setAppHangThreshold(thresholdSeconds)
+    }
+
     override fun build(): DDRUMConfiguration {
         return nativeConfiguration
     }
