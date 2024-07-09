@@ -23,7 +23,7 @@ kotlin {
     cocoapods {
         // cannot use noPodSpec, because of https://youtrack.jetbrains.com/issue/KT-63331
         // so what is below for podspec description is just a fake thing to make tooling happy
-        version = AndroidConfig.VERSION.toString()
+        version = AndroidConfig.VERSION.name
         // need to build with XCode 15
         ios.deploymentTarget = "12.0"
         name = "DatadogKMPLogs"
