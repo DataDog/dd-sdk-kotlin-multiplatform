@@ -19,12 +19,14 @@ repositories {
             includeGroupByRegex("com\\.github\\..*")
         }
     }
+    gradlePluginPortal()
 }
 
 dependencies {
     compileOnly(gradleApi())
     compileOnly(libs.android.tools)
     compileOnly(libs.kotlin.gradle.plugin)
+    compileOnly(libs.nexusPublishMavenPlugin)
     implementation(libs.kotlinGrammarParser)
 }
 
