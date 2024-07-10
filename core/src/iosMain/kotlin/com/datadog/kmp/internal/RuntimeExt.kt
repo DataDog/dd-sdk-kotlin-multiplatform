@@ -40,7 +40,7 @@ internal fun addDatadogUnhandledExceptionHookWithTermination(
                 // TODO RUM-5176 RumMonitor.addErrorWithError call is not blocking, so we may have no time to
                 //  write a specific error and we will end up with having a generic runtime crash error. Adding
                 //  a small sleep call here won't hurt: we get better chances that error is written
-                val sleepMicroseconds = 100_000U // 100 ms
+                val sleepMicroseconds = 80_000U // 80 ms
                 usleep(sleepMicroseconds)
 
                 // our hook is the last one, we can terminate application, otherwise we shift this
