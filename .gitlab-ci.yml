@@ -24,6 +24,16 @@ stages:
     - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
     - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.ossrh_username --with-decryption --query "Parameter.Value" --out text)
     - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.ossrh_password --with-decryption --query "Parameter.Value" --out text)
+  install-android-sdk:
+    - curl -sSL -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip
+    - rm -rf ~/android_sdk
+    - rm -rf ~/cmdline-tools
+    - unzip -q commandlinetools -d ~/
+    - mkdir -p ~/android_sdk/cmdline-tools/latest
+    - mv ~/cmdline-tools/* ~/android_sdk/cmdline-tools/latest
+    - rm ./commandlinetools.zip
+    - export ANDROID_HOME="$HOME/android_sdk/"
+    - yes | ~/android_sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
 # Security
 
@@ -161,6 +171,7 @@ publish:release-core:
   stage: publish
   timeout: 30m
   script:
+    - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :core:publishToSonatype --stacktrace --no-daemon
 
@@ -171,6 +182,7 @@ publish:release-logs:
   stage: publish
   timeout: 30m
   script:
+    - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:logs:publishToSonatype --stacktrace --no-daemon
 
@@ -181,7 +193,9 @@ publish:release-rum:
   stage: publish
   timeout: 30m
   script:
+    - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
+    - brew install android-sdk
     - ./gradlew :features:rum:publishToSonatype --stacktrace --no-daemon
 
 publish:release-webview:
@@ -191,6 +205,7 @@ publish:release-webview:
   stage: publish
   timeout: 30m
   script:
+    - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:webview:publishToSonatype --stacktrace --no-daemon
 
@@ -201,5 +216,6 @@ publish:release-ktor:
   stage: publish
   timeout: 30m
   script:
+    - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :integrations:ktor:publishToSonatype --stacktrace --no-daemon
