@@ -6,6 +6,7 @@
 
 package com.datadog.kmp.sample.network
 
+import com.datadog.kmp.ktor.datadogKtorPlugin
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -21,6 +22,7 @@ object NetworkClient {
 
     private val client = HttpClient {
         followRedirects = true
+        install(datadogKtorPlugin())
     }
 
     suspend fun get(

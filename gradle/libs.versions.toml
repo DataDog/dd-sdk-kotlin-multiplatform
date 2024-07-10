@@ -15,6 +15,7 @@ kotlinGrammarParser = "0.1.0"
 
 ktor = "2.3.11"
 kotlinxCoroutines = "1.8.1"
+uuid = "0.8.4"
 
 # JUnit 5
 jUnitJupiter = "5.10.2"
@@ -54,6 +55,8 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-Test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+
+uuid = {module="com.benasher44:uuid", version.ref = "uuid"}
 
 # JUnit 5 (JVM only)
 jUnitPlatform = { module = "org.junit.platform:junit-platform-launcher", version.ref = "jUnitPlatform" }

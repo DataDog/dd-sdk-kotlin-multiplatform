@@ -18,6 +18,7 @@ import,androidx.navigation,Apache-2.0,Copyright 2018 The Android Open Source Pro
 import,androidx.savedstate,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.versionedparcelable,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.viewpager,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,com.benasher44,MIT,Copyright (c) 2019 Ben Asher
 import,com.datadoghq,Apache-2.0,Copyright 2019-Present Datadog, Inc.
 import,com.squareup.okhttp3,Apache-2.0,"Copyright 2019 Square, Inc"
 import,com.squareup.okio,Apache-2.0,"Copyright 2013 Square, Inc"

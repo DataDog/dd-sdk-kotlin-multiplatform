@@ -1,0 +1,44 @@
+Dependencies List
+
+androidx.activity:activity:1.5.1                                :   90 Kb
+androidx.annotation:annotation-experimental:1.1.0               :   16 Kb
+androidx.annotation:annotation:1.2.0                            :   28 Kb
+androidx.arch.core:core-common:2.1.0                            :   10 Kb
+androidx.arch.core:core-runtime:2.0.0                           :    5 Kb
+androidx.collection:collection:1.1.0                            :   41 Kb
+androidx.core:core-ktx:1.2.0                                    :  155 Kb
+androidx.core:core:1.8.0                                        : 1052 Kb
+androidx.customview:customview:1.0.0                            :   32 Kb
+androidx.fragment:fragment:1.5.1                                :  328 Kb
+androidx.lifecycle:lifecycle-common:2.5.1                       :   23 Kb
+androidx.lifecycle:lifecycle-livedata-core:2.5.1                :    9 Kb
+androidx.lifecycle:lifecycle-livedata:2.0.0                     :    9 Kb
+androidx.lifecycle:lifecycle-runtime:2.5.1                      :   12 Kb
+androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.1         :   34 Kb
+androidx.lifecycle:lifecycle-viewmodel:2.5.1                    :   34 Kb
+androidx.loader:loader:1.0.0                                    :   32 Kb
+androidx.navigation:navigation-common:2.3.0                     :   54 Kb
+androidx.navigation:navigation-runtime:2.3.0                    :   46 Kb
+androidx.savedstate:savedstate:1.2.0                            :   18 Kb
+androidx.versionedparcelable:versionedparcelable:1.1.1          :   30 Kb
+androidx.viewpager:viewpager:1.0.0                              :   52 Kb
+com.benasher44:uuid-jvm:0.8.4                                   :    8 Kb
+com.datadoghq:dd-sdk-android-core:2.10.1                        :  682 Kb
+com.datadoghq:dd-sdk-android-rum:2.10.1                         : 1580 Kb
+io.ktor:ktor-client-core-jvm:2.3.11                             :  816 Kb
+io.ktor:ktor-events-jvm:2.3.11                                  :    7 Kb
+io.ktor:ktor-http-jvm:2.3.11                                    :  404 Kb
+io.ktor:ktor-io-jvm:2.3.11                                      :  791 Kb
+io.ktor:ktor-serialization-jvm:2.3.11                           :   24 Kb
+io.ktor:ktor-utils-jvm:2.3.11                                   :  328 Kb
+io.ktor:ktor-websocket-serialization-jvm:2.3.11                 :    6 Kb
+io.ktor:ktor-websockets-jvm:2.3.11                              :  173 Kb
+org.jetbrains.kotlin:kotlin-stdlib:2.0.20-Beta1                 : 1691 Kb
+org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1          :   20 Kb
+org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.1         : 1512 Kb
+org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.1             :  953 b 
+org.jetbrains:annotations:23.0.0                                :   28 Kb
+org.slf4j:slf4j-api:1.7.36                                      :   40 Kb
+
+Total transitive dependencies size                              :    9 Mb
+
