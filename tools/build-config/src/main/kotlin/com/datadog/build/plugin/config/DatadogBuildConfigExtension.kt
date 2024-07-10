@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 interface DatadogBuildConfigExtension {
     val jvmTarget: Property<JvmTarget>
     val kotlinVersion: Property<KotlinVersion>
+    val pomDescription: Property<String>
 }
 
 internal val DatadogBuildConfigExtension.jvmTargetOrDefault

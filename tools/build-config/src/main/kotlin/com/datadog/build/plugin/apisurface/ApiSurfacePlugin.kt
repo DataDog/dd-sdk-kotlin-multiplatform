@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
+import java.util.Locale
 
 class ApiSurfacePlugin : Plugin<Project> {
 
@@ -69,6 +70,9 @@ class ApiSurfacePlugin : Plugin<Project> {
 
     companion object {
         const val FILE_NAME = "apiSurface"
+
+        private fun String.capitalize() =
+            replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString() }
 
         internal fun createGenerateApiSurfaceTaskName(sourceSetName: String) =
             "generate${sourceSetName.capitalize()}ApiSurface"

@@ -1,4 +1,4 @@
-import com.datadog.build.AndroidConfig
+import com.datadog.build.ProjectConfig
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 /*
@@ -15,13 +15,17 @@ plugins {
     alias(libs.plugins.dependencyLicense)
     id("api-surface")
     id("transitive-dependencies")
+
+    // publishing
+    `maven-publish`
+    signing
 }
 
 kotlin {
     cocoapods {
         // cannot use noPodSpec, because of https://youtrack.jetbrains.com/issue/KT-63331
         // so what is below for podspec description is just a fake thing to make tooling happy
-        version = AndroidConfig.VERSION.name
+        version = ProjectConfig.VERSION.name
         // need to build with XCode 15
         ios.deploymentTarget = "12.0"
         name = "DatadogKMPCore"
@@ -83,4 +87,8 @@ kotlin {
 
 android {
     namespace = "com.datadog.kmp"
+}
+
+datadogBuildConfig {
+    pomDescription = "The Core module of Datadog monitoring library for Kotlin Multiplatform."
 }
