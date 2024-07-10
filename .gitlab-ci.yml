@@ -193,3 +193,13 @@ publish:release-webview:
   script:
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:webview:publishToSonatype --stacktrace --no-daemon
+
+publish:release-ktor:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - !reference [.snippets, set-publishing-credentials]
+    - ./gradlew :integrations:ktor:publishToSonatype --stacktrace --no-daemon

@@ -16,6 +16,10 @@ plugins {
     id("transitive-dependencies")
 // TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
 //    alias(libs.plugins.mokkery)
+
+    // publishing
+    `maven-publish`
+    signing
 }
 
 kotlin {
