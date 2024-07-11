@@ -22,6 +22,7 @@ plugins {
 }
 
 kotlin {
+
     cocoapods {
         // cannot use noPodSpec, because of https://youtrack.jetbrains.com/issue/KT-63331
         // so what is below for podspec description is just a fake thing to make tooling happy
@@ -33,14 +34,6 @@ kotlin {
 
         framework {
             baseName = "DatadogKMPCore"
-        }
-
-        targets.all {
-            if (this is KotlinNativeTarget && konanTarget.family.isAppleFamily) {
-                compilations.getByName("main") {
-                    cinterops.create("DDBinaryImages")
-                }
-            }
         }
 
         val compilerOptionFlag = "-compiler-option"
@@ -66,6 +59,14 @@ kotlin {
                 compilerOptionFlag,
                 "-fmodules"
             )
+        }
+    }
+
+    targets.all {
+        if (this is KotlinNativeTarget && konanTarget.family.isAppleFamily) {
+            compilations.getByName("main") {
+                cinterops.create("DDBinaryImages")
+            }
         }
     }
 

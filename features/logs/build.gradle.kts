@@ -35,7 +35,6 @@ kotlin {
 
         framework {
             baseName = "DatadogKMPLogs"
-            isStatic = true
         }
 
         // need to link it only for the tests so far (maybe this will change
