@@ -22,8 +22,10 @@ stages:
   set-publishing-credentials:
     - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
     - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
-    - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.ossrh_username --with-decryption --query "Parameter.Value" --out text)
-    - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.ossrh_password --with-decryption --query "Parameter.Value" --out text)
+    - export VAULT_ADDR=https://vault.us1.ddbuild.io
+    - vault login -method=aws -no-print
+    - export OSSRH_USERNAME=$(vault kv get -field=username kv/aws/arn:aws:iam::486234852809:role/ci-dd-sdk-kotlin-multiplatform/sonatype)
+    - export OSSRH_PASSWORD=$(vault kv get -field=password kv/aws/arn:aws:iam::486234852809:role/ci-dd-sdk-kotlin-multiplatform/sonatype)
   install-android-sdk:
     - curl -sSL -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip
     - rm -rf ~/android_sdk
