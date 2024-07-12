@@ -1,3 +1,7 @@
+import com.datadog.build.ProjectConfig
+import com.datadog.build.utils.taskConfig
+import io.github.gradlenexus.publishplugin.AbstractNexusStagingRepositoryTask
+
 /*
  * Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
  * This product includes software developed at Datadog (https://www.datadoghq.com/).
@@ -15,6 +19,8 @@ plugins {
     alias(libs.plugins.mokkery) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.nexusPublish)
+    // false - just to load classes into a classpath
+    id("datadog-build-config") apply false
 }
 
 nexusPublishing {
@@ -27,6 +33,14 @@ nexusPublishing {
             if (sonatypePassword != null) password.set(sonatypePassword)
         }
     }
+}
+
+// nexus-publish plugin creates repository tasks only for the root project, so we cannot set a
+// sub-project-specific description
+project.taskConfig<AbstractNexusStagingRepositoryTask> {
+    repositoryDescription.set(
+        "${ProjectConfig.GROUP_ID}:dd-sdk-kotlin-multiplatform:${ProjectConfig.VERSION.name}"
+    )
 }
 
 /**
