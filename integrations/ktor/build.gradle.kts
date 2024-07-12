@@ -54,8 +54,9 @@ kotlin {
         commonMain.dependencies {
             api(projects.core)
             api(projects.features.rum)
-            api(libs.ktor.client.core)
-            api(libs.uuid)
+            implementation(libs.ktor.client.core)
+            implementation(libs.uuid)
+            implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

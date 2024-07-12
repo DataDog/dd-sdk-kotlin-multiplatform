@@ -1,1 +1,9 @@
-val DatadogKtorPlugin: io.ktor.client.plugins.api.ClientPlugin<Unit>
+fun datadogKtorPlugin(Map<String, Set<TracingHeaderType>> = emptyMap(), Float = DEFAULT_TRACE_SAMPLE_RATE): io.ktor.client.plugins.api.ClientPlugin<Unit>
+const val RUM_TRACE_ID: String
+const val RUM_SPAN_ID: String
+const val RUM_RULE_PSR: String
+enum com.datadog.kmp.ktor.TracingHeaderType
+  - DATADOG
+  - B3
+  - B3MULTI
+  - TRACECONTEXT
