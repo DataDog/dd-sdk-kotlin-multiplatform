@@ -18,6 +18,30 @@ stages:
   - test
   - publish
 
+.snippets:
+  set-publishing-credentials:
+    - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
+    - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
+    - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.ossrh_username --with-decryption --query "Parameter.Value" --out text)
+    - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.ossrh_password --with-decryption --query "Parameter.Value" --out text)
+  install-android-sdk:
+    - curl -sSL -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip
+    - rm -rf ~/android_sdk
+    - rm -rf ~/cmdline-tools
+    - unzip -q commandlinetools -d ~/
+    - mkdir -p ~/android_sdk/cmdline-tools/latest
+    - mv ~/cmdline-tools/* ~/android_sdk/cmdline-tools/latest
+    - rm ./commandlinetools.zip
+    - export ANDROID_HOME="$HOME/android_sdk/"
+    - yes | ~/android_sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
+# Security
+
+# TODO RUM-5306 Signing keys were generated using the image
+#  486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/agent-key-management-tools/gpg:1.
+# But this image is not compatible with k8s runner, so we need to regenerate keys using compatible
+# approach by the time existing keys expire (Aug 2025).
+
 # CI IMAGE
 
 ci-image:
@@ -147,10 +171,8 @@ publish:release-core:
   stage: publish
   timeout: 30m
   script:
-    - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
-    - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
-    - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_username --with-decryption --query "Parameter.Value" --out text)
-    - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_password --with-decryption --query "Parameter.Value" --out text)
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :core:publishToSonatype --stacktrace --no-daemon
 
 publish:release-logs:
@@ -160,10 +182,8 @@ publish:release-logs:
   stage: publish
   timeout: 30m
   script:
-    - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
-    - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
-    - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_username --with-decryption --query "Parameter.Value" --out text)
-    - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_password --with-decryption --query "Parameter.Value" --out text)
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:logs:publishToSonatype --stacktrace --no-daemon
 
 publish:release-rum:
@@ -173,10 +193,9 @@ publish:release-rum:
   stage: publish
   timeout: 30m
   script:
-    - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
-    - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
-    - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_username --with-decryption --query "Parameter.Value" --out text)
-    - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_password --with-decryption --query "Parameter.Value" --out text)
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
+    - brew install android-sdk
     - ./gradlew :features:rum:publishToSonatype --stacktrace --no-daemon
 
 publish:release-webview:
@@ -186,8 +205,17 @@ publish:release-webview:
   stage: publish
   timeout: 30m
   script:
-    - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
-    - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
-    - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_username --with-decryption --query "Parameter.Value" --out text)
-    - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.ossrh_password --with-decryption --query "Parameter.Value" --out text)
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:webview:publishToSonatype --stacktrace --no-daemon
+
+publish:release-ktor:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
+    - ./gradlew :integrations:ktor:publishToSonatype --stacktrace --no-daemon
