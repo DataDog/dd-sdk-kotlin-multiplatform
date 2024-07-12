@@ -50,23 +50,15 @@ kotlin {
         commonMain.dependencies {
             api(projects.core)
             api(projects.features.rum)
-            api(libs.ktor.client.core)
-            api(libs.uuid)
-            api(libs.kotlinx.datetime)
+            implementation(libs.ktor.client.core)
+            implementation(libs.uuid)
+            implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             // TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
             implementation("dev.mokkery:mokkery-runtime:${libs.versions.mokkery.get()}")
         }
-    }
-
-    configurations.androidMainImplementation {
-        // this is because we have to use FragmentX 1.5.1 (because 1.4.x ships Lint rules which are not
-        // compatible with AGP 8.4.+), and it brings these dependencies. We can strip them out, because since Kotlin
-        // 1.8 everything is in the main stdlib.
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
     }
 }
 

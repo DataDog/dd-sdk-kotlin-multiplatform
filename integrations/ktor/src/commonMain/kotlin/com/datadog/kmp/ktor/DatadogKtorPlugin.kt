@@ -7,10 +7,10 @@
 package com.datadog.kmp.ktor
 
 import com.benasher44.uuid.uuid4
-import com.datadog.kmp.ktor.trace.DefaultSpanIdGenerator
-import com.datadog.kmp.ktor.trace.DefaultTraceIdGenerator
-import com.datadog.kmp.ktor.trace.SpanIdGenerator
-import com.datadog.kmp.ktor.trace.TraceIdGenerator
+import com.datadog.kmp.ktor.internal.trace.DefaultSpanIdGenerator
+import com.datadog.kmp.ktor.internal.trace.DefaultTraceIdGenerator
+import com.datadog.kmp.ktor.internal.trace.SpanIdGenerator
+import com.datadog.kmp.ktor.internal.trace.TraceIdGenerator
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
@@ -30,17 +30,26 @@ internal const val MAX_SAMPLE_RATE: Double = 100.0
 
 /**
  * Create a Datadog plugin for a Ktor [HttpClient].
- * @param tracedHosts the list of all the hosts to track, and the header types that you want
- * to use to handle distributed traces
+ * @param tracedHosts the map of all the hosts to track, and the header types that you want
+ * to use to handle distributed traces. For a default setup, we recommend using the DATADOG + TRACECONTEXT header types
+ * for the hosts you own.
  * @param traceSamplingRate the sampling rate for the tracing (between 0 and 100)
- * @param traceIdGenerator the generator for trace ids
- * @param spanIdGenerator the generator for span ids
  */
 fun datadogKtorPlugin(
     tracedHosts: Map<String, Set<TracingHeaderType>> = emptyMap(),
-    traceSamplingRate: Float = DEFAULT_TRACE_SAMPLE_RATE,
-    traceIdGenerator: TraceIdGenerator = DefaultTraceIdGenerator(),
-    spanIdGenerator: SpanIdGenerator = DefaultSpanIdGenerator()
+    traceSamplingRate: Float = DEFAULT_TRACE_SAMPLE_RATE
+): ClientPlugin<Unit> = datadogKtorPlugin(
+    tracedHosts,
+    traceSamplingRate,
+    DefaultTraceIdGenerator(),
+    DefaultSpanIdGenerator()
+)
+
+internal fun datadogKtorPlugin(
+    tracedHosts: Map<String, Set<TracingHeaderType>>,
+    traceSamplingRate: Float,
+    traceIdGenerator: TraceIdGenerator,
+    spanIdGenerator: SpanIdGenerator
 ): ClientPlugin<Unit> {
     return createClientPlugin(PLUGIN_NAME) {
         // TODO RUM-5228 report request timings (DNS, SSL, …)
@@ -59,8 +68,8 @@ fun datadogKtorPlugin(
                 traceHeaderTypes.forEach { headerType ->
                     headerType.injectHeaders(request, true, traceId, spanId)
                 }
-                attributes[RUM_TRACE_ID] = traceId
-                attributes[RUM_SPAN_ID] = spanId
+                attributes[RUM_TRACE_ID] = traceId.toHexString()
+                attributes[RUM_SPAN_ID] = spanId.raw.toString()
                 attributes[RUM_RULE_PSR] = traceSamplingRate
             } else {
                 TracingHeaderType.entries.forEach { headerType ->

@@ -4,7 +4,7 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp.ktor.trace
+package com.datadog.kmp.ktor.internal.trace
 
 import com.datadog.kmp.ktor.HEX_RADIX
 
@@ -12,7 +12,7 @@ import com.datadog.kmp.ktor.HEX_RADIX
  * Represents a Span ID (as a 64 bit id).
  * @property raw the raw bits of the id
  */
-data class SpanId(
+internal data class SpanId(
     val raw: ULong
 ) {
 

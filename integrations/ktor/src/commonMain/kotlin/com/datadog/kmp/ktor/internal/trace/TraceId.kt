@@ -4,7 +4,7 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp.ktor.trace
+package com.datadog.kmp.ktor.internal.trace
 
 import com.datadog.kmp.ktor.HEX_RADIX
 
@@ -13,7 +13,7 @@ import com.datadog.kmp.ktor.HEX_RADIX
  * @property high the high bits of the id
  * @property low the low bits of the id
  */
-data class TraceId(
+internal data class TraceId(
     val high: ULong,
     val low: ULong
 ) {

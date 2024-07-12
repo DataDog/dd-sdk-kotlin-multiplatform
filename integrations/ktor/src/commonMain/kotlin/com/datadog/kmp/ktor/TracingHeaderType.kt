@@ -6,8 +6,8 @@
 
 package com.datadog.kmp.ktor
 
-import com.datadog.kmp.ktor.trace.SpanId
-import com.datadog.kmp.ktor.trace.TraceId
+import com.datadog.kmp.ktor.internal.trace.SpanId
+import com.datadog.kmp.ktor.internal.trace.TraceId
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.headers
 
@@ -42,7 +42,7 @@ enum class TracingHeaderType {
      * @param traceId the trace id
      * @param spanId the span id
      */
-    fun injectHeaders(
+    internal fun injectHeaders(
         request: HttpRequestBuilder,
         sampledIn: Boolean,
         traceId: TraceId,

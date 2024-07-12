@@ -4,14 +4,13 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp.ktor.trace
+package com.datadog.kmp.ktor.internal.trace
 
-/**
- * A generator to create [SpanId].
- */
-fun interface SpanIdGenerator {
-    /**
-     * Generates a new unique [SpanId].
-     */
-    fun generateSpanId(): SpanId
+import com.datadog.kmp.ktor.RNG
+
+internal class DefaultSpanIdGenerator : SpanIdGenerator {
+
+    override fun generateSpanId(): SpanId {
+        return SpanId(RNG.nextLong(1, Long.MAX_VALUE).toULong())
+    }
 }

@@ -4,14 +4,14 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp.ktor.trace
+package com.datadog.kmp.ktor.internal.trace
 
 /**
- * A generator to create [TraceId].
+ * A generator to create [SpanId].
  */
-fun interface TraceIdGenerator {
+internal fun interface SpanIdGenerator {
     /**
-     * Generates a new unique [TraceId].
+     * Generates a new unique [SpanId].
      */
-    fun generateTraceId(): TraceId
+    fun generateSpanId(): SpanId
 }

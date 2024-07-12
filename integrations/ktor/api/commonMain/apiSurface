@@ -1,29 +1,9 @@
-fun datadogKtorPlugin(Map<String, Set<TracingHeaderType>> = emptyMap(), Float = DEFAULT_TRACE_SAMPLE_RATE, com.datadog.kmp.ktor.trace.TraceIdGenerator = DefaultTraceIdGenerator(), com.datadog.kmp.ktor.trace.SpanIdGenerator = DefaultSpanIdGenerator()): io.ktor.client.plugins.api.ClientPlugin<Unit>
+fun datadogKtorPlugin(Map<String, Set<TracingHeaderType>> = emptyMap(), Float = DEFAULT_TRACE_SAMPLE_RATE): io.ktor.client.plugins.api.ClientPlugin<Unit>
 const val RUM_TRACE_ID: String
 const val RUM_SPAN_ID: String
 const val RUM_RULE_PSR: String
 enum com.datadog.kmp.ktor.TracingHeaderType
-  constructor(String)
   - DATADOG
   - B3
   - B3MULTI
   - TRACECONTEXT
-  fun setHeaders(io.ktor.client.request.HttpRequestBuilder, Boolean, com.datadog.kmp.ktor.trace.TraceId, com.datadog.kmp.ktor.trace.SpanId)
-class com.datadog.kmp.ktor.trace.DefaultSpanIdGenerator : SpanIdGenerator
-  override fun generateSpanId(): SpanId
-  companion object 
-class com.datadog.kmp.ktor.trace.DefaultTraceIdGenerator : TraceIdGenerator
-  override fun generateTraceId(): TraceId
-  companion object 
-data class com.datadog.kmp.ktor.trace.SpanId
-  constructor(ULong)
-  fun toHexString(): String
-  override fun toString(): String
-fun interface com.datadog.kmp.ktor.trace.SpanIdGenerator
-  fun generateSpanId(): SpanId
-data class com.datadog.kmp.ktor.trace.TraceId
-  constructor(ULong, ULong)
-  fun toHexString(): String
-  companion object 
-fun interface com.datadog.kmp.ktor.trace.TraceIdGenerator
-  fun generateTraceId(): TraceId

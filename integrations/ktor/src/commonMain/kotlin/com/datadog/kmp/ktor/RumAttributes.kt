@@ -7,12 +7,12 @@
 package com.datadog.kmp.ktor
 
 /**
- * Trace Id related to the resource loading. (Number)
+ * Trace Id related to the resource loading. (Number as Hex string)
  */
 const val RUM_TRACE_ID: String = "_dd.trace_id"
 
 /**
- * Span Id related to the resource loading. (Number)
+ * Span Id related to the resource loading. (Number as decimal string)
  */
 const val RUM_SPAN_ID: String = "_dd.span_id"
 

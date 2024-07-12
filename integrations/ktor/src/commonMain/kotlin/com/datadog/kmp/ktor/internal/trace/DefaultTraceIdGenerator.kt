@@ -4,12 +4,12 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp.ktor.trace
+package com.datadog.kmp.ktor.internal.trace
 
 import com.datadog.kmp.ktor.RNG
 import kotlinx.datetime.Clock
 
-class DefaultTraceIdGenerator : TraceIdGenerator {
+internal class DefaultTraceIdGenerator : TraceIdGenerator {
 
     override fun generateTraceId(): TraceId {
         var idHi: ULong
