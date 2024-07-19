@@ -11,6 +11,7 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
 import com.datadog.build.ProjectConfig
 import com.datadog.build.utils.taskConfig
+import io.github.gradlenexus.publishplugin.AbstractNexusStagingRepositoryTask
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -318,6 +319,13 @@ private fun Project.applyPublishingConfig(buildConfigExtension: DatadogBuildConf
                 useInMemoryPgpKeys(privateKey, password)
                 sign(publishingExtension.publications)
             }
+    }
+
+    val projectName = name
+    project.taskConfig<AbstractNexusStagingRepositoryTask> {
+        repositoryDescription.set(
+            "${ProjectConfig.GROUP_ID}:dd-sdk-kotlin-multiplatform-$projectName:${ProjectConfig.VERSION.name}"
+        )
     }
 }
 

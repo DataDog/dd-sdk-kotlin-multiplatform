@@ -61,6 +61,8 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 
+nexusPublishMavenPlugin = { module = "io.github.gradle-nexus:publish-plugin", version.ref = "nexusPublish"  }
+
 # JUnit 5 (JVM only)
 jUnitPlatform = { module = "org.junit.platform:junit-platform-launcher", version.ref = "jUnitPlatform" }
 jUnitJupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jUnitJupiter" }
