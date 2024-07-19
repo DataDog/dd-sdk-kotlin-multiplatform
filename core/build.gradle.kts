@@ -1,5 +1,7 @@
 import com.datadog.build.ProjectConfig
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import java.nio.file.Paths
+import kotlin.io.path.pathString
 
 /*
  * Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
@@ -19,6 +21,27 @@ plugins {
     // publishing
     `maven-publish`
     signing
+}
+
+val generateLibConfigTask = tasks.register("generateLibConfig", Sync::class) {
+    from(
+        resources.text.fromString(
+            """
+        |package com.datadog.kmp.internal
+        |
+        |internal object LibraryConfig {
+        |  const val SDK_VERSION = "${ProjectConfig.VERSION.name}"
+        |}
+        |
+            """.trimMargin()
+        )
+    ) {
+        rename { "LibraryConfig.kt" }
+        into(Paths.get("com", "datadog", "kmp", "internal").pathString)
+    }
+
+    val generatedDirectory = layout.buildDirectory.dir(Paths.get("generated", "datadog").pathString)
+    into(generatedDirectory)
 }
 
 kotlin {
@@ -82,6 +105,9 @@ kotlin {
         }
         iosTest.dependencies {
             implementation(projects.tools.unit)
+        }
+        commonMain {
+            kotlin.srcDir(generateLibConfigTask.map { it.destinationDir })
         }
     }
 }

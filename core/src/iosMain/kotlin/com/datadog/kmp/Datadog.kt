@@ -29,6 +29,7 @@ import com.datadog.kmp.core.configuration.BatchProcessingLevel
 import com.datadog.kmp.core.configuration.BatchSize
 import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.core.configuration.UploadFrequency
+import com.datadog.kmp.internal.InternalAttributes
 import com.datadog.kmp.privacy.TrackingConsent
 import kotlin.concurrent.Volatile
 import cocoapods.DatadogObjc.DDDatadog as DatadogIOS
@@ -173,6 +174,12 @@ private val Configuration.native: DDConfiguration
         nativeConfig.setUploadFrequency(coreConfig.uploadFrequency.native)
         nativeConfig.setBatchProcessingLevel(coreConfig.batchProcessingLevel.native)
         nativeConfig.setBatchSize(coreConfig.batchSize.native)
+        nativeConfig.setAdditionalConfiguration(
+            mapOf(
+                InternalAttributes.SOURCE_ATTRIBUTE,
+                InternalAttributes.SDK_VERSION_ATTRIBUTE
+            )
+        )
         return nativeConfig
     }
 
