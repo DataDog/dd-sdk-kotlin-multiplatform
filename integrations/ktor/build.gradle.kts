@@ -74,3 +74,7 @@ android {
 //    defaultMockMode = MockMode.autofill
 //    ignoreFinalMembers = true
 // }
+
+datadogBuildConfig {
+    pomDescription = "The Ktor integration to use with the Datadog monitoring library for Kotlin Multiplatform."
+}
