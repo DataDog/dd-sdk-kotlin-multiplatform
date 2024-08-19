@@ -103,7 +103,7 @@ analysis:licenses:
   stage: analysis
   timeout: 30m
   script:
-    - GRADLE_OPTS="-Xmx3072m" ./gradlew checkDependencyLicences --stacktrace --no-daemon
+    - GRADLE_OPTS="-Xmx3072m" ./gradlew checkDependencyLicenses --stacktrace --no-daemon
 
 # Test
 
