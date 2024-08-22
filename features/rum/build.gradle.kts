@@ -5,6 +5,7 @@
  */
 
 import com.datadog.build.ProjectConfig
+import com.datadog.build.plugin.jsonschema.SchemaLocation
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -16,6 +17,7 @@ plugins {
     id("transitive-dependencies")
 // TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
 //    alias(libs.plugins.mokkery)
+    id("json-schema-generator")
 
     // publishing
     `maven-publish`
@@ -94,4 +96,30 @@ android {
 
 datadogBuildConfig {
     pomDescription = "The RUM feature to use with the Datadog monitoring library for Kotlin Multiplatform."
+}
+
+jsonSchemaGenerator {
+    schema("rum") {
+        location = SchemaLocation.Git(
+            repo = "https://github.com/DataDog/rum-events-format.git",
+            subFolder = "schemas/rum",
+            destinationFolder = "src/commonMain/json/rum",
+            ref = "master"
+        )
+        targetPackageName = "com.datadog.kmp.rum.model"
+        ignoredFiles = listOf(
+            "_common-schema.json",
+            "_perf-metric-schema.json",
+            "_action-child-schema.json",
+            "_view-container-schema.json",
+            "vital-schema.json"
+        )
+        inputNameMapping = mapOf(
+            "action-schema.json" to "ActionEvent",
+            "error-schema.json" to "ErrorEvent",
+            "resource-schema.json" to "ResourceEvent",
+            "view-schema.json" to "ViewEvent",
+            "long_task-schema.json" to "LongTaskEvent"
+        )
+    }
 }

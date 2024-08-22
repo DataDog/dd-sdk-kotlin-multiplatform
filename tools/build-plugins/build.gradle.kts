@@ -26,6 +26,8 @@ dependencies {
     compileOnly(libs.android.tools)
     compileOnly(libs.kotlin.gradle.plugin)
     implementation(libs.kotlinGrammarParser)
+    implementation(libs.kotlinPoet)
+    implementation(libs.gson)
 }
 
 tasks.validatePlugins {
@@ -56,6 +58,10 @@ gradlePlugin {
         register("TransitiveDependenciesPlugin") {
             id = "transitive-dependencies"
             implementationClass = "com.datadog.build.plugin.transdeps.TransitiveDependenciesPlugin"
+        }
+        register("GenerateJsonSchemaPlugin") {
+            id = "json-schema-generator"
+            implementationClass = "com.datadog.build.plugin.jsonschema.GenerateJsonSchemaPlugin"
         }
     }
 }

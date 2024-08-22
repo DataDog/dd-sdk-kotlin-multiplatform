@@ -11,7 +11,7 @@ pluginManagement {
             }
         }
     }
-    includeBuild("./tools/build-config")
+    includeBuild("./tools/build-plugins")
 }
 
 rootProject.name = "dd-sdk-kotlin-multiplatform"

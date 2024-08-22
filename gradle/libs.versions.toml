@@ -12,6 +12,8 @@ datadog-ios = "2.14.1"
 dependencyLicense = "0.3"
 nexusPublish = "2.0.0"
 kotlinGrammarParser = "0.1.0"
+kotlinPoet = "1.18.1"
+gson = "2.11.0"
 
 ktor = "2.3.11"
 kotlinxCoroutines = "1.8.1"
@@ -48,6 +50,8 @@ datadog-android-rum = { module = "com.datadoghq:dd-sdk-android-rum", version.ref
 datadog-android-webview = { module = "com.datadoghq:dd-sdk-android-webview", version.ref = "datadog-android" }
 datadog-android-compose = { module = "com.datadoghq:dd-sdk-android-compose", version.ref = "datadog-android" }
 kotlinGrammarParser = { module = "com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm", version.ref = "kotlinGrammarParser" }
+kotlinPoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinPoet" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }

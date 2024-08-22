@@ -36,10 +36,6 @@ class ApiSurfacePlugin : Plugin<Project> {
             }
 
             val sourceFiles = kotlin.sourceDirectories
-            // no generated files yet, but let's keep it for the future, we will probably need to generate models
-            // for the mappers
-            val generatedFiles =
-                target.files(File(target.layout.buildDirectory.dir("generated").get().asFile, "json2kotlin"))
             val apiDir = File(File(target.projectDir, "api"), name)
             val surfaceFile = File(apiDir, FILE_NAME)
             val generateApiSurfaceTaskName = createGenerateApiSurfaceTaskName(sourceSetName)
@@ -48,7 +44,6 @@ class ApiSurfacePlugin : Plugin<Project> {
             val generateApiSurfaceTask = target.tasks
                 .register(generateApiSurfaceTaskName, GenerateApiSurfaceTask::class.java) {
                     this.sourceFiles = sourceFiles
-                    this.generatedFiles = generatedFiles
                     this.surfaceFile = surfaceFile
                     this.description = "Generate the API surface of the $sourceSetName source set"
                     commonGenerateApiSurfaceTask.dependsOn(this)
