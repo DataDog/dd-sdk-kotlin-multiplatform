@@ -195,7 +195,6 @@ publish:release-rum:
   script:
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
-    - brew install android-sdk
     - ./gradlew :features:rum:publishToSonatype --stacktrace --no-daemon
 
 publish:release-webview:
