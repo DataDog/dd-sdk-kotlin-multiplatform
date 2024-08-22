@@ -18,9 +18,6 @@ open class GenerateApiSurfaceTask : DefaultTask() {
     @get:InputFiles
     lateinit var sourceFiles: FileCollection
 
-    @get:InputFiles
-    lateinit var generatedFiles: FileCollection
-
     @get: OutputFile
     lateinit var surfaceFile: File
 
@@ -36,7 +33,6 @@ open class GenerateApiSurfaceTask : DefaultTask() {
     fun applyTask() {
         visitor = KotlinFileVisitor()
         visitFileCollectionRecursively(sourceFiles)
-        visitFileCollectionRecursively(generatedFiles)
 
         val apiSurface = visitor.description.toString()
         if (apiSurface.isNotEmpty()) {

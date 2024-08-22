@@ -4,12 +4,12 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-rootProject.name = "build-config"
+package com.datadog.build.plugin.jsonschema.generator
 
-dependencyResolutionManagement {
-    versionCatalogs {
-        create("libs") {
-            from(files("../../gradle/libs.versions.toml"))
-        }
-    }
+object Identifier {
+
+    const val PARAM_JSON_VALUE = "jsonValue"
+    const val PARAM_ADDITIONAL_PROPS = "additionalProperties"
+
+    const val PARAM_RESERVED_PROPS = "RESERVED_PROPERTIES"
 }
