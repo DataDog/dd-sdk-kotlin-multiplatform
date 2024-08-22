@@ -32,3 +32,32 @@ expect object com.datadog.kmp.log.Logs
   fun enable()
   fun addAttribute(String, Any?)
   fun removeAttribute(String)
+data class com.datadog.kmp.log.model.LogEvent
+  constructor(Status, kotlin.String, kotlin.String, kotlin.String, Logger, Dd, Usr? = null, Network? = null, Error? = null, kotlin.String? = null, kotlin.String, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+  data class Logger
+    constructor(kotlin.String, kotlin.String? = null, kotlin.String)
+  data class Dd
+    constructor(Device)
+  data class Usr
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+  data class Network
+    constructor(Client)
+  data class Error
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.List<Thread>? = null)
+  data class Device
+    constructor(kotlin.String)
+  data class Client
+    constructor(SimCarrier? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String)
+  data class Thread
+    constructor(kotlin.String, kotlin.Boolean, kotlin.String, kotlin.String? = null)
+  data class SimCarrier
+    constructor(kotlin.String? = null, kotlin.String? = null)
+  enum Status
+    constructor(kotlin.String)
+    - CRITICAL
+    - ERROR
+    - WARN
+    - INFO
+    - DEBUG
+    - TRACE
+    - EMERGENCY
