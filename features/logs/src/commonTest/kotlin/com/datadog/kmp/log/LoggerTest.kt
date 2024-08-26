@@ -9,11 +9,8 @@ package com.datadog.kmp.log
 import com.datadog.kmp.log.internal.PlatformLogger
 import dev.mokkery.mock
 import dev.mokkery.verify
-import kotlin.test.Ignore
 import kotlin.test.Test
 
-// TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
-@Ignore
 class LoggerTest {
 
     private val mockPlatformLogger = mock<PlatformLogger>()

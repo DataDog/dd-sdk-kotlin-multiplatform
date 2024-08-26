@@ -67,8 +67,6 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-// TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
-@Ignore
 class RumMonitorAdapterTest {
 
     private val mockNativeRumMonitor = mock<DDRumMonitorProxy>()

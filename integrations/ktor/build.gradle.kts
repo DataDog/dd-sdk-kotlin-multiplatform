@@ -5,6 +5,7 @@
  */
 
 import com.datadog.build.ProjectConfig
+import dev.mokkery.MockMode
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -14,8 +15,7 @@ plugins {
     alias(libs.plugins.dependencyLicense)
     id("api-surface")
     id("transitive-dependencies")
-// TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
-//    alias(libs.plugins.mokkery)
+    alias(libs.plugins.mokkery)
 
     // publishing
     `maven-publish`
@@ -59,8 +59,6 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
-            // TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
-            implementation("dev.mokkery:mokkery-runtime:${libs.versions.mokkery.get()}")
         }
     }
 }
@@ -69,11 +67,10 @@ android {
     namespace = "com.datadog.kmp.ktor"
 }
 
-// TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
-// mokkery {
-//    defaultMockMode = MockMode.autofill
-//    ignoreFinalMembers = true
-// }
+mokkery {
+    defaultMockMode = MockMode.autofill
+    ignoreFinalMembers = true
+}
 
 datadogBuildConfig {
     pomDescription = "The Ktor integration to use with the Datadog monitoring library for Kotlin Multiplatform."
