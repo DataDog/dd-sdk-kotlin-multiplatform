@@ -8,6 +8,7 @@ package com.datadog.kmp.rum.internal
 
 import com.datadog.android.rum.internal.domain.event.ResourceTiming
 import com.datadog.android.rum.internal.monitor.AdvancedNetworkRumMonitor
+import com.datadog.android.rum.resource.ResourceId
 import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumMonitor
@@ -123,7 +124,7 @@ internal class RumMonitorAdapter(private val nativeRumMonitor: NativeRumMonitor)
 
     // region AdvancedRumNetworkMonitor
 
-    override fun addResourceTiming(key: String, timing: ResourceTiming) {
+    override fun addResourceTiming(key: Any, timing: ResourceTiming) {
         (nativeRumMonitor as? AdvancedNetworkRumMonitor)?.addResourceTiming(key, timing)
     }
 
@@ -131,8 +132,76 @@ internal class RumMonitorAdapter(private val nativeRumMonitor: NativeRumMonitor)
         (nativeRumMonitor as? AdvancedNetworkRumMonitor)?.notifyInterceptorInstantiated()
     }
 
-    override fun waitForResourceTiming(key: String) {
+    override fun waitForResourceTiming(key: Any) {
         (nativeRumMonitor as? AdvancedNetworkRumMonitor)?.waitForResourceTiming(key)
+    }
+
+    override fun startResource(
+        key: ResourceId,
+        method: NativeRumResourceMethod,
+        url: String,
+        attributes: Map<String, Any?>
+    ) {
+        (nativeRumMonitor as? AdvancedNetworkRumMonitor)?.startResource(
+            key,
+            method,
+            url,
+            attributes
+        )
+    }
+
+    override fun stopResource(
+        key: ResourceId,
+        statusCode: Int?,
+        size: Long?,
+        kind: NativeRumResourceKind,
+        attributes: Map<String, Any?>
+    ) {
+        (nativeRumMonitor as? AdvancedNetworkRumMonitor)?.stopResource(
+            key,
+            statusCode,
+            size,
+            kind,
+            attributes
+        )
+    }
+
+    override fun stopResourceWithError(
+        key: ResourceId,
+        statusCode: Int?,
+        message: String,
+        source: NativeRumErrorSource,
+        stackTrace: String,
+        errorType: String?,
+        attributes: Map<String, Any?>
+    ) {
+        (nativeRumMonitor as? AdvancedNetworkRumMonitor)?.stopResourceWithError(
+            key,
+            statusCode,
+            message,
+            source,
+            stackTrace,
+            errorType,
+            attributes
+        )
+    }
+
+    override fun stopResourceWithError(
+        key: ResourceId,
+        statusCode: Int?,
+        message: String,
+        source: NativeRumErrorSource,
+        throwable: Throwable,
+        attributes: Map<String, Any?>
+    ) {
+        (nativeRumMonitor as? AdvancedNetworkRumMonitor)?.stopResourceWithError(
+            key,
+            statusCode,
+            message,
+            source,
+            throwable,
+            attributes
+        )
     }
 
     // endregion
