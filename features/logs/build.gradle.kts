@@ -6,6 +6,7 @@
 
 import com.datadog.build.ProjectConfig
 import com.datadog.build.plugin.jsonschema.SchemaLocation
+import dev.mokkery.MockMode
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -15,8 +16,7 @@ plugins {
     alias(libs.plugins.dependencyLicense)
     id("api-surface")
     id("transitive-dependencies")
-// TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
-//    alias(libs.plugins.mokkery)
+    alias(libs.plugins.mokkery)
     id("json-schema-generator")
 
     // publishing
@@ -65,8 +65,6 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
-            // TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
-            implementation("dev.mokkery:mokkery-runtime:${libs.versions.mokkery.get()}")
         }
     }
 }
@@ -75,11 +73,10 @@ android {
     namespace = "com.datadog.kmp.log"
 }
 
-// TODO RUM-5099 Update Mokkery to the version compatible with Kotlin 2.0.20+
-// mokkery {
-//    defaultMockMode = MockMode.autofill
-//    ignoreFinalMembers = true
-// }
+mokkery {
+    defaultMockMode = MockMode.autofill
+    ignoreFinalMembers = true
+}
 
 datadogBuildConfig {
     pomDescription = "The Logs feature to use with the Datadog monitoring library for Kotlin Multiplatform."
