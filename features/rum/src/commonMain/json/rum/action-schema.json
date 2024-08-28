@@ -56,23 +56,6 @@
               },
               "readOnly": true
             },
-            "frustration": {
-              "type": "object",
-              "description": "Action frustration properties",
-              "required": ["type"],
-              "properties": {
-                "type": {
-                  "type": "array",
-                  "description": "Action frustration types",
-                  "readOnly": true,
-                  "items": {
-                    "type": "string",
-                    "enum": ["rage_click", "dead_click", "error_click", "rage_tap", "error_tap"]
-                  }
-                }
-              },
-              "readOnly": true
-            },
             "error": {
               "type": "object",
               "description": "Properties of the errors of the action",

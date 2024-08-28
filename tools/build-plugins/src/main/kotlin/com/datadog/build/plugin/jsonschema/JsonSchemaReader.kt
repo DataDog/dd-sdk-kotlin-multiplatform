@@ -224,6 +224,7 @@ class JsonSchemaReader(
     ): TypeDefinition.Enum {
         return TypeDefinition.Enum(
             name = typeName,
+            originalName = typeName,
             type = type,
             values = values,
             description = description.orEmpty()
@@ -338,7 +339,7 @@ class JsonSchemaReader(
         allOf: List<JsonDefinition>,
         fromFile: File
     ): TypeDefinition {
-        var mergedType: TypeDefinition = TypeDefinition.Class(typeName, emptyList())
+        var mergedType: TypeDefinition = TypeDefinition.Class(typeName, originalName = typeName, emptyList())
 
         allOf.forEach {
             val type = transform(it, typeName, fromFile)
@@ -375,6 +376,7 @@ class JsonSchemaReader(
 
         return TypeDefinition.Class(
             name = typeName,
+            originalName = typeName,
             description = definition.description.orEmpty(),
             properties = properties,
             additionalProperties = additional

@@ -84,9 +84,9 @@ data class com.datadog.kmp.rum.model.ActionEvent
   data class ActionEventView
     constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null, kotlin.Boolean? = null)
   data class Usr
-    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
   data class Connectivity
-    constructor(Status, kotlin.collections.List<Interface>? = null, EffectiveType? = null, Cellular? = null)
+    constructor(Status, EffectiveType? = null, Cellular? = null)
   data class Display
     constructor(Viewport? = null)
   data class Synthetics
@@ -101,11 +101,11 @@ data class com.datadog.kmp.rum.model.ActionEvent
     constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, DdAction? = null)
     val formatVersion: kotlin.Long
   data class Context
-    constructor(kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+    constructor(kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
   data class Container
     constructor(ContainerView, ActionEventSource)
   data class ActionEventAction
-    constructor(ActionEventActionType, kotlin.String? = null, kotlin.Long? = null, ActionEventActionTarget? = null, Frustration? = null, Error? = null, Crash? = null, LongTask? = null, Resource? = null)
+    constructor(ActionEventActionType, kotlin.String? = null, kotlin.Long? = null, ActionEventActionTarget? = null, Error? = null, Crash? = null, LongTask? = null, Resource? = null)
   data class Cellular
     constructor(kotlin.String? = null, kotlin.String? = null)
   data class Viewport
@@ -120,8 +120,6 @@ data class com.datadog.kmp.rum.model.ActionEvent
     constructor(kotlin.String)
   data class ActionEventActionTarget
     constructor(kotlin.String)
-  data class Frustration
-    constructor(kotlin.collections.List<Type>)
   data class Error
     constructor(kotlin.Long)
   data class Crash
@@ -154,17 +152,6 @@ data class com.datadog.kmp.rum.model.ActionEvent
     - CONNECTED
     - NOT_CONNECTED
     - MAYBE
-  enum Interface
-    constructor(kotlin.String)
-    - BLUETOOTH
-    - CELLULAR
-    - ETHERNET
-    - WIFI
-    - WIMAX
-    - MIXED
-    - OTHER
-    - UNKNOWN
-    - NONE
   enum EffectiveType
     constructor(kotlin.String)
     - SLOW_2G
@@ -202,15 +189,8 @@ data class com.datadog.kmp.rum.model.ActionEvent
     - PREWARM
     - FROM_NON_INTERACTIVE_SESSION
     - EXPLICIT_STOP
-  enum Type
-    constructor(kotlin.String)
-    - RAGE_CLICK
-    - DEAD_CLICK
-    - ERROR_CLICK
-    - RAGE_TAP
-    - ERROR_TAP
 data class com.datadog.kmp.rum.model.ErrorEvent
-  constructor(kotlin.Long, Application, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, ErrorEventSession, ErrorEventSource? = null, ErrorEventView, Usr? = null, Connectivity? = null, Display? = null, Synthetics? = null, CiTest? = null, Os? = null, Device? = null, Dd, Context? = null, Action? = null, Container? = null, Error, Freeze? = null, Context? = null)
+  constructor(kotlin.Long, Application, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, ErrorEventSession, ErrorEventSource? = null, ErrorEventView, Usr? = null, Connectivity? = null, Display? = null, Synthetics? = null, CiTest? = null, Os? = null, Device? = null, Dd, Context? = null, Action? = null, Container? = null, Error, Context? = null)
   val type: kotlin.String
   data class Application
     constructor(kotlin.String)
@@ -219,9 +199,9 @@ data class com.datadog.kmp.rum.model.ErrorEvent
   data class ErrorEventView
     constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null, kotlin.Boolean? = null)
   data class Usr
-    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
   data class Connectivity
-    constructor(Status, kotlin.collections.List<Interface>? = null, EffectiveType? = null, Cellular? = null)
+    constructor(Status, EffectiveType? = null, Cellular? = null)
   data class Display
     constructor(Viewport? = null)
   data class Synthetics
@@ -236,15 +216,13 @@ data class com.datadog.kmp.rum.model.ErrorEvent
     constructor(DdSession? = null, Configuration? = null, kotlin.String? = null)
     val formatVersion: kotlin.Long
   data class Context
-    constructor(kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+    constructor(kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
   data class Action
     constructor(kotlin.collections.List<kotlin.String>)
   data class Container
     constructor(ContainerView, ErrorEventSource)
   data class Error
-    constructor(kotlin.String? = null, kotlin.String, ErrorSource, kotlin.String? = null, kotlin.collections.List<Cause>? = null, kotlin.Boolean? = null, kotlin.String? = null, kotlin.String? = null, Category? = null, Handling? = null, kotlin.String? = null, SourceType? = null, Resource? = null, kotlin.collections.List<Thread>? = null, kotlin.collections.List<BinaryImage>? = null, kotlin.Boolean? = null, Meta? = null, Csp? = null, kotlin.Long? = null)
-  data class Freeze
-    constructor(kotlin.Long)
+    constructor(kotlin.String? = null, kotlin.String, ErrorSource, kotlin.String? = null, kotlin.collections.List<Cause>? = null, kotlin.Boolean? = null, kotlin.String? = null, kotlin.String? = null, Category? = null, Handling? = null, kotlin.String? = null, SourceType? = null, Resource? = null, kotlin.collections.List<Thread>? = null, kotlin.collections.List<BinaryImage>? = null, kotlin.Boolean? = null, Meta? = null, kotlin.Long? = null)
   data class Cellular
     constructor(kotlin.String? = null, kotlin.String? = null)
   data class Viewport
@@ -265,8 +243,6 @@ data class com.datadog.kmp.rum.model.ErrorEvent
     constructor(kotlin.String, kotlin.String, kotlin.Boolean, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
   data class Meta
     constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
-  data class Csp
-    constructor(Disposition? = null)
   data class Provider
     constructor(kotlin.String? = null, kotlin.String? = null, ProviderType? = null)
   enum ErrorEventSource
@@ -289,17 +265,6 @@ data class com.datadog.kmp.rum.model.ErrorEvent
     - CONNECTED
     - NOT_CONNECTED
     - MAYBE
-  enum Interface
-    constructor(kotlin.String)
-    - BLUETOOTH
-    - CELLULAR
-    - ETHERNET
-    - WIFI
-    - WIMAX
-    - MIXED
-    - OTHER
-    - UNKNOWN
-    - NONE
   enum EffectiveType
     constructor(kotlin.String)
     - SLOW_2G
@@ -330,8 +295,6 @@ data class com.datadog.kmp.rum.model.ErrorEvent
     - ANR
     - APP_HANG
     - EXCEPTION
-    - WATCHDOG_TERMINATION
-    - MEMORY_WARNING
   enum Handling
     constructor(kotlin.String)
     - HANDLED
@@ -371,10 +334,6 @@ data class com.datadog.kmp.rum.model.ErrorEvent
     - TRACE
     - OPTIONS
     - CONNECT
-  enum Disposition
-    constructor(kotlin.String)
-    - ENFORCE
-    - REPORT
   enum ProviderType
     constructor(kotlin.String)
     - AD
@@ -401,9 +360,9 @@ data class com.datadog.kmp.rum.model.LongTaskEvent
   data class LongTaskEventView
     constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null)
   data class Usr
-    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
   data class Connectivity
-    constructor(Status, kotlin.collections.List<Interface>? = null, EffectiveType? = null, Cellular? = null)
+    constructor(Status, EffectiveType? = null, Cellular? = null)
   data class Display
     constructor(Viewport? = null)
   data class Synthetics
@@ -418,13 +377,13 @@ data class com.datadog.kmp.rum.model.LongTaskEvent
     constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, kotlin.Boolean? = null)
     val formatVersion: kotlin.Long
   data class Context
-    constructor(kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+    constructor(kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
   data class Action
     constructor(kotlin.collections.List<kotlin.String>)
   data class Container
     constructor(ContainerView, LongTaskEventSource)
   data class LongTask
-    constructor(kotlin.String? = null, EntryType? = null, kotlin.Long, kotlin.Long? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Boolean? = null, kotlin.collections.List<Script>? = null)
+    constructor(kotlin.String? = null, kotlin.Long, kotlin.Boolean? = null)
   data class Cellular
     constructor(kotlin.String? = null, kotlin.String? = null)
   data class Viewport
@@ -435,8 +394,6 @@ data class com.datadog.kmp.rum.model.LongTaskEvent
     constructor(kotlin.Number, kotlin.Number? = null)
   data class ContainerView
     constructor(kotlin.String)
-  data class Script
-    constructor(kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.String? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.String? = null, InvokerType? = null, kotlin.String? = null)
   enum LongTaskEventSource
     constructor(kotlin.String)
     - ANDROID
@@ -457,17 +414,6 @@ data class com.datadog.kmp.rum.model.LongTaskEvent
     - CONNECTED
     - NOT_CONNECTED
     - MAYBE
-  enum Interface
-    constructor(kotlin.String)
-    - BLUETOOTH
-    - CELLULAR
-    - ETHERNET
-    - WIFI
-    - WIMAX
-    - MIXED
-    - OTHER
-    - UNKNOWN
-    - NONE
   enum EffectiveType
     constructor(kotlin.String)
     - SLOW_2G
@@ -483,10 +429,6 @@ data class com.datadog.kmp.rum.model.LongTaskEvent
     - GAMING_CONSOLE
     - BOT
     - OTHER
-  enum EntryType
-    constructor(kotlin.String)
-    - LONG_TASK
-    - LONG_ANIMATION_FRAME
   enum Plan
     constructor(kotlin.Number)
     - PLAN_1
@@ -500,14 +442,6 @@ data class com.datadog.kmp.rum.model.LongTaskEvent
     - PREWARM
     - FROM_NON_INTERACTIVE_SESSION
     - EXPLICIT_STOP
-  enum InvokerType
-    constructor(kotlin.String)
-    - USER_CALLBACK
-    - EVENT_LISTENER
-    - RESOLVE_PROMISE
-    - REJECT_PROMISE
-    - CLASSIC_SCRIPT
-    - MODULE_SCRIPT
 data class com.datadog.kmp.rum.model.ResourceEvent
   constructor(kotlin.Long, Application, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, ResourceEventSession, ResourceEventSource? = null, ResourceEventView, Usr? = null, Connectivity? = null, Display? = null, Synthetics? = null, CiTest? = null, Os? = null, Device? = null, Dd, Context? = null, Action? = null, Container? = null, Resource)
   val type: kotlin.String
@@ -518,9 +452,9 @@ data class com.datadog.kmp.rum.model.ResourceEvent
   data class ResourceEventView
     constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null)
   data class Usr
-    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
   data class Connectivity
-    constructor(Status, kotlin.collections.List<Interface>? = null, EffectiveType? = null, Cellular? = null)
+    constructor(Status, EffectiveType? = null, Cellular? = null)
   data class Display
     constructor(Viewport? = null)
   data class Synthetics
@@ -535,13 +469,13 @@ data class com.datadog.kmp.rum.model.ResourceEvent
     constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.Boolean? = null)
     val formatVersion: kotlin.Long
   data class Context
-    constructor(kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+    constructor(kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
   data class Action
     constructor(kotlin.collections.List<kotlin.String>)
   data class Container
     constructor(ContainerView, ResourceEventSource)
   data class Resource
-    constructor(kotlin.String? = null, ResourceType, Method? = null, kotlin.String, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, RenderBlockingStatus? = null, Redirect? = null, Dns? = null, Connect? = null, Ssl? = null, FirstByte? = null, Download? = null, Provider? = null, Graphql? = null)
+    constructor(kotlin.String? = null, ResourceType, Method? = null, kotlin.String, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, Redirect? = null, Dns? = null, Connect? = null, Ssl? = null, FirstByte? = null, Download? = null, Provider? = null, Graphql? = null)
   data class Cellular
     constructor(kotlin.String? = null, kotlin.String? = null)
   data class Viewport
@@ -588,17 +522,6 @@ data class com.datadog.kmp.rum.model.ResourceEvent
     - CONNECTED
     - NOT_CONNECTED
     - MAYBE
-  enum Interface
-    constructor(kotlin.String)
-    - BLUETOOTH
-    - CELLULAR
-    - ETHERNET
-    - WIFI
-    - WIMAX
-    - MIXED
-    - OTHER
-    - UNKNOWN
-    - NONE
   enum EffectiveType
     constructor(kotlin.String)
     - SLOW_2G
@@ -638,10 +561,6 @@ data class com.datadog.kmp.rum.model.ResourceEvent
     - TRACE
     - OPTIONS
     - CONNECT
-  enum RenderBlockingStatus
-    constructor(kotlin.String)
-    - BLOCKING
-    - NON_BLOCKING
   enum Plan
     constructor(kotlin.Number)
     - PLAN_1
@@ -684,11 +603,11 @@ data class com.datadog.kmp.rum.model.ViewEvent
   data class ViewEventSession
     constructor(kotlin.String, ViewEventSessionType, kotlin.Boolean? = null, kotlin.Boolean? = true, kotlin.Boolean? = null)
   data class ViewEventView
-    constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null, kotlin.Long? = null, LoadingType? = null, kotlin.Long, kotlin.Long? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, CustomTimings? = null, kotlin.Boolean? = null, kotlin.Boolean? = null, Action, Error, Crash? = null, LongTask? = null, FrozenFrame? = null, Resource, Frustration? = null, kotlin.collections.List<InForegroundPeriod>? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, FlutterBuildTime? = null, FlutterBuildTime? = null, FlutterBuildTime? = null)
+    constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null, kotlin.Long? = null, LoadingType? = null, kotlin.Long, kotlin.Long? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, CustomTimings? = null, kotlin.Boolean? = null, kotlin.Boolean? = null, Action, Error, Crash? = null, LongTask? = null, FrozenFrame? = null, Resource, Frustration? = null, kotlin.collections.List<InForegroundPeriod>? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, FlutterBuildTime? = null, FlutterBuildTime? = null, FlutterBuildTime? = null)
   data class Usr
-    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
   data class Connectivity
-    constructor(Status, kotlin.collections.List<Interface>? = null, EffectiveType? = null, Cellular? = null)
+    constructor(Status, EffectiveType? = null, Cellular? = null)
   data class Display
     constructor(Viewport? = null, Scroll? = null)
   data class Synthetics
@@ -703,13 +622,13 @@ data class com.datadog.kmp.rum.model.ViewEvent
     constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, kotlin.Long, kotlin.collections.List<PageState>? = null, ReplayStats? = null)
     val formatVersion: kotlin.Long
   data class Context
-    constructor(kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+    constructor(kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
   data class Container
     constructor(ContainerView, ViewEventSource)
   data class Privacy
     constructor(ReplayLevel)
   data class CustomTimings
-    constructor(kotlin.collections.MutableMap<kotlin.String, kotlin.Long> = mutableMapOf())
+    constructor(kotlin.collections.Map<kotlin.String, kotlin.Long> = mapOf())
   data class Action
     constructor(kotlin.Long)
   data class Error
@@ -774,17 +693,6 @@ data class com.datadog.kmp.rum.model.ViewEvent
     - CONNECTED
     - NOT_CONNECTED
     - MAYBE
-  enum Interface
-    constructor(kotlin.String)
-    - BLUETOOTH
-    - CELLULAR
-    - ETHERNET
-    - WIFI
-    - WIMAX
-    - MIXED
-    - OTHER
-    - UNKNOWN
-    - NONE
   enum EffectiveType
     constructor(kotlin.String)
     - SLOW_2G

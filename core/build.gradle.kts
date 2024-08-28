@@ -71,7 +71,7 @@ kotlin {
                 // class is already declared, leading to error: 'DDRUMErrorEventErrorMeta' is going
                 // to be declared twice
                 compilerOptionFlag,
-                "-DDDRUMErrorEventErrorMeta=DDRUMErrorEventErrorMetaUnavailable"
+                "-DDDRUMErrorEventErrorMeta=DDRUMErrorEventErrorMetaInfo"
             )
             version = libs.versions.datadog.ios.get()
         }

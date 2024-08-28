@@ -10,6 +10,4 @@ object Identifier {
 
     const val PARAM_JSON_VALUE = "jsonValue"
     const val PARAM_ADDITIONAL_PROPS = "additionalProperties"
-
-    const val PARAM_RESERVED_PROPS = "RESERVED_PROPERTIES"
 }

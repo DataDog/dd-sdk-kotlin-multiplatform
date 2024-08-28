@@ -138,15 +138,6 @@
           "enum": ["connected", "not_connected", "maybe"],
           "readOnly": true
         },
-        "interfaces": {
-          "type": "array",
-          "description": "The list of available network interfaces",
-          "items": {
-            "type": "string",
-            "enum": ["bluetooth", "cellular", "ethernet", "wifi", "wimax", "mixed", "other", "unknown", "none"]
-          },
-          "readOnly": true
-        },
         "effective_type": {
           "type": "string",
           "description": "Cellular connection type reflecting the measured network performance",

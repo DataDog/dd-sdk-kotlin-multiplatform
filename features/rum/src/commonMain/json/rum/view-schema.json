@@ -92,12 +92,6 @@
               "minimum": 0,
               "readOnly": true
             },
-            "interaction_to_next_paint_time": {
-              "type": "integer",
-              "description": "Duration in ns between start of the view and start of the INP",
-              "minimum": 0,
-              "readOnly": true
-            },
             "interaction_to_next_paint_target_selector": {
               "type": "string",
               "description": "CSS selector path of the interacted element corresponding to INP",
@@ -106,12 +100,6 @@
             "cumulative_layout_shift": {
               "type": "number",
               "description": "Total layout shift score that occurred on the view",
-              "minimum": 0,
-              "readOnly": true
-            },
-            "cumulative_layout_shift_time": {
-              "type": "integer",
-              "description": "Duration in ns between start of the view and start of the largest layout shift contributing to CLS",
               "minimum": 0,
               "readOnly": true
             },
