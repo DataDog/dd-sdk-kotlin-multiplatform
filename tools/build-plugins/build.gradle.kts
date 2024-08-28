@@ -28,6 +28,13 @@ dependencies {
     implementation(libs.kotlinGrammarParser)
     implementation(libs.kotlinPoet)
     implementation(libs.gson)
+
+    testImplementation(libs.bundles.jUnit5)
+    testImplementation(libs.bundles.jvmTestTools)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 tasks.validatePlugins {
