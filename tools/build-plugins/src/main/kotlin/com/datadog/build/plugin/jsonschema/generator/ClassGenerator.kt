@@ -12,11 +12,10 @@ import com.datadog.build.plugin.jsonschema.TypeDefinition
 import com.datadog.build.plugin.jsonschema.TypeProperty
 import com.datadog.build.plugin.jsonschema.variableName
 import com.squareup.kotlinpoet.ANY
-import com.squareup.kotlinpoet.ARRAY
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.MUTABLE_MAP
+import com.squareup.kotlinpoet.MAP
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
@@ -125,7 +124,8 @@ class ClassGenerator(
             val mapType = definition.additionalProperties.additionalPropertyType(rootTypeName)
             constructorBuilder.addParameter(
                 ParameterSpec.builder(Identifier.PARAM_ADDITIONAL_PROPS, mapType)
-                    .defaultValue("mutableMapOf()")
+                    // TODO RUM-5992 additional properties are not mutable in iOS API, we have to align
+                    .defaultValue("mapOf()")
                     .build()
             )
         }
@@ -193,19 +193,6 @@ class ClassGenerator(
         }
     }
 
-    @Suppress("FunctionMaxLength")
-    private fun generateReservedPropertiesArray(definition: TypeDefinition.Class): PropertySpec {
-        val propertyNames = definition.properties.joinToString(", ") { "\"${it.name}\"" }
-
-        val propertyBuilder = PropertySpec.builder(
-            Identifier.PARAM_RESERVED_PROPS,
-            ARRAY.parameterizedBy(STRING),
-            KModifier.INTERNAL
-        ).initializer("arrayOf($propertyNames)")
-
-        return propertyBuilder.build()
-    }
-
     // endregion
 
     // region Internal Extensions
@@ -253,7 +240,8 @@ class ClassGenerator(
         } else {
             ANY.copy(nullable = true)
         }
-        return MUTABLE_MAP.parameterizedBy(STRING, valueType)
+        // TODO RUM-5992 additional properties are not mutable in iOS API, we have to align
+        return MAP.parameterizedBy(STRING, valueType)
     }
 
     // endregion

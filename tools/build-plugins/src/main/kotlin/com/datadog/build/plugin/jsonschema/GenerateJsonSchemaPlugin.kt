@@ -38,23 +38,15 @@ class GenerateJsonSchemaPlugin : Plugin<Project> {
                                 )
                             }
                         }
-                        target.tasks.register<GenerateJsonSchemaTask>("generate${name.ddCapitalize()}ModelsFromJson") {
-                            inputDirPath = location.destinationFolder
-                            targetPackageName = schema.targetPackageName.get()
-                            ignoredFiles = schema.ignoredFiles.getOrElse(emptyList()).toTypedArray()
-                            inputNameMapping = schema.inputNameMapping.getOrElse(emptyMap())
-                        }
                     }
 
-                    is SchemaLocation.Local -> {
-                        target.tasks.register<GenerateJsonSchemaTask>("generate${name.ddCapitalize()}ModelsFromJson") {
-                            inputDirPath = location.path
-                            targetPackageName = schema.targetPackageName.get()
-                            ignoredFiles = schema.ignoredFiles.getOrElse(emptyList()).toTypedArray()
-                            inputNameMapping = schema.inputNameMapping.getOrElse(emptyMap())
-                        }
+                    else -> {
+                        // do nothing
                     }
                 }
+
+                registerModelsGenerationTask(target, name, schema)
+
                 target.tasks.withType<KotlinCompile> {
                     dependsOn(target.tasks.withType<GenerateJsonSchemaTask>())
                 }
@@ -67,8 +59,33 @@ class GenerateJsonSchemaPlugin : Plugin<Project> {
                     sourceSets.commonMain {
                         kotlin.srcDir("build/generated/json2kotlin/commonMain/kotlin")
                     }
+                    val jsonSchemas = extension.jsonSchemas.values
+                    if (jsonSchemas.any { it.androidModelsMappingGeneration.enabled.getOrElse(false) }) {
+                        sourceSets.androidMain {
+                            kotlin.srcDir("build/generated/json2kotlin/androidMain/kotlin")
+                        }
+                    }
+                    if (jsonSchemas.any { it.iosModelsMappingGeneration.enabled.getOrElse(false) }) {
+                        sourceSets.iosMain {
+                            kotlin.srcDir("build/generated/json2kotlin/iosMain/kotlin")
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    private fun registerModelsGenerationTask(target: Project, schemaName: String, schema: JsonSchema) {
+        target.tasks.register<GenerateJsonSchemaTask>("generate${schemaName.ddCapitalize()}ModelsFromJson") {
+            inputDirPath = when (val location = schema.location.get()) {
+                is SchemaLocation.Git -> location.destinationFolder
+                is SchemaLocation.Local -> location.path
+            }
+            targetPackageName = schema.targetPackageName.get()
+            ignoredFiles = schema.ignoredFiles.getOrElse(emptyList()).toTypedArray()
+            inputNameMapping = schema.inputNameMapping.getOrElse(emptyMap())
+            androidModelsMappingGeneration.set(schema.androidModelsMappingGeneration)
+            iosModelsMappingGeneration.set(schema.iosModelsMappingGeneration)
         }
     }
 }

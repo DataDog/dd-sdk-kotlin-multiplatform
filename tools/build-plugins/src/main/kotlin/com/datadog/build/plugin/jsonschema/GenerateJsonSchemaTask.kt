@@ -6,9 +6,12 @@
 
 package com.datadog.build.plugin.jsonschema
 
+import com.datadog.build.plugin.jsonschema.generator.AndroidModelsMappingFileGenerator
 import com.datadog.build.plugin.jsonschema.generator.FileGenerator
+import com.datadog.build.plugin.jsonschema.generator.IOSModelsMappingFileGenerator
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -26,7 +29,7 @@ import java.io.File
  * It will read source JsonSchema files and generate the relevant Kotlin data classes.
  */
 @CacheableTask
-open class GenerateJsonSchemaTask : DefaultTask() {
+abstract class GenerateJsonSchemaTask : DefaultTask() {
 
     init {
         group = "datadog"
@@ -79,6 +82,12 @@ open class GenerateJsonSchemaTask : DefaultTask() {
     @Input
     var inputNameMapping: Map<String, String> = emptyMap()
 
+    @get:Input
+    abstract val androidModelsMappingGeneration: Property<AndroidModelsMappingGeneration>
+
+    @get:Input
+    abstract val iosModelsMappingGeneration: Property<IOSModelsMappingGeneration>
+
     /**
      * The [OutputDirectory] (`src/main/kotlin/{out_package}`).
      */
@@ -115,6 +124,30 @@ open class GenerateJsonSchemaTask : DefaultTask() {
         files.forEach {
             val type = reader.readSchema(it)
             generator.generate(type)
+            with(androidModelsMappingGeneration.get()) {
+                if (enabled.getOrElse(false)) {
+                    val mappingGenerator = AndroidModelsMappingFileGenerator(
+                        File(outputDir.path.replace("commonMain", "androidMain")),
+                        commonModelsPackageName = targetPackageName,
+                        androidModelsPackageName = androidModelsPackageName.get(),
+                        logger
+                    )
+                    mappingGenerator.generate(type)
+                }
+            }
+            with(iosModelsMappingGeneration.get()) {
+                if (enabled.getOrElse(false)) {
+                    val mappingGenerator = IOSModelsMappingFileGenerator(
+                        File(outputDir.path.replace("commonMain", "iosMain")),
+                        commonModelsPackageName = targetPackageName,
+                        iosModelsPackageName = iosModelsPackageName.get(),
+                        iosModelsClassNamePrefix = iosModelsClassNamePrefix.getOrElse(""),
+                        typeNameRemapping = typeNameRemapping.get(),
+                        logger
+                    )
+                    mappingGenerator.generate(type)
+                }
+            }
         }
     }
 

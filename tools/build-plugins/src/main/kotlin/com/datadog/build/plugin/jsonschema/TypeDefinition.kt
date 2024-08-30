@@ -41,19 +41,6 @@ sealed class TypeDefinition {
         override fun matches(other: TypeDefinition): Boolean {
             return (other is Constant) && (other.type == type) && (other.value == value)
         }
-
-        fun asPrimitiveTypeFun(): String {
-            return when (type) {
-                JsonType.NULL -> "asNull"
-                JsonType.BOOLEAN -> "asBoolean"
-                JsonType.NUMBER -> "asNumber"
-                JsonType.STRING -> "asString"
-                JsonType.INTEGER -> "asLong"
-                JsonType.ARRAY -> "asArray"
-                JsonType.OBJECT -> "asObjext"
-                null -> TODO()
-            }
-        }
     }
 
     data class Primitive(
@@ -71,16 +58,6 @@ sealed class TypeDefinition {
 
         override fun matches(other: TypeDefinition): Boolean {
             return (other is Primitive) && (other.type == type)
-        }
-
-        fun asPrimitiveTypeFun(): String {
-            return when (type) {
-                JsonPrimitiveType.BOOLEAN -> "asBoolean"
-                JsonPrimitiveType.DOUBLE -> "asDouble"
-                JsonPrimitiveType.STRING -> "asString"
-                JsonPrimitiveType.INTEGER -> "asLong"
-                JsonPrimitiveType.NUMBER -> "asNumber"
-            }
         }
     }
 
@@ -100,6 +77,7 @@ sealed class TypeDefinition {
 
     data class Class(
         val name: String,
+        val originalName: String,
         val properties: List<TypeProperty>,
         override val description: String = "",
         val additionalProperties: TypeDefinition? = null,
@@ -137,6 +115,7 @@ sealed class TypeDefinition {
 
             return Class(
                 name,
+                originalName,
                 mergedFields,
                 "$description\n${other.description}".trim(),
                 mergedAdditionalProperties
@@ -197,6 +176,7 @@ sealed class TypeDefinition {
 
     data class Enum(
         val name: String,
+        val originalName: String,
         val type: JsonType?,
         val values: List<String?>,
         override val description: String = ""

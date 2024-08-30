@@ -69,30 +69,6 @@
               "minimum": 0,
               "readOnly": true
             },
-            "encoded_body_size": {
-              "type": "integer",
-              "description": "Size in octet of the resource before removing any applied content encodings",
-              "minimum": 0,
-              "readOnly": true
-            },
-            "decoded_body_size": {
-              "type": "integer",
-              "description": "Size in octet of the resource after removing any applied encoding",
-              "minimum": 0,
-              "readOnly": true
-            },
-            "transfer_size": {
-              "type": "integer",
-              "description": "Size in octet of the fetched resource",
-              "minimum": 0,
-              "readOnly": true
-            },
-            "render_blocking_status": {
-              "type": "string",
-              "description": "Render blocking status of the resource",
-              "enum": ["blocking", "non-blocking"],
-              "readOnly": true
-            },
             "redirect": {
               "type": "object",
               "description": "Redirect phase properties",

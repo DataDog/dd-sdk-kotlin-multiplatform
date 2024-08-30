@@ -101,7 +101,7 @@
             "category": {
               "type": "string",
               "description": "The specific category of the error. It provides a high-level grouping for different types of errors.",
-              "enum": ["ANR", "App Hang", "Exception", "Watchdog Termination", "Memory Warning"],
+              "enum": ["ANR", "App Hang", "Exception"],
               "readOnly": true
             },
             "handling": {
@@ -314,35 +314,9 @@
               },
               "readOnly": true
             },
-            "csp": {
-              "type": "object",
-              "description": "Content Security Violation properties",
-              "properties": {
-                "disposition": {
-                  "type": "string",
-                  "description": "In the context of CSP errors, indicates how the violated policy is configured to be treated by the user agent.",
-                  "enum": ["enforce", "report"],
-                  "readOnly": true
-                }
-              },
-              "readOnly": true
-            },
             "time_since_app_start": {
               "type": "integer",
               "description": "Time since application start when error happened (in milliseconds)",
-              "readOnly": true
-            }
-          },
-          "readOnly": true
-        },
-        "freeze": {
-          "type": "object",
-          "description": "Properties of App Hang and ANR errors",
-          "required": ["duration"],
-          "properties": {
-            "duration": {
-              "type": "integer",
-              "description": "Duration of the main thread freeze (in ns)",
               "readOnly": true
             }
           },

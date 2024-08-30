@@ -118,5 +118,28 @@ jsonSchemaGenerator {
             "view-schema.json" to "ViewEvent",
             "long_task-schema.json" to "LongTaskEvent"
         )
+
+        androidModelsMappingGeneration {
+            enabled = true
+            androidModelsPackageName = "com.datadog.android.rum.model"
+        }
+
+        iosModelsMappingGeneration {
+            enabled = true
+            iosModelsPackageName = "cocoapods.DatadogObjc"
+            iosModelsClassNamePrefix = "DDRUM"
+            typeNameRemapping = mapOf(
+                "Connectivity" to "RUMConnectivity",
+                "USR" to "RUMUser",
+                "Method" to "RUMMethod",
+                "Context" to "RUMEventAttributes",
+                "CiTest" to "RUMCITest",
+                "SessionType" to "RUMSessionType",
+                "Synthetics" to "RUMSyntheticsTest",
+                "Device" to "RUMDevice",
+                "OS" to "RUMOperatingSystem",
+                "SessionPrecondition" to "RUMSessionPrecondition"
+            )
+        }
     }
 }

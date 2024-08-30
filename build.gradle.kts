@@ -111,7 +111,11 @@ val jvmUnitTestReleaseAllTask = tasks.register("jvmUnitTestReleaseAll") {
 
 // will cover Android-specific tests + tests from common source set
 tasks.register("jvmUnitTestAll") {
-    dependsOn(jvmUnitTestDebugAllTask, jvmUnitTestReleaseAllTask)
+    dependsOn(
+        jvmUnitTestDebugAllTask,
+        jvmUnitTestReleaseAllTask,
+        gradle.includedBuild("build-plugins").task(":test")
+    )
 }
 
 tasks.register("iosUnitTestAll") {
