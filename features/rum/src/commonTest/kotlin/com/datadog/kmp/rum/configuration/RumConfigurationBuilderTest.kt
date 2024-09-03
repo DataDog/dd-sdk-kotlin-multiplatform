@@ -6,7 +6,13 @@
 
 package com.datadog.kmp.rum.configuration
 
+import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.rum.configuration.internal.PlatformRumConfigurationBuilder
+import com.datadog.kmp.rum.event.ViewEventMapper
+import com.datadog.kmp.rum.model.ActionEvent
+import com.datadog.kmp.rum.model.ErrorEvent
+import com.datadog.kmp.rum.model.LongTaskEvent
+import com.datadog.kmp.rum.model.ResourceEvent
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
@@ -128,6 +134,76 @@ class RumConfigurationBuilderTest {
         // Then
         verify {
             mockPlatformRumConfigurationBuilder.setSessionListener(fakeSessionListener)
+        }
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setViewEventMapper W setViewEventMapper`() {
+        // Given
+        val fakeViewEventMapper = ViewEventMapper { it }
+
+        // When
+        testedRumConfigurationBuilder.setViewEventMapper(fakeViewEventMapper)
+
+        // Then
+        verify {
+            mockPlatformRumConfigurationBuilder.setViewEventMapper(fakeViewEventMapper)
+        }
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setResourceEventMapper W setResourceEventMapper`() {
+        // Given
+        val fakeResourceEventMapper = EventMapper<ResourceEvent> { it }
+
+        // When
+        testedRumConfigurationBuilder.setResourceEventMapper(fakeResourceEventMapper)
+
+        // Then
+        verify {
+            mockPlatformRumConfigurationBuilder.setResourceEventMapper(fakeResourceEventMapper)
+        }
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setActionEventMapper W setActionEventMapper`() {
+        // Given
+        val fakeActionEventMapper = EventMapper<ActionEvent> { it }
+
+        // When
+        testedRumConfigurationBuilder.setActionEventMapper(fakeActionEventMapper)
+
+        // Then
+        verify {
+            mockPlatformRumConfigurationBuilder.setActionEventMapper(fakeActionEventMapper)
+        }
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setErrorEventMapper W setErrorEventMapper`() {
+        // Given
+        val fakeErrorEventMapper = EventMapper<ErrorEvent> { it }
+
+        // When
+        testedRumConfigurationBuilder.setErrorEventMapper(fakeErrorEventMapper)
+
+        // Then
+        verify {
+            mockPlatformRumConfigurationBuilder.setErrorEventMapper(fakeErrorEventMapper)
+        }
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setLongTaskEventMapper W setLongTaskEventMapper`() {
+        // Given
+        val fakeLongTaskEventMapper = EventMapper<LongTaskEvent> { it }
+
+        // When
+        testedRumConfigurationBuilder.setLongTaskEventMapper(fakeLongTaskEventMapper)
+
+        // Then
+        verify {
+            mockPlatformRumConfigurationBuilder.setLongTaskEventMapper(fakeLongTaskEventMapper)
         }
     }
 }

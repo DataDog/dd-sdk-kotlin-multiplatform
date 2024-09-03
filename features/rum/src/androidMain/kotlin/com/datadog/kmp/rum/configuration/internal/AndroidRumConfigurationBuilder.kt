@@ -9,14 +9,22 @@ package com.datadog.kmp.rum.configuration.internal
 import android.content.Context
 import android.view.View
 import com.datadog.android.api.SdkCore
+import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.rum.configuration.RumSessionListener
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
+import com.datadog.kmp.rum.event.ViewEventMapper
+import com.datadog.kmp.rum.model.ActionEvent
+import com.datadog.kmp.rum.model.ErrorEvent
+import com.datadog.kmp.rum.model.LongTaskEvent
+import com.datadog.kmp.rum.model.ResourceEvent
+import com.datadog.kmp.rum.model.toCommonModel
 import com.datadog.kmp.rum.tracking.InteractionPredicate
 import com.datadog.kmp.rum.tracking.ViewAttributesProvider
 import com.datadog.kmp.rum.tracking.ViewTrackingStrategy
 import com.datadog.android.rum.RumConfiguration as NativeAndroidConfiguration
 import com.datadog.android.rum.RumSessionListener as NativeRumSessionListener
 import com.datadog.android.rum.configuration.VitalsUpdateFrequency as NativeVitalsUpdateFrequency
+import com.datadog.android.rum.model.ErrorEvent as NativeErrorEvent
 import com.datadog.android.rum.tracking.InteractionPredicate as NativeInteractionPredicate
 import com.datadog.android.rum.tracking.ViewAttributesProvider as NativeViewAttributesProvider
 import com.datadog.android.rum.tracking.ViewTrackingStrategy as NativeViewTrackingStrategy
@@ -61,6 +69,100 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
                 sessionListener.onSessionStarted(sessionId, isDiscarded)
             }
         })
+    }
+
+    override fun setViewEventMapper(eventMapper: ViewEventMapper) {
+        nativeConfigurationBuilder.setViewEventMapper { view ->
+            val mapped = eventMapper.map(view.toCommonModel())
+
+            view.view.referrer = mapped.view.referrer
+            view.view.url = mapped.view.url
+            view.view.name = mapped.view.name
+
+            view
+        }
+    }
+
+    override fun setResourceEventMapper(eventMapper: EventMapper<ResourceEvent>) {
+        nativeConfigurationBuilder.setResourceEventMapper native@{ resource ->
+            val mapped = eventMapper.map(resource.toCommonModel()) ?: return@native null
+
+            resource.view.referrer = mapped.view.referrer
+            resource.view.url = mapped.view.url
+            resource.view.name = mapped.view.name
+
+            resource.resource.url = mapped.resource.url
+
+            resource.resource.graphql?.payload = mapped.resource.graphql?.payload
+            resource.resource.graphql?.variables = mapped.resource.graphql?.variables
+
+            resource
+        }
+    }
+
+    override fun setActionEventMapper(eventMapper: EventMapper<ActionEvent>) {
+        nativeConfigurationBuilder.setActionEventMapper native@{ action ->
+            val mapped = eventMapper.map(action.toCommonModel()) ?: return@native null
+
+            action.view.referrer = mapped.view.referrer
+            action.view.url = mapped.view.url
+            action.view.name = mapped.view.name
+
+            mapped.action.target?.let { target ->
+                action.action.target?.name = target.name
+            }
+
+            action
+        }
+    }
+
+    override fun setErrorEventMapper(eventMapper: EventMapper<ErrorEvent>) {
+        nativeConfigurationBuilder.setErrorEventMapper native@{ error ->
+            val mapped = eventMapper.map(error.toCommonModel()) ?: return@native null
+
+            error.view.referrer = mapped.view.referrer
+            error.view.url = mapped.view.url
+            error.view.name = mapped.view.name
+
+            error.error.message = mapped.error.message
+            error.error.stack = mapped.error.stack
+            error.error.fingerprint = mapped.error.fingerprint
+            error.error.causes = mapped.error.causes?.map {
+                NativeErrorEvent.Cause(
+                    message = it.message,
+                    type = it.type,
+                    stack = it.stack,
+                    source = when (it.source) {
+                        ErrorEvent.ErrorSource.NETWORK -> NativeErrorEvent.ErrorSource.NETWORK
+                        ErrorEvent.ErrorSource.SOURCE -> NativeErrorEvent.ErrorSource.SOURCE
+                        ErrorEvent.ErrorSource.CONSOLE -> NativeErrorEvent.ErrorSource.CONSOLE
+                        ErrorEvent.ErrorSource.LOGGER -> NativeErrorEvent.ErrorSource.LOGGER
+                        ErrorEvent.ErrorSource.AGENT -> NativeErrorEvent.ErrorSource.AGENT
+                        ErrorEvent.ErrorSource.WEBVIEW -> NativeErrorEvent.ErrorSource.WEBVIEW
+                        ErrorEvent.ErrorSource.CUSTOM -> NativeErrorEvent.ErrorSource.CUSTOM
+                        ErrorEvent.ErrorSource.REPORT -> NativeErrorEvent.ErrorSource.REPORT
+                    }
+                )
+            }
+
+            mapped.error.resource?.let {
+                error.error.resource?.url = it.url
+            }
+
+            error
+        }
+    }
+
+    override fun setLongTaskEventMapper(eventMapper: EventMapper<LongTaskEvent>) {
+        nativeConfigurationBuilder.setLongTaskEventMapper native@{ longTask ->
+            val mapped = eventMapper.map(longTask.toCommonModel()) ?: return@native null
+
+            longTask.view.referrer = mapped.view.referrer
+            longTask.view.url = mapped.view.url
+            longTask.view.name = mapped.view.name
+
+            longTask
+        }
     }
 
     fun trackNonFatalAnrs(enabled: Boolean) {

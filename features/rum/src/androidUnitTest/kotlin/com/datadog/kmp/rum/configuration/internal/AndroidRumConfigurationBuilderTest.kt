@@ -8,18 +8,25 @@ package com.datadog.kmp.rum.configuration.internal
 
 import android.content.Context
 import android.view.View
+import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.rum.configuration.RumSessionListener
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
+import com.datadog.kmp.rum.event.ViewEventMapper
+import com.datadog.kmp.rum.model.ActionEvent
+import com.datadog.kmp.rum.model.ErrorEvent
+import com.datadog.kmp.rum.model.LongTaskEvent
+import com.datadog.kmp.rum.model.ResourceEvent
 import com.datadog.kmp.rum.tracking.InteractionPredicate
 import com.datadog.kmp.rum.tracking.ViewAttributesProvider
 import com.datadog.kmp.rum.tracking.ViewTrackingStrategy
-import com.datadog.tools.unit.forge.BaseConfigurator
+import com.datadog.kmp.rum.utils.forge.Configurator
 import com.datadog.tools.unit.forge.exhaustiveAttributes
 import fr.xgouchet.elmyr.Forge
 import fr.xgouchet.elmyr.annotation.BoolForgery
 import fr.xgouchet.elmyr.annotation.FloatForgery
 import fr.xgouchet.elmyr.annotation.Forgery
 import fr.xgouchet.elmyr.annotation.LongForgery
+import fr.xgouchet.elmyr.annotation.StringForgery
 import fr.xgouchet.elmyr.junit5.ForgeConfiguration
 import fr.xgouchet.elmyr.junit5.ForgeExtension
 import org.assertj.core.api.Assertions.assertThat
@@ -37,10 +44,17 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.mockito.quality.Strictness
 import java.util.UUID
+import com.datadog.android.event.EventMapper as NativeEventMapper
 import com.datadog.android.rum.RumConfiguration as NativeAndroidConfiguration
 import com.datadog.android.rum.RumConfiguration as NativeRumConfiguration
 import com.datadog.android.rum.RumSessionListener as NativeRumSessionListener
 import com.datadog.android.rum.configuration.VitalsUpdateFrequency as NativeVitalsUpdateFrequency
+import com.datadog.android.rum.event.ViewEventMapper as NativeViewEventMapper
+import com.datadog.android.rum.model.ActionEvent as NativeActionEvent
+import com.datadog.android.rum.model.ErrorEvent as NativeErrorEvent
+import com.datadog.android.rum.model.LongTaskEvent as NativeLongTaskEvent
+import com.datadog.android.rum.model.ResourceEvent as NativeResourceEvent
+import com.datadog.android.rum.model.ViewEvent as NativeViewEvent
 import com.datadog.android.rum.tracking.InteractionPredicate as NativeInteractionPredicate
 import com.datadog.android.rum.tracking.ViewAttributesProvider as NativeViewAttributesProvider
 import com.datadog.android.rum.tracking.ViewTrackingStrategy as NativeViewTrackingStrategy
@@ -50,7 +64,7 @@ import com.datadog.android.rum.tracking.ViewTrackingStrategy as NativeViewTracki
     ExtendWith(ForgeExtension::class)
 )
 @MockitoSettings(strictness = Strictness.LENIENT)
-@ForgeConfiguration(BaseConfigurator::class)
+@ForgeConfiguration(Configurator::class)
 internal class AndroidRumConfigurationBuilderTest {
 
     private lateinit var testedBuilder: AndroidRumConfigurationBuilder
@@ -221,6 +235,185 @@ internal class AndroidRumConfigurationBuilderTest {
         val fakeTarget = Any()
         interactionPredicateCaptor.firstValue.getTargetName(fakeTarget)
         verify(mockInteractionPredicate).getTargetName(fakeTarget)
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setViewEventMapper W setViewEventMapper`(
+        @Forgery fakeNativeViewEvent: NativeViewEvent,
+        @StringForgery(
+            regex = "(https|http)://([a-z][a-z0-9-]{3,9}\\.){1,4}[a-z][a-z0-9]{2,3}"
+        ) fakeViewReferrer: String,
+        @StringForgery fakeViewName: String,
+        @StringForgery fakeViewUrl: String
+    ) {
+        // Given
+        val fakeViewEventMapper = ViewEventMapper {
+            it.view.referrer = fakeViewReferrer
+            it.view.name = fakeViewName
+            it.view.url = fakeViewUrl
+            it
+        }
+
+        // When
+        testedBuilder.setViewEventMapper(fakeViewEventMapper)
+
+        // Then
+        argumentCaptor<NativeViewEventMapper> {
+            verify(mockNativeRumConfigurationBuilder).setViewEventMapper(capture())
+            firstValue.map(fakeNativeViewEvent)
+
+            assertThat(fakeNativeViewEvent.view.referrer).isEqualTo(fakeViewReferrer)
+            assertThat(fakeNativeViewEvent.view.name).isEqualTo(fakeViewName)
+            assertThat(fakeNativeViewEvent.view.url).isEqualTo(fakeViewUrl)
+        }
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setActionEventMapper W setActionEventMapper`(
+        @Forgery fakeNativeActionEvent: NativeActionEvent,
+        @StringForgery(
+            regex = "(https|http)://([a-z][a-z0-9-]{3,9}\\.){1,4}[a-z][a-z0-9]{2,3}"
+        ) fakeViewReferrer: String,
+        @StringForgery fakeViewName: String,
+        @StringForgery fakeViewUrl: String,
+        @StringForgery fakeActionTargetName: String
+    ) {
+        // Given
+        val fakeActionEventMapper = EventMapper<ActionEvent> {
+            it.view.referrer = fakeViewReferrer
+            it.view.name = fakeViewName
+            it.view.url = fakeViewUrl
+
+            it.action.target?.let {
+                it.name = fakeActionTargetName
+            }
+
+            it
+        }
+
+        // When
+        testedBuilder.setActionEventMapper(fakeActionEventMapper)
+
+        // Then
+        argumentCaptor<NativeEventMapper<NativeActionEvent>> {
+            verify(mockNativeRumConfigurationBuilder).setActionEventMapper(capture())
+            firstValue.map(fakeNativeActionEvent)
+
+            assertThat(fakeNativeActionEvent.view.referrer).isEqualTo(fakeViewReferrer)
+            assertThat(fakeNativeActionEvent.view.name).isEqualTo(fakeViewName)
+            assertThat(fakeNativeActionEvent.view.url).isEqualTo(fakeViewUrl)
+
+            fakeNativeActionEvent.action.target?.let {
+                assertThat(it.name).isEqualTo(fakeActionTargetName)
+            }
+        }
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setResourceEventMapper W setResourceEventMapper`(
+        @Forgery fakeNativeResourceEvent: NativeResourceEvent,
+        @StringForgery(
+            regex = "(https|http)://([a-z][a-z0-9-]{3,9}\\.){1,4}[a-z][a-z0-9]{2,3}"
+        ) fakeViewReferrer: String,
+        @StringForgery fakeViewName: String,
+        @StringForgery fakeViewUrl: String,
+        @StringForgery(
+            regex = "(https|http)://([a-z][a-z0-9-]{3,9}\\.){1,4}[a-z][a-z0-9]{2,3}"
+        ) fakeResourceUrl: String
+    ) {
+        // Given
+        val fakeResourceEventMapper = EventMapper<ResourceEvent> {
+            it.view.referrer = fakeViewReferrer
+            it.view.name = fakeViewName
+            it.view.url = fakeViewUrl
+
+            it.resource.url = fakeResourceUrl
+
+            it
+        }
+
+        // When
+        testedBuilder.setResourceEventMapper(fakeResourceEventMapper)
+
+        // Then
+        argumentCaptor<NativeEventMapper<NativeResourceEvent>> {
+            verify(mockNativeRumConfigurationBuilder).setResourceEventMapper(capture())
+            firstValue.map(fakeNativeResourceEvent)
+
+            assertThat(fakeNativeResourceEvent.view.referrer).isEqualTo(fakeViewReferrer)
+            assertThat(fakeNativeResourceEvent.view.name).isEqualTo(fakeViewName)
+            assertThat(fakeNativeResourceEvent.view.url).isEqualTo(fakeViewUrl)
+
+            assertThat(fakeNativeResourceEvent.resource.url).isEqualTo(fakeResourceUrl)
+        }
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setErrorEventMapper W setErrorEventMapper`(
+        @Forgery fakeNativeErrorEvent: NativeErrorEvent,
+        @StringForgery(
+            regex = "(https|http)://([a-z][a-z0-9-]{3,9}\\.){1,4}[a-z][a-z0-9]{2,3}"
+        ) fakeViewReferrer: String,
+        @StringForgery fakeViewName: String,
+        @StringForgery fakeViewUrl: String,
+        @StringForgery fakeErrorFingerprint: String
+    ) {
+        // Given
+        val fakeErrorEventMapper = EventMapper<ErrorEvent> {
+            it.view.referrer = fakeViewReferrer
+            it.view.name = fakeViewName
+            it.view.url = fakeViewUrl
+
+            it.error.fingerprint = fakeErrorFingerprint
+
+            it
+        }
+
+        // When
+        testedBuilder.setErrorEventMapper(fakeErrorEventMapper)
+
+        // Then
+        argumentCaptor<NativeEventMapper<NativeErrorEvent>> {
+            verify(mockNativeRumConfigurationBuilder).setErrorEventMapper(capture())
+            firstValue.map(fakeNativeErrorEvent)
+
+            assertThat(fakeNativeErrorEvent.view.referrer).isEqualTo(fakeViewReferrer)
+            assertThat(fakeNativeErrorEvent.view.name).isEqualTo(fakeViewName)
+            assertThat(fakeNativeErrorEvent.view.url).isEqualTo(fakeViewUrl)
+
+            assertThat(fakeNativeErrorEvent.error.fingerprint).isEqualTo(fakeErrorFingerprint)
+        }
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setLongTaskEventMapper W setLongTaskEventMapper`(
+        @Forgery fakeNativeLongTaskEvent: NativeLongTaskEvent,
+        @StringForgery(
+            regex = "(https|http)://([a-z][a-z0-9-]{3,9}\\.){1,4}[a-z][a-z0-9]{2,3}"
+        ) fakeViewReferrer: String,
+        @StringForgery fakeViewName: String,
+        @StringForgery fakeViewUrl: String
+    ) {
+        // Given
+        val fakeLongTaskEventMapper = EventMapper<LongTaskEvent> {
+            it.view.referrer = fakeViewReferrer
+            it.view.name = fakeViewName
+            it.view.url = fakeViewUrl
+            it
+        }
+
+        // When
+        testedBuilder.setLongTaskEventMapper(fakeLongTaskEventMapper)
+
+        // Then
+        argumentCaptor<NativeEventMapper<NativeLongTaskEvent>> {
+            verify(mockNativeRumConfigurationBuilder).setLongTaskEventMapper(capture())
+            firstValue.map(fakeNativeLongTaskEvent)
+
+            assertThat(fakeNativeLongTaskEvent.view.referrer).isEqualTo(fakeViewReferrer)
+            assertThat(fakeNativeLongTaskEvent.view.name).isEqualTo(fakeViewName)
+            assertThat(fakeNativeLongTaskEvent.view.url).isEqualTo(fakeViewUrl)
+        }
     }
 
     @Test

@@ -11,6 +11,13 @@ import cocoapods.DatadogObjc.DDRUMVitalsFrequencyAverage
 import cocoapods.DatadogObjc.DDRUMVitalsFrequencyFrequent
 import cocoapods.DatadogObjc.DDRUMVitalsFrequencyNever
 import cocoapods.DatadogObjc.DDRUMVitalsFrequencyRare
+import com.datadog.kmp.Datadog
+import com.datadog.kmp.core.configuration.Configuration
+import com.datadog.kmp.privacy.TrackingConsent
+import com.datadog.kmp.rum.Rum
+import com.datadog.kmp.rum.RumActionType
+import com.datadog.kmp.rum.RumMonitor
+import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.RumSessionListener
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.tracking.RumAction
@@ -18,14 +25,22 @@ import com.datadog.kmp.rum.tracking.RumView
 import com.datadog.kmp.rum.tracking.UIKitRUMActionsPredicate
 import com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
 import com.datadog.tools.random.exhaustiveAttributes
+import com.datadog.tools.random.nullable
 import com.datadog.tools.random.randomBoolean
 import com.datadog.tools.random.randomEnumValue
 import com.datadog.tools.random.randomFloat
+import com.datadog.tools.random.randomInt
 import com.datadog.tools.random.randomLong
 import dev.mokkery.mock
 import dev.mokkery.verify
+import platform.Foundation.NSDate
+import platform.Foundation.now
+import platform.Foundation.timeIntervalSinceDate
 import platform.UIKit.UIView
 import platform.UIKit.UIViewController
+import platform.posix.usleep
+import kotlin.concurrent.AtomicInt
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -203,6 +218,148 @@ class IOSRumConfigurationBuilderTest {
         assertEquals(0.0, fakeNativeRumConfiguration.appHangThreshold())
     }
 
+    // region event mappers
+
+    // There is no way to create an instance of the RUM events in iOS SDK ObjC API, so they only way we can get them
+    // is by running the real SDK instance and interacting with RUM monitor.
+    // The best we can do for the mappers tests is to assert that they were called and make sure nothing crashes
+    // during the conversion to the native model.
+
+    @Test
+    fun `M call platform RUM configuration builder+setViewEventMapper W setViewEventMapper`() {
+        // Given
+        initializeSdkWithPendingConsent()
+
+        val latch = CountDownLatch(1)
+
+        initializeRum {
+            setViewEventMapper {
+                // beware: we have ApplicationLaunch view as well, so it can be called multiple times
+                latch.countDown()
+                it
+            }
+        }
+
+        // When
+        runRUMActions(imitateLongTask = true)
+        latch.await(EVENTS_WAIT_TIMEOUT_MS)
+
+        // Then
+        assertEquals(
+            expected = true,
+            actual = latch.isExhausted(),
+            "Expected user-provided view event mapper to be called successfully, but it wasn't"
+        )
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setResourceEventMapper W setResourceEventMapper`() {
+        // Given
+        initializeSdkWithPendingConsent()
+
+        val latch = CountDownLatch(1)
+
+        initializeRum {
+            setResourceEventMapper {
+                latch.countDown()
+                it
+            }
+        }
+
+        // When
+        runRUMActions()
+        latch.await(EVENTS_WAIT_TIMEOUT_MS)
+
+        // Then
+        assertEquals(
+            expected = true,
+            actual = latch.isExhausted(),
+            "Expected user-provided resource event mapper to be called successfully, but it wasn't"
+        )
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setActionEventMapper W setActionEventMapper`() {
+        // Given
+        initializeSdkWithPendingConsent()
+
+        val latch = CountDownLatch(1)
+
+        initializeRum {
+            setActionEventMapper {
+                latch.countDown()
+                it
+            }
+        }
+
+        // When
+        runRUMActions()
+        latch.await(EVENTS_WAIT_TIMEOUT_MS)
+
+        // Then
+        assertEquals(
+            expected = true,
+            actual = latch.isExhausted(),
+            "Expected user-provided action event mapper to be called successfully, but it wasn't"
+        )
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setErrorEventMapper W setErrorEventMapper`() {
+        // Given
+        initializeSdkWithPendingConsent()
+
+        val latch = CountDownLatch(1)
+
+        initializeRum {
+            setErrorEventMapper {
+                latch.countDown()
+                it
+            }
+        }
+
+        // When
+        runRUMActions()
+        latch.await(EVENTS_WAIT_TIMEOUT_MS)
+
+        // Then
+        assertEquals(
+            expected = true,
+            actual = latch.isExhausted(),
+            "Expected user-provided error event mapper to be called successfully, but it wasn't"
+        )
+    }
+
+    // Long task detection seems not working in the test executable
+    @Ignore
+    @Test
+    fun `M call platform RUM configuration builder+setLongTaskEventMapper W setLongTaskEventMapper`() {
+        // Given
+        initializeSdkWithPendingConsent()
+
+        val latch = CountDownLatch(1)
+
+        initializeRum {
+            setLongTaskEventMapper {
+                latch.countDown()
+                it
+            }
+        }
+
+        // When
+        runRUMActions(imitateLongTask = true)
+        latch.await(EVENTS_WAIT_TIMEOUT_MS)
+
+        // Then
+        assertEquals(
+            expected = true,
+            actual = latch.isExhausted(),
+            "Expected user-provided long task event mapper to be called successfully, but it wasn't"
+        )
+    }
+
+    // endregion
+
     @Test
     fun `M return native configuration W build`() {
         // When
@@ -210,5 +367,74 @@ class IOSRumConfigurationBuilderTest {
 
         // Then
         assertSame(fakeNativeRumConfiguration, nativeConfiguration)
+    }
+
+    // region private
+
+    private class CountDownLatch(count: Int) {
+        private val count = AtomicInt(count)
+
+        fun countDown() {
+            count.decrementAndGet()
+        }
+
+        fun await(timeoutMs: Long) {
+            val started = NSDate.now
+            while (!isExhausted()) {
+                val now = NSDate.now
+                if (now.timeIntervalSinceDate(started) * 1000 > timeoutMs) {
+                    break
+                }
+            }
+        }
+
+        fun isExhausted() = count.value <= 0
+    }
+
+    private fun runRUMActions(imitateLongTask: Boolean = false) {
+        with(RumMonitor.get()) {
+            val fakeViewName = "FakeView"
+            startView(fakeViewName, fakeViewName)
+
+            addError("FakeErrorMessage", randomEnumValue(), IllegalStateException("fakeExceptionMessage"))
+
+            addAction(RumActionType.CUSTOM, "FakeAction", mapOf("action-custom-attribute" to "action-custom-value"))
+            val fakeResourceName = "FakeResource"
+            startResource(fakeResourceName, randomEnumValue(), "https://www.datadoghq.com")
+            stopResource(
+                fakeResourceName,
+                statusCode = randomInt(from = 100, until = 600),
+                size = nullable(randomLong(from = 0L)),
+                randomEnumValue(),
+                mapOf("resource-custom-attribute" to "resource-custom-value")
+            )
+
+            // sleep for 500ms
+            if (imitateLongTask) usleep(500_000U)
+
+            stopView(fakeViewName)
+        }
+    }
+
+    private fun initializeSdkWithPendingConsent() {
+        val fakeConfiguration = Configuration.Builder(
+            clientToken = "fakeToken",
+            env = "fakeEnv"
+        ).build()
+        Datadog.initialize(null, fakeConfiguration, TrackingConsent.PENDING)
+    }
+
+    private fun initializeRum(configurationAction: RumConfiguration.Builder.() -> Unit) {
+        Rum.enable(
+            RumConfiguration.Builder(applicationId = "fakeApplicationId")
+                .apply(configurationAction)
+                .build()
+        )
+    }
+
+    // endregion
+
+    private companion object {
+        const val EVENTS_WAIT_TIMEOUT_MS = 2000L
     }
 }

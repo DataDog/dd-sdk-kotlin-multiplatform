@@ -6,7 +6,13 @@
 
 package com.datadog.kmp.rum.configuration
 
+import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.rum.configuration.internal.PlatformRumConfigurationBuilder
+import com.datadog.kmp.rum.event.ViewEventMapper
+import com.datadog.kmp.rum.model.ActionEvent
+import com.datadog.kmp.rum.model.ErrorEvent
+import com.datadog.kmp.rum.model.LongTaskEvent
+import com.datadog.kmp.rum.model.ResourceEvent
 
 /**
  * Describes configuration to be used for the RUM feature.
@@ -16,6 +22,7 @@ class RumConfiguration internal constructor(internal val nativeConfiguration: An
     /**
      * A Builder class for a [RumConfiguration].
      */
+    @Suppress("TooManyFunctions")
     class Builder {
 
         internal val platformBuilder: PlatformRumConfigurationBuilder<*>
@@ -110,6 +117,61 @@ class RumConfiguration internal constructor(internal val nativeConfiguration: An
          */
         fun setSessionListener(sessionListener: RumSessionListener): Builder {
             platformBuilder.setSessionListener(sessionListener)
+            return this
+        }
+
+        /**
+         * Sets the [ViewEventMapper] for the RUM [ViewEvent]. You can use this interface implementation
+         * to modify the [ViewEvent] attributes before serialisation.
+         *
+         * @param eventMapper the [ViewEventMapper] implementation.
+         */
+        fun setViewEventMapper(eventMapper: ViewEventMapper): Builder {
+            platformBuilder.setViewEventMapper(eventMapper = eventMapper)
+            return this
+        }
+
+        /**
+         * Sets the [EventMapper] for the RUM [ResourceEvent]. You can use this interface implementation
+         * to modify the [ResourceEvent] attributes before serialisation.
+         *
+         * @param eventMapper the [EventMapper] implementation.
+         */
+        fun setResourceEventMapper(eventMapper: EventMapper<ResourceEvent>): Builder {
+            platformBuilder.setResourceEventMapper(eventMapper = eventMapper)
+            return this
+        }
+
+        /**
+         * Sets the [EventMapper] for the RUM [ActionEvent]. You can use this interface implementation
+         * to modify the [ActionEvent] attributes before serialisation.
+         *
+         * @param eventMapper the [EventMapper] implementation.
+         */
+        fun setActionEventMapper(eventMapper: EventMapper<ActionEvent>): Builder {
+            platformBuilder.setActionEventMapper(eventMapper = eventMapper)
+            return this
+        }
+
+        /**
+         * Sets the [EventMapper] for the RUM [ErrorEvent]. You can use this interface implementation
+         * to modify the [ErrorEvent] attributes before serialisation.
+         *
+         * @param eventMapper the [EventMapper] implementation.
+         */
+        fun setErrorEventMapper(eventMapper: EventMapper<ErrorEvent>): Builder {
+            platformBuilder.setErrorEventMapper(eventMapper = eventMapper)
+            return this
+        }
+
+        /**
+         * Sets the [EventMapper] for the RUM [LongTaskEvent]. You can use this interface implementation
+         * to modify the [LongTaskEvent] attributes before serialisation.
+         *
+         * @param eventMapper the [EventMapper] implementation.
+         */
+        fun setLongTaskEventMapper(eventMapper: EventMapper<LongTaskEvent>): Builder {
+            platformBuilder.setLongTaskEventMapper(eventMapper = eventMapper)
             return this
         }
 

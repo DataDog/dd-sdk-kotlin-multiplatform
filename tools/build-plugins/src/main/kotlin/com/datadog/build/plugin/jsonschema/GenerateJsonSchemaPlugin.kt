@@ -17,6 +17,7 @@ import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 
 class GenerateJsonSchemaPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -48,6 +49,9 @@ class GenerateJsonSchemaPlugin : Plugin<Project> {
                 registerModelsGenerationTask(target, name, schema)
 
                 target.tasks.withType<KotlinCompile> {
+                    dependsOn(target.tasks.withType<GenerateJsonSchemaTask>())
+                }
+                target.tasks.withType<KotlinNativeCompile> {
                     dependsOn(target.tasks.withType<GenerateJsonSchemaTask>())
                 }
             }

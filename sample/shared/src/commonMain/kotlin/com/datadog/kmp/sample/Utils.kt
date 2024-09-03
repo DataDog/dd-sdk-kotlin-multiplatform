@@ -3,6 +3,7 @@
  * This product includes software developed at Datadog (https://www.datadoghq.com/).
  * Copyright 2016-Present Datadog, Inc.
  */
+@file:Suppress("TooManyFunctions")
 
 package com.datadog.kmp.sample
 
@@ -63,6 +64,9 @@ fun initDatadog(context: Any? = null) {
         }
         .trackLongTasks()
         .trackFrustrations(true)
+        .apply {
+            setupRumMappers()
+        }
         .apply {
             platformSpecificSetup(this)
         }
@@ -140,6 +144,32 @@ fun triggerCheckedException() {
 fun triggerUncheckedException() {
     val cause = IllegalStateException("sample crash")
     throw RuntimeException(cause)
+}
+
+private fun RumConfiguration.Builder.setupRumMappers() {
+    // TODO RUM-5992 additionalProperties cannot be mutable because of iOS SDK API, so using a referrer for
+    //  the mapping example
+    val referrer = "https://www.datadoghq.com"
+    setViewEventMapper {
+        it.view.referrer = referrer
+        it
+    }
+    setResourceEventMapper {
+        it.view.referrer = referrer
+        it
+    }
+    setActionEventMapper {
+        it.view.referrer = referrer
+        it
+    }
+    setErrorEventMapper {
+        it.view.referrer = referrer
+        it
+    }
+    setLongTaskEventMapper {
+        it.view.referrer = referrer
+        it
+    }
 }
 
 expect fun startWebViewTracking(webView: Any)
