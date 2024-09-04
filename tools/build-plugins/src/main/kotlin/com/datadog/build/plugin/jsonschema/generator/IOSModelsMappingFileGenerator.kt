@@ -9,6 +9,7 @@ package com.datadog.build.plugin.jsonschema.generator
 import com.datadog.build.plugin.jsonschema.JsonPrimitiveType
 import com.datadog.build.plugin.jsonschema.TypeDefinition
 import com.datadog.build.plugin.jsonschema.TypeProperty
+import com.datadog.build.plugin.jsonschema.asNullable
 import com.datadog.build.utils.ddCapitalize
 import com.datadog.build.utils.toCamelCase
 import com.datadog.build.utils.toCamelCaseAsVar
@@ -122,6 +123,7 @@ internal class IOSModelsMappingFileGenerator(
                     commonRootClassName ?: typeDefinition.name,
                     iosTypeDefinition,
                     it.type,
+                    it.optional,
                     processed
                 )
 
@@ -140,6 +142,7 @@ internal class IOSModelsMappingFileGenerator(
                             commonRootClassName ?: typeDefinition.name,
                             iosTypeDefinition,
                             it.type.items,
+                            false,
                             processed
                         )
 
@@ -169,6 +172,7 @@ internal class IOSModelsMappingFileGenerator(
         commonRootClassName: String?,
         parentIOSTypeDefinition: IOSTypeDefinition?,
         typeDefinition: TypeDefinition.Enum,
+        allowsNull: Boolean,
         processed: MutableSet<String>
     ) {
         val fullCommonEnumName = typeDefinition.fullCommonEnumName(commonRootClassName)
@@ -185,7 +189,7 @@ internal class IOSModelsMappingFileGenerator(
             FunSpec.builder("${iosClassName.lowercaseFirstChar()}${ENUM_CONVERSION_METHOD_NAME.ddCapitalize()}")
                 .addModifiers(KModifier.INTERNAL, KModifier.INLINE)
                 .addParameter("enumValue", receiver)
-                .returns(returnClass)
+                .returns(returnClass.let { if (allowsNull) it.asNullable() else it })
                 .addCode(
                     CodeBlock.builder()
                         .beginControlFlow("return when(enumValue)")
@@ -208,6 +212,17 @@ internal class IOSModelsMappingFileGenerator(
                                         typeDefinition.enumConstantName(it)
                                     )
                                 }
+                            }
+                            // Objective-C enums extend Int, but there is no Int? class, so if property is of nullable
+                            // type, iOS models have a special ObjC value $<enumName>None to match nil on the Swift side.
+                            if (allowsNull) {
+                                addStatement(
+                                    "%M -> null",
+                                    MemberName(
+                                        iosModelsPackageName,
+                                        "$iosModelsClassNamePrefix${iosClassName}None"
+                                    )
+                                )
                             }
                             // will never hit this, because we auto-generate code, which means all the possible
                             // branches are covered. This is just needed because in ObjC API all enums are extending

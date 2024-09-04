@@ -27,6 +27,7 @@ import cocoapods.DatadogObjc.DDRUMViewEventDDPageStatesStateTerminated
 import cocoapods.DatadogObjc.DDRUMViewEventDDReplayStats
 import cocoapods.DatadogObjc.DDRUMViewEventDDSession
 import cocoapods.DatadogObjc.DDRUMViewEventDDSessionPlan
+import cocoapods.DatadogObjc.DDRUMViewEventDDSessionPlanNone
 import cocoapods.DatadogObjc.DDRUMViewEventDDSessionPlanPlan1
 import cocoapods.DatadogObjc.DDRUMViewEventDDSessionPlanPlan2
 import cocoapods.DatadogObjc.DDRUMViewEventDDSessionRUMSessionPrecondition
@@ -35,6 +36,7 @@ import cocoapods.DatadogObjc.DDRUMViewEventDDSessionRUMSessionPreconditionExplic
 import cocoapods.DatadogObjc.DDRUMViewEventDDSessionRUMSessionPreconditionFromNonInteractiveSession
 import cocoapods.DatadogObjc.DDRUMViewEventDDSessionRUMSessionPreconditionInactivityTimeout
 import cocoapods.DatadogObjc.DDRUMViewEventDDSessionRUMSessionPreconditionMaxDuration
+import cocoapods.DatadogObjc.DDRUMViewEventDDSessionRUMSessionPreconditionNone
 import cocoapods.DatadogObjc.DDRUMViewEventDDSessionRUMSessionPreconditionPrewarm
 import cocoapods.DatadogObjc.DDRUMViewEventDDSessionRUMSessionPreconditionUserAppLaunch
 import cocoapods.DatadogObjc.DDRUMViewEventDisplay
@@ -53,6 +55,7 @@ import cocoapods.DatadogObjc.DDRUMViewEventRUMConnectivityEffectiveType
 import cocoapods.DatadogObjc.DDRUMViewEventRUMConnectivityEffectiveTypeEffectiveType2g
 import cocoapods.DatadogObjc.DDRUMViewEventRUMConnectivityEffectiveTypeEffectiveType3g
 import cocoapods.DatadogObjc.DDRUMViewEventRUMConnectivityEffectiveTypeEffectiveType4g
+import cocoapods.DatadogObjc.DDRUMViewEventRUMConnectivityEffectiveTypeNone
 import cocoapods.DatadogObjc.DDRUMViewEventRUMConnectivityEffectiveTypeSlow2g
 import cocoapods.DatadogObjc.DDRUMViewEventRUMConnectivityStatus
 import cocoapods.DatadogObjc.DDRUMViewEventRUMConnectivityStatusConnected
@@ -82,6 +85,7 @@ import cocoapods.DatadogObjc.DDRUMViewEventSourceBrowser
 import cocoapods.DatadogObjc.DDRUMViewEventSourceFlutter
 import cocoapods.DatadogObjc.DDRUMViewEventSourceIos
 import cocoapods.DatadogObjc.DDRUMViewEventSourceKotlinMultiplatform
+import cocoapods.DatadogObjc.DDRUMViewEventSourceNone
 import cocoapods.DatadogObjc.DDRUMViewEventSourceReactNative
 import cocoapods.DatadogObjc.DDRUMViewEventSourceRoku
 import cocoapods.DatadogObjc.DDRUMViewEventSourceUnity
@@ -101,6 +105,7 @@ import cocoapods.DatadogObjc.DDRUMViewEventViewLoadingTypeActivityRedisplay
 import cocoapods.DatadogObjc.DDRUMViewEventViewLoadingTypeFragmentDisplay
 import cocoapods.DatadogObjc.DDRUMViewEventViewLoadingTypeFragmentRedisplay
 import cocoapods.DatadogObjc.DDRUMViewEventViewLoadingTypeInitialLoad
+import cocoapods.DatadogObjc.DDRUMViewEventViewLoadingTypeNone
 import cocoapods.DatadogObjc.DDRUMViewEventViewLoadingTypeRouteChange
 import cocoapods.DatadogObjc.DDRUMViewEventViewLoadingTypeViewControllerDisplay
 import cocoapods.DatadogObjc.DDRUMViewEventViewLoadingTypeViewControllerRedisplay
@@ -157,7 +162,7 @@ internal inline
 }
 
 internal inline fun viewEventSourceToCommonEnum(enumValue: DDRUMViewEventSource):
-    ViewEvent.ViewEventSource = when(enumValue) {
+    ViewEvent.ViewEventSource? = when(enumValue) {
   DDRUMViewEventSourceAndroid -> ViewEvent.ViewEventSource.ANDROID
   DDRUMViewEventSourceIos -> ViewEvent.ViewEventSource.IOS
   DDRUMViewEventSourceBrowser -> ViewEvent.ViewEventSource.BROWSER
@@ -166,6 +171,7 @@ internal inline fun viewEventSourceToCommonEnum(enumValue: DDRUMViewEventSource)
   DDRUMViewEventSourceRoku -> ViewEvent.ViewEventSource.ROKU
   DDRUMViewEventSourceUnity -> ViewEvent.ViewEventSource.UNITY
   DDRUMViewEventSourceKotlinMultiplatform -> ViewEvent.ViewEventSource.KOTLIN_MULTIPLATFORM
+  DDRUMViewEventSourceNone -> null
   else -> throw IllegalArgumentException("Unknown value $enumValue")
 }
 
@@ -219,7 +225,7 @@ internal inline fun DDRUMViewEventView.toCommonModel(): ViewEvent.ViewEventView 
 )
 
 internal inline fun viewEventViewLoadingTypeToCommonEnum(enumValue: DDRUMViewEventViewLoadingType):
-    ViewEvent.LoadingType = when(enumValue) {
+    ViewEvent.LoadingType? = when(enumValue) {
   DDRUMViewEventViewLoadingTypeInitialLoad -> ViewEvent.LoadingType.INITIAL_LOAD
   DDRUMViewEventViewLoadingTypeRouteChange -> ViewEvent.LoadingType.ROUTE_CHANGE
   DDRUMViewEventViewLoadingTypeActivityDisplay -> ViewEvent.LoadingType.ACTIVITY_DISPLAY
@@ -230,6 +236,7 @@ internal inline fun viewEventViewLoadingTypeToCommonEnum(enumValue: DDRUMViewEve
       ViewEvent.LoadingType.VIEW_CONTROLLER_DISPLAY
   DDRUMViewEventViewLoadingTypeViewControllerRedisplay ->
       ViewEvent.LoadingType.VIEW_CONTROLLER_REDISPLAY
+  DDRUMViewEventViewLoadingTypeNone -> null
   else -> throw IllegalArgumentException("Unknown value $enumValue")
 }
 
@@ -323,11 +330,12 @@ internal inline
 
 internal inline
     fun viewEventRUMConnectivityEffectiveTypeToCommonEnum(enumValue: DDRUMViewEventRUMConnectivityEffectiveType):
-    ViewEvent.EffectiveType = when(enumValue) {
+    ViewEvent.EffectiveType? = when(enumValue) {
   DDRUMViewEventRUMConnectivityEffectiveTypeSlow2g -> ViewEvent.EffectiveType.SLOW_2G
   DDRUMViewEventRUMConnectivityEffectiveTypeEffectiveType2g -> ViewEvent.EffectiveType.`2G`
   DDRUMViewEventRUMConnectivityEffectiveTypeEffectiveType3g -> ViewEvent.EffectiveType.`3G`
   DDRUMViewEventRUMConnectivityEffectiveTypeEffectiveType4g -> ViewEvent.EffectiveType.`4G`
+  DDRUMViewEventRUMConnectivityEffectiveTypeNone -> null
   else -> throw IllegalArgumentException("Unknown value $enumValue")
 }
 
@@ -413,15 +421,16 @@ internal inline fun DDRUMViewEventDDSession.toCommonModel(): ViewEvent.DdSession
 )
 
 internal inline fun viewEventDDSessionPlanToCommonEnum(enumValue: DDRUMViewEventDDSessionPlan):
-    ViewEvent.Plan = when(enumValue) {
+    ViewEvent.Plan? = when(enumValue) {
   DDRUMViewEventDDSessionPlanPlan1 -> ViewEvent.Plan.PLAN_1
   DDRUMViewEventDDSessionPlanPlan2 -> ViewEvent.Plan.PLAN_2
+  DDRUMViewEventDDSessionPlanNone -> null
   else -> throw IllegalArgumentException("Unknown value $enumValue")
 }
 
 internal inline
     fun viewEventDDSessionRUMSessionPreconditionToCommonEnum(enumValue: DDRUMViewEventDDSessionRUMSessionPrecondition):
-    ViewEvent.SessionPrecondition = when(enumValue) {
+    ViewEvent.SessionPrecondition? = when(enumValue) {
   DDRUMViewEventDDSessionRUMSessionPreconditionUserAppLaunch ->
       ViewEvent.SessionPrecondition.USER_APP_LAUNCH
   DDRUMViewEventDDSessionRUMSessionPreconditionInactivityTimeout ->
@@ -435,6 +444,7 @@ internal inline
       ViewEvent.SessionPrecondition.FROM_NON_INTERACTIVE_SESSION
   DDRUMViewEventDDSessionRUMSessionPreconditionExplicitStop ->
       ViewEvent.SessionPrecondition.EXPLICIT_STOP
+  DDRUMViewEventDDSessionRUMSessionPreconditionNone -> null
   else -> throw IllegalArgumentException("Unknown value $enumValue")
 }
 
