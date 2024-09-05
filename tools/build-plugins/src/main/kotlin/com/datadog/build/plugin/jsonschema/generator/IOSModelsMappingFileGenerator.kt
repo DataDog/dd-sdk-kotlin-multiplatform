@@ -30,6 +30,7 @@ internal class IOSModelsMappingFileGenerator(
     private val iosModelsPackageName: String,
     private val iosModelsClassNamePrefix: String,
     private val typeNameRemapping: Map<String, String>,
+    private val defaultCommonEnumValues: Map<String, String>,
     private val logger: Logger
 ) : NativeModelsMappingFileGenerator(commonModelsPackageName, mutableSetOf()) {
 
@@ -71,7 +72,7 @@ internal class IOSModelsMappingFileGenerator(
 
         val returnClass = ClassName.bestGuess("$packageName.$fullCommonClassName")
         val funSpecBuilder = FunSpec.builder(MODEL_CONVERSION_METHOD_NAME)
-        funSpecBuilder.addModifiers(KModifier.INTERNAL, KModifier.INLINE)
+        funSpecBuilder.addModifiers(KModifier.INTERNAL)
             .receiver(ClassName(iosModelsPackageName, "$iosModelsClassNamePrefix$iosClassName"))
             .returns(returnClass)
             .addCode(
@@ -187,7 +188,7 @@ internal class IOSModelsMappingFileGenerator(
         val receiver = ClassName(iosModelsPackageName, "$iosModelsClassNamePrefix$iosClassName")
         fileSpecBuilder.addFunction(
             FunSpec.builder("${iosClassName.lowercaseFirstChar()}${ENUM_CONVERSION_METHOD_NAME.ddCapitalize()}")
-                .addModifiers(KModifier.INTERNAL, KModifier.INLINE)
+                .addModifiers(KModifier.INTERNAL)
                 .addParameter("enumValue", receiver)
                 .returns(returnClass.let { if (allowsNull) it.asNullable() else it })
                 .addCode(
@@ -224,10 +225,19 @@ internal class IOSModelsMappingFileGenerator(
                                     )
                                 )
                             }
-                            // will never hit this, because we auto-generate code, which means all the possible
-                            // branches are covered. This is just needed because in ObjC API all enums are extending
-                            // Int type
-                            addStatement("else -> throw IllegalArgumentException(\"Unknown value ${"$"}enumValue\")")
+                            // we need to provide default fallback values for enum conversion, because even though
+                            // generated code covers all enum values, these are values for the specific
+                            // native SDK version. It can be the case that final application has a newer native SDK
+                            // version will enum values not known by KMP SDK.
+                            val defaultEnumValue = defaultCommonEnumValues[fullCommonEnumName]
+                                ?: throw IllegalStateException(
+                                    "Default value for enum type $fullCommonEnumName is not provided"
+                                )
+                            addStatement(
+                                "else -> %T.%N",
+                                returnClass,
+                                defaultEnumValue
+                            )
                         }
                         .endControlFlow()
                         .build()

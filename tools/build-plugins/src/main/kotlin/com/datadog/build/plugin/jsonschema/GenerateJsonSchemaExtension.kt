@@ -62,6 +62,7 @@ abstract class JsonSchema @Inject constructor(
 interface AndroidModelsMappingGeneration {
     val enabled: Property<Boolean>
     val androidModelsPackageName: Property<String>
+    val defaultCommonEnumValues: MapProperty<String, String>
 }
 
 interface IOSModelsMappingGeneration {
@@ -69,6 +70,7 @@ interface IOSModelsMappingGeneration {
     val iosModelsPackageName: Property<String>
     val iosModelsClassNamePrefix: Property<String>
     val typeNameRemapping: MapProperty<String, String>
+    val defaultCommonEnumValues: MapProperty<String, String>
 }
 
 sealed class SchemaLocation {

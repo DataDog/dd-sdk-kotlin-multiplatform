@@ -53,6 +53,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.ViewEventSessionType
       ViewEvent.ViewEventSessionType.SYNTHETICS
   com.datadog.android.rum.model.ViewEvent.ViewEventSessionType.CI_TEST ->
       ViewEvent.ViewEventSessionType.CI_TEST
+  else -> ViewEvent.ViewEventSessionType.USER
 }
 
 internal inline fun com.datadog.android.rum.model.ViewEvent.ViewEventSource.toCommonEnum():
@@ -70,6 +71,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.ViewEventSource.toCo
   com.datadog.android.rum.model.ViewEvent.ViewEventSource.UNITY -> ViewEvent.ViewEventSource.UNITY
   com.datadog.android.rum.model.ViewEvent.ViewEventSource.KOTLIN_MULTIPLATFORM ->
       ViewEvent.ViewEventSource.KOTLIN_MULTIPLATFORM
+  else -> ViewEvent.ViewEventSource.ANDROID
 }
 
 internal inline fun com.datadog.android.rum.model.ViewEvent.ViewEventView.toCommonModel():
@@ -136,6 +138,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.LoadingType.toCommon
       ViewEvent.LoadingType.VIEW_CONTROLLER_DISPLAY
   com.datadog.android.rum.model.ViewEvent.LoadingType.VIEW_CONTROLLER_REDISPLAY ->
       ViewEvent.LoadingType.VIEW_CONTROLLER_REDISPLAY
+  else -> ViewEvent.LoadingType.ACTIVITY_DISPLAY
 }
 
 internal inline fun com.datadog.android.rum.model.ViewEvent.CustomTimings.toCommonModel():
@@ -212,6 +215,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.Status.toCommonEnum(
   com.datadog.android.rum.model.ViewEvent.Status.CONNECTED -> ViewEvent.Status.CONNECTED
   com.datadog.android.rum.model.ViewEvent.Status.NOT_CONNECTED -> ViewEvent.Status.NOT_CONNECTED
   com.datadog.android.rum.model.ViewEvent.Status.MAYBE -> ViewEvent.Status.MAYBE
+  else -> ViewEvent.Status.CONNECTED
 }
 
 internal inline fun com.datadog.android.rum.model.ViewEvent.EffectiveType.toCommonEnum():
@@ -220,6 +224,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.EffectiveType.toComm
   com.datadog.android.rum.model.ViewEvent.EffectiveType.`2G` -> ViewEvent.EffectiveType.`2G`
   com.datadog.android.rum.model.ViewEvent.EffectiveType.`3G` -> ViewEvent.EffectiveType.`3G`
   com.datadog.android.rum.model.ViewEvent.EffectiveType.`4G` -> ViewEvent.EffectiveType.`4G`
+  else -> ViewEvent.EffectiveType.`4G`
 }
 
 internal inline fun com.datadog.android.rum.model.ViewEvent.Cellular.toCommonModel():
@@ -287,6 +292,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.DeviceType.toCommonE
       ViewEvent.DeviceType.GAMING_CONSOLE
   com.datadog.android.rum.model.ViewEvent.DeviceType.BOT -> ViewEvent.DeviceType.BOT
   com.datadog.android.rum.model.ViewEvent.DeviceType.OTHER -> ViewEvent.DeviceType.OTHER
+  else -> ViewEvent.DeviceType.OTHER
 }
 
 internal inline fun com.datadog.android.rum.model.ViewEvent.Dd.toCommonModel(): ViewEvent.Dd =
@@ -309,6 +315,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.Plan.toCommonEnum():
     when(this) {
   com.datadog.android.rum.model.ViewEvent.Plan.PLAN_1 -> ViewEvent.Plan.PLAN_1
   com.datadog.android.rum.model.ViewEvent.Plan.PLAN_2 -> ViewEvent.Plan.PLAN_2
+  else -> ViewEvent.Plan.PLAN_1
 }
 
 internal inline fun com.datadog.android.rum.model.ViewEvent.SessionPrecondition.toCommonEnum():
@@ -327,6 +334,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.SessionPrecondition.
       ViewEvent.SessionPrecondition.FROM_NON_INTERACTIVE_SESSION
   com.datadog.android.rum.model.ViewEvent.SessionPrecondition.EXPLICIT_STOP ->
       ViewEvent.SessionPrecondition.EXPLICIT_STOP
+  else -> ViewEvent.SessionPrecondition.USER_APP_LAUNCH
 }
 
 internal inline fun com.datadog.android.rum.model.ViewEvent.Configuration.toCommonModel():
@@ -349,6 +357,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.State.toCommonEnum()
   com.datadog.android.rum.model.ViewEvent.State.HIDDEN -> ViewEvent.State.HIDDEN
   com.datadog.android.rum.model.ViewEvent.State.FROZEN -> ViewEvent.State.FROZEN
   com.datadog.android.rum.model.ViewEvent.State.TERMINATED -> ViewEvent.State.TERMINATED
+  else -> ViewEvent.State.ACTIVE
 }
 
 internal inline fun com.datadog.android.rum.model.ViewEvent.ReplayStats.toCommonModel():
@@ -385,5 +394,6 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.ReplayLevel.toCommon
   com.datadog.android.rum.model.ViewEvent.ReplayLevel.MASK -> ViewEvent.ReplayLevel.MASK
   com.datadog.android.rum.model.ViewEvent.ReplayLevel.MASK_USER_INPUT ->
       ViewEvent.ReplayLevel.MASK_USER_INPUT
+  else -> ViewEvent.ReplayLevel.MASK_USER_INPUT
 }
 
