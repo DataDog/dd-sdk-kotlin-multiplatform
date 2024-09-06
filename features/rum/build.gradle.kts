@@ -120,6 +120,21 @@ datadogBuildConfig {
     pomDescription = "The RUM feature to use with the Datadog monitoring library for Kotlin Multiplatform."
 }
 
+@Suppress("PropertyName", "VariableNaming")
+val VIEW_EVENT_MODEL_NAME = "ViewEvent"
+
+@Suppress("PropertyName", "VariableNaming")
+val ACTION_EVENT_MODEL_NAME = "ActionEvent"
+
+@Suppress("PropertyName", "VariableNaming")
+val ERROR_EVENT_MODEL_NAME = "ErrorEvent"
+
+@Suppress("PropertyName", "VariableNaming")
+val RESOURCE_EVENT_MODEL_NAME = "ResourceEvent"
+
+@Suppress("PropertyName", "VariableNaming")
+val LONG_TASK_EVENT_MODEL_NAME = "LongTaskEvent"
+
 jsonSchemaGenerator {
     schema("rum") {
         location = SchemaLocation.Git(
@@ -137,16 +152,59 @@ jsonSchemaGenerator {
             "vital-schema.json"
         )
         inputNameMapping = mapOf(
-            "action-schema.json" to "ActionEvent",
-            "error-schema.json" to "ErrorEvent",
-            "resource-schema.json" to "ResourceEvent",
-            "view-schema.json" to "ViewEvent",
-            "long_task-schema.json" to "LongTaskEvent"
+            "action-schema.json" to ACTION_EVENT_MODEL_NAME,
+            "error-schema.json" to ERROR_EVENT_MODEL_NAME,
+            "resource-schema.json" to RESOURCE_EVENT_MODEL_NAME,
+            "view-schema.json" to VIEW_EVENT_MODEL_NAME,
+            "long_task-schema.json" to LONG_TASK_EVENT_MODEL_NAME
         )
+
+        @Suppress("StringLiteralDuplication")
+        val defaultEnumValues = mapOf(
+            "$VIEW_EVENT_MODEL_NAME.${VIEW_EVENT_MODEL_NAME}SessionType" to "USER",
+            "$VIEW_EVENT_MODEL_NAME.Status" to "CONNECTED",
+            "$VIEW_EVENT_MODEL_NAME.EffectiveType" to "`4G`",
+            "$VIEW_EVENT_MODEL_NAME.DeviceType" to "OTHER",
+            "$VIEW_EVENT_MODEL_NAME.ReplayLevel" to "MASK_USER_INPUT",
+            "$VIEW_EVENT_MODEL_NAME.Plan" to "PLAN_1",
+            "$VIEW_EVENT_MODEL_NAME.SessionPrecondition" to "USER_APP_LAUNCH",
+            "$VIEW_EVENT_MODEL_NAME.State" to "ACTIVE",
+            "$ACTION_EVENT_MODEL_NAME.${ACTION_EVENT_MODEL_NAME}ActionType" to "TAP",
+            "$RESOURCE_EVENT_MODEL_NAME.ResourceType" to "OTHER",
+            "$RESOURCE_EVENT_MODEL_NAME.OperationType" to "QUERY",
+            "$RESOURCE_EVENT_MODEL_NAME.Method" to "GET",
+            "$RESOURCE_EVENT_MODEL_NAME.ProviderType" to "OTHER",
+            "$ERROR_EVENT_MODEL_NAME.ErrorSource" to "CUSTOM",
+            "$ERROR_EVENT_MODEL_NAME.Category" to "EXCEPTION",
+            "$ERROR_EVENT_MODEL_NAME.Handling" to "UNHANDLED"
+        )
+
+        val commonizeDefaultEnumValues: (Map<String, String>) -> Map<String, String> = {
+            it.toMutableMap()
+                .apply {
+                    val add = entries.flatMap {
+                        listOf(
+                            it.key.replace(VIEW_EVENT_MODEL_NAME, ACTION_EVENT_MODEL_NAME) to it.value,
+                            it.key.replace(VIEW_EVENT_MODEL_NAME, RESOURCE_EVENT_MODEL_NAME) to it.value,
+                            it.key.replace(VIEW_EVENT_MODEL_NAME, ERROR_EVENT_MODEL_NAME) to it.value,
+                            it.key.replace(VIEW_EVENT_MODEL_NAME, LONG_TASK_EVENT_MODEL_NAME) to it.value,
+                            it.key.replace(RESOURCE_EVENT_MODEL_NAME, ERROR_EVENT_MODEL_NAME) to it.value
+                        )
+                    }
+                    putAll(add)
+                }
+        }
 
         androidModelsMappingGeneration {
             enabled = true
             androidModelsPackageName = "com.datadog.android.rum.model"
+            defaultCommonEnumValues = commonizeDefaultEnumValues(
+                defaultEnumValues + mapOf(
+                    "$VIEW_EVENT_MODEL_NAME.${VIEW_EVENT_MODEL_NAME}Source" to "ANDROID",
+                    "$VIEW_EVENT_MODEL_NAME.LoadingType" to "ACTIVITY_DISPLAY",
+                    "$ERROR_EVENT_MODEL_NAME.SourceType" to "ANDROID"
+                )
+            )
         }
 
         iosModelsMappingGeneration {
@@ -164,6 +222,13 @@ jsonSchemaGenerator {
                 "Device" to "RUMDevice",
                 "OS" to "RUMOperatingSystem",
                 "SessionPrecondition" to "RUMSessionPrecondition"
+            )
+            defaultCommonEnumValues = commonizeDefaultEnumValues(
+                defaultEnumValues + mapOf(
+                    "$VIEW_EVENT_MODEL_NAME.${VIEW_EVENT_MODEL_NAME}Source" to "IOS",
+                    "$VIEW_EVENT_MODEL_NAME.LoadingType" to "VIEW_CONTROLLER_DISPLAY",
+                    "$ERROR_EVENT_MODEL_NAME.SourceType" to "IOS"
+                )
             )
         }
     }

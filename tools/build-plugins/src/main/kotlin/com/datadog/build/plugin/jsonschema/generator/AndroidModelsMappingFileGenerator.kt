@@ -22,6 +22,7 @@ internal class AndroidModelsMappingFileGenerator(
     private val outputDir: File,
     commonModelsPackageName: String,
     private val androidModelsPackageName: String,
+    private val defaultCommonEnumValues: Map<String, String>,
     private val logger: Logger
 ) : NativeModelsMappingFileGenerator(commonModelsPackageName, mutableSetOf()) {
 
@@ -209,6 +210,19 @@ internal class AndroidModelsMappingFileGenerator(
                                     )
                                 }
                             }
+                            // we need to provide default fallback values for enum conversion, because even though
+                            // generated code covers all enum values, these are values for the specific
+                            // native SDK version. It can be the case that final application has a newer native SDK
+                            // version will enum values not known by KMP SDK.
+                            val defaultEnumValue = defaultCommonEnumValues[fullCommonEnumName]
+                                ?: throw IllegalStateException(
+                                    "Default value for enum type $fullCommonEnumName is not provided"
+                                )
+                            addStatement(
+                                "else -> %T.%N",
+                                returnClass,
+                                defaultEnumValue
+                            )
                         }
                         .endControlFlow()
                         .build()

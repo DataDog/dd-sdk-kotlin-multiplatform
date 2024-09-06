@@ -20,6 +20,18 @@ class IOSModelsMappingFileGeneratorTest : NativeModelsMappingFileGeneratorTest()
                 "OS" to "RUMOperatingSystem",
                 "SessionPrecondition" to "RUMSessionPrecondition"
             ),
+            defaultCommonEnumValues = mapOf(
+                "ViewEvent.ViewEventSessionType" to "USER",
+                "ViewEvent.Status" to "CONNECTED",
+                "ViewEvent.EffectiveType" to "`4G`",
+                "ViewEvent.DeviceType" to "OTHER",
+                "ViewEvent.ReplayLevel" to "MASK_USER_INPUT",
+                "ViewEvent.Plan" to "PLAN_1",
+                "ViewEvent.SessionPrecondition" to "USER_APP_LAUNCH",
+                "ViewEvent.State" to "ACTIVE",
+                "ViewEvent.ViewEventSource" to "IOS",
+                "ViewEvent.LoadingType" to "VIEW_CONTROLLER_DISPLAY"
+            ),
             logger = mockLogger
         )
     }

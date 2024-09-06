@@ -114,7 +114,7 @@ import cocoapods.DatadogObjc.DDRUMViewEventViewResource
 import kotlin.Suppress
 import platform.Foundation.NSNumber
 
-internal inline fun DDRUMViewEvent.toCommonModel(): ViewEvent = ViewEvent(
+internal fun DDRUMViewEvent.toCommonModel(): ViewEvent = ViewEvent(
   date = date().longValue,
   application = application().toCommonModel(),
   service = service(),
@@ -138,12 +138,12 @@ internal inline fun DDRUMViewEvent.toCommonModel(): ViewEvent = ViewEvent(
   privacy = privacy()?.toCommonModel(),
 )
 
-internal inline fun DDRUMViewEventApplication.toCommonModel(): ViewEvent.Application =
+internal fun DDRUMViewEventApplication.toCommonModel(): ViewEvent.Application =
     ViewEvent.Application(
   id = id(),
 )
 
-internal inline fun DDRUMViewEventSession.toCommonModel(): ViewEvent.ViewEventSession =
+internal fun DDRUMViewEventSession.toCommonModel(): ViewEvent.ViewEventSession =
     ViewEvent.ViewEventSession(
   id = id(),
   type = viewEventSessionRUMSessionTypeToCommonEnum(type()),
@@ -152,16 +152,16 @@ internal inline fun DDRUMViewEventSession.toCommonModel(): ViewEvent.ViewEventSe
   sampledForReplay = sampledForReplay()?.boolValue,
 )
 
-internal inline
+internal
     fun viewEventSessionRUMSessionTypeToCommonEnum(enumValue: DDRUMViewEventSessionRUMSessionType):
     ViewEvent.ViewEventSessionType = when(enumValue) {
   DDRUMViewEventSessionRUMSessionTypeUser -> ViewEvent.ViewEventSessionType.USER
   DDRUMViewEventSessionRUMSessionTypeSynthetics -> ViewEvent.ViewEventSessionType.SYNTHETICS
   DDRUMViewEventSessionRUMSessionTypeCiTest -> ViewEvent.ViewEventSessionType.CI_TEST
-  else -> throw IllegalArgumentException("Unknown value $enumValue")
+  else -> ViewEvent.ViewEventSessionType.USER
 }
 
-internal inline fun viewEventSourceToCommonEnum(enumValue: DDRUMViewEventSource):
+internal fun viewEventSourceToCommonEnum(enumValue: DDRUMViewEventSource):
     ViewEvent.ViewEventSource? = when(enumValue) {
   DDRUMViewEventSourceAndroid -> ViewEvent.ViewEventSource.ANDROID
   DDRUMViewEventSourceIos -> ViewEvent.ViewEventSource.IOS
@@ -172,12 +172,11 @@ internal inline fun viewEventSourceToCommonEnum(enumValue: DDRUMViewEventSource)
   DDRUMViewEventSourceUnity -> ViewEvent.ViewEventSource.UNITY
   DDRUMViewEventSourceKotlinMultiplatform -> ViewEvent.ViewEventSource.KOTLIN_MULTIPLATFORM
   DDRUMViewEventSourceNone -> null
-  else -> throw IllegalArgumentException("Unknown value $enumValue")
+  else -> ViewEvent.ViewEventSource.IOS
 }
 
 @Suppress("CAST_NEVER_SUCCEEDS")
-internal inline fun DDRUMViewEventView.toCommonModel(): ViewEvent.ViewEventView =
-    ViewEvent.ViewEventView(
+internal fun DDRUMViewEventView.toCommonModel(): ViewEvent.ViewEventView = ViewEvent.ViewEventView(
   id = id(),
   referrer = referrer(),
   url = url(),
@@ -224,7 +223,7 @@ internal inline fun DDRUMViewEventView.toCommonModel(): ViewEvent.ViewEventView 
   jsRefreshRate = jsRefreshRate()?.toCommonModel(),
 )
 
-internal inline fun viewEventViewLoadingTypeToCommonEnum(enumValue: DDRUMViewEventViewLoadingType):
+internal fun viewEventViewLoadingTypeToCommonEnum(enumValue: DDRUMViewEventViewLoadingType):
     ViewEvent.LoadingType? = when(enumValue) {
   DDRUMViewEventViewLoadingTypeInitialLoad -> ViewEvent.LoadingType.INITIAL_LOAD
   DDRUMViewEventViewLoadingTypeRouteChange -> ViewEvent.LoadingType.ROUTE_CHANGE
@@ -237,49 +236,47 @@ internal inline fun viewEventViewLoadingTypeToCommonEnum(enumValue: DDRUMViewEve
   DDRUMViewEventViewLoadingTypeViewControllerRedisplay ->
       ViewEvent.LoadingType.VIEW_CONTROLLER_REDISPLAY
   DDRUMViewEventViewLoadingTypeNone -> null
-  else -> throw IllegalArgumentException("Unknown value $enumValue")
+  else -> ViewEvent.LoadingType.VIEW_CONTROLLER_DISPLAY
 }
 
-internal inline fun DDRUMViewEventViewAction.toCommonModel(): ViewEvent.Action = ViewEvent.Action(
+internal fun DDRUMViewEventViewAction.toCommonModel(): ViewEvent.Action = ViewEvent.Action(
   count = count().longValue,
 )
 
-internal inline fun DDRUMViewEventViewError.toCommonModel(): ViewEvent.Error = ViewEvent.Error(
+internal fun DDRUMViewEventViewError.toCommonModel(): ViewEvent.Error = ViewEvent.Error(
   count = count().longValue,
 )
 
-internal inline fun DDRUMViewEventViewCrash.toCommonModel(): ViewEvent.Crash = ViewEvent.Crash(
+internal fun DDRUMViewEventViewCrash.toCommonModel(): ViewEvent.Crash = ViewEvent.Crash(
   count = count().longValue,
 )
 
-internal inline fun DDRUMViewEventViewLongTask.toCommonModel(): ViewEvent.LongTask =
-    ViewEvent.LongTask(
+internal fun DDRUMViewEventViewLongTask.toCommonModel(): ViewEvent.LongTask = ViewEvent.LongTask(
   count = count().longValue,
 )
 
-internal inline fun DDRUMViewEventViewFrozenFrame.toCommonModel(): ViewEvent.FrozenFrame =
+internal fun DDRUMViewEventViewFrozenFrame.toCommonModel(): ViewEvent.FrozenFrame =
     ViewEvent.FrozenFrame(
   count = count().longValue,
 )
 
-internal inline fun DDRUMViewEventViewResource.toCommonModel(): ViewEvent.Resource =
-    ViewEvent.Resource(
+internal fun DDRUMViewEventViewResource.toCommonModel(): ViewEvent.Resource = ViewEvent.Resource(
   count = count().longValue,
 )
 
-internal inline fun DDRUMViewEventViewFrustration.toCommonModel(): ViewEvent.Frustration =
+internal fun DDRUMViewEventViewFrustration.toCommonModel(): ViewEvent.Frustration =
     ViewEvent.Frustration(
   count = count().longValue,
 )
 
-internal inline fun DDRUMViewEventViewInForegroundPeriods.toCommonModel():
-    ViewEvent.InForegroundPeriod = ViewEvent.InForegroundPeriod(
+internal fun DDRUMViewEventViewInForegroundPeriods.toCommonModel(): ViewEvent.InForegroundPeriod =
+    ViewEvent.InForegroundPeriod(
   start = start().longValue,
   duration = duration().longValue,
 )
 
 @Suppress("CAST_NEVER_SUCCEEDS")
-internal inline fun DDRUMViewEventViewFlutterBuildTime.toCommonModel(): ViewEvent.FlutterBuildTime =
+internal fun DDRUMViewEventViewFlutterBuildTime.toCommonModel(): ViewEvent.FlutterBuildTime =
     ViewEvent.FlutterBuildTime(
   min = min() as Number,
   max = max() as Number,
@@ -288,16 +285,7 @@ internal inline fun DDRUMViewEventViewFlutterBuildTime.toCommonModel(): ViewEven
 )
 
 @Suppress("CAST_NEVER_SUCCEEDS")
-internal inline fun DDRUMViewEventViewFlutterRasterTime.toCommonModel(): ViewEvent.FlutterBuildTime
-    = ViewEvent.FlutterBuildTime(
-  min = min() as Number,
-  max = max() as Number,
-  average = average() as Number,
-  metricMax = metricMax() as? Number,
-)
-
-@Suppress("CAST_NEVER_SUCCEEDS")
-internal inline fun DDRUMViewEventViewJsRefreshRate.toCommonModel(): ViewEvent.FlutterBuildTime =
+internal fun DDRUMViewEventViewFlutterRasterTime.toCommonModel(): ViewEvent.FlutterBuildTime =
     ViewEvent.FlutterBuildTime(
   min = min() as Number,
   max = max() as Number,
@@ -305,30 +293,39 @@ internal inline fun DDRUMViewEventViewJsRefreshRate.toCommonModel(): ViewEvent.F
   metricMax = metricMax() as? Number,
 )
 
-internal inline fun DDRUMViewEventRUMUser.toCommonModel(): ViewEvent.Usr = ViewEvent.Usr(
+@Suppress("CAST_NEVER_SUCCEEDS")
+internal fun DDRUMViewEventViewJsRefreshRate.toCommonModel(): ViewEvent.FlutterBuildTime =
+    ViewEvent.FlutterBuildTime(
+  min = min() as Number,
+  max = max() as Number,
+  average = average() as Number,
+  metricMax = metricMax() as? Number,
+)
+
+internal fun DDRUMViewEventRUMUser.toCommonModel(): ViewEvent.Usr = ViewEvent.Usr(
   id = id(),
   name = name(),
   email = email(),
   additionalProperties = usrInfo().mapKeys { it.key as String }
 )
 
-internal inline fun DDRUMViewEventRUMConnectivity.toCommonModel(): ViewEvent.Connectivity =
+internal fun DDRUMViewEventRUMConnectivity.toCommonModel(): ViewEvent.Connectivity =
     ViewEvent.Connectivity(
   status = viewEventRUMConnectivityStatusToCommonEnum(status()),
   effectiveType = viewEventRUMConnectivityEffectiveTypeToCommonEnum(effectiveType()),
   cellular = cellular()?.toCommonModel(),
 )
 
-internal inline
+internal
     fun viewEventRUMConnectivityStatusToCommonEnum(enumValue: DDRUMViewEventRUMConnectivityStatus):
     ViewEvent.Status = when(enumValue) {
   DDRUMViewEventRUMConnectivityStatusConnected -> ViewEvent.Status.CONNECTED
   DDRUMViewEventRUMConnectivityStatusNotConnected -> ViewEvent.Status.NOT_CONNECTED
   DDRUMViewEventRUMConnectivityStatusMaybe -> ViewEvent.Status.MAYBE
-  else -> throw IllegalArgumentException("Unknown value $enumValue")
+  else -> ViewEvent.Status.CONNECTED
 }
 
-internal inline
+internal
     fun viewEventRUMConnectivityEffectiveTypeToCommonEnum(enumValue: DDRUMViewEventRUMConnectivityEffectiveType):
     ViewEvent.EffectiveType? = when(enumValue) {
   DDRUMViewEventRUMConnectivityEffectiveTypeSlow2g -> ViewEvent.EffectiveType.SLOW_2G
@@ -336,55 +333,53 @@ internal inline
   DDRUMViewEventRUMConnectivityEffectiveTypeEffectiveType3g -> ViewEvent.EffectiveType.`3G`
   DDRUMViewEventRUMConnectivityEffectiveTypeEffectiveType4g -> ViewEvent.EffectiveType.`4G`
   DDRUMViewEventRUMConnectivityEffectiveTypeNone -> null
-  else -> throw IllegalArgumentException("Unknown value $enumValue")
+  else -> ViewEvent.EffectiveType.`4G`
 }
 
-internal inline fun DDRUMViewEventRUMConnectivityCellular.toCommonModel(): ViewEvent.Cellular =
+internal fun DDRUMViewEventRUMConnectivityCellular.toCommonModel(): ViewEvent.Cellular =
     ViewEvent.Cellular(
   technology = technology(),
   carrierName = carrierName(),
 )
 
-internal inline fun DDRUMViewEventDisplay.toCommonModel(): ViewEvent.Display = ViewEvent.Display(
+internal fun DDRUMViewEventDisplay.toCommonModel(): ViewEvent.Display = ViewEvent.Display(
   viewport = viewport()?.toCommonModel(),
   scroll = scroll()?.toCommonModel(),
 )
 
 @Suppress("CAST_NEVER_SUCCEEDS")
-internal inline fun DDRUMViewEventDisplayViewport.toCommonModel(): ViewEvent.Viewport =
-    ViewEvent.Viewport(
+internal fun DDRUMViewEventDisplayViewport.toCommonModel(): ViewEvent.Viewport = ViewEvent.Viewport(
   width = width() as Number,
   height = height() as Number,
 )
 
 @Suppress("CAST_NEVER_SUCCEEDS")
-internal inline fun DDRUMViewEventDisplayScroll.toCommonModel(): ViewEvent.Scroll =
-    ViewEvent.Scroll(
+internal fun DDRUMViewEventDisplayScroll.toCommonModel(): ViewEvent.Scroll = ViewEvent.Scroll(
   maxDepth = maxDepth() as Number,
   maxDepthScrollTop = maxDepthScrollTop() as Number,
   maxScrollHeight = maxScrollHeight() as Number,
   maxScrollHeightTime = maxScrollHeightTime() as Number,
 )
 
-internal inline fun DDRUMViewEventRUMSyntheticsTest.toCommonModel(): ViewEvent.Synthetics =
+internal fun DDRUMViewEventRUMSyntheticsTest.toCommonModel(): ViewEvent.Synthetics =
     ViewEvent.Synthetics(
   testId = testId(),
   resultId = resultId(),
   injected = injected()?.boolValue,
 )
 
-internal inline fun DDRUMViewEventRUMCITest.toCommonModel(): ViewEvent.CiTest = ViewEvent.CiTest(
+internal fun DDRUMViewEventRUMCITest.toCommonModel(): ViewEvent.CiTest = ViewEvent.CiTest(
   testExecutionId = testExecutionId(),
 )
 
-internal inline fun DDRUMViewEventRUMOperatingSystem.toCommonModel(): ViewEvent.Os = ViewEvent.Os(
+internal fun DDRUMViewEventRUMOperatingSystem.toCommonModel(): ViewEvent.Os = ViewEvent.Os(
   name = name(),
   version = version(),
   build = build(),
   versionMajor = versionMajor(),
 )
 
-internal inline fun DDRUMViewEventRUMDevice.toCommonModel(): ViewEvent.Device = ViewEvent.Device(
+internal fun DDRUMViewEventRUMDevice.toCommonModel(): ViewEvent.Device = ViewEvent.Device(
   type = viewEventRUMDeviceRUMDeviceTypeToCommonEnum(type()),
   name = name(),
   model = model(),
@@ -392,7 +387,7 @@ internal inline fun DDRUMViewEventRUMDevice.toCommonModel(): ViewEvent.Device = 
   architecture = architecture(),
 )
 
-internal inline
+internal
     fun viewEventRUMDeviceRUMDeviceTypeToCommonEnum(enumValue: DDRUMViewEventRUMDeviceRUMDeviceType):
     ViewEvent.DeviceType = when(enumValue) {
   DDRUMViewEventRUMDeviceRUMDeviceTypeMobile -> ViewEvent.DeviceType.MOBILE
@@ -402,10 +397,10 @@ internal inline
   DDRUMViewEventRUMDeviceRUMDeviceTypeGamingConsole -> ViewEvent.DeviceType.GAMING_CONSOLE
   DDRUMViewEventRUMDeviceRUMDeviceTypeBot -> ViewEvent.DeviceType.BOT
   DDRUMViewEventRUMDeviceRUMDeviceTypeOther -> ViewEvent.DeviceType.OTHER
-  else -> throw IllegalArgumentException("Unknown value $enumValue")
+  else -> ViewEvent.DeviceType.OTHER
 }
 
-internal inline fun DDRUMViewEventDD.toCommonModel(): ViewEvent.Dd = ViewEvent.Dd(
+internal fun DDRUMViewEventDD.toCommonModel(): ViewEvent.Dd = ViewEvent.Dd(
   session = session()?.toCommonModel(),
   configuration = configuration()?.toCommonModel(),
   browserSdkVersion = browserSdkVersion(),
@@ -414,21 +409,20 @@ internal inline fun DDRUMViewEventDD.toCommonModel(): ViewEvent.Dd = ViewEvent.D
   replayStats = replayStats()?.toCommonModel(),
 )
 
-internal inline fun DDRUMViewEventDDSession.toCommonModel(): ViewEvent.DdSession =
-    ViewEvent.DdSession(
+internal fun DDRUMViewEventDDSession.toCommonModel(): ViewEvent.DdSession = ViewEvent.DdSession(
   plan = viewEventDDSessionPlanToCommonEnum(plan()),
   sessionPrecondition = viewEventDDSessionRUMSessionPreconditionToCommonEnum(sessionPrecondition()),
 )
 
-internal inline fun viewEventDDSessionPlanToCommonEnum(enumValue: DDRUMViewEventDDSessionPlan):
+internal fun viewEventDDSessionPlanToCommonEnum(enumValue: DDRUMViewEventDDSessionPlan):
     ViewEvent.Plan? = when(enumValue) {
   DDRUMViewEventDDSessionPlanPlan1 -> ViewEvent.Plan.PLAN_1
   DDRUMViewEventDDSessionPlanPlan2 -> ViewEvent.Plan.PLAN_2
   DDRUMViewEventDDSessionPlanNone -> null
-  else -> throw IllegalArgumentException("Unknown value $enumValue")
+  else -> ViewEvent.Plan.PLAN_1
 }
 
-internal inline
+internal
     fun viewEventDDSessionRUMSessionPreconditionToCommonEnum(enumValue: DDRUMViewEventDDSessionRUMSessionPrecondition):
     ViewEvent.SessionPrecondition? = when(enumValue) {
   DDRUMViewEventDDSessionRUMSessionPreconditionUserAppLaunch ->
@@ -445,58 +439,55 @@ internal inline
   DDRUMViewEventDDSessionRUMSessionPreconditionExplicitStop ->
       ViewEvent.SessionPrecondition.EXPLICIT_STOP
   DDRUMViewEventDDSessionRUMSessionPreconditionNone -> null
-  else -> throw IllegalArgumentException("Unknown value $enumValue")
+  else -> ViewEvent.SessionPrecondition.USER_APP_LAUNCH
 }
 
 @Suppress("CAST_NEVER_SUCCEEDS")
-internal inline fun DDRUMViewEventDDConfiguration.toCommonModel(): ViewEvent.Configuration =
+internal fun DDRUMViewEventDDConfiguration.toCommonModel(): ViewEvent.Configuration =
     ViewEvent.Configuration(
   sessionSampleRate = sessionSampleRate() as Number,
   sessionReplaySampleRate = sessionReplaySampleRate() as? Number,
   startSessionReplayRecordingManually = startSessionReplayRecordingManually()?.boolValue,
 )
 
-internal inline fun DDRUMViewEventDDPageStates.toCommonModel(): ViewEvent.PageState =
-    ViewEvent.PageState(
+internal fun DDRUMViewEventDDPageStates.toCommonModel(): ViewEvent.PageState = ViewEvent.PageState(
   state = viewEventDDPageStatesStateToCommonEnum(state()),
   start = start().longValue,
 )
 
-internal inline
-    fun viewEventDDPageStatesStateToCommonEnum(enumValue: DDRUMViewEventDDPageStatesState):
+internal fun viewEventDDPageStatesStateToCommonEnum(enumValue: DDRUMViewEventDDPageStatesState):
     ViewEvent.State = when(enumValue) {
   DDRUMViewEventDDPageStatesStateActive -> ViewEvent.State.ACTIVE
   DDRUMViewEventDDPageStatesStatePassive -> ViewEvent.State.PASSIVE
   DDRUMViewEventDDPageStatesStateHidden -> ViewEvent.State.HIDDEN
   DDRUMViewEventDDPageStatesStateFrozen -> ViewEvent.State.FROZEN
   DDRUMViewEventDDPageStatesStateTerminated -> ViewEvent.State.TERMINATED
-  else -> throw IllegalArgumentException("Unknown value $enumValue")
+  else -> ViewEvent.State.ACTIVE
 }
 
-internal inline fun DDRUMViewEventDDReplayStats.toCommonModel(): ViewEvent.ReplayStats =
+internal fun DDRUMViewEventDDReplayStats.toCommonModel(): ViewEvent.ReplayStats =
     ViewEvent.ReplayStats(
   recordsCount = recordsCount()?.longValue,
   segmentsCount = segmentsCount()?.longValue,
   segmentsTotalRawSize = segmentsTotalRawSize()?.longValue,
 )
 
-internal inline fun DDRUMViewEventRUMEventAttributes.toCommonModel(): ViewEvent.Context =
+internal fun DDRUMViewEventRUMEventAttributes.toCommonModel(): ViewEvent.Context =
     ViewEvent.Context(
   additionalProperties = contextInfo().mapKeys { it.key as String }
 )
 
-internal inline fun DDRUMViewEventContainer.toCommonModel(): ViewEvent.Container =
-    ViewEvent.Container(
+internal fun DDRUMViewEventContainer.toCommonModel(): ViewEvent.Container = ViewEvent.Container(
   view = view().toCommonModel(),
   source = viewEventContainerSourceToCommonEnum(source()),
 )
 
-internal inline fun DDRUMViewEventContainerView.toCommonModel(): ViewEvent.ContainerView =
+internal fun DDRUMViewEventContainerView.toCommonModel(): ViewEvent.ContainerView =
     ViewEvent.ContainerView(
   id = id(),
 )
 
-internal inline fun viewEventContainerSourceToCommonEnum(enumValue: DDRUMViewEventContainerSource):
+internal fun viewEventContainerSourceToCommonEnum(enumValue: DDRUMViewEventContainerSource):
     ViewEvent.ViewEventSource = when(enumValue) {
   DDRUMViewEventContainerSourceAndroid -> ViewEvent.ViewEventSource.ANDROID
   DDRUMViewEventContainerSourceIos -> ViewEvent.ViewEventSource.IOS
@@ -506,24 +497,22 @@ internal inline fun viewEventContainerSourceToCommonEnum(enumValue: DDRUMViewEve
   DDRUMViewEventContainerSourceRoku -> ViewEvent.ViewEventSource.ROKU
   DDRUMViewEventContainerSourceUnity -> ViewEvent.ViewEventSource.UNITY
   DDRUMViewEventContainerSourceKotlinMultiplatform -> ViewEvent.ViewEventSource.KOTLIN_MULTIPLATFORM
-  else -> throw IllegalArgumentException("Unknown value $enumValue")
+  else -> ViewEvent.ViewEventSource.IOS
 }
 
-internal inline fun DDRUMViewEventFeatureFlags.toCommonModel(): ViewEvent.Context =
-    ViewEvent.Context(
+internal fun DDRUMViewEventFeatureFlags.toCommonModel(): ViewEvent.Context = ViewEvent.Context(
   additionalProperties = featureFlagsInfo().mapKeys { it.key as String }
 )
 
-internal inline fun DDRUMViewEventPrivacy.toCommonModel(): ViewEvent.Privacy = ViewEvent.Privacy(
+internal fun DDRUMViewEventPrivacy.toCommonModel(): ViewEvent.Privacy = ViewEvent.Privacy(
   replayLevel = viewEventPrivacyReplayLevelToCommonEnum(replayLevel()),
 )
 
-internal inline
-    fun viewEventPrivacyReplayLevelToCommonEnum(enumValue: DDRUMViewEventPrivacyReplayLevel):
+internal fun viewEventPrivacyReplayLevelToCommonEnum(enumValue: DDRUMViewEventPrivacyReplayLevel):
     ViewEvent.ReplayLevel = when(enumValue) {
   DDRUMViewEventPrivacyReplayLevelAllow -> ViewEvent.ReplayLevel.ALLOW
   DDRUMViewEventPrivacyReplayLevelMask -> ViewEvent.ReplayLevel.MASK
   DDRUMViewEventPrivacyReplayLevelMaskUserInput -> ViewEvent.ReplayLevel.MASK_USER_INPUT
-  else -> throw IllegalArgumentException("Unknown value $enumValue")
+  else -> ViewEvent.ReplayLevel.MASK_USER_INPUT
 }
 
