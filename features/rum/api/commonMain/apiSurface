@@ -66,6 +66,11 @@ class com.datadog.kmp.rum.configuration.RumConfiguration
     fun trackFrustrations(Boolean): Builder
     fun setVitalsUpdateFrequency(VitalsUpdateFrequency): Builder
     fun setSessionListener(RumSessionListener): Builder
+    fun setViewEventMapper(com.datadog.kmp.rum.event.ViewEventMapper): Builder
+    fun setResourceEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ResourceEvent>): Builder
+    fun setActionEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ActionEvent>): Builder
+    fun setErrorEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ErrorEvent>): Builder
+    fun setLongTaskEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.LongTaskEvent>): Builder
     fun build(): RumConfiguration
 fun interface com.datadog.kmp.rum.configuration.RumSessionListener
   fun onSessionStarted(String, Boolean)
@@ -74,6 +79,8 @@ enum com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
   - AVERAGE
   - RARE
   - NEVER
+fun interface com.datadog.kmp.rum.event.ViewEventMapper : com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ViewEvent>
+  override fun map(com.datadog.kmp.rum.model.ViewEvent): com.datadog.kmp.rum.model.ViewEvent
 data class com.datadog.kmp.rum.model.ActionEvent
   constructor(kotlin.Long, Application, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, ActionEventSession, ActionEventSource? = null, ActionEventView, Usr? = null, Connectivity? = null, Display? = null, Synthetics? = null, CiTest? = null, Os? = null, Device? = null, Dd, Context? = null, Container? = null, ActionEventAction)
   val type: kotlin.String

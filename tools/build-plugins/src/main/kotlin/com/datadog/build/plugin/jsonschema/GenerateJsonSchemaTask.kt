@@ -89,7 +89,7 @@ abstract class GenerateJsonSchemaTask : DefaultTask() {
     abstract val iosModelsMappingGeneration: Property<IOSModelsMappingGeneration>
 
     /**
-     * The [OutputDirectory] (`src/main/kotlin/{out_package}`).
+     * The [OutputDirectory] (`src/commonMain/kotlin/{out_package}`) for common model files.
      */
     @OutputDirectory
     fun getOutputPackage(): File {
@@ -100,6 +100,20 @@ abstract class GenerateJsonSchemaTask : DefaultTask() {
         )
         return outputPackageDir
     }
+
+    /**
+     * The [OutputDirectory] (`src/iosMain/kotlin/{out_package}`) iOS model mapping files.
+     */
+    @OutputDirectory
+    fun getIOSMappingOutputDirectory(): File =
+        File(getOutputPackage().absolutePath.replace("commonMain", "iosMain"))
+
+    /**
+     * The [OutputDirectory] (`src/androidMain/kotlin/{out_package}`) Android model mapping files.
+     */
+    @OutputDirectory
+    fun getAndroidMappingOutputDirectory(): File =
+        File(getOutputPackage().absolutePath.replace("commonMain", "androidMain"))
 
     // endregion
 
