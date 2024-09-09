@@ -15,6 +15,7 @@ import com.datadog.kmp.internal.InternalProxy
 import com.datadog.kmp.internal.LOG_ERROR_IS_CRASH
 import com.datadog.kmp.internal.addDatadogUnhandledExceptionHook
 import com.datadog.kmp.internal.createNSErrorFromThrowable
+import com.datadog.kmp.log.configuration.LogsConfiguration
 import com.datadog.kmp.log.internal.default
 
 /**
@@ -26,11 +27,11 @@ actual object Logs {
 
     /**
      * Enables a Logs feature.
+     *
+     * @param logsConfiguration Configuration to use for the feature.
      */
-    actual fun enable() {
-        DDLogs.enableWith(
-            DDLogsConfiguration(customEndpoint = null)
-        )
+    actual fun enable(logsConfiguration: LogsConfiguration) {
+        DDLogs.enableWith(logsConfiguration.nativeConfiguration as DDLogsConfiguration)
 
         if (InternalProxy.isCrashReportingEnabled) {
             addDatadogUnhandledExceptionHook {

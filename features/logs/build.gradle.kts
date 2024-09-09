@@ -6,6 +6,7 @@
 
 import com.datadog.build.plugin.jsonschema.SchemaLocation
 import dev.mokkery.MockMode
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithSimulatorTests
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -53,14 +54,36 @@ kotlin {
         androidUnitTest.dependencies {
             implementation(libs.bundles.jUnit5)
             implementation(libs.bundles.jvmTestTools)
-            implementation(projects.tools.unit)
         }
         commonMain.dependencies {
             api(projects.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(projects.tools.unit)
         }
+    }
+
+    targets.withType<KotlinNativeTargetWithSimulatorTests> {
+        compilations
+            .getByName("test")
+            .compileTaskProvider {
+                compilerOptions {
+                    freeCompilerArgs.addAll(
+                        listOf(
+                            "-linker-options",
+                            // TODO RUM-6046 Name of CrashReporter framework is not passed, so have
+                            //  to pass it explicitly, otherwise konanc invocation with linking (ld) fails
+                            //  to locate framework for PLCrashReporter pod. Kotlin Compiler bug?
+                            "-framework CrashReporter " +
+                                // TODO RUM-6047 Kotlin Compiler cannot locate these during the linking
+                                //  done via pods integration
+                                "-U __swift_FORCE_LOAD_\$_swiftCompatibility56 " +
+                                "-U __swift_FORCE_LOAD_\$_swiftCompatibilityConcurrency"
+                        )
+                    )
+                }
+            }
     }
 }
 
@@ -83,5 +106,11 @@ jsonSchemaGenerator {
             path = "src/commonMain/json/log"
         )
         targetPackageName = "com.datadog.kmp.log.model"
+
+        androidModelsMappingGeneration {
+            enabled = true
+            androidModelsPackageName = "com.datadog.android.log.model"
+            defaultCommonEnumValues = mapOf("LogEvent.Status" to "INFO")
+        }
     }
 }

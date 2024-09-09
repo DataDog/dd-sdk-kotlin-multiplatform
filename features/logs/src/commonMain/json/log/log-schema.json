@@ -17,7 +17,7 @@
         "trace",
         "emergency"
       ],
-      "readOnly": false
+      "readOnly": true
     },
     "service": {
       "type": "string",
@@ -41,11 +41,6 @@
         "name": {
           "type": "string",
           "description": "The name of the logger",
-          "readOnly": false
-        },
-        "thread_name": {
-          "type": "string",
-          "description": "The thread name on which the log event was created",
           "readOnly": true
         },
         "version": {
@@ -110,54 +105,6 @@
       },
       "readOnly": true
     },
-    "network": {
-      "type": "object",
-      "description": "The network information in the moment the log was created",
-      "properties": {
-        "client": {
-          "type": "object",
-          "properties": {
-            "sim_carrier": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "readOnly": true
-                },
-                "name": {
-                  "type": "string",
-                  "readOnly": true
-                }
-              }
-            },
-            "signal_strength": {
-              "type": "string"
-            },
-            "downlink_kbps": {
-              "type": "string",
-              "readOnly": true
-            },
-            "uplink_kbps": {
-              "type": "string",
-              "readOnly": true
-            },
-            "connectivity": {
-              "type": "string",
-              "description": "The active network",
-              "readOnly": true
-            }
-          },
-          "readOnly": true,
-          "required": [
-            "connectivity"
-          ]
-        }
-      },
-      "readOnly": true,
-      "required": [
-        "client"
-      ]
-    },
     "error": {
       "type": "object",
       "description": "The additional error information in case this log is marked as an error",
@@ -186,37 +133,6 @@
           "type": "string",
           "description": "A custom fingerprint for this error",
           "readOnly": false
-        },
-        "threads": {
-          "type": "array",
-          "description": "Description of each thread in the process when error happened.",
-          "items": {
-            "type": "object",
-            "description": "Description of the thread in the process when error happened.",
-            "required": ["name", "crashed", "stack"],
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Name of the thread (e.g. 'Thread 0').",
-                "readOnly": true
-              },
-              "crashed": {
-                "type": "boolean",
-                "description": "Tells if the thread crashed.",
-                "readOnly": true
-              },
-              "stack": {
-                "type": "string",
-                "description": "Unsymbolicated stack trace of the given thread.",
-                "readOnly": true
-              },
-              "state": {
-                "type": "string",
-                "description": "Platform-specific state of the thread when its state was captured (CPU registers dump for iOS, thread state enum for Android, etc.).",
-                "readOnly": true
-              }
-            }
-          }
         }
       },
       "readOnly": true

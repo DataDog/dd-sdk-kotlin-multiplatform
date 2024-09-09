@@ -77,28 +77,26 @@ kotlin {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
     }
 
-    afterEvaluate {
-        targets.withType<KotlinNativeTargetWithSimulatorTests> {
-            compilations
-                .getByName("test")
-                .compileTaskProvider {
-                    compilerOptions {
-                        freeCompilerArgs.addAll(
-                            listOf(
-                                "-linker-options",
-                                // TODO RUM-6046 Name of CrashReporter framework is not passed, so have
-                                //  to pass it explicitly, otherwise konanc invocation with linking (ld) fails
-                                //  to locate framework for PLCrashReporter pod. Kotlin Compiler bug?
-                                "-framework CrashReporter " +
-                                    // TODO RUM-6047 Kotlin Compiler cannot locate these during the linking
-                                    //  done via pods integration
-                                    "-U __swift_FORCE_LOAD_\$_swiftCompatibility56 " +
-                                    "-U __swift_FORCE_LOAD_\$_swiftCompatibilityConcurrency"
-                            )
+    targets.withType<KotlinNativeTargetWithSimulatorTests> {
+        compilations
+            .getByName("test")
+            .compileTaskProvider {
+                compilerOptions {
+                    freeCompilerArgs.addAll(
+                        listOf(
+                            "-linker-options",
+                            // TODO RUM-6046 Name of CrashReporter framework is not passed, so have
+                            //  to pass it explicitly, otherwise konanc invocation with linking (ld) fails
+                            //  to locate framework for PLCrashReporter pod. Kotlin Compiler bug?
+                            "-framework CrashReporter " +
+                                // TODO RUM-6047 Kotlin Compiler cannot locate these during the linking
+                                //  done via pods integration
+                                "-U __swift_FORCE_LOAD_\$_swiftCompatibility56 " +
+                                "-U __swift_FORCE_LOAD_\$_swiftCompatibilityConcurrency"
                         )
-                    }
+                    )
                 }
-        }
+            }
     }
 }
 

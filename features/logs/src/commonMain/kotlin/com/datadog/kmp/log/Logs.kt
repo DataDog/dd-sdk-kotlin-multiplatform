@@ -6,6 +6,8 @@
 
 package com.datadog.kmp.log
 
+import com.datadog.kmp.log.configuration.LogsConfiguration
+
 /**
  * An entry point to Datadog Logs feature.
  */
@@ -13,8 +15,10 @@ expect object Logs {
 
     /**
      * Enables a Logs feature.
+     *
+     * @param logsConfiguration Configuration to use for the feature.
      */
-    fun enable()
+    fun enable(logsConfiguration: LogsConfiguration)
 
     /**
      * Add a custom attribute to all future logs sent by loggers.
