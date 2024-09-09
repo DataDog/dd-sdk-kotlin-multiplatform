@@ -4,7 +4,6 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-import com.datadog.build.ProjectConfig
 import dev.mokkery.MockMode
 
 plugins {
@@ -25,13 +24,9 @@ plugins {
 kotlin {
 
     cocoapods {
-        // cannot use noPodSpec, because of https://youtrack.jetbrains.com/issue/KT-63331
-        // so what is below for podspec description is just a fake thing to make tooling happy
-        version = ProjectConfig.VERSION.name
         // need to build with XCode 15
         ios.deploymentTarget = "12.0"
-        name = "DatadogKMPKtor"
-        summary = "Official Datadog SDK Ktor integration for iOS."
+        noPodspec()
 
         framework {
             baseName = "DatadogKMPKtor"
