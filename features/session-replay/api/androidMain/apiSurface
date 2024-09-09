@@ -1,0 +1,3 @@
+actual object com.datadog.kmp.sessionreplay.SessionReplay
+  actual fun enable(com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration)
+fun SessionReplayConfiguration.Builder.addExtensionSupport(com.datadog.android.sessionreplay.ExtensionSupport)

@@ -208,6 +208,17 @@ publish:release-webview:
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:webview:publishToSonatype --stacktrace --no-daemon
 
+publish:release-session-replay:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
+    - ./gradlew :features:session-replay:publishToSonatype --stacktrace --no-daemon
+
 publish:release-ktor:
   tags: [ "macos:sonoma" ]
   only:

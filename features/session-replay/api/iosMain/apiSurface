@@ -1,0 +1,2 @@
+actual object com.datadog.kmp.sessionreplay.SessionReplay
+  actual fun enable(com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration)
