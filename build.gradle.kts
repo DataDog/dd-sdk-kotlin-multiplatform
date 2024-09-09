@@ -92,6 +92,7 @@ val publishableProjects = listOf(
     projects.features.logs,
     projects.features.rum,
     projects.features.webview,
+    projects.features.sessionReplay,
     projects.integrations.ktor
 )
 
