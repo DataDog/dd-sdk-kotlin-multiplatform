@@ -10,6 +10,7 @@ import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.setAppHangThreshold
 import com.datadog.kmp.rum.configuration.trackUiKitActions
 import com.datadog.kmp.rum.configuration.trackUiKitViews
+import com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration
 import com.datadog.kmp.webview.WebViewTracking
 import platform.WebKit.WKWebView
 
@@ -26,6 +27,10 @@ internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfigurat
         trackUiKitActions()
         setAppHangThreshold(APP_HANG_THRESHOLD_MS)
     }
+}
+
+internal actual fun platformSpecificSetup(sessionReplayConfigurationBuilder: SessionReplayConfiguration.Builder) {
+    // nothing to do for iOS
 }
 
 const val APP_HANG_THRESHOLD_MS = 100L

@@ -7,10 +7,13 @@
 package com.datadog.kmp.sample
 
 import android.webkit.WebView
+import com.datadog.android.sessionreplay.material.MaterialExtensionSupport
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.trackNonFatalAnrs
 import com.datadog.kmp.rum.configuration.trackUserInteractions
 import com.datadog.kmp.rum.configuration.useViewTrackingStrategy
+import com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration
+import com.datadog.kmp.sessionreplay.configuration.addExtensionSupport
 import com.datadog.kmp.webview.WebViewTracking
 
 internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder) {
@@ -19,6 +22,12 @@ internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfigurat
         useViewTrackingStrategy(null)
         trackUserInteractions()
         trackNonFatalAnrs(true)
+    }
+}
+
+internal actual fun platformSpecificSetup(sessionReplayConfigurationBuilder: SessionReplayConfiguration.Builder) {
+    with(sessionReplayConfigurationBuilder) {
+        addExtensionSupport(MaterialExtensionSupport())
     }
 }
 

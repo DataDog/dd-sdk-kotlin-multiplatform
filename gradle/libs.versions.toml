@@ -49,6 +49,7 @@ datadog-android-logs = { module = "com.datadoghq:dd-sdk-android-logs", version.r
 datadog-android-rum = { module = "com.datadoghq:dd-sdk-android-rum", version.ref = "datadog-android" }
 datadog-android-webview = { module = "com.datadoghq:dd-sdk-android-webview", version.ref = "datadog-android" }
 datadog-android-sessionReplay = { module = "com.datadoghq:dd-sdk-android-session-replay", version.ref = "datadog-android" }
+datadog-android-sessionReplayMaterial = { module = "com.datadoghq:dd-sdk-android-session-replay-material", version.ref = "datadog-android" }
 datadog-android-compose = { module = "com.datadoghq:dd-sdk-android-compose", version.ref = "datadog-android" }
 kotlinGrammarParser = { module = "com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm", version.ref = "kotlinGrammarParser" }
 kotlinPoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinPoet" }

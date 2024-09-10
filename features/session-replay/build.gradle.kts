@@ -1,3 +1,5 @@
+import dev.mokkery.MockMode
+
 /*
  * Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
  * This product includes software developed at Datadog (https://www.datadoghq.com/).
@@ -12,6 +14,7 @@ plugins {
     alias(libs.plugins.dependencyLicense)
     id("api-surface")
     id("transitive-dependencies")
+    alias(libs.plugins.mokkery)
 
     // publishing
     `maven-publish`
@@ -51,16 +54,33 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
-            implementation(libs.datadog.android.sessionReplay)
+            // need to be API, because in androidMain we have extension methods which
+            // expose native interface as argument
+            api(libs.datadog.android.sessionReplay)
+        }
+        androidUnitTest.dependencies {
+            implementation(libs.bundles.jUnit5)
+            implementation(libs.bundles.jvmTestTools)
         }
         commonMain.dependencies {
             api(projects.core)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+        iosTest.dependencies {
+            implementation(projects.tools.unit)
         }
     }
 }
 
 android {
     namespace = "com.datadog.kmp.sessionreplay"
+}
+
+mokkery {
+    defaultMockMode = MockMode.autofill
+    ignoreFinalMembers = true
 }
 
 datadogBuildConfig {
