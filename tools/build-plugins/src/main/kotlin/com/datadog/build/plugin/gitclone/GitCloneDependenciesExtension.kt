@@ -6,7 +6,9 @@
 
 package com.datadog.build.plugin.gitclone
 
-open class GitCloneDependenciesExtension {
+import java.io.Serializable
+
+open class GitCloneDependenciesExtension : Serializable {
 
     internal data class Dependency(
         var originRepository: String,
@@ -14,7 +16,7 @@ open class GitCloneDependenciesExtension {
         var excludedPrefixes: List<String>,
         var originRef: String,
         var destinationFolder: String
-    )
+    ) : Serializable
 
     internal val dependencies: MutableList<Dependency> = mutableListOf()
 }
