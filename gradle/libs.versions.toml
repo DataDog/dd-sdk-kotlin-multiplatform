@@ -12,6 +12,10 @@ datadog-ios = "2.14.1"
 dependencyLicense = "0.3"
 nexusPublish = "2.0.0"
 kotlinGrammarParser = "0.1.0"
+# version d4384e4d90 of com.github.drieks.antlr-kotlin:antlr-kotlin-runtime
+# referenced by com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm cannot be found
+# so explicitly overriding with the version which can be found
+kotlinAntlrRuntime = "v0.1.0"
 kotlinPoet = "1.18.1"
 gson = "2.11.0"
 
@@ -52,6 +56,7 @@ datadog-android-sessionReplay = { module = "com.datadoghq:dd-sdk-android-session
 datadog-android-sessionReplayMaterial = { module = "com.datadoghq:dd-sdk-android-session-replay-material", version.ref = "datadog-android" }
 datadog-android-compose = { module = "com.datadoghq:dd-sdk-android-compose", version.ref = "datadog-android" }
 kotlinGrammarParser = { module = "com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm", version.ref = "kotlinGrammarParser" }
+kotlinAntlrRuntime = { module = "com.github.drieks.antlr-kotlin:antlr-kotlin-runtime", version.ref = "kotlinAntlrRuntime" }
 kotlinPoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinPoet" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 

@@ -26,6 +26,7 @@ dependencies {
     compileOnly(libs.android.tools)
     compileOnly(libs.kotlin.gradle.plugin)
     implementation(libs.kotlinGrammarParser)
+    implementation(libs.kotlinAntlrRuntime)
     implementation(libs.kotlinPoet)
     implementation(libs.gson)
 
