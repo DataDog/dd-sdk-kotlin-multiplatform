@@ -29,29 +29,26 @@ class com.datadog.kmp.log.Logger
     fun setBundleWithRumEnabled(Boolean): Builder
     fun setRemoteSampleRate(Float): Builder
 expect object com.datadog.kmp.log.Logs
-  fun enable()
+  fun enable(com.datadog.kmp.log.configuration.LogsConfiguration)
   fun addAttribute(String, Any?)
   fun removeAttribute(String)
+class com.datadog.kmp.log.configuration.LogsConfiguration
+  class Builder
+    constructor()
+    fun setEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.log.model.LogEvent>): Builder
+    fun build(): LogsConfiguration
 data class com.datadog.kmp.log.model.LogEvent
-  constructor(Status, kotlin.String, kotlin.String, kotlin.String, Logger, Dd, Usr? = null, Network? = null, Error? = null, kotlin.String? = null, kotlin.String, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  constructor(Status, kotlin.String, kotlin.String, kotlin.String, Logger, Dd, Usr? = null, Error? = null, kotlin.String? = null, kotlin.String, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
   data class Logger
-    constructor(kotlin.String, kotlin.String? = null, kotlin.String)
+    constructor(kotlin.String, kotlin.String)
   data class Dd
     constructor(Device)
   data class Usr
     constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
-  data class Network
-    constructor(Client)
   data class Error
-    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.List<Thread>? = null)
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
   data class Device
     constructor(kotlin.String)
-  data class Client
-    constructor(SimCarrier? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String)
-  data class Thread
-    constructor(kotlin.String, kotlin.Boolean, kotlin.String, kotlin.String? = null)
-  data class SimCarrier
-    constructor(kotlin.String? = null, kotlin.String? = null)
   enum Status
     constructor(kotlin.String)
     - CRITICAL

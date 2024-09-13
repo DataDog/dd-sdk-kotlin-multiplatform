@@ -16,6 +16,7 @@ import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.core.configuration.UploadFrequency
 import com.datadog.kmp.log.Logger
 import com.datadog.kmp.log.Logs
+import com.datadog.kmp.log.configuration.LogsConfiguration
 import com.datadog.kmp.privacy.TrackingConsent
 import com.datadog.kmp.rum.Rum
 import com.datadog.kmp.rum.RumActionType
@@ -54,7 +55,13 @@ fun initDatadog(context: Any? = null) {
 
     Datadog.initialize(context = context, configuration = configuration, trackingConsent = TrackingConsent.GRANTED)
 
-    Logs.enable()
+    val logsConfiguration = LogsConfiguration.Builder()
+        .setEventMapper {
+            it.ddtags += ",mapped_tag:mapped_value"
+            it
+        }
+        .build()
+    Logs.enable(logsConfiguration)
 
     val rumConfiguration = RumConfiguration.Builder(LibraryConfig.DD_APPLICATION_ID)
         .setSessionSampleRate(100f)

@@ -6,8 +6,9 @@
 
 package com.datadog.kmp.log
 
-import com.datadog.android.log.LogsConfiguration
+import com.datadog.kmp.log.configuration.LogsConfiguration
 import com.datadog.android.log.Logs as AndroidLogs
+import com.datadog.android.log.LogsConfiguration as NativeLogsConfiguration
 
 /**
  * An entry point to Datadog Logs feature.
@@ -16,8 +17,11 @@ actual object Logs {
 
     /**
      * Enables a Logs feature.
+     *
+     * @param logsConfiguration Configuration to use for the feature.
      */
-    actual fun enable() = AndroidLogs.enable(LogsConfiguration.Builder().build())
+    actual fun enable(logsConfiguration: LogsConfiguration) =
+        AndroidLogs.enable(logsConfiguration.nativeConfiguration as NativeLogsConfiguration)
 
     /**
      * Add a custom attribute to all future logs sent by loggers.

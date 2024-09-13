@@ -24,6 +24,7 @@ import com.datadog.kmp.rum.tracking.RumAction
 import com.datadog.kmp.rum.tracking.RumView
 import com.datadog.kmp.rum.tracking.UIKitRUMActionsPredicate
 import com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
+import com.datadog.tools.concurrent.CountDownLatch
 import com.datadog.tools.random.exhaustiveAttributes
 import com.datadog.tools.random.nullable
 import com.datadog.tools.random.randomBoolean
@@ -33,13 +34,9 @@ import com.datadog.tools.random.randomInt
 import com.datadog.tools.random.randomLong
 import dev.mokkery.mock
 import dev.mokkery.verify
-import platform.Foundation.NSDate
-import platform.Foundation.now
-import platform.Foundation.timeIntervalSinceDate
 import platform.UIKit.UIView
 import platform.UIKit.UIViewController
 import platform.posix.usleep
-import kotlin.concurrent.AtomicInt
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -243,6 +240,7 @@ class IOSRumConfigurationBuilderTest {
         // When
         runRUMActions(imitateLongTask = true)
         latch.await(EVENTS_WAIT_TIMEOUT_MS)
+        Datadog.stopInstance()
 
         // Then
         assertEquals(
@@ -269,6 +267,7 @@ class IOSRumConfigurationBuilderTest {
         // When
         runRUMActions()
         latch.await(EVENTS_WAIT_TIMEOUT_MS)
+        Datadog.stopInstance()
 
         // Then
         assertEquals(
@@ -295,6 +294,7 @@ class IOSRumConfigurationBuilderTest {
         // When
         runRUMActions()
         latch.await(EVENTS_WAIT_TIMEOUT_MS)
+        Datadog.stopInstance()
 
         // Then
         assertEquals(
@@ -321,6 +321,7 @@ class IOSRumConfigurationBuilderTest {
         // When
         runRUMActions()
         latch.await(EVENTS_WAIT_TIMEOUT_MS)
+        Datadog.stopInstance()
 
         // Then
         assertEquals(
@@ -349,6 +350,7 @@ class IOSRumConfigurationBuilderTest {
         // When
         runRUMActions(imitateLongTask = true)
         latch.await(EVENTS_WAIT_TIMEOUT_MS)
+        Datadog.stopInstance()
 
         // Then
         assertEquals(
@@ -370,26 +372,6 @@ class IOSRumConfigurationBuilderTest {
     }
 
     // region private
-
-    private class CountDownLatch(count: Int) {
-        private val count = AtomicInt(count)
-
-        fun countDown() {
-            count.decrementAndGet()
-        }
-
-        fun await(timeoutMs: Long) {
-            val started = NSDate.now
-            while (!isExhausted()) {
-                val now = NSDate.now
-                if (now.timeIntervalSinceDate(started) * 1000 > timeoutMs) {
-                    break
-                }
-            }
-        }
-
-        fun isExhausted() = count.value <= 0
-    }
 
     private fun runRUMActions(imitateLongTask: Boolean = false) {
         with(RumMonitor.get()) {

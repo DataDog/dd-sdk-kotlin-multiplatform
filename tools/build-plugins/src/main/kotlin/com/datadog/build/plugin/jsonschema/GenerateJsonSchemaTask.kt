@@ -144,7 +144,7 @@ abstract class GenerateJsonSchemaTask : DefaultTask() {
                         File(outputDir.path.replace("commonMain", "androidMain")),
                         commonModelsPackageName = targetPackageName,
                         androidModelsPackageName = androidModelsPackageName.get(),
-                        defaultCommonEnumValues = defaultCommonEnumValues.get(),
+                        defaultCommonEnumValues = defaultCommonEnumValues.getOrElse(emptyMap()),
                         logger
                     )
                     mappingGenerator.generate(type)
@@ -157,8 +157,8 @@ abstract class GenerateJsonSchemaTask : DefaultTask() {
                         commonModelsPackageName = targetPackageName,
                         iosModelsPackageName = iosModelsPackageName.get(),
                         iosModelsClassNamePrefix = iosModelsClassNamePrefix.getOrElse(""),
-                        typeNameRemapping = typeNameRemapping.get(),
-                        defaultCommonEnumValues = defaultCommonEnumValues.get(),
+                        typeNameRemapping = typeNameRemapping.getOrElse(emptyMap()),
+                        defaultCommonEnumValues = defaultCommonEnumValues.getOrElse(emptyMap()),
                         logger
                     )
                     mappingGenerator.generate(type)

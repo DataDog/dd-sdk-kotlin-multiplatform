@@ -1,4 +1,4 @@
 actual object com.datadog.kmp.log.Logs
-  actual fun enable()
+  actual fun enable(com.datadog.kmp.log.configuration.LogsConfiguration)
   actual fun addAttribute(String, Any?)
   actual fun removeAttribute(String)
