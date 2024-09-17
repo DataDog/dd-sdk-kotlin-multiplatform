@@ -1,0 +1,50 @@
+expect object com.datadog.kmp.Datadog
+  var verbosity: SdkLogVerbosity?
+  fun initialize(Any? = null, com.datadog.kmp.core.configuration.Configuration, com.datadog.kmp.privacy.TrackingConsent)
+  fun isInitialized(): Boolean
+  fun setTrackingConsent(com.datadog.kmp.privacy.TrackingConsent)
+  fun setUserInfo(String? = null, String? = null, String? = null, Map<String, Any?> = emptyMap())
+  fun addUserExtraInfo(Map<String, Any?>)
+  fun clearAllData()
+  fun stopInstance()
+enum com.datadog.kmp.DatadogSite
+  - US1
+  - US3
+  - US5
+  - EU1
+  - AP1
+  - US1_FED
+enum com.datadog.kmp.SdkLogVerbosity
+  - DEBUG
+  - WARN
+  - ERROR
+  - CRITICAL
+enum com.datadog.kmp.core.configuration.BatchProcessingLevel
+  - LOW
+  - MEDIUM
+  - HIGH
+enum com.datadog.kmp.core.configuration.BatchSize
+  - SMALL
+  - MEDIUM
+  - LARGE
+data class com.datadog.kmp.core.configuration.Configuration
+  class Builder
+    constructor(String, String, String = NO_VARIANT, String? = null)
+    fun build(): Configuration
+    fun useSite(com.datadog.kmp.DatadogSite): Builder
+    fun setBatchSize(BatchSize): Builder
+    fun setUploadFrequency(UploadFrequency): Builder
+    fun setBatchProcessingLevel(BatchProcessingLevel): Builder
+    fun trackCrashes(Boolean): Builder
+enum com.datadog.kmp.core.configuration.UploadFrequency
+  - FREQUENT
+  - AVERAGE
+  - RARE
+fun interface com.datadog.kmp.event.EventMapper<T: Any>
+  fun map(T): T?
+object com.datadog.kmp.internal.InternalProxy
+  val isCrashReportingEnabled: Boolean
+enum com.datadog.kmp.privacy.TrackingConsent
+  - GRANTED
+  - NOT_GRANTED
+  - PENDING

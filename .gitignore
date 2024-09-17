@@ -1,0 +1,37 @@
+# IntelliJ + Kotlin
+*.iml
+.idea/**
+.kotlin/
+
+# Android Studio 3+
+.navigation/
+captures/
+.externalNativeBuild
+
+# Gradle files
+.gradle/
+build/
+
+# CMake
+.cxx/
+
+# Local configuration file (sdk path, etc)
+local.properties
+repo/
+config/*
+
+# MacOS garbage
+.DS_Store
+
+# XCode
+xcuserdata
+Package.resolved
+
+# .log
+*.log
+
+gh_token
+sdk_classpath
+
+# Generated .podspec files
+**/*.podspec

@@ -1,0 +1,22 @@
+Dependencies List
+
+com.benasher44:uuid-jvm:0.8.4                                   :    8 Kb
+io.ktor:ktor-client-core-jvm:2.3.11                             :  816 Kb
+io.ktor:ktor-events-jvm:2.3.11                                  :    7 Kb
+io.ktor:ktor-http-jvm:2.3.11                                    :  404 Kb
+io.ktor:ktor-io-jvm:2.3.11                                      :  791 Kb
+io.ktor:ktor-serialization-jvm:2.3.11                           :   24 Kb
+io.ktor:ktor-utils-jvm:2.3.11                                   :  328 Kb
+io.ktor:ktor-websocket-serialization-jvm:2.3.11                 :    6 Kb
+io.ktor:ktor-websockets-jvm:2.3.11                              :  173 Kb
+org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22                  :  963 b 
+org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22                  :  969 b 
+org.jetbrains.kotlin:kotlin-stdlib:2.0.20                       : 1706 Kb
+org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.1         : 1512 Kb
+org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.1             :  953 b 
+org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.6.0                :  648 Kb
+org.jetbrains:annotations:23.0.0                                :   28 Kb
+org.slf4j:slf4j-api:1.7.36                                      :   40 Kb
+
+Total transitive dependencies size                              :    6 Mb
+

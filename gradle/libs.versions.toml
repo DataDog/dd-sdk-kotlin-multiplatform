@@ -1,0 +1,114 @@
+[versions]
+agp = "8.6.0"
+kotlin = "2.0.20"
+compose = "1.6.6"
+compose-material3 = "1.1.2"
+androidx-fragment = "1.5.1"
+androidx-navigation-forSdk = "2.3.0"
+androidx-navigation-forApp = "2.7.7"
+androidx-activityCompose = "1.8.0"
+datadog-android = "2.13.1"
+datadog-ios = "2.17.0"
+dependencyLicense = "0.3"
+nexusPublish = "2.0.0"
+kotlinGrammarParser = "0.1.0"
+# version d4384e4d90 of com.github.drieks.antlr-kotlin:antlr-kotlin-runtime
+# referenced by com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm cannot be found
+# so explicitly overriding with the version which can be found
+kotlinAntlrRuntime = "v0.1.0"
+kotlinPoet = "1.18.1"
+gson = "2.11.0"
+
+ktor = "2.3.11"
+kotlinxCoroutines = "1.8.1"
+kotlinxDatetime = "0.6.0"
+uuid = "0.8.4"
+
+# JUnit 5
+jUnitJupiter = "5.10.2"
+jUnitPlatform = "1.10.2"
+jUnitMockitoExt = "5.12.0"
+
+# Test tools
+assertJ = "3.18.1"
+elmyr = "1.4.0"
+mockitoKotlin = "5.3.1"
+mokkery = "2.3.0"
+
+[libraries]
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "androidx-fragment" }
+androidx-navigation-runtime-forSdk = { module = "androidx.navigation:navigation-runtime", version.ref = "androidx-navigation-forSdk" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation-forApp" }
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
+android-tools = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+datadog-android-core = { module = "com.datadoghq:dd-sdk-android-core", version.ref = "datadog-android" }
+datadog-android-logs = { module = "com.datadoghq:dd-sdk-android-logs", version.ref = "datadog-android" }
+datadog-android-rum = { module = "com.datadoghq:dd-sdk-android-rum", version.ref = "datadog-android" }
+datadog-android-webview = { module = "com.datadoghq:dd-sdk-android-webview", version.ref = "datadog-android" }
+datadog-android-sessionReplay = { module = "com.datadoghq:dd-sdk-android-session-replay", version.ref = "datadog-android" }
+datadog-android-sessionReplayMaterial = { module = "com.datadoghq:dd-sdk-android-session-replay-material", version.ref = "datadog-android" }
+datadog-android-compose = { module = "com.datadoghq:dd-sdk-android-compose", version.ref = "datadog-android" }
+kotlinGrammarParser = { module = "com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm", version.ref = "kotlinGrammarParser" }
+kotlinAntlrRuntime = { module = "com.github.drieks.antlr-kotlin:antlr-kotlin-runtime", version.ref = "kotlinAntlrRuntime" }
+kotlinPoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinPoet" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-Test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+
+uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
+
+# JUnit 5 (JVM only)
+jUnitPlatform = { module = "org.junit.platform:junit-platform-launcher", version.ref = "jUnitPlatform" }
+jUnitJupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jUnitJupiter" }
+jUnitMockitoExt = { module = "org.mockito:mockito-junit-jupiter", version.ref = "jUnitMockitoExt" }
+
+# Test tools (JVM only)
+assertJ = { module = "org.assertj:assertj-core", version.ref = "assertJ" }
+elmyr = { module = "fr.xgouchet.elmyr:core", version.ref = "elmyr" }
+elmyrInject = { module = "fr.xgouchet.elmyr:inject", version.ref = "elmyr" }
+elmyrJUnit5 = { module = "fr.xgouchet.elmyr:junit5", version.ref = "elmyr" }
+elmyrJVM = { module = "fr.xgouchet.elmyr:jvm", version.ref = "elmyr" }
+mockitoKotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+dependencyLicense = { id = "com.datadoghq.dependency-license", version.ref = "dependencyLicense" }
+mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexusPublish" }
+
+[bundles]
+
+jUnit5 = [
+    "jUnitPlatform",
+    "jUnitJupiter",
+    "jUnitMockitoExt"
+]
+
+jvmTestTools = [
+    "assertJ",
+    "elmyr",
+    "elmyrInject",
+    "elmyrJUnit5",
+    "elmyrJVM",
+    "mockitoKotlin"
+]

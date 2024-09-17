@@ -1,0 +1,60 @@
+enum com.datadog.kmp.log.LogLevel
+  - DEBUG
+  - INFO
+  - WARN
+  - ERROR
+  - CRITICAL
+class com.datadog.kmp.log.Logger
+  fun debug(String, Throwable? = null, Map<String, Any?> = emptyMap())
+  fun info(String, Throwable? = null, Map<String, Any?> = emptyMap())
+  fun warn(String, Throwable? = null, Map<String, Any?> = emptyMap())
+  fun error(String, Throwable? = null, Map<String, Any?> = emptyMap())
+  fun critical(String, Throwable? = null, Map<String, Any?> = emptyMap())
+  fun log(LogLevel, String, Throwable? = null, Map<String, Any?> = emptyMap())
+  fun addAttribute(String, Any?)
+  fun removeAttribute(String)
+  fun addTag(String, String)
+  fun addTag(String)
+  fun removeTag(String)
+  fun removeTagsWithKey(String)
+  class Builder
+    constructor()
+    fun build(): Logger
+    fun setService(String): Builder
+    fun setRemoteLogThreshold(LogLevel): Builder
+    fun setPrintLogsToConsole(Boolean): Builder
+    fun setNetworkInfoEnabled(Boolean): Builder
+    fun setName(String): Builder
+    fun setBundleWithTraceEnabled(Boolean): Builder
+    fun setBundleWithRumEnabled(Boolean): Builder
+    fun setRemoteSampleRate(Float): Builder
+expect object com.datadog.kmp.log.Logs
+  fun enable(com.datadog.kmp.log.configuration.LogsConfiguration)
+  fun addAttribute(String, Any?)
+  fun removeAttribute(String)
+class com.datadog.kmp.log.configuration.LogsConfiguration
+  class Builder
+    constructor()
+    fun setEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.log.model.LogEvent>): Builder
+    fun build(): LogsConfiguration
+data class com.datadog.kmp.log.model.LogEvent
+  constructor(Status, kotlin.String, kotlin.String, kotlin.String, Logger, Dd, Usr? = null, Error? = null, kotlin.String? = null, kotlin.String, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  data class Logger
+    constructor(kotlin.String, kotlin.String)
+  data class Dd
+    constructor(Device)
+  data class Usr
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  data class Error
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+  data class Device
+    constructor(kotlin.String)
+  enum Status
+    constructor(kotlin.String)
+    - CRITICAL
+    - ERROR
+    - WARN
+    - INFO
+    - DEBUG
+    - TRACE
+    - EMERGENCY

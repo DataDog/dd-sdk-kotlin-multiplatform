@@ -1,0 +1,39 @@
+package = com.datadog.binary_images
+---
+#include <mach-o/dyld.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+extern uint32_t                    _dyld_image_count(void);
+extern const struct mach_header*   _dyld_get_image_header(uint32_t image_index);
+extern intptr_t                    _dyld_get_image_vmaddr_slide(uint32_t image_index);
+extern const char*                 _dyld_get_image_name(uint32_t image_index);
+
+typedef struct {
+  char* path;
+  uint64_t load_address
+} DDBinaryImage;
+
+typedef struct {
+    DDBinaryImage* images;
+    uint32_t count;
+} DDBinaryImagesResult;
+
+static DDBinaryImagesResult _dd_get_binary_images(void) {
+    uint32_t num_images = _dyld_image_count();
+    DDBinaryImage* images = (DDBinaryImage*) malloc(num_images * sizeof(DDBinaryImage));
+    uint32_t valid_images_count = 0;
+    for (uint32_t i = 0; i < num_images; i++) {
+        char* path = _dyld_get_image_name(i);
+        if (!path) continue;
+        struct mach_header* header = _dyld_get_image_header(i);
+        DDBinaryImage binary_image;
+        binary_image.path = path;
+        binary_image.load_address = (uint64_t) header;
+        images[valid_images_count++] = binary_image;
+    }
+    DDBinaryImagesResult result;
+    result.images = images;
+    result.count = valid_images_count;
+    return result;
+}

@@ -1,0 +1,241 @@
+# SETUP
+
+variables:
+  CURRENT_CI_IMAGE: "2"
+  CI_IMAGE_DOCKER: registry.ddbuild.io/ci/dd-sdk-kotlin-multiplatform:$CURRENT_CI_IMAGE
+  GIT_DEPTH: 6
+
+  DD_SERVICE: "dd-sdk-kotlin-multiplatform"
+  DD_ENV_TESTS: "ci"
+  DD_CIVISIBILITY_ENABLED: "true"
+  DD_INSIDE_CI: "true"
+  DD_COMMON_AGENT_CONFIG: "dd.env=ci,dd.trace.enabled=false,dd.jmx.fetch.enabled=false"
+
+stages:
+  - ci-image
+  - info
+  - analysis
+  - test
+  - publish
+
+.snippets:
+  set-publishing-credentials:
+    - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
+    - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
+    - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.ossrh_username --with-decryption --query "Parameter.Value" --out text)
+    - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.ossrh_password --with-decryption --query "Parameter.Value" --out text)
+  install-android-sdk:
+    - curl -sSL -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip
+    - rm -rf ~/android_sdk
+    - rm -rf ~/cmdline-tools
+    - unzip -q commandlinetools -d ~/
+    - mkdir -p ~/android_sdk/cmdline-tools/latest
+    - mv ~/cmdline-tools/* ~/android_sdk/cmdline-tools/latest
+    - rm ./commandlinetools.zip
+    - export ANDROID_HOME="$HOME/android_sdk/"
+    - yes | ~/android_sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
+# Security
+
+# TODO RUM-5306 Signing keys were generated using the image
+#  486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/agent-key-management-tools/gpg:1.
+# But this image is not compatible with k8s runner, so we need to regenerate keys using compatible
+# approach by the time existing keys expire (Aug 2025).
+
+# CI IMAGE
+
+ci-image:
+  stage: ci-image
+  when: manual
+  except: [ tags, schedules ]
+  tags: [ "arch:amd64" ]
+  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/docker:24.0.4-gbi-focal
+  script:
+    - docker buildx build --tag $CI_IMAGE_DOCKER --label target=build -f Dockerfile.gitlab --push .
+
+env-info:
+  stage: info
+  when: manual
+  tags: [ "macos:sonoma" ]
+  allow_failure: true # do not block GH PRs
+  script:
+    - system_profiler SPSoftwareDataType # system info
+    - xcodebuild -version
+    - xcode-select -p # default Xcode
+    - ls /Applications/ | grep Xcode # other Xcodes
+    - xcodebuild -project sample/iosApp/iosApp.xcodeproj -scheme iosApp -showdestinations -quiet # installed iOS destinations
+    - xcbeautify --version
+    - swiftlint --version
+    - carthage version
+    - gh --version
+    - brew -v
+    - bundler --version
+    - python3 -V
+    - java --version
+
+# Analysis
+
+static-analysis-ios:
+  stage: analysis
+  tags: [ "macos:sonoma" ]
+  timeout: 1h
+  script:
+#    - ./tools/lint/run-linter.sh
+    - ./tools/license/check-license.sh
+
+static-analysis-android:
+  stage: analysis
+  variables:
+    DETEKT_PUBLIC_API: "false"
+    DETEKT_CUSTOM_RULES_BUILD_TASK: ""
+    DETEKT_CUSTOM_RULES_JAR_PATH: ""
+    DETEKT_CUSTOM_RULES_YML_PATH: ""
+    DETEKT_GENERATE_CLASSPATH_BUILD_TASK: "printSdkDebugRuntimeClasspath"
+    DETEKT_CLASSPATH_FILE_PATH: ""
+    FLAVORED_ANDROID_LINT: ""
+  trigger:
+    include: "https://gitlab-templates.ddbuild.io/mobile/v34714656-060be019/static-analysis.yml"
+    strategy: depend
+
+analysis:licenses:
+  tags: [ "arch:amd64" ]
+  image: $CI_IMAGE_DOCKER
+  stage: analysis
+  timeout: 30m
+  script:
+    - GRADLE_OPTS="-Xmx3072m" ./gradlew checkDependencyLicenses --stacktrace --no-daemon
+
+# Test
+
+jvm-unit-test:
+  stage: test
+  tags: [ "arch:amd64" ]
+  image: $CI_IMAGE_DOCKER
+  timeout: 1h
+  script:
+    - rm -rf ~/.gradle/daemon/
+    - export DD_AGENT_HOST="$BUILDENV_HOST_IP"
+    - GRADLE_OPTS="-Xmx4096m" ./gradlew jvmUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_TRACER_FOLDER/dd-java-agent.jar=$DD_COMMON_AGENT_CONFIG
+  artifacts:
+    when: always
+    expire_in: 1 week
+    reports:
+      junit:
+        - "**/build/test-results/testDebugUnitTest/*.xml"
+        - "**/build/test-results/testReleaseUnitTest/*.xml"
+
+ios-unit-test:
+  stage: test
+  tags: [ "macos:sonoma" ]
+  image: $CI_IMAGE_DOCKER
+  timeout: 1h
+  # Remove URL re-write, otherwise dd-sdk-ios is attempted to be cloned from Gitlab instead of Github as requested
+  before_script:
+    - set +o pipefail
+    - git config --global --list | grep --line-buffered -oe "url.https://gitlab-ci-token:.*@gitlab.ddbuild.io/DataDog/" | xargs -I {} git config --global --remove {}
+    - set -o pipefail
+  script:
+    # TODO RUM-4602 Datadog Java Agent fails to start (macOS problem? arm64 problem?)
+    - pod repo update
+    - ./gradlew iosUnitTestAll
+  artifacts:
+    when: always
+    expire_in: 1 week
+    reports:
+      junit:
+        - "**/build/test-results/iosSimulatorArm64Test/*.xml"
+
+sample-app-build-ios:
+  stage: test
+  tags: [ "macos:sonoma" ]
+  timeout: 1h
+  variables:
+    BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.4"
+  # Remove URL re-write, otherwise dd-sdk-ios is attempted to be cloned from Gitlab instead of Github as requested
+  before_script:
+    - set +o pipefail
+    - git config --global --list | grep --line-buffered -oe "url.https://gitlab-ci-token:.*@gitlab.ddbuild.io/DataDog/" | xargs -I {} git config --global --remove {}
+    - set -o pipefail
+  script:
+    - pod repo update
+    # temporary workaround for RUM-4282
+    - ./gradlew :core:podBuildDatadogObjcIphonesimulator :core:podBuildDatadogCrashReportingIphonesimulator
+    - xcodebuild -project sample/iosApp/iosApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme iosApp build | xcbeautify --preserve-unbeautified
+
+sample-app-build-android:
+  stage: test
+  tags: [ "arch:amd64" ]
+  image: $CI_IMAGE_DOCKER
+  timeout: 1h
+  script:
+    - rm -rf ~/.gradle/daemon/
+    - export DD_AGENT_HOST="$BUILDENV_HOST_IP"
+    - GRADLE_OPTS="-Xmx4096m" ./gradlew :sample:androidApp:assembleDebug --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_TRACER_FOLDER/dd-java-agent.jar=$DD_COMMON_AGENT_CONFIG
+
+# PUBLISH ARTIFACTS ON MAVEN
+
+publish:release-core:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
+    - ./gradlew :core:publishToSonatype --stacktrace --no-daemon
+
+publish:release-logs:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
+    - ./gradlew :features:logs:publishToSonatype --stacktrace --no-daemon
+
+publish:release-rum:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
+    - ./gradlew :features:rum:publishToSonatype --stacktrace --no-daemon
+
+publish:release-webview:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
+    - ./gradlew :features:webview:publishToSonatype --stacktrace --no-daemon
+
+publish:release-session-replay:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
+    - ./gradlew :features:session-replay:publishToSonatype --stacktrace --no-daemon
+
+publish:release-ktor:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
+    - ./gradlew :integrations:ktor:publishToSonatype --stacktrace --no-daemon

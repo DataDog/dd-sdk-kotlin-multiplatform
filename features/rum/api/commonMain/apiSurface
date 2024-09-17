@@ -1,0 +1,742 @@
+expect object com.datadog.kmp.rum.Rum
+  fun enable(com.datadog.kmp.rum.configuration.RumConfiguration)
+enum com.datadog.kmp.rum.RumActionType
+  - TAP
+  - SCROLL
+  - SWIPE
+  - CLICK
+  - BACK
+  - CUSTOM
+object com.datadog.kmp.rum.RumAttributes
+  const val ERROR_FINGERPRINT: String
+enum com.datadog.kmp.rum.RumErrorSource
+  - NETWORK
+  - SOURCE
+  - LOGGER
+  - WEBVIEW
+interface com.datadog.kmp.rum.RumMonitor
+  fun getCurrentSessionId((String?) -> Unit)
+  fun startView(Any, String, Map<String, Any?> = emptyMap())
+  fun stopView(Any, Map<String, Any?> = emptyMap())
+  fun addAction(RumActionType, String, Map<String, Any?>)
+  fun startAction(RumActionType, String, Map<String, Any?>)
+  fun stopAction(RumActionType, String, Map<String, Any?> = emptyMap())
+  fun startResource(String, RumResourceMethod, String, Map<String, Any?> = emptyMap())
+  fun stopResource(String, Int?, Long?, RumResourceKind, Map<String, Any?>)
+  fun stopResourceWithError(String, Int?, String, Throwable, Map<String, Any?> = emptyMap())
+  fun addError(String, RumErrorSource, Throwable?, Map<String, Any?> = emptyMap())
+  fun addTiming(String)
+  fun addFeatureFlagEvaluation(String, Any)
+  fun addFeatureFlagEvaluations(Map<String, Any>)
+  fun addAttribute(String, Any?)
+  fun removeAttribute(String)
+  fun stopSession()
+  var debug: Boolean
+  companion object 
+    fun get(): RumMonitor
+enum com.datadog.kmp.rum.RumResourceKind
+  - BEACON
+  - FETCH
+  - XHR
+  - DOCUMENT
+  - NATIVE
+  - IMAGE
+  - JS
+  - FONT
+  - CSS
+  - MEDIA
+  - OTHER
+enum com.datadog.kmp.rum.RumResourceMethod
+  - POST
+  - GET
+  - HEAD
+  - PUT
+  - DELETE
+  - PATCH
+  - TRACE
+  - OPTIONS
+  - CONNECT
+class com.datadog.kmp.rum.configuration.RumConfiguration
+  class Builder
+    constructor(String)
+    fun setSessionSampleRate(Float): Builder
+    fun setTelemetrySampleRate(Float): Builder
+    fun trackLongTasks(Long = DEFAULT_LONG_TASK_THRESHOLD_MS): Builder
+    fun trackBackgroundEvents(Boolean): Builder
+    fun trackFrustrations(Boolean): Builder
+    fun setVitalsUpdateFrequency(VitalsUpdateFrequency): Builder
+    fun setSessionListener(RumSessionListener): Builder
+    fun setViewEventMapper(com.datadog.kmp.rum.event.ViewEventMapper): Builder
+    fun setResourceEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ResourceEvent>): Builder
+    fun setActionEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ActionEvent>): Builder
+    fun setErrorEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ErrorEvent>): Builder
+    fun setLongTaskEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.LongTaskEvent>): Builder
+    fun build(): RumConfiguration
+fun interface com.datadog.kmp.rum.configuration.RumSessionListener
+  fun onSessionStarted(String, Boolean)
+enum com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
+  - FREQUENT
+  - AVERAGE
+  - RARE
+  - NEVER
+fun interface com.datadog.kmp.rum.event.ViewEventMapper : com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ViewEvent>
+  override fun map(com.datadog.kmp.rum.model.ViewEvent): com.datadog.kmp.rum.model.ViewEvent
+data class com.datadog.kmp.rum.model.ActionEvent
+  constructor(kotlin.Long, Application, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, ActionEventSession, ActionEventSource? = null, ActionEventView, Usr? = null, Connectivity? = null, Display? = null, Synthetics? = null, CiTest? = null, Os? = null, Device? = null, Dd, Context? = null, Container? = null, ActionEventAction)
+  val type: kotlin.String
+  data class Application
+    constructor(kotlin.String)
+  data class ActionEventSession
+    constructor(kotlin.String, ActionEventSessionType, kotlin.Boolean? = null)
+  data class ActionEventView
+    constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null, kotlin.Boolean? = null)
+  data class Usr
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  data class Connectivity
+    constructor(Status, EffectiveType? = null, Cellular? = null)
+  data class Display
+    constructor(Viewport? = null)
+  data class Synthetics
+    constructor(kotlin.String, kotlin.String, kotlin.Boolean? = null)
+  data class CiTest
+    constructor(kotlin.String)
+  data class Os
+    constructor(kotlin.String, kotlin.String, kotlin.String? = null, kotlin.String)
+  data class Device
+    constructor(DeviceType, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+  data class Dd
+    constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, DdAction? = null)
+    val formatVersion: kotlin.Long
+  data class Context
+    constructor(kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  data class Container
+    constructor(ContainerView, ActionEventSource)
+  data class ActionEventAction
+    constructor(ActionEventActionType, kotlin.String? = null, kotlin.Long? = null, ActionEventActionTarget? = null, Error? = null, Crash? = null, LongTask? = null, Resource? = null)
+  data class Cellular
+    constructor(kotlin.String? = null, kotlin.String? = null)
+  data class Viewport
+    constructor(kotlin.Number, kotlin.Number)
+  data class DdSession
+    constructor(Plan? = null, SessionPrecondition? = null)
+  data class Configuration
+    constructor(kotlin.Number, kotlin.Number? = null)
+  data class DdAction
+    constructor(Position? = null, DdActionTarget? = null)
+  data class ContainerView
+    constructor(kotlin.String)
+  data class ActionEventActionTarget
+    constructor(kotlin.String)
+  data class Error
+    constructor(kotlin.Long)
+  data class Crash
+    constructor(kotlin.Long)
+  data class LongTask
+    constructor(kotlin.Long)
+  data class Resource
+    constructor(kotlin.Long)
+  data class Position
+    constructor(kotlin.Long, kotlin.Long)
+  data class DdActionTarget
+    constructor(kotlin.String? = null, kotlin.Long? = null, kotlin.Long? = null)
+  enum ActionEventSource
+    constructor(kotlin.String)
+    - ANDROID
+    - IOS
+    - BROWSER
+    - FLUTTER
+    - REACT_NATIVE
+    - ROKU
+    - UNITY
+    - KOTLIN_MULTIPLATFORM
+  enum ActionEventSessionType
+    constructor(kotlin.String)
+    - USER
+    - SYNTHETICS
+    - CI_TEST
+  enum Status
+    constructor(kotlin.String)
+    - CONNECTED
+    - NOT_CONNECTED
+    - MAYBE
+  enum EffectiveType
+    constructor(kotlin.String)
+    - SLOW_2G
+    - `2G`
+    - `3G`
+    - `4G`
+  enum DeviceType
+    constructor(kotlin.String)
+    - MOBILE
+    - DESKTOP
+    - TABLET
+    - TV
+    - GAMING_CONSOLE
+    - BOT
+    - OTHER
+  enum ActionEventActionType
+    constructor(kotlin.String)
+    - CUSTOM
+    - CLICK
+    - TAP
+    - SCROLL
+    - SWIPE
+    - APPLICATION_START
+    - BACK
+  enum Plan
+    constructor(kotlin.Number)
+    - PLAN_1
+    - PLAN_2
+  enum SessionPrecondition
+    constructor(kotlin.String)
+    - USER_APP_LAUNCH
+    - INACTIVITY_TIMEOUT
+    - MAX_DURATION
+    - BACKGROUND_LAUNCH
+    - PREWARM
+    - FROM_NON_INTERACTIVE_SESSION
+    - EXPLICIT_STOP
+data class com.datadog.kmp.rum.model.ErrorEvent
+  constructor(kotlin.Long, Application, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, ErrorEventSession, ErrorEventSource? = null, ErrorEventView, Usr? = null, Connectivity? = null, Display? = null, Synthetics? = null, CiTest? = null, Os? = null, Device? = null, Dd, Context? = null, Action? = null, Container? = null, Error, Context? = null)
+  val type: kotlin.String
+  data class Application
+    constructor(kotlin.String)
+  data class ErrorEventSession
+    constructor(kotlin.String, ErrorEventSessionType, kotlin.Boolean? = null)
+  data class ErrorEventView
+    constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null, kotlin.Boolean? = null)
+  data class Usr
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  data class Connectivity
+    constructor(Status, EffectiveType? = null, Cellular? = null)
+  data class Display
+    constructor(Viewport? = null)
+  data class Synthetics
+    constructor(kotlin.String, kotlin.String, kotlin.Boolean? = null)
+  data class CiTest
+    constructor(kotlin.String)
+  data class Os
+    constructor(kotlin.String, kotlin.String, kotlin.String? = null, kotlin.String)
+  data class Device
+    constructor(DeviceType, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+  data class Dd
+    constructor(DdSession? = null, Configuration? = null, kotlin.String? = null)
+    val formatVersion: kotlin.Long
+  data class Context
+    constructor(kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  data class Action
+    constructor(kotlin.collections.List<kotlin.String>)
+  data class Container
+    constructor(ContainerView, ErrorEventSource)
+  data class Error
+    constructor(kotlin.String? = null, kotlin.String, ErrorSource, kotlin.String? = null, kotlin.collections.List<Cause>? = null, kotlin.Boolean? = null, kotlin.String? = null, kotlin.String? = null, Category? = null, Handling? = null, kotlin.String? = null, SourceType? = null, Resource? = null, kotlin.collections.List<Thread>? = null, kotlin.collections.List<BinaryImage>? = null, kotlin.Boolean? = null, Meta? = null, kotlin.Long? = null)
+  data class Cellular
+    constructor(kotlin.String? = null, kotlin.String? = null)
+  data class Viewport
+    constructor(kotlin.Number, kotlin.Number)
+  data class DdSession
+    constructor(Plan? = null, SessionPrecondition? = null)
+  data class Configuration
+    constructor(kotlin.Number, kotlin.Number? = null)
+  data class ContainerView
+    constructor(kotlin.String)
+  data class Cause
+    constructor(kotlin.String, kotlin.String? = null, kotlin.String? = null, ErrorSource)
+  data class Resource
+    constructor(Method, kotlin.Long, kotlin.String, Provider? = null)
+  data class Thread
+    constructor(kotlin.String, kotlin.Boolean, kotlin.String, kotlin.String? = null)
+  data class BinaryImage
+    constructor(kotlin.String, kotlin.String, kotlin.Boolean, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+  data class Meta
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+  data class Provider
+    constructor(kotlin.String? = null, kotlin.String? = null, ProviderType? = null)
+  enum ErrorEventSource
+    constructor(kotlin.String)
+    - ANDROID
+    - IOS
+    - BROWSER
+    - FLUTTER
+    - REACT_NATIVE
+    - ROKU
+    - UNITY
+    - KOTLIN_MULTIPLATFORM
+  enum ErrorEventSessionType
+    constructor(kotlin.String)
+    - USER
+    - SYNTHETICS
+    - CI_TEST
+  enum Status
+    constructor(kotlin.String)
+    - CONNECTED
+    - NOT_CONNECTED
+    - MAYBE
+  enum EffectiveType
+    constructor(kotlin.String)
+    - SLOW_2G
+    - `2G`
+    - `3G`
+    - `4G`
+  enum DeviceType
+    constructor(kotlin.String)
+    - MOBILE
+    - DESKTOP
+    - TABLET
+    - TV
+    - GAMING_CONSOLE
+    - BOT
+    - OTHER
+  enum ErrorSource
+    constructor(kotlin.String)
+    - NETWORK
+    - SOURCE
+    - CONSOLE
+    - LOGGER
+    - AGENT
+    - WEBVIEW
+    - CUSTOM
+    - REPORT
+  enum Category
+    constructor(kotlin.String)
+    - ANR
+    - APP_HANG
+    - EXCEPTION
+  enum Handling
+    constructor(kotlin.String)
+    - HANDLED
+    - UNHANDLED
+  enum SourceType
+    constructor(kotlin.String)
+    - ANDROID
+    - BROWSER
+    - IOS
+    - REACT_NATIVE
+    - FLUTTER
+    - ROKU
+    - NDK
+    - IOS_IL2CPP
+    - NDK_IL2CPP
+  enum Plan
+    constructor(kotlin.Number)
+    - PLAN_1
+    - PLAN_2
+  enum SessionPrecondition
+    constructor(kotlin.String)
+    - USER_APP_LAUNCH
+    - INACTIVITY_TIMEOUT
+    - MAX_DURATION
+    - BACKGROUND_LAUNCH
+    - PREWARM
+    - FROM_NON_INTERACTIVE_SESSION
+    - EXPLICIT_STOP
+  enum Method
+    constructor(kotlin.String)
+    - POST
+    - GET
+    - HEAD
+    - PUT
+    - DELETE
+    - PATCH
+    - TRACE
+    - OPTIONS
+    - CONNECT
+  enum ProviderType
+    constructor(kotlin.String)
+    - AD
+    - ADVERTISING
+    - ANALYTICS
+    - CDN
+    - CONTENT
+    - CUSTOMER_SUCCESS
+    - FIRST_PARTY
+    - HOSTING
+    - MARKETING
+    - OTHER
+    - SOCIAL
+    - TAG_MANAGER
+    - UTILITY
+    - VIDEO
+data class com.datadog.kmp.rum.model.LongTaskEvent
+  constructor(kotlin.Long, Application, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, LongTaskEventSession, LongTaskEventSource? = null, LongTaskEventView, Usr? = null, Connectivity? = null, Display? = null, Synthetics? = null, CiTest? = null, Os? = null, Device? = null, Dd, Context? = null, Action? = null, Container? = null, LongTask)
+  val type: kotlin.String
+  data class Application
+    constructor(kotlin.String)
+  data class LongTaskEventSession
+    constructor(kotlin.String, LongTaskEventSessionType, kotlin.Boolean? = null)
+  data class LongTaskEventView
+    constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null)
+  data class Usr
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  data class Connectivity
+    constructor(Status, EffectiveType? = null, Cellular? = null)
+  data class Display
+    constructor(Viewport? = null)
+  data class Synthetics
+    constructor(kotlin.String, kotlin.String, kotlin.Boolean? = null)
+  data class CiTest
+    constructor(kotlin.String)
+  data class Os
+    constructor(kotlin.String, kotlin.String, kotlin.String? = null, kotlin.String)
+  data class Device
+    constructor(DeviceType, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+  data class Dd
+    constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, kotlin.Boolean? = null)
+    val formatVersion: kotlin.Long
+  data class Context
+    constructor(kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  data class Action
+    constructor(kotlin.collections.List<kotlin.String>)
+  data class Container
+    constructor(ContainerView, LongTaskEventSource)
+  data class LongTask
+    constructor(kotlin.String? = null, kotlin.Long, kotlin.Boolean? = null)
+  data class Cellular
+    constructor(kotlin.String? = null, kotlin.String? = null)
+  data class Viewport
+    constructor(kotlin.Number, kotlin.Number)
+  data class DdSession
+    constructor(Plan? = null, SessionPrecondition? = null)
+  data class Configuration
+    constructor(kotlin.Number, kotlin.Number? = null)
+  data class ContainerView
+    constructor(kotlin.String)
+  enum LongTaskEventSource
+    constructor(kotlin.String)
+    - ANDROID
+    - IOS
+    - BROWSER
+    - FLUTTER
+    - REACT_NATIVE
+    - ROKU
+    - UNITY
+    - KOTLIN_MULTIPLATFORM
+  enum LongTaskEventSessionType
+    constructor(kotlin.String)
+    - USER
+    - SYNTHETICS
+    - CI_TEST
+  enum Status
+    constructor(kotlin.String)
+    - CONNECTED
+    - NOT_CONNECTED
+    - MAYBE
+  enum EffectiveType
+    constructor(kotlin.String)
+    - SLOW_2G
+    - `2G`
+    - `3G`
+    - `4G`
+  enum DeviceType
+    constructor(kotlin.String)
+    - MOBILE
+    - DESKTOP
+    - TABLET
+    - TV
+    - GAMING_CONSOLE
+    - BOT
+    - OTHER
+  enum Plan
+    constructor(kotlin.Number)
+    - PLAN_1
+    - PLAN_2
+  enum SessionPrecondition
+    constructor(kotlin.String)
+    - USER_APP_LAUNCH
+    - INACTIVITY_TIMEOUT
+    - MAX_DURATION
+    - BACKGROUND_LAUNCH
+    - PREWARM
+    - FROM_NON_INTERACTIVE_SESSION
+    - EXPLICIT_STOP
+data class com.datadog.kmp.rum.model.ResourceEvent
+  constructor(kotlin.Long, Application, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, ResourceEventSession, ResourceEventSource? = null, ResourceEventView, Usr? = null, Connectivity? = null, Display? = null, Synthetics? = null, CiTest? = null, Os? = null, Device? = null, Dd, Context? = null, Action? = null, Container? = null, Resource)
+  val type: kotlin.String
+  data class Application
+    constructor(kotlin.String)
+  data class ResourceEventSession
+    constructor(kotlin.String, ResourceEventSessionType, kotlin.Boolean? = null)
+  data class ResourceEventView
+    constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null)
+  data class Usr
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  data class Connectivity
+    constructor(Status, EffectiveType? = null, Cellular? = null)
+  data class Display
+    constructor(Viewport? = null)
+  data class Synthetics
+    constructor(kotlin.String, kotlin.String, kotlin.Boolean? = null)
+  data class CiTest
+    constructor(kotlin.String)
+  data class Os
+    constructor(kotlin.String, kotlin.String, kotlin.String? = null, kotlin.String)
+  data class Device
+    constructor(DeviceType, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+  data class Dd
+    constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.Boolean? = null)
+    val formatVersion: kotlin.Long
+  data class Context
+    constructor(kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  data class Action
+    constructor(kotlin.collections.List<kotlin.String>)
+  data class Container
+    constructor(ContainerView, ResourceEventSource)
+  data class Resource
+    constructor(kotlin.String? = null, ResourceType, Method? = null, kotlin.String, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, Redirect? = null, Dns? = null, Connect? = null, Ssl? = null, FirstByte? = null, Download? = null, Provider? = null, Graphql? = null)
+  data class Cellular
+    constructor(kotlin.String? = null, kotlin.String? = null)
+  data class Viewport
+    constructor(kotlin.Number, kotlin.Number)
+  data class DdSession
+    constructor(Plan? = null, SessionPrecondition? = null)
+  data class Configuration
+    constructor(kotlin.Number, kotlin.Number? = null)
+  data class ContainerView
+    constructor(kotlin.String)
+  data class Redirect
+    constructor(kotlin.Long, kotlin.Long)
+  data class Dns
+    constructor(kotlin.Long, kotlin.Long)
+  data class Connect
+    constructor(kotlin.Long, kotlin.Long)
+  data class Ssl
+    constructor(kotlin.Long, kotlin.Long)
+  data class FirstByte
+    constructor(kotlin.Long, kotlin.Long)
+  data class Download
+    constructor(kotlin.Long, kotlin.Long)
+  data class Provider
+    constructor(kotlin.String? = null, kotlin.String? = null, ProviderType? = null)
+  data class Graphql
+    constructor(OperationType, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+  enum ResourceEventSource
+    constructor(kotlin.String)
+    - ANDROID
+    - IOS
+    - BROWSER
+    - FLUTTER
+    - REACT_NATIVE
+    - ROKU
+    - UNITY
+    - KOTLIN_MULTIPLATFORM
+  enum ResourceEventSessionType
+    constructor(kotlin.String)
+    - USER
+    - SYNTHETICS
+    - CI_TEST
+  enum Status
+    constructor(kotlin.String)
+    - CONNECTED
+    - NOT_CONNECTED
+    - MAYBE
+  enum EffectiveType
+    constructor(kotlin.String)
+    - SLOW_2G
+    - `2G`
+    - `3G`
+    - `4G`
+  enum DeviceType
+    constructor(kotlin.String)
+    - MOBILE
+    - DESKTOP
+    - TABLET
+    - TV
+    - GAMING_CONSOLE
+    - BOT
+    - OTHER
+  enum ResourceType
+    constructor(kotlin.String)
+    - DOCUMENT
+    - XHR
+    - BEACON
+    - FETCH
+    - CSS
+    - JS
+    - IMAGE
+    - FONT
+    - MEDIA
+    - OTHER
+    - NATIVE
+  enum Method
+    constructor(kotlin.String)
+    - POST
+    - GET
+    - HEAD
+    - PUT
+    - DELETE
+    - PATCH
+    - TRACE
+    - OPTIONS
+    - CONNECT
+  enum Plan
+    constructor(kotlin.Number)
+    - PLAN_1
+    - PLAN_2
+  enum SessionPrecondition
+    constructor(kotlin.String)
+    - USER_APP_LAUNCH
+    - INACTIVITY_TIMEOUT
+    - MAX_DURATION
+    - BACKGROUND_LAUNCH
+    - PREWARM
+    - FROM_NON_INTERACTIVE_SESSION
+    - EXPLICIT_STOP
+  enum ProviderType
+    constructor(kotlin.String)
+    - AD
+    - ADVERTISING
+    - ANALYTICS
+    - CDN
+    - CONTENT
+    - CUSTOMER_SUCCESS
+    - FIRST_PARTY
+    - HOSTING
+    - MARKETING
+    - OTHER
+    - SOCIAL
+    - TAG_MANAGER
+    - UTILITY
+    - VIDEO
+  enum OperationType
+    constructor(kotlin.String)
+    - QUERY
+    - MUTATION
+    - SUBSCRIPTION
+data class com.datadog.kmp.rum.model.ViewEvent
+  constructor(kotlin.Long, Application, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, ViewEventSession, ViewEventSource? = null, ViewEventView, Usr? = null, Connectivity? = null, Display? = null, Synthetics? = null, CiTest? = null, Os? = null, Device? = null, Dd, Context? = null, Container? = null, Context? = null, Privacy? = null)
+  val type: kotlin.String
+  data class Application
+    constructor(kotlin.String)
+  data class ViewEventSession
+    constructor(kotlin.String, ViewEventSessionType, kotlin.Boolean? = null, kotlin.Boolean? = true, kotlin.Boolean? = null)
+  data class ViewEventView
+    constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null, kotlin.Long? = null, LoadingType? = null, kotlin.Long, kotlin.Long? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, CustomTimings? = null, kotlin.Boolean? = null, kotlin.Boolean? = null, Action, Error, Crash? = null, LongTask? = null, FrozenFrame? = null, Resource, Frustration? = null, kotlin.collections.List<InForegroundPeriod>? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, FlutterBuildTime? = null, FlutterBuildTime? = null, FlutterBuildTime? = null)
+  data class Usr
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  data class Connectivity
+    constructor(Status, EffectiveType? = null, Cellular? = null)
+  data class Display
+    constructor(Viewport? = null, Scroll? = null)
+  data class Synthetics
+    constructor(kotlin.String, kotlin.String, kotlin.Boolean? = null)
+  data class CiTest
+    constructor(kotlin.String)
+  data class Os
+    constructor(kotlin.String, kotlin.String, kotlin.String? = null, kotlin.String)
+  data class Device
+    constructor(DeviceType, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+  data class Dd
+    constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, kotlin.Long, kotlin.collections.List<PageState>? = null, ReplayStats? = null)
+    val formatVersion: kotlin.Long
+  data class Context
+    constructor(kotlin.collections.Map<kotlin.String, kotlin.Any?> = mapOf())
+  data class Container
+    constructor(ContainerView, ViewEventSource)
+  data class Privacy
+    constructor(ReplayLevel)
+  data class CustomTimings
+    constructor(kotlin.collections.Map<kotlin.String, kotlin.Long> = mapOf())
+  data class Action
+    constructor(kotlin.Long)
+  data class Error
+    constructor(kotlin.Long)
+  data class Crash
+    constructor(kotlin.Long)
+  data class LongTask
+    constructor(kotlin.Long)
+  data class FrozenFrame
+    constructor(kotlin.Long)
+  data class Resource
+    constructor(kotlin.Long)
+  data class Frustration
+    constructor(kotlin.Long)
+  data class InForegroundPeriod
+    constructor(kotlin.Long, kotlin.Long)
+  data class FlutterBuildTime
+    constructor(kotlin.Number, kotlin.Number, kotlin.Number, kotlin.Number? = null)
+  data class Cellular
+    constructor(kotlin.String? = null, kotlin.String? = null)
+  data class Viewport
+    constructor(kotlin.Number, kotlin.Number)
+  data class Scroll
+    constructor(kotlin.Number, kotlin.Number, kotlin.Number, kotlin.Number)
+  data class DdSession
+    constructor(Plan? = null, SessionPrecondition? = null)
+  data class Configuration
+    constructor(kotlin.Number, kotlin.Number? = null, kotlin.Boolean? = null)
+  data class PageState
+    constructor(State, kotlin.Long)
+  data class ReplayStats
+    constructor(kotlin.Long? = 0L, kotlin.Long? = 0L, kotlin.Long? = 0L)
+  data class ContainerView
+    constructor(kotlin.String)
+  enum ViewEventSource
+    constructor(kotlin.String)
+    - ANDROID
+    - IOS
+    - BROWSER
+    - FLUTTER
+    - REACT_NATIVE
+    - ROKU
+    - UNITY
+    - KOTLIN_MULTIPLATFORM
+  enum ViewEventSessionType
+    constructor(kotlin.String)
+    - USER
+    - SYNTHETICS
+    - CI_TEST
+  enum LoadingType
+    constructor(kotlin.String)
+    - INITIAL_LOAD
+    - ROUTE_CHANGE
+    - ACTIVITY_DISPLAY
+    - ACTIVITY_REDISPLAY
+    - FRAGMENT_DISPLAY
+    - FRAGMENT_REDISPLAY
+    - VIEW_CONTROLLER_DISPLAY
+    - VIEW_CONTROLLER_REDISPLAY
+  enum Status
+    constructor(kotlin.String)
+    - CONNECTED
+    - NOT_CONNECTED
+    - MAYBE
+  enum EffectiveType
+    constructor(kotlin.String)
+    - SLOW_2G
+    - `2G`
+    - `3G`
+    - `4G`
+  enum DeviceType
+    constructor(kotlin.String)
+    - MOBILE
+    - DESKTOP
+    - TABLET
+    - TV
+    - GAMING_CONSOLE
+    - BOT
+    - OTHER
+  enum ReplayLevel
+    constructor(kotlin.String)
+    - ALLOW
+    - MASK
+    - MASK_USER_INPUT
+  enum Plan
+    constructor(kotlin.Number)
+    - PLAN_1
+    - PLAN_2
+  enum SessionPrecondition
+    constructor(kotlin.String)
+    - USER_APP_LAUNCH
+    - INACTIVITY_TIMEOUT
+    - MAX_DURATION
+    - BACKGROUND_LAUNCH
+    - PREWARM
+    - FROM_NON_INTERACTIVE_SESSION
+    - EXPLICIT_STOP
+  enum State
+    constructor(kotlin.String)
+    - ACTIVE
+    - PASSIVE
+    - HIDDEN
+    - FROZEN
+    - TERMINATED
