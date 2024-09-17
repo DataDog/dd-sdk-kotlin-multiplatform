@@ -11,12 +11,15 @@ import com.datadog.build.plugin.gitclone.GitCloneDependenciesTask
 import com.datadog.build.utils.ddCapitalize
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 
 class GenerateJsonSchemaPlugin : Plugin<Project> {
@@ -46,13 +49,19 @@ class GenerateJsonSchemaPlugin : Plugin<Project> {
                     }
                 }
 
-                registerModelsGenerationTask(target, name, schema)
+                val modelsGenerationTask = registerModelsGenerationTask(target, name, schema)
 
                 target.tasks.withType<KotlinCompile> {
-                    dependsOn(target.tasks.withType<GenerateJsonSchemaTask>())
+                    dependsOn(modelsGenerationTask)
                 }
                 target.tasks.withType<KotlinNativeCompile> {
-                    dependsOn(target.tasks.withType<GenerateJsonSchemaTask>())
+                    dependsOn(modelsGenerationTask)
+                }
+                target.tasks.withType<Jar> {
+                    dependsOn(modelsGenerationTask)
+                }
+                target.tasks.withType<KotlinCompileCommon>() {
+                    dependsOn(modelsGenerationTask)
                 }
             }
         }
@@ -79,8 +88,12 @@ class GenerateJsonSchemaPlugin : Plugin<Project> {
         }
     }
 
-    private fun registerModelsGenerationTask(target: Project, schemaName: String, schema: JsonSchema) {
-        target.tasks.register<GenerateJsonSchemaTask>("generate${schemaName.ddCapitalize()}ModelsFromJson") {
+    private fun registerModelsGenerationTask(
+        target: Project,
+        schemaName: String,
+        schema: JsonSchema
+    ): TaskProvider<GenerateJsonSchemaTask> {
+        return target.tasks.register<GenerateJsonSchemaTask>("generate${schemaName.ddCapitalize()}ModelsFromJson") {
             inputDirPath = when (val location = schema.location.get()) {
                 is SchemaLocation.Git -> location.destinationFolder
                 is SchemaLocation.Local -> location.path
