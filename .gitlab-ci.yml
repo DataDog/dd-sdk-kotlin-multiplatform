@@ -133,11 +133,6 @@ ios-unit-test:
   tags: [ "macos:sonoma" ]
   image: $CI_IMAGE_DOCKER
   timeout: 1h
-  # Remove URL re-write, otherwise dd-sdk-ios is attempted to be cloned from Gitlab instead of Github as requested
-  before_script:
-    - set +o pipefail
-    - git config --global --list | grep --line-buffered -oe "url.https://gitlab-ci-token:.*@gitlab.ddbuild.io/DataDog/" | xargs -I {} git config --global --remove {}
-    - set -o pipefail
   script:
     # TODO RUM-4602 Datadog Java Agent fails to start (macOS problem? arm64 problem?)
     - pod repo update
@@ -155,11 +150,6 @@ sample-app-build-ios:
   timeout: 1h
   variables:
     BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.4"
-  # Remove URL re-write, otherwise dd-sdk-ios is attempted to be cloned from Gitlab instead of Github as requested
-  before_script:
-    - set +o pipefail
-    - git config --global --list | grep --line-buffered -oe "url.https://gitlab-ci-token:.*@gitlab.ddbuild.io/DataDog/" | xargs -I {} git config --global --remove {}
-    - set -o pipefail
   script:
     - pod repo update
     # temporary workaround for RUM-4282
