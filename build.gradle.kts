@@ -125,3 +125,10 @@ tasks.register("iosUnitTestAll") {
     }
     dependsOn(subProjectsTestTasks)
 }
+
+tasks.register("lintCheckAll") {
+    val subProjectsLintTasks = publishableProjects.map {
+        "${it.identityPath.path}:lintRelease"
+    }
+    dependsOn(subProjectsLintTasks)
+}
