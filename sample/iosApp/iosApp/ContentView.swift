@@ -19,6 +19,8 @@ internal struct ContentView: View {
     static let CRASH_VIA_UNCHECKED_KMP_LABEL = "Crash: unchecked KMP exception"
     static let GET_REQUEST_LABEL = "Start GET request"
     static let POST_REQUEST_LABEL = "Start POST request"
+    static let SERVER_ERROR_REQUEST_LABEL = "Start server error request"
+    static let NETWORK_REQUEST_LABEL = "Start network request"
 
     var body: some View {
         NavigationView {
@@ -187,6 +189,28 @@ internal struct RumView: View {
                 NetworkUtilsKt.startPostRequest(url: "https://httpbin.org/post", payload: "This is a payload")
             }) {
                 Text(ContentView.POST_REQUEST_LABEL)
+                    .padding()
+                    .background(Color.orange)
+                    .foregroundColor(Color.black)
+                    .cornerRadius(8)
+            }
+
+            Button(action: {
+                UtilsKt.trackAction(actionName: ContentView.SERVER_ERROR_REQUEST_LABEL)
+                NetworkUtilsKt.startGetRequest(url: "https://httpbin.org/status/500")
+            }) {
+                Text(ContentView.SERVER_ERROR_REQUEST_LABEL)
+                    .padding()
+                    .background(Color.orange)
+                    .foregroundColor(Color.black)
+                    .cornerRadius(8)
+            }
+
+            Button(action: {
+                UtilsKt.trackAction(actionName: ContentView.NETWORK_REQUEST_LABEL)
+                NetworkUtilsKt.startGetRequest(url: "https://some-domain.in-non-existing-zone")
+            }) {
+                Text(ContentView.NETWORK_REQUEST_LABEL)
                     .padding()
                     .background(Color.orange)
                     .foregroundColor(Color.black)

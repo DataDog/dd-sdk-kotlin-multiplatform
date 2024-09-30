@@ -79,6 +79,22 @@ internal class DatadogKtorPlugin(
         }
     }
 
+    override fun onError(request: HttpRequestBuilder, throwable: Throwable) {
+        val requestId = request.attributes.getOrNull(DD_REQUEST_ID_ATTR)
+        if (requestId != null) {
+            val method = request.method
+            val url = request.url.toString()
+            rumMonitor.stopResourceWithError(
+                key = requestId,
+                statusCode = null,
+                message = "Ktor request error $method $url",
+                throwable = throwable
+            )
+        } else {
+            // TODO RUM-5254 handle missing request id case
+        }
+    }
+
     private fun HttpMethod.asRumMethod(): RumResourceMethod {
         return when (this) {
             HttpMethod.Post -> RumResourceMethod.POST
