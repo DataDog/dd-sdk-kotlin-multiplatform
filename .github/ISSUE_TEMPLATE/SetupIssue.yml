@@ -1,11 +1,11 @@
 name: Setup Issue
-description: Having a hard time setting up the SDK for the first time? Maybe a compilation issue or just nothing seems to be happening. Seek help with this.
+description: Having a hard time setting up the SDK for the first time? Maybe you're having a compilation issue or nothing simply seems to be working. Get help with your setup.
 labels: ["setup"]
 body:
   - type: markdown
     attributes:
       value: |
-        Before creating an issue, please ensure you go through the [troubleshooting page](https://docs.datadoghq.com/real_user_monitoring/mobile_and_tv_monitoring/troubleshooting/kotlin-multiplatform/#debugging).
+        Before creating an issue, try the steps on the [troubleshooting page](https://docs.datadoghq.com/real_user_monitoring/mobile_and_tv_monitoring/troubleshooting/kotlin-multiplatform/#debugging).
   - type: textarea
     id: issue
     attributes:
@@ -19,8 +19,8 @@ body:
       label: Reproduction steps
       description: |
         Provide a self-contained piece of code demonstrating the issue.
-        For a more complex setup consider creating a small app that showcases the problem.
-        **Note** - Avoid sharing any business logic, credentials or tokens.
+        For a more complex setup, consider creating a small app that showcases the problem.
+        **Note**: Avoid sharing any business logic, credentials or tokens.
     validations:
       required: true
   - type: textarea
@@ -29,7 +29,7 @@ body:
       label: Device Information
       description: |
         What are the common characteristics of devices you're seeing this issue in?
-        Simulators, specific models, OS versions, network state (wifi / cellular / offline), power state (plugged in / battery), etc.
+        List relevant simulators, specific models, OS versions, network state (wifi / cellular / offline), power state (plugged in / battery), etc.
     validations:
       required: false
   - type: input
@@ -78,5 +78,4 @@ body:
     attributes:
       label: Other relevant information
       description: |
-        Other relevant information such as additional tooling in place, proxies, etc.
-        Anything that might be relevant for troubleshooting your setup.
+        List other relevant information, such as additional tooling in place, proxies, etc. - anything that might be relevant for troubleshooting your setup.

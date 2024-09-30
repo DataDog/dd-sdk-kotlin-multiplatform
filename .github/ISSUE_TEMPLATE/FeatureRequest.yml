@@ -19,13 +19,13 @@ body:
       label: Proposed solution
       description: |
         How would you implement this?
-        Propose an idea, solution or reference implementation.
+        Propose an idea or solution, or provide a reference implementation.
     validations:
       required: false
   - type: textarea
     id: other_info
     attributes:
       label: Other relevant information
-      description: Any other relevant information you'd like we take into consideration.
+      description: Any other relevant information you'd like for us to take into consideration.
     validations:
       required: false

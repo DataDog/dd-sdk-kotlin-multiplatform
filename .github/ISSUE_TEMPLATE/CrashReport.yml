@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Report crashes caused by the SDK. Please try to be as detailed as possible.
-        Before getting started, if the problem is urgent please use our [official support channel](https://www.datadoghq.com/support/).
+        Before reporting a crash, if the problem is urgent, contact [Datadog support](https://www.datadoghq.com/support/).
   - type: textarea
     id: stacktrace
     attributes:
@@ -19,16 +19,16 @@ body:
     attributes:
       label: Reproduction steps
       description: |
-        Provide a self-contained piece of code demonstrating the crash if you can.
-        For a more complex setup consider creating a small app that showcases the problem.
-        **Note** - Avoid sharing any business logic, credentials or tokens.
+        Provide a self-contained piece of code demonstrating the crash if possible.
+        For a more complex setup, consider creating a small app that showcases the problem.
+        **Note**: Avoid sharing any business logic, credentials or tokens.
     validations:
       required: false
   - type: input
     id: volume
     attributes:
       label: Volume
-      description: What percentage of your app sessions are impacted with this crash?
+      description: What percentage of your app sessions are impacted by this crash?
     validations:
       required: true
   - type: input
@@ -42,7 +42,7 @@ body:
     id: last_working_sdk_version
     attributes:
       label: Latest working SDK version
-      description: If you know, what was the last SDK version where the crash did manifest itself?
+      description: If you know, what was the last SDK version where the crash manifested itself?
     validations:
       required: true
   - type: dropdown
@@ -80,7 +80,7 @@ body:
     id: swift_version
     attributes:
       label: Swift Version
-      description: e.g. Swift 5.9 , obtained with **swift -version**
+      description: e.g. Swift 5.9, obtained with **swift -version**
   - type: textarea
     id: dependencies
     attributes:
@@ -93,8 +93,8 @@ body:
     attributes:
       label: Device Information
       description: |
-        What are the common characteristics of devices you're seeing this crash in?
-        Specific models, OS versions, etc.
+        What are the common characteristics of the devices you're seeing this crash in?
+        List specific models, OS versions, etc.
     validations:
       required: false
   - type: textarea
