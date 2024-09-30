@@ -145,6 +145,20 @@ fun RumView() {
         }) {
             Text(text = "Trigger POST request")
         }
+
+        Button(onClick = {
+            trackAction("Start server error request")
+            startGetRequest("https://httpbin.org/status/500")
+        }) {
+            Text(text = "Trigger server error request")
+        }
+
+        Button(onClick = {
+            trackAction("Start network error request")
+            startGetRequest("https://some-domain.in-non-existing-zone")
+        }) {
+            Text(text = "Trigger network error request")
+        }
     }
 }
 
