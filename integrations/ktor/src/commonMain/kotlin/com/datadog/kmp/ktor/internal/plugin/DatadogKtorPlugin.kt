@@ -21,6 +21,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.request
 import io.ktor.http.HttpMethod
+import io.ktor.http.contentLength
 import io.ktor.util.AttributeKey
 
 internal class DatadogKtorPlugin(
@@ -70,7 +71,7 @@ internal class DatadogKtorPlugin(
             rumMonitor.stopResource(
                 key = requestId,
                 statusCode = response.status.value,
-                size = null, // TODO RUM-5233 report request size
+                size = response.contentLength(), // TODO RUM-6382 Report content size if header is missing
                 kind = RumResourceKind.NATIVE,
                 attributes = emptyMap()
             )
