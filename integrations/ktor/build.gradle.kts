@@ -50,10 +50,12 @@ kotlin {
             api(projects.features.rum)
             implementation(libs.ktor.client.core)
             implementation(libs.uuid)
-            implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+        iosMain.dependencies {
+            implementation(libs.kotlinx.datetime)
         }
     }
 }
