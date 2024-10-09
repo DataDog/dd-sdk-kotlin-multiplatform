@@ -99,7 +99,7 @@ enum class TracingHeaderType {
                     remove(W3C_TRACESTATE_KEY)
 
                     val paddedTraceId = traceId.toHexString().padStart(W3C_TRACE_ID_LENGTH, '0')
-                    val paddedSpanId = traceId.toHexString().padStart(W3C_PARENT_ID_LENGTH, '0')
+                    val paddedSpanId = spanId.toHexString().padStart(W3C_PARENT_ID_LENGTH, '0')
                     val decision = if (sampledIn) W3C_SAMPLE_PRIORITY_ACCEPT else W3C_SAMPLE_PRIORITY_DROP
                     append(W3C_TRACEPARENT_KEY, "00-$paddedTraceId-$paddedSpanId-$decision")
                 }
