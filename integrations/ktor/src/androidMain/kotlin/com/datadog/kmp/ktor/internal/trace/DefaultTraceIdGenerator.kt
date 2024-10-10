@@ -4,11 +4,8 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp.ktor
+package com.datadog.kmp.ktor.internal.trace
 
-import kotlin.random.Random
+import java.util.concurrent.TimeUnit
 
-// TODO RUM-6453 Documentation says that it is not thread-safe for JVM target, we need to handle this
-internal val RNG = Random(seed())
-
-internal expect fun seed(): Long
+internal actual fun epochSeconds(): Long = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())

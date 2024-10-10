@@ -21,8 +21,10 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.request
 import io.ktor.http.HttpMethod
+import io.ktor.http.contentLength
 import io.ktor.util.AttributeKey
 
+// TODO RUM-6456 Write unit tests
 internal class DatadogKtorPlugin(
     private val rumMonitor: RumMonitor,
     private val tracedHosts: Map<String, Set<TracingHeaderType>>,
@@ -35,8 +37,7 @@ internal class DatadogKtorPlugin(
 
     override fun onRequest(onRequestContext: Any, request: HttpRequestBuilder, content: Any) {
         val isSampledIn = RNG.nextDouble(MIN_SAMPLE_RATE, MAX_SAMPLE_RATE).toFloat() < traceSamplingRate
-        val traceHeaderTypes = tracedHosts[request.url.host]
-        val attributes = mutableMapOf<String, Any?>()
+        val traceHeaderTypes = traceHeaderTypesForHost(request.url.host)
 
         val traceId = traceIdGenerator.generateTraceId()
         val spanId = spanIdGenerator.generateSpanId()
@@ -45,9 +46,9 @@ internal class DatadogKtorPlugin(
             traceHeaderTypes.forEach { headerType ->
                 headerType.injectHeaders(request, true, traceId, spanId)
             }
-            attributes[RUM_TRACE_ID] = traceId.toHexString()
-            attributes[RUM_SPAN_ID] = spanId.raw.toString()
-            attributes[RUM_RULE_PSR] = traceSamplingRate
+            request.attributes.put(DD_TRACE_ID_ATTR, traceId.toHexString())
+            request.attributes.put(DD_SPAN_ID_ATTR, spanId.raw.toString())
+            request.attributes.put(DD_RULE_PSR_ATTR, traceSamplingRate)
         } else {
             TracingHeaderType.entries.forEach { headerType ->
                 headerType.injectHeaders(request, false, traceId, spanId)
@@ -63,19 +64,50 @@ internal class DatadogKtorPlugin(
             attributes = emptyMap()
         )
     }
-
     override fun onResponse(onResponseContext: Any, response: HttpResponse) {
-        val requestId = response.request.attributes.getOrNull(DD_REQUEST_ID_ATTR)
+        val requestAttributes = response.request.attributes
+        val requestId = requestAttributes.getOrNull(DD_REQUEST_ID_ATTR)
         if (requestId != null) {
             rumMonitor.stopResource(
                 key = requestId,
                 statusCode = response.status.value,
-                size = null, // TODO RUM-5233 report request size
+                size = response.contentLength(), // TODO RUM-6382 Report content size if header is missing
                 kind = RumResourceKind.NATIVE,
-                attributes = emptyMap()
+                attributes = mutableMapOf<String, Any?>().apply {
+                    val traceId = requestAttributes.getOrNull(DD_TRACE_ID_ATTR)
+                    val spanId = requestAttributes.getOrNull(DD_SPAN_ID_ATTR)
+                    val rulePsr = requestAttributes.getOrNull(DD_RULE_PSR_ATTR)
+                    if (traceId != null && spanId != null && rulePsr != null) {
+                        put(RUM_TRACE_ID, traceId)
+                        put(RUM_SPAN_ID, spanId)
+                        put(RUM_RULE_PSR, rulePsr)
+                    }
+                }
             )
         } else {
             // TODO RUM-5254 handle missing request id case
+        }
+    }
+
+    override fun onError(request: HttpRequestBuilder, throwable: Throwable) {
+        val requestId = request.attributes.getOrNull(DD_REQUEST_ID_ATTR)
+        if (requestId != null) {
+            val method = request.method
+            val url = request.url.toString()
+            rumMonitor.stopResourceWithError(
+                key = requestId,
+                statusCode = null,
+                message = "Ktor request error $method $url",
+                throwable = throwable
+            )
+        } else {
+            // TODO RUM-5254 handle missing request id case
+        }
+    }
+
+    private fun traceHeaderTypesForHost(host: String): Set<TracingHeaderType>? {
+        return tracedHosts.getOrElse(host) {
+            tracedHosts.entries.firstOrNull { host.endsWith(".${it.key}") }?.value ?: tracedHosts["*"]
         }
     }
 
@@ -101,6 +133,9 @@ internal class DatadogKtorPlugin(
         internal const val PLUGIN_NAME = "Datadog"
         internal const val DD_REQUEST_ID = "X-Datadog-Request-ID"
         internal val DD_REQUEST_ID_ATTR = AttributeKey<String>(DD_REQUEST_ID)
+        internal val DD_TRACE_ID_ATTR = AttributeKey<String>(RUM_TRACE_ID)
+        internal val DD_SPAN_ID_ATTR = AttributeKey<String>(RUM_SPAN_ID)
+        internal val DD_RULE_PSR_ATTR = AttributeKey<Float>(RUM_RULE_PSR)
         internal const val MIN_SAMPLE_RATE: Double = 0.0
         internal const val MAX_SAMPLE_RATE: Double = 100.0
     }

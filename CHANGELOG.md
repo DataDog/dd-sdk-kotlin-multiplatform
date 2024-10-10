@@ -1,3 +1,24 @@
+# 0.0.3 / 2024-10-10
+
+* [FEATURE] Add Ktor network errors tracking. See [#92](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/92)
+* [FEATURE] Report response size in Ktor instrumentation. See [#93](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/93)
+* [FEATURE] Support wider domain matching for traced hosts. See [#99](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/99)
+* [BUGFIX] Don't use `kotlinx.datetime` on Android. See [#97](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/97)
+* [BUGFIX] Propagate tracing attributes to RUM. See [#98](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/98)
+* [DOCS] Setup `CONTRIBUTING` docs, update `README`. See [#88](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/88)
+* [DOCS] Apply editorial fixes. See [#91](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/91)
+* [MAINTENANCE] Remove Github -> Gitlab git URL overwrite for macOS runner. See [#79](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/79)
+* [MAINTENANCE] Next dev iteration. See [#78](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/78)
+* [MAINTENANCE] Handle case when no Github -> Gitlab overwrite. See [#80](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/80)
+* [MAINTENANCE] Add Slack notification for the release publishing. See [#83](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/83)
+* [MAINTENANCE] Merge `release/0.0.2` branch into `develop` branch. See [#85](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/85)
+* [MAINTENANCE] Remove git URL rewrite cleanup. See [#86](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/86)
+* [MAINTENANCE] Lift `CrashReporter` linker workaround to the convention plugin. See [#87](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/87)
+* [MAINTENANCE] Setup CodeQL check. See [#34](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/34)
+* [MAINTENANCE] Escape comma in the licenses list. See [#89](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/89)
+* [MAINTENANCE] Rename master to main branch in CodeQL config. See [#90](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/90)
+* [MAINTENANCE] Update org name in the iOS sample app attributes. See [#95](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/95)
+
 # 0.0.2 / 2024-09-17
 
 * [FEATURE] Support RUM event mappers. See [#68](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/68)

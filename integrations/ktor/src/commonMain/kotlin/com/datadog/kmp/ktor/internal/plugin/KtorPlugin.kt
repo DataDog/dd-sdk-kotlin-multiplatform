@@ -23,4 +23,9 @@ internal interface KtorPlugin {
         onResponseContext: Any,
         response: HttpResponse
     )
+
+    fun onError(
+        request: HttpRequestBuilder,
+        throwable: Throwable
+    )
 }
