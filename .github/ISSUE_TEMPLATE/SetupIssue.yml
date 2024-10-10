@@ -1,0 +1,81 @@
+name: Setup Issue
+description: Having a hard time setting up the SDK for the first time? Maybe you're having a compilation issue or nothing simply seems to be working. Get help with your setup.
+labels: ["setup"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before creating an issue, try the steps on the [troubleshooting page](https://docs.datadoghq.com/real_user_monitoring/mobile_and_tv_monitoring/troubleshooting/kotlin-multiplatform/#debugging).
+  - type: textarea
+    id: issue
+    attributes:
+      label: Describe the issue
+      description: Provide a clear and concise description of the issue. Include compilation logs and SDK debug logs if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: |
+        Provide a self-contained piece of code demonstrating the issue.
+        For a more complex setup, consider creating a small app that showcases the problem.
+        **Note**: Avoid sharing any business logic, credentials or tokens.
+    validations:
+      required: true
+  - type: textarea
+    id: device_info
+    attributes:
+      label: Device Information
+      description: |
+        What are the common characteristics of devices you're seeing this issue in?
+        List relevant simulators, specific models, OS versions, network state (wifi / cellular / offline), power state (plugged in / battery), etc.
+    validations:
+      required: false
+  - type: input
+    id: sdk_version
+    attributes:
+      label: SDK version
+      description: Which SDK version are you trying to use?
+    validations:
+      required: true
+  - type: input
+    id: kotlin_version
+    attributes:
+      label: Kotlin version
+  - type: input
+    id: gradle_version
+    attributes:
+      label: Gradle / AGP version
+  - type: input
+    id: xcode_version
+    attributes:
+      label: Xcode version
+  - type: dropdown
+    id: ios_integration_method
+    attributes:
+      label: iOS Integration Methods
+      options:
+        - SPM
+        - Cocoapods
+        - Carthage
+        - XCFramework
+        - Other
+  - type: input
+    id: swift_version
+    attributes:
+      label: Swift Version
+      description: e.g. Swift 5.9 , obtained with **swift -version**
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Other dependencies versions
+      description: |
+        Relevant third party dependency versions.
+        e.g. Ktor 2.3.11
+  - type: textarea
+    id: other_info
+    attributes:
+      label: Other relevant information
+      description: |
+        List other relevant information, such as additional tooling in place, proxies, etc. - anything that might be relevant for troubleshooting your setup.

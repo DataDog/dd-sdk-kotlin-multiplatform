@@ -14,9 +14,8 @@ org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22                  :  969 b
 org.jetbrains.kotlin:kotlin-stdlib:2.0.20                       : 1706 Kb
 org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.1         : 1512 Kb
 org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.1             :  953 b 
-org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.6.0                :  648 Kb
 org.jetbrains:annotations:23.0.0                                :   28 Kb
 org.slf4j:slf4j-api:1.7.36                                      :   40 Kb
 
-Total transitive dependencies size                              :    6 Mb
+Total transitive dependencies size                              :    5 Mb
 

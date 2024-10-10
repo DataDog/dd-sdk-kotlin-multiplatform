@@ -7,12 +7,22 @@
 package com.datadog.kmp.ktor.internal.plugin
 
 import io.ktor.client.plugins.api.ClientPlugin
+import io.ktor.client.plugins.api.Send
 import io.ktor.client.plugins.api.createClientPlugin
 
 internal fun KtorPlugin.buildClientPlugin(): ClientPlugin<Unit> {
     val plugin = this
 
     return createClientPlugin(pluginName) {
+        on(Send) {
+            try {
+                proceed(it)
+            } catch (@Suppress("TooGenericExceptionCaught") t: Throwable) {
+                plugin.onError(it, t)
+                throw t
+            }
+        }
+
         onRequest { request, content ->
             plugin.onRequest(onRequestContext = this, request = request, content = content)
         }

@@ -1,3 +1,6 @@
+include:
+  - 'https://gitlab-templates.ddbuild.io/slack-notifier/v1/template.yml'
+
 # SETUP
 
 variables:
@@ -17,6 +20,7 @@ stages:
   - analysis
   - test
   - publish
+  - notify
 
 .snippets:
   set-publishing-credentials:
@@ -129,11 +133,6 @@ ios-unit-test:
   tags: [ "macos:sonoma" ]
   image: $CI_IMAGE_DOCKER
   timeout: 1h
-  # Remove URL re-write, otherwise dd-sdk-ios is attempted to be cloned from Gitlab instead of Github as requested
-  before_script:
-    - set +o pipefail
-    - git config --global --list | grep --line-buffered -oe "url.https://gitlab-ci-token:.*@gitlab.ddbuild.io/DataDog/" | xargs -I {} git config --global --remove {}
-    - set -o pipefail
   script:
     # TODO RUM-4602 Datadog Java Agent fails to start (macOS problem? arm64 problem?)
     - pod repo update
@@ -151,11 +150,6 @@ sample-app-build-ios:
   timeout: 1h
   variables:
     BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.4"
-  # Remove URL re-write, otherwise dd-sdk-ios is attempted to be cloned from Gitlab instead of Github as requested
-  before_script:
-    - set +o pipefail
-    - git config --global --list | grep --line-buffered -oe "url.https://gitlab-ci-token:.*@gitlab.ddbuild.io/DataDog/" | xargs -I {} git config --global --remove {}
-    - set -o pipefail
   script:
     - pod repo update
     # temporary workaround for RUM-4282
@@ -239,3 +233,27 @@ publish:release-ktor:
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :integrations:ktor:publishToSonatype --stacktrace --no-daemon
+
+# SLACK NOTIFICATIONS
+
+notify:publish-release-success:
+  extends: .slack-notifier-base
+  stage: notify
+  when: on_success
+  only:
+    - tags
+  script:
+    - MAVEN_URL="https://central.sonatype.com/artifact/com.datadoghq/dd-sdk-kotlin-multiplatform-core/$CI_COMMIT_TAG"
+    - 'MESSAGE_TEXT=":rocket: $CI_PROJECT_NAME $CI_COMMIT_TAG published on :maven: $MAVEN_URL"'
+    - postmessage "#mobile-sdk-ops" "$MESSAGE_TEXT"
+
+notify:publish-release-failure:
+  extends: .slack-notifier-base
+  stage: notify
+  when: on_failure
+  only:
+    - tags
+  script:
+    - BUILD_URL="$CI_PROJECT_URL/pipelines/$CI_PIPELINE_ID"
+    - 'MESSAGE_TEXT=":status_alert: $CI_PROJECT_NAME $CI_COMMIT_TAG publish pipeline <$BUILD_URL|$COMMIT_MESSAGE> failed."'
+    - postmessage "#mobile-sdk-ops" "$MESSAGE_TEXT"

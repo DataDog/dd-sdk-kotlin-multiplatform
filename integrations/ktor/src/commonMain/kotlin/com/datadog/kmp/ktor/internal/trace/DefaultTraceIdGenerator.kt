@@ -7,7 +7,6 @@
 package com.datadog.kmp.ktor.internal.trace
 
 import com.datadog.kmp.ktor.RNG
-import kotlinx.datetime.Clock
 
 internal class DefaultTraceIdGenerator : TraceIdGenerator {
 
@@ -16,7 +15,7 @@ internal class DefaultTraceIdGenerator : TraceIdGenerator {
         var idLo: ULong
         do {
             // 32-bit unix seconds + 32 bits of zero in decimal
-            idHi = (Clock.System.now().epochSeconds shl CLOCK_SHIFT).toULong()
+            idHi = (epochSeconds() shl CLOCK_SHIFT).toULong()
             idLo = RNG.nextLong(1, Long.MAX_VALUE).toULong()
         } while (idHi == INVALID_ID && idLo == INVALID_ID)
         return TraceId(idHi, idLo)
@@ -28,3 +27,5 @@ internal class DefaultTraceIdGenerator : TraceIdGenerator {
         private const val CLOCK_SHIFT = 32
     }
 }
+
+internal expect fun epochSeconds(): Long

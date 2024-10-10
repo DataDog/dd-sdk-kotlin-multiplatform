@@ -14,10 +14,12 @@ import com.datadog.build.utils.taskConfig
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.SigningExtension
@@ -27,7 +29,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -152,7 +156,50 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
                         apiVersion = configExtension.kotlinVersionOrDefault.version
                     }
                 }
+
+                applyCrashReporterLinkingWorkaround(this@apply)
             }
+        }
+}
+
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
+private fun applyCrashReporterLinkingWorkaround(kmpExtension: KotlinMultiplatformExtension) {
+    (kmpExtension as ExtensionAware).extensions
+        .findByType<CocoapodsExtension>()
+        ?.pods
+        ?.matching { it.name == "DatadogCrashReporting" }
+        ?.all {
+            kmpExtension
+                .targets
+                .withType<KotlinNativeTarget>()
+                .matching { it.konanTarget.family.isAppleFamily }
+                .all {
+                    val swiftCompatibilityArgs = if (System.getenv("DEVELOPER_DIR") != null) {
+                        // case env injected from XCode
+                        "-L${System.getenv("DEVELOPER_DIR")}/Toolchains/XcodeDefault.xctoolchain" +
+                            "/usr/lib/swift/${System.getenv("PLATFORM_NAME")}"
+                    } else {
+                        "-U __swift_FORCE_LOAD_\$_swiftCompatibility50 " +
+                            "-U __swift_FORCE_LOAD_\$_swiftCompatibility51 " +
+                            "-U __swift_FORCE_LOAD_\$_swiftCompatibility56 " +
+                            "-U __swift_FORCE_LOAD_\$_swiftCompatibilityConcurrency " +
+                            "-U __swift_FORCE_LOAD_\$_swiftCompatibilityDynamicReplacements"
+                    }
+                    compilerOptions {
+                        freeCompilerArgs.addAll(
+                            listOf(
+                                "-linker-options",
+                                // TODO RUM-6046 Name of CrashReporter framework is not passed, so have
+                                //  to pass it explicitly, otherwise konanc invocation with linking (ld) fails
+                                //  to locate framework for PLCrashReporter pod. Kotlin Compiler bug?
+                                "-framework CrashReporter " +
+                                    // TODO RUM-6047 Kotlin Compiler cannot locate these during the linking
+                                    //  done via pods integration
+                                    swiftCompatibilityArgs
+                            )
+                        )
+                    }
+                }
         }
 }
 
