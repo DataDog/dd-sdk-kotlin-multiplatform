@@ -24,6 +24,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.contentLength
 import io.ktor.util.AttributeKey
 
+// TODO RUM-6456 Write unit tests
 internal class DatadogKtorPlugin(
     private val rumMonitor: RumMonitor,
     private val tracedHosts: Map<String, Set<TracingHeaderType>>,
@@ -36,7 +37,7 @@ internal class DatadogKtorPlugin(
 
     override fun onRequest(onRequestContext: Any, request: HttpRequestBuilder, content: Any) {
         val isSampledIn = RNG.nextDouble(MIN_SAMPLE_RATE, MAX_SAMPLE_RATE).toFloat() < traceSamplingRate
-        val traceHeaderTypes = tracedHosts[request.url.host]
+        val traceHeaderTypes = traceHeaderTypesForHost(request.url.host)
 
         val traceId = traceIdGenerator.generateTraceId()
         val spanId = spanIdGenerator.generateSpanId()
@@ -63,7 +64,6 @@ internal class DatadogKtorPlugin(
             attributes = emptyMap()
         )
     }
-
     override fun onResponse(onResponseContext: Any, response: HttpResponse) {
         val requestAttributes = response.request.attributes
         val requestId = requestAttributes.getOrNull(DD_REQUEST_ID_ATTR)
@@ -102,6 +102,12 @@ internal class DatadogKtorPlugin(
             )
         } else {
             // TODO RUM-5254 handle missing request id case
+        }
+    }
+
+    private fun traceHeaderTypesForHost(host: String): Set<TracingHeaderType>? {
+        return tracedHosts.getOrElse(host) {
+            tracedHosts.entries.firstOrNull { host.endsWith(".${it.key}") }?.value ?: tracedHosts["*"]
         }
     }
 
