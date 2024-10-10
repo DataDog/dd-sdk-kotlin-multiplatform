@@ -1,11 +1,9 @@
-include:
-  - 'https://gitlab-templates.ddbuild.io/slack-notifier/v1/template.yml'
-
 # SETUP
 
 variables:
   CURRENT_CI_IMAGE: "2"
   CI_IMAGE_DOCKER: registry.ddbuild.io/ci/dd-sdk-kotlin-multiplatform:$CURRENT_CI_IMAGE
+  SLACK_NOTIFIER_IMAGE: registry.ddbuild.io/slack-notifier:latest
   GIT_DEPTH: 6
 
   DD_SERVICE: "dd-sdk-kotlin-multiplatform"
@@ -237,7 +235,8 @@ publish:release-ktor:
 # SLACK NOTIFICATIONS
 
 notify:publish-release-success:
-  extends: .slack-notifier-base
+  image: $SLACK_NOTIFIER_IMAGE
+  tags: [ "arch:amd64" ]
   stage: notify
   when: on_success
   only:
@@ -248,7 +247,8 @@ notify:publish-release-success:
     - postmessage "#mobile-sdk-ops" "$MESSAGE_TEXT"
 
 notify:publish-release-failure:
-  extends: .slack-notifier-base
+  image: $SLACK_NOTIFIER_IMAGE
+  tags: [ "arch:amd64" ]
   stage: notify
   when: on_failure
   only:
