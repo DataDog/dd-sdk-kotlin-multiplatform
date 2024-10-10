@@ -1,7 +1,7 @@
 # SETUP
 
 variables:
-  CURRENT_CI_IMAGE: "2"
+  CURRENT_CI_IMAGE: "3"
   CI_IMAGE_DOCKER: registry.ddbuild.io/ci/dd-sdk-kotlin-multiplatform:$CURRENT_CI_IMAGE
   SLACK_NOTIFIER_IMAGE: registry.ddbuild.io/slack-notifier:latest
   GIT_DEPTH: 6
