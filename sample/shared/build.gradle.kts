@@ -11,6 +11,7 @@ import kotlin.io.path.pathString
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.androidLibrary)
     id("datadog-build-config")
     alias(libs.plugins.dependencyLicense)
@@ -98,6 +99,27 @@ kotlin {
 
         commonMain {
             kotlin.srcDir(generateLibConfigTask.map { it.destinationDir })
+        }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+    }
+
+    cocoapods {
+        // need to build with XCode 15
+        ios.deploymentTarget = "12.0"
+        noPodspec()
+
+        // need to link it only for the tests so far (maybe this will change
+        // later with SDK setup changes)
+        pod("DatadogObjc") {
+            linkOnly = true
+            version = libs.versions.datadog.ios.get()
+        }
+        pod("DatadogCrashReporting") {
+            linkOnly = true
+            version = libs.versions.datadog.ios.get()
         }
     }
 }
