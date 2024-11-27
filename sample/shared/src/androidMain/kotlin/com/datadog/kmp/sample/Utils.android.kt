@@ -7,7 +7,8 @@
 package com.datadog.kmp.sample
 
 import android.webkit.WebView
-import com.datadog.android.sessionreplay.material.MaterialExtensionSupport
+import com.datadog.android.sessionreplay.compose.ComposeExtensionSupport
+import com.datadog.android.sessionreplay.compose.ExperimentalSessionReplayApi
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.trackNonFatalAnrs
 import com.datadog.kmp.rum.configuration.trackUserInteractions
@@ -25,9 +26,10 @@ internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfigurat
     }
 }
 
+@OptIn(ExperimentalSessionReplayApi::class)
 internal actual fun platformSpecificSetup(sessionReplayConfigurationBuilder: SessionReplayConfiguration.Builder) {
     with(sessionReplayConfigurationBuilder) {
-        addExtensionSupport(MaterialExtensionSupport())
+        addExtensionSupport(ComposeExtensionSupport())
     }
 }
 

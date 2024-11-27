@@ -1,11 +1,27 @@
 expect object com.datadog.kmp.sessionreplay.SessionReplay
   fun enable(com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration)
+  fun startRecording()
+  fun stopRecording()
+enum com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
+  - MASK_NONE
+  - MASK_LARGE_ONLY
+  - MASK_ALL
 data class com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration
   class Builder
     constructor(Float)
-    fun setPrivacy(SessionReplayPrivacy): Builder
+    DEPRECATED fun setPrivacy(SessionReplayPrivacy): Builder
+    fun setImagePrivacy(ImagePrivacy): Builder
+    fun setTouchPrivacy(TouchPrivacy): Builder
+    fun setTextAndInputPrivacy(TextAndInputPrivacy): Builder
     fun build(): SessionReplayConfiguration
 enum com.datadog.kmp.sessionreplay.configuration.SessionReplayPrivacy
   - ALLOW
   - MASK
   - MASK_USER_INPUT
+enum com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
+  - MASK_SENSITIVE_INPUTS
+  - MASK_ALL_INPUTS
+  - MASK_ALL
+enum com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
+  - SHOW
+  - HIDE

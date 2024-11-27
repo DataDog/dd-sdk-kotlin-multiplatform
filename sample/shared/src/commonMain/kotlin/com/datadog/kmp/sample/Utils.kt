@@ -24,7 +24,10 @@ import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.sessionreplay.SessionReplay
+import com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
 import com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration
+import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
+import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
 
 const val HOME_SCREEN_NAME = "Home"
 const val LOGS_SCREEN_NAME = "Logs"
@@ -38,7 +41,7 @@ const val WEB_VIEW_TRACKING_LOAD_URL = "https://datadoghq.dev/browser-sdk-test-p
     "&application_id=${LibraryConfig.DD_APPLICATION_ID}" +
     "&site=datadoghq.com"
 
-@Suppress("MagicNumber")
+@Suppress("MagicNumber", "LongMethod")
 fun initDatadog(context: Any? = null) {
     Datadog.verbosity = SdkLogVerbosity.DEBUG
 
@@ -84,6 +87,9 @@ fun initDatadog(context: Any? = null) {
 
     SessionReplay.enable(
         SessionReplayConfiguration.Builder(100f)
+            .setImagePrivacy(ImagePrivacy.MASK_LARGE_ONLY)
+            .setTouchPrivacy(TouchPrivacy.SHOW)
+            .setTextAndInputPrivacy(TextAndInputPrivacy.MASK_SENSITIVE_INPUTS)
             .apply {
                 platformSpecificSetup(this)
             }

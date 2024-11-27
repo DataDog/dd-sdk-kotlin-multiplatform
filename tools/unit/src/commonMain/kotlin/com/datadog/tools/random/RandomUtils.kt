@@ -10,6 +10,10 @@ package com.datadog.tools.random
 
 import kotlin.random.Random
 
+/**
+ * Set of methods generating random value. NB: Use `Forge` if writing JVM/Android-specific test.
+ */
+
 fun randomBoolean(): Boolean = Random.nextBoolean()
 
 fun randomFloat(from: Float = -Float.MAX_VALUE, until: Float = Float.MAX_VALUE): Float =
@@ -49,7 +53,7 @@ fun randomError(): Error {
     val errorMessage = "fakeErrorMessage"
     return listOf(
         NotImplementedError(errorMessage),
-        OutOfMemoryError(errorMessage)
+        AssertionError(errorMessage)
     ).randomElement()
 }
 

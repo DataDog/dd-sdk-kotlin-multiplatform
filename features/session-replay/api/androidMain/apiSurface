@@ -1,3 +1,7 @@
 actual object com.datadog.kmp.sessionreplay.SessionReplay
   actual fun enable(com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration)
-fun SessionReplayConfiguration.Builder.addExtensionSupport(com.datadog.android.sessionreplay.ExtensionSupport)
+  actual fun startRecording()
+  actual fun stopRecording()
+fun SessionReplayConfiguration.Builder.addExtensionSupport(com.datadog.android.sessionreplay.ExtensionSupport): SessionReplayConfiguration.Builder
+fun SessionReplayConfiguration.Builder.setDynamicOptimizationEnabled(Boolean): SessionReplayConfiguration.Builder
+fun SessionReplayConfiguration.Builder.setSystemRequirements(com.datadog.android.sessionreplay.SystemRequirementsConfiguration): SessionReplayConfiguration.Builder

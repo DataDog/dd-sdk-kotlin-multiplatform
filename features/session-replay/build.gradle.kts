@@ -67,8 +67,6 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
-        }
-        iosTest.dependencies {
             implementation(projects.tools.unit)
         }
     }

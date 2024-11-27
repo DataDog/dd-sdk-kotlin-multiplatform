@@ -7,6 +7,7 @@
 package com.datadog.kmp.sessionreplay.configuration
 
 import com.datadog.kmp.sessionreplay.configuration.internal.PlatformSessionReplayConfigurationBuilder
+import com.datadog.tools.random.randomEnumValue
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
@@ -37,14 +38,57 @@ class SessionReplayConfigurationBuilderTest {
     @Test
     fun `M call platform configuration builder+setPrivacy W setPrivacy`() {
         // Given
-        val fakePrivacy = SessionReplayPrivacy.ALLOW
+        val fakePrivacy = randomEnumValue<SessionReplayPrivacy>()
 
         // When
+        @Suppress("DEPRECATION")
         testedSessionReplayConfigurationBuilder.setPrivacy(fakePrivacy)
 
         // Then
         verify {
             mockPlatformSessionReplayConfigurationBuilder.setPrivacy(fakePrivacy)
+        }
+    }
+
+    @Test
+    fun `M call platform configuration builder+setImagePrivacy W setImagePrivacy`() {
+        // Given
+        val fakeImagePrivacy = randomEnumValue<ImagePrivacy>()
+
+        // When
+        testedSessionReplayConfigurationBuilder.setImagePrivacy(fakeImagePrivacy)
+
+        // Then
+        verify {
+            mockPlatformSessionReplayConfigurationBuilder.setImagePrivacy(fakeImagePrivacy)
+        }
+    }
+
+    @Test
+    fun `M call platform configuration builder+setTouchPrivacy W setTouchPrivacy`() {
+        // Given
+        val fakeTouchPrivacy = randomEnumValue<TouchPrivacy>()
+
+        // When
+        testedSessionReplayConfigurationBuilder.setTouchPrivacy(fakeTouchPrivacy)
+
+        // Then
+        verify {
+            mockPlatformSessionReplayConfigurationBuilder.setTouchPrivacy(fakeTouchPrivacy)
+        }
+    }
+
+    @Test
+    fun `M call platform configuration builder+setTextAndInputPrivacy W setTextAndInputPrivacy`() {
+        // Given
+        val fakeTextAndInputPrivacy = randomEnumValue<TextAndInputPrivacy>()
+
+        // When
+        testedSessionReplayConfigurationBuilder.setTextAndInputPrivacy(fakeTextAndInputPrivacy)
+
+        // Then
+        verify {
+            mockPlatformSessionReplayConfigurationBuilder.setTextAndInputPrivacy(fakeTextAndInputPrivacy)
         }
     }
 }
