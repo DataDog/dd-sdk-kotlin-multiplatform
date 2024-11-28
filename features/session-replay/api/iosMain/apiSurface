@@ -1,2 +1,8 @@
 actual object com.datadog.kmp.sessionreplay.SessionReplay
   actual fun enable(com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration)
+  actual fun startRecording()
+  actual fun stopRecording()
+fun platform.UIKit.UIView.setSessionReplayHidden(Boolean)
+fun platform.UIKit.UIView.setSessionReplayImagePrivacy(com.datadog.kmp.sessionreplay.configuration.ImagePrivacy?)
+fun platform.UIKit.UIView.setSessionReplayTextAndInputPrivacy(com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy?)
+fun platform.UIKit.UIView.setSessionReplayTouchPrivacy(com.datadog.kmp.sessionreplay.configuration.TouchPrivacy?)

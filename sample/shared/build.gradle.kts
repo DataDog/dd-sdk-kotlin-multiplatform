@@ -89,7 +89,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.kotlinx.coroutines.android)
-            implementation(libs.datadog.android.sessionReplayMaterial)
+            implementation(libs.datadog.android.sessionReplayCompose)
         }
 
         iosMain.dependencies {

@@ -40,8 +40,48 @@ data class SessionReplayConfiguration internal constructor(
          * @see SessionReplayPrivacy.MASK
          * @see SessionReplayPrivacy.MASK_USER_INPUT
          */
+        @Deprecated(
+            message = "This method is deprecated and will be removed in future versions. " +
+                "Use the new Fine Grained Masking APIs instead: " +
+                "[setImagePrivacy], [setTouchPrivacy], [setTextAndInputPrivacy]."
+        )
         fun setPrivacy(privacy: SessionReplayPrivacy): Builder {
             platformBuilder.setPrivacy(privacy)
+            return this
+        }
+
+        /**
+         * Sets the image recording level for the Session Replay feature.
+         * If not specified then all images that are considered to be content images will be masked by default.
+         * @see ImagePrivacy.MASK_NONE
+         * @see ImagePrivacy.MASK_LARGE_ONLY
+         * @see ImagePrivacy.MASK_ALL
+         */
+        fun setImagePrivacy(privacy: ImagePrivacy): Builder {
+            platformBuilder.setImagePrivacy(privacy)
+            return this
+        }
+
+        /**
+         * Sets the touch recording level for the Session Replay feature.
+         * If not specified then all touches will be hidden by default.
+         * @see TouchPrivacy.HIDE
+         * @see TouchPrivacy.SHOW
+         */
+        fun setTouchPrivacy(privacy: TouchPrivacy): Builder {
+            platformBuilder.setTouchPrivacy(privacy)
+            return this
+        }
+
+        /**
+         * Sets the text and input recording level for the Session Replay feature.
+         * If not specified then sensitive text will be masked by default.
+         * @see TextAndInputPrivacy.MASK_SENSITIVE_INPUTS
+         * @see TextAndInputPrivacy.MASK_ALL_INPUTS
+         * @see TextAndInputPrivacy.MASK_ALL
+         */
+        fun setTextAndInputPrivacy(privacy: TextAndInputPrivacy): Builder {
+            platformBuilder.setTextAndInputPrivacy(privacy)
             return this
         }
 

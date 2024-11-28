@@ -22,4 +22,18 @@ actual object SessionReplay {
      */
     actual fun enable(sessionReplayConfiguration: SessionReplayConfiguration) =
         NativeSessionReplay.enable(sessionReplayConfiguration.nativeConfiguration as NativeSessionReplayConfiguration)
+
+    /**
+     * Start recording session replay data.
+     */
+    actual fun startRecording() {
+        NativeSessionReplay.startRecording()
+    }
+
+    /**
+     * Stop recording session replay data.
+     */
+    actual fun stopRecording() {
+        NativeSessionReplay.stopRecording()
+    }
 }
