@@ -121,7 +121,7 @@ fun CrashView() {
         Button(onClick = {
             throw IllegalStateException("crash!")
         }) {
-            Text(text = "Crash")
+            Text(text = "Trigger Crash")
         }
     }
 }

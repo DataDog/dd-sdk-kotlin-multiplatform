@@ -81,6 +81,7 @@ sealed class TypeDefinition {
         val properties: List<TypeProperty>,
         override val description: String = "",
         val additionalProperties: TypeDefinition? = null,
+        val readOnlyAdditionalProperties: Boolean = false,
         val parentType: OneOfClass? = null
     ) : TypeDefinition() {
 

@@ -153,24 +153,25 @@ class JsonSchemaReader(
     private fun extractAdditionalPropertiesType(
         definition: JsonDefinition,
         fromFile: File
-    ): TypeDefinition? {
+    ): Pair<TypeDefinition?, Boolean> {
         return when (val additional = definition.additionalProperties) {
-            null -> null // TODO additionalProperties is true by default !
+            null -> null to false // TODO additionalProperties is true by default !
             is Map<*, *> -> {
                 val value = additional["type"]?.toString()
                 if (value == null) {
                     error("additionalProperties object is missing a `type`")
                 } else {
+                    val readOnly = additional.getOrDefault("readOnly", false) as Boolean
                     val type = JsonType.values().firstOrNull { it.name.equals(value, true) }
-                    transform(JsonDefinition.ANY.copy(type = type), "?", fromFile)
+                    transform(JsonDefinition.ANY.copy(type = type), "?", fromFile) to readOnly
                 }
             }
 
             is Boolean -> {
                 if (additional) {
-                    transform(JsonDefinition.EMPTY.copy(type = JsonType.OBJECT), "?", fromFile)
+                    transform(JsonDefinition.EMPTY.copy(type = JsonType.OBJECT), "?", fromFile) to false
                 } else {
-                    null
+                    null to false
                 }
             }
 
@@ -372,14 +373,15 @@ class JsonSchemaReader(
                 )
             )
         }
-        val additional = extractAdditionalPropertiesType(definition, fromFile)
+        val (additionalType, readOnly) = extractAdditionalPropertiesType(definition, fromFile)
 
         return TypeDefinition.Class(
             name = typeName,
             originalName = typeName,
             description = definition.description.orEmpty(),
             properties = properties,
-            additionalProperties = additional
+            additionalProperties = additionalType,
+            readOnlyAdditionalProperties = readOnly
         )
     }
 

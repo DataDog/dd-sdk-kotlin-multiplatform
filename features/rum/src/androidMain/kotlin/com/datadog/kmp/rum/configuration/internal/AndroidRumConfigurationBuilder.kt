@@ -79,6 +79,8 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
             view.view.url = mapped.view.url
             view.view.name = mapped.view.name
 
+            // usr and context additional properties are exposed as a reference, so no need to copy things back
+
             view
         }
     }
@@ -96,6 +98,8 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
             resource.resource.graphql?.payload = mapped.resource.graphql?.payload
             resource.resource.graphql?.variables = mapped.resource.graphql?.variables
 
+            // usr and context additional properties are exposed as a reference, so no need to copy things back
+
             resource
         }
     }
@@ -111,6 +115,8 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
             mapped.action.target?.let { target ->
                 action.action.target?.name = target.name
             }
+
+            // usr and context additional properties are exposed as a reference, so no need to copy things back
 
             action
         }
@@ -148,6 +154,8 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
             mapped.error.resource?.let {
                 error.error.resource?.url = it.url
             }
+
+            // usr and context additional properties are exposed as a reference, so no need to copy things back
 
             error
         }
