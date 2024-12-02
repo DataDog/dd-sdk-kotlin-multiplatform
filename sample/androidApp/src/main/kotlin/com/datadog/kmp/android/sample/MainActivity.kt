@@ -11,20 +11,32 @@ import android.os.Bundle
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -58,11 +70,11 @@ class MainActivity : ComponentActivity() {
                         NavigationViewTrackingEffect(navController = this)
                     }
                     NavHost(navController = navController, startDestination = HOME_SCREEN_NAME) {
-                        composable(HOME_SCREEN_NAME) { HomeView(navController) }
-                        composable(LOGS_SCREEN_NAME) { LoggingView() }
-                        composable(CRASH_SCREEN_NAME) { CrashView() }
-                        composable(RUM_SCREEN_NAME) { RumView() }
-                        composable(WEBVIEW_SCREEN_NAME) { WebView() }
+                        animatedComposable(HOME_SCREEN_NAME) { HomeView(navController) }
+                        animatedComposable(LOGS_SCREEN_NAME) { LoggingView() }
+                        animatedComposable(CRASH_SCREEN_NAME) { CrashView() }
+                        animatedComposable(RUM_SCREEN_NAME) { RumView() }
+                        animatedComposable(WEBVIEW_SCREEN_NAME) { WebView() }
                     }
                 }
             }
@@ -72,92 +84,133 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun HomeView(navController: NavController) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(top = 32.dp)
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        Button(onClick = { navController.navigate(LOGS_SCREEN_NAME) }) {
-            Text(text = "LOGS")
-        }
-        Button(onClick = { navController.navigate(CRASH_SCREEN_NAME) }) {
-            Text(text = "CRASH")
-        }
-        Button(onClick = { navController.navigate(RUM_SCREEN_NAME) }) {
-            Text(text = "RUM")
-        }
-        Button(onClick = { navController.navigate(WEBVIEW_SCREEN_NAME) }) {
-            Text(text = "WEBVIEW")
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(top = 32.dp)
+        ) {
+            Button(
+                onClick = { navController.navigate(LOGS_SCREEN_NAME) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+            ) {
+                Text(text = "LOGS")
+            }
+            Button(
+                onClick = { navController.navigate(CRASH_SCREEN_NAME) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+                Text(text = "CRASH")
+            }
+            Button(
+                onClick = { navController.navigate(RUM_SCREEN_NAME) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Brown)
+            ) {
+                Text(text = "RUM")
+            }
+            Button(
+                onClick = { navController.navigate(WEBVIEW_SCREEN_NAME) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+            ) {
+                Text(text = "WEBVIEW")
+            }
         }
     }
 }
 
 @Composable
 fun LoggingView() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(top = 32.dp)
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        Button(onClick = {
-            trackAction("Log info")
-            logInfo()
-        }) {
-            Text(text = "Log info")
-        }
-        Button(onClick = {
-            trackAction("Log error")
-            logErrorWithThrowable()
-        }) {
-            Text(text = "Log error with Throwable")
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(top = 32.dp)
+        ) {
+            Button(
+                onClick = {
+                    trackAction("Log info")
+                    logInfo()
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+            ) {
+                Text(text = "Log info")
+            }
+            Button(
+                onClick = {
+                    trackAction("Log error")
+                    logErrorWithThrowable()
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+                Text(text = "Log error with Throwable")
+            }
         }
     }
 }
 
 @Composable
 fun CrashView() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(top = 32.dp)
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        Button(onClick = {
-            throw IllegalStateException("crash!")
-        }) {
-            Text(text = "Trigger Crash")
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(top = 32.dp)
+        ) {
+            Button(
+                onClick = {
+                    throw IllegalStateException("crash!")
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+                Text(text = "Trigger Crash")
+            }
         }
     }
 }
 
 @Composable
 fun RumView() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(top = 32.dp)
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        Button(onClick = {
-            trackAction("Start GET request")
-            startGetRequest("https://httpbin.org/get")
-        }) {
-            Text(text = "Trigger GET request")
-        }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(top = 32.dp)
+        ) {
+            Button(onClick = {
+                trackAction("Start GET request")
+                startGetRequest("https://httpbin.org/get")
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color.Orange)) {
+                Text(text = "Trigger GET request")
+            }
 
-        Button(onClick = {
-            trackAction("Start POST request")
-            startPostRequest("https://httpbin.org/post", "Some payload")
-        }) {
-            Text(text = "Trigger POST request")
-        }
+            Button(onClick = {
+                trackAction("Start POST request")
+                startPostRequest("https://httpbin.org/post", "Some payload")
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color.Orange)) {
+                Text(text = "Trigger POST request")
+            }
 
-        Button(onClick = {
-            trackAction("Start server error request")
-            startGetRequest("https://httpbin.org/status/500")
-        }) {
-            Text(text = "Trigger server error request")
-        }
+            Button(onClick = {
+                trackAction("Start server error request")
+                startGetRequest("https://httpbin.org/status/500")
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color.Orange)) {
+                Text(text = "Trigger server error request")
+            }
 
-        Button(onClick = {
-            trackAction("Start network error request")
-            startGetRequest("https://some-domain.in-non-existing-zone")
-        }) {
-            Text(text = "Trigger network error request")
+            Button(onClick = {
+                trackAction("Start network error request")
+                startGetRequest("https://some-domain.in-non-existing-zone")
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color.Orange)) {
+                Text(text = "Trigger network error request")
+            }
         }
     }
 }
@@ -190,3 +243,48 @@ fun DefaultPreview() {
         LoggingView()
     }
 }
+
+@Suppress("MagicNumber")
+private fun NavGraphBuilder.animatedComposable(
+    route: String,
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
+) {
+    return composable(
+        route,
+        enterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> fullWidth },
+                animationSpec = tween(300)
+            ) + fadeIn()
+        },
+        exitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { fullWidth -> -fullWidth },
+                animationSpec = tween(300)
+            ) + fadeOut()
+        },
+        popEnterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> -fullWidth },
+                animationSpec = tween(300)
+            ) + fadeIn()
+        },
+        popExitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { fullWidth -> fullWidth },
+                animationSpec = tween(300)
+            ) + fadeOut()
+        },
+        content = content
+    )
+}
+
+@Suppress("MagicNumber")
+@Stable
+private val Color.Companion.Brown
+    get() = Color(0xff996633)
+
+@Suppress("MagicNumber")
+@Stable
+private val Color.Companion.Orange
+    get() = Color(0xffffA500)
