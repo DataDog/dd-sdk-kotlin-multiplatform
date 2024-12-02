@@ -165,6 +165,11 @@ jsonSchemaGenerator {
                 }
         }
 
+        // NB: model mapping is generated only for the native -> common conversion.
+        // Common -> native model mapping generation is not implemented, because of the very few mutable fields,
+        // it is faster to write things manually. Once schemas updates, check for the new readOnly:false properties
+        // and additionalProperties (they are mutable by default) and update the mapping.
+
         androidModelsMappingGeneration {
             enabled = true
             androidModelsPackageName = "com.datadog.android.rum.model"

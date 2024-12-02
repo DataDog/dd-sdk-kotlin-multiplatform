@@ -8,6 +8,7 @@ package com.datadog.kmp.log.configuration.internal
 
 import cocoapods.DatadogObjc.DDLogsConfiguration
 import com.datadog.kmp.event.EventMapper
+import com.datadog.kmp.internal.eraseKeyType
 import com.datadog.kmp.log.model.LogEvent
 import com.datadog.kmp.log.model.internal.toCommonModel
 
@@ -22,7 +23,7 @@ internal class IOSLogsConfigurationBuilder : PlatformLogsConfigurationBuilder<DD
 
             // TODO RUM-6088 status, logger name are mutable in Android SDK, but not mutable in iOS SDK
             logEvent.setMessage(mapped.message)
-            logEvent.setTags(mapped.ddtags.split(","))
+            logEvent.setTags(mapped.ddtags.split(",").filter { it.isNotEmpty() })
 
             logEvent.error()?.setMessage(mapped.error?.message)
             logEvent.error()?.setKind(mapped.error?.kind)
@@ -30,6 +31,13 @@ internal class IOSLogsConfigurationBuilder : PlatformLogsConfigurationBuilder<DD
             logEvent.error()?.setFingerprint(mapped.error?.fingerprint)
             mapped.error?.sourceType?.let {
                 logEvent.error()?.setSourceType(it)
+            }
+
+            mapped.additionalProperties.let {
+                logEvent.attributes().setUserAttributes(eraseKeyType(it))
+            }
+            mapped.usr?.additionalProperties?.let {
+                logEvent.userInfo().setExtraInfo(eraseKeyType(it))
             }
 
             logEvent

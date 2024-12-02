@@ -18,6 +18,7 @@ import cocoapods.DatadogObjc.DDRUMVitalsFrequencyNever
 import cocoapods.DatadogObjc.DDRUMVitalsFrequencyRare
 import cocoapods.DatadogObjc.DDUIKitRUMViewsPredicateProtocol
 import com.datadog.kmp.event.EventMapper
+import com.datadog.kmp.internal.eraseKeyType
 import com.datadog.kmp.rum.configuration.RumSessionListener
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.event.ViewEventMapper
@@ -89,6 +90,14 @@ internal class IOSRumConfigurationBuilder : PlatformRumConfigurationBuilder<DDRU
             view.view().setUrl(mapped.view.url)
             view.view().setName(mapped.view.name)
 
+            mapped.usr?.additionalProperties?.let {
+                view.usr()?.setUsrInfo(eraseKeyType(it))
+            }
+
+            mapped.context?.additionalProperties?.let {
+                view.context()?.setContextInfo(eraseKeyType(it))
+            }
+
             view
         }
     }
@@ -107,6 +116,14 @@ internal class IOSRumConfigurationBuilder : PlatformRumConfigurationBuilder<DDRU
             resource.resource().graphql()?.setPayload(mapped.resource.graphql?.payload)
             resource.resource().graphql()?.setVariables(mapped.resource.graphql?.variables)
 
+            mapped.usr?.additionalProperties?.let {
+                resource.usr()?.setUsrInfo(eraseKeyType(it))
+            }
+
+            mapped.context?.additionalProperties?.let {
+                resource.context()?.setContextInfo(eraseKeyType(it))
+            }
+
             resource
         }
     }
@@ -122,6 +139,14 @@ internal class IOSRumConfigurationBuilder : PlatformRumConfigurationBuilder<DDRU
 
             mapped.action.target?.let { target ->
                 action.action().target()?.setName(target.name)
+            }
+
+            mapped.usr?.additionalProperties?.let {
+                action.usr()?.setUsrInfo(eraseKeyType(it))
+            }
+
+            mapped.context?.additionalProperties?.let {
+                action.context()?.setContextInfo(eraseKeyType(it))
             }
 
             action
@@ -164,6 +189,14 @@ internal class IOSRumConfigurationBuilder : PlatformRumConfigurationBuilder<DDRU
 
             mapped.error.resource?.let {
                 error.error().resource()?.setUrl(it.url)
+            }
+
+            mapped.usr?.additionalProperties?.let {
+                error.usr()?.setUsrInfo(eraseKeyType(it))
+            }
+
+            mapped.context?.additionalProperties?.let {
+                error.context()?.setContextInfo(eraseKeyType(it))
             }
 
             error

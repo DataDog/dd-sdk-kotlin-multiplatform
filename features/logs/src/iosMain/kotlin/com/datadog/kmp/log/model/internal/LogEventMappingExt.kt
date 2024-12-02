@@ -41,10 +41,8 @@ internal fun DDLogEvent.toCommonModel(): LogEvent = LogEvent(
     ddtags = tags()?.joinToString(",") { it as String }.orEmpty(),
     additionalProperties = attributes()
         .userAttributes()
-        .mapKeys {
-            @Suppress("CAST_NEVER_SUCCEEDS")
-            it as String
-        }
+        .mapKeys { it.key as String }
+        .toMutableMap()
 )
 
 internal fun logEventStatusToCommonEnum(enumValue: DDLogEventStatus): LogEvent.Status =
@@ -70,7 +68,7 @@ internal fun DDLogEventUserInfo.toCommonModel(): LogEvent.Usr = LogEvent.Usr(
     id = id(),
     name = name(),
     email = email(),
-    additionalProperties = extraInfo().mapKeys { it.key as String }
+    additionalProperties = extraInfo().mapKeys { it.key as String }.toMutableMap()
 )
 
 internal fun DDLogEventError.toCommonModel(): LogEvent.Error = LogEvent.Error(

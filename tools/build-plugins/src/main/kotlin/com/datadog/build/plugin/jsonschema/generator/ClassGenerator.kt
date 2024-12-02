@@ -16,6 +16,7 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.MAP
+import com.squareup.kotlinpoet.MUTABLE_MAP
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
@@ -57,7 +58,11 @@ class ClassGenerator(
         }
         if (definition.additionalProperties != null) {
             typeBuilder.addProperty(
-                generateAdditionalProperties(definition.additionalProperties, rootTypeName)
+                generateAdditionalProperties(
+                    definition.additionalProperties,
+                    definition.readOnlyAdditionalProperties,
+                    rootTypeName
+                )
             )
         }
 
@@ -121,11 +126,13 @@ class ClassGenerator(
         }
 
         if (definition.additionalProperties != null) {
-            val mapType = definition.additionalProperties.additionalPropertyType(rootTypeName)
+            val mapType = definition.additionalProperties.additionalPropertyType(
+                definition.readOnlyAdditionalProperties,
+                rootTypeName
+            )
             constructorBuilder.addParameter(
                 ParameterSpec.builder(Identifier.PARAM_ADDITIONAL_PROPS, mapType)
-                    // TODO RUM-5992 additional properties are not mutable in iOS API, we have to align
-                    .defaultValue("mapOf()")
+                    .defaultValue(if (definition.readOnlyAdditionalProperties) "mapOf()" else "mutableMapOf()")
                     .build()
             )
         }
@@ -154,9 +161,10 @@ class ClassGenerator(
 
     private fun generateAdditionalProperties(
         additionalPropertyType: TypeDefinition,
+        readOnly: Boolean,
         rootTypeName: String
     ): PropertySpec {
-        val type = additionalPropertyType.additionalPropertyType(rootTypeName)
+        val type = additionalPropertyType.additionalPropertyType(readOnly, rootTypeName)
 
         return PropertySpec.builder(Identifier.PARAM_ADDITIONAL_PROPS, type)
             .mutable(false)
@@ -234,14 +242,14 @@ class ClassGenerator(
         return this
     }
 
-    private fun TypeDefinition.additionalPropertyType(rootTypeName: String): TypeName {
+    private fun TypeDefinition.additionalPropertyType(readOnly: Boolean, rootTypeName: String): TypeName {
         val valueType = if (this is TypeDefinition.Primitive) {
             this.asKotlinTypeName(rootTypeName)
         } else {
             ANY.copy(nullable = true)
         }
-        // TODO RUM-5992 additional properties are not mutable in iOS API, we have to align
-        return MAP.parameterizedBy(STRING, valueType)
+        val mapType = if (readOnly) MAP else MUTABLE_MAP
+        return mapType.parameterizedBy(STRING, valueType)
     }
 
     // endregion
