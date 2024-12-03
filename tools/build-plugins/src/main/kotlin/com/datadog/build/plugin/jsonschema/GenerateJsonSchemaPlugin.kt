@@ -79,8 +79,8 @@ class GenerateJsonSchemaPlugin : Plugin<Project> {
                         }
                     }
                     if (jsonSchemas.any { it.iosModelsMappingGeneration.enabled.getOrElse(false) }) {
-                        sourceSets.iosMain {
-                            kotlin.srcDir("build/generated/json2kotlin/iosMain/kotlin")
+                        sourceSets.appleMain {
+                            kotlin.srcDir("build/generated/json2kotlin/appleMain/kotlin")
                         }
                     }
                 }

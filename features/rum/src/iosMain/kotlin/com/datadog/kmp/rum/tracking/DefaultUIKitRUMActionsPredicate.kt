@@ -11,7 +11,7 @@ import platform.UIKit.UIView
 
 /**
  * Default implementation of [UIKitRUMActionsPredicate].
- * It names  RUM Actions by the `accessibilityIdentifier` or `className` otherwise.
+ * It names RUM Actions by the `accessibilityIdentifier` or `className` otherwise.
  */
 class DefaultUIKitRUMActionsPredicate : UIKitRUMActionsPredicate {
 
@@ -19,11 +19,11 @@ class DefaultUIKitRUMActionsPredicate : UIKitRUMActionsPredicate {
 
     /** @inheritdoc */
     override fun createAction(targetView: UIView): RumAction? {
-        val nativeView = nativeDelegate.rumActionWithTargetView(targetView) ?: return null
+        val nativeAction = nativeDelegate.rumActionWithTargetView(targetView) ?: return null
         return RumAction(
-            nativeView.name(),
+            nativeAction.name(),
             // Swift has it like [String,Any], but KMP generates type [Any?,*]
-            nativeView.attributes()
+            nativeAction.attributes()
                 .filterKeys { it is String }
                 .mapKeys {
                     it.key as String

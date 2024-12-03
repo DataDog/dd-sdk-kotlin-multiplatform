@@ -23,11 +23,6 @@ import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
-import com.datadog.kmp.sessionreplay.SessionReplay
-import com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
-import com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration
-import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
-import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
 
 const val HOME_SCREEN_NAME = "Home"
 const val LOGS_SCREEN_NAME = "Logs"
@@ -85,16 +80,7 @@ fun initDatadog(context: Any? = null) {
         .build()
     Rum.enable(rumConfiguration)
 
-    SessionReplay.enable(
-        SessionReplayConfiguration.Builder(100f)
-            .setImagePrivacy(ImagePrivacy.MASK_LARGE_ONLY)
-            .setTouchPrivacy(TouchPrivacy.SHOW)
-            .setTextAndInputPrivacy(TextAndInputPrivacy.MASK_SENSITIVE_INPUTS)
-            .apply {
-                platformSpecificSetup(this)
-            }
-            .build()
-    )
+    initSessionReplay()
 
     Datadog.setUserInfo(
         name = "Random User",
@@ -213,5 +199,5 @@ private data class SampleClassAttributeProperty(
 
 expect fun startWebViewTracking(webView: Any)
 expect fun stopWebViewTracking(webView: Any)
+internal expect fun initSessionReplay()
 internal expect fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder)
-internal expect fun platformSpecificSetup(sessionReplayConfigurationBuilder: SessionReplayConfiguration.Builder)

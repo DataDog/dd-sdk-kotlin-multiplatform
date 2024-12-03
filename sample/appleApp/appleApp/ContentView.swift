@@ -7,7 +7,9 @@
 import SwiftUI
 import sharedLib
 import DatadogRUM
+#if !os(tvOS)
 import WebKit
+#endif
 
 internal struct ContentView: View {
     static let LOG_INFO_LABEL = "Log info"
@@ -49,6 +51,8 @@ internal struct ContentView: View {
                         .cornerRadius(8)
                 }
 
+                // WebView tracking is not available on tvOS
+                #if !os(tvOS)
                 NavigationLink(destination: WebTrackingView()) {
                     Text("WEBVIEW")
                         .padding()
@@ -56,6 +60,7 @@ internal struct ContentView: View {
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
+                #endif
             }
             .onAppear {
                 UtilsKt.trackView(viewName: UtilsKt.HOME_SCREEN_NAME)
@@ -224,6 +229,7 @@ internal struct RumView: View {
     }
 }
 
+#if !os(tvOS)
 internal struct WebTrackingView: View {
     var body: some View {
         let view = SwiftUIWebView()
@@ -253,6 +259,7 @@ struct SwiftUIWebView: UIViewRepresentable {
         webView.load(URLRequest(url: URL(string: UtilsKt.WEB_VIEW_TRACKING_LOAD_URL)!))
     }
 }
+#endif
 
 private enum RuntimeError: Error {
     case error(message: String)
