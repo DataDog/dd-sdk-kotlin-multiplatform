@@ -1,7 +1,11 @@
-fun datadogKtorPlugin(Map<String, Set<TracingHeaderType>> = emptyMap(), Float = DEFAULT_TRACE_SAMPLE_RATE): io.ktor.client.plugins.api.ClientPlugin<Unit>
+fun datadogKtorPlugin(Map<String, Set<TracingHeaderType>> = emptyMap(), Float = DEFAULT_TRACE_SAMPLE_RATE, RumResourceAttributesProvider = DefaultRumResourceAttributesProvider): io.ktor.client.plugins.api.ClientPlugin<Unit>
 const val RUM_TRACE_ID: String
 const val RUM_SPAN_ID: String
 const val RUM_RULE_PSR: String
+interface com.datadog.kmp.ktor.RumResourceAttributesProvider
+  fun onRequest(io.ktor.client.request.HttpRequestData): Map<String, Any?>
+  fun onResponse(io.ktor.client.statement.HttpResponse): Map<String, Any?>
+  fun onError(io.ktor.client.request.HttpRequestData, Throwable): Map<String, Any?>
 enum com.datadog.kmp.ktor.TracingHeaderType
   - DATADOG
   - B3

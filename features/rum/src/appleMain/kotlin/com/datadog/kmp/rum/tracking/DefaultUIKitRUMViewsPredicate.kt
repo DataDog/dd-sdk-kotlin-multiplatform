@@ -11,7 +11,7 @@ import platform.UIKit.UIViewController
 
 /**
  * Default implementation of [UIKitRUMViewsPredicate].
- * It names  RUM Views by the names of their [UIViewController] subclasses.
+ * It names RUM Views by the names of their [UIViewController] subclasses.
  */
 class DefaultUIKitRUMViewsPredicate : UIKitRUMViewsPredicate {
 

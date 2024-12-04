@@ -111,7 +111,7 @@ val jvmUnitTestReleaseAllTask = tasks.register("jvmUnitTestReleaseAll") {
 }
 
 // will cover Android-specific tests + tests from common source set
-tasks.register("jvmUnitTestAll") {
+val jvmUnitTestAllTask = tasks.register("jvmUnitTestAll") {
     dependsOn(
         jvmUnitTestDebugAllTask,
         jvmUnitTestReleaseAllTask,
@@ -134,8 +134,12 @@ val tvosUnitTestAllTask = tasks.register("tvosUnitTestAll") {
     dependsOn(subProjectsTestTasks)
 }
 
-tasks.register("appleUnitTestAll") {
+val appleUnitTestAllTask = tasks.register("appleUnitTestAll") {
     dependsOn(iosUnitTestAllTask, tvosUnitTestAllTask)
+}
+
+tasks.register("unitTestAll") {
+    dependsOn(jvmUnitTestAllTask, appleUnitTestAllTask)
 }
 
 tasks.register("lintCheckAll") {
