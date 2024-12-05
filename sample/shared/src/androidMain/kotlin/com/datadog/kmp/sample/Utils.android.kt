@@ -13,7 +13,11 @@ import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.trackNonFatalAnrs
 import com.datadog.kmp.rum.configuration.trackUserInteractions
 import com.datadog.kmp.rum.configuration.useViewTrackingStrategy
+import com.datadog.kmp.sessionreplay.SessionReplay
+import com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
 import com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration
+import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
+import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
 import com.datadog.kmp.sessionreplay.configuration.addExtensionSupport
 import com.datadog.kmp.webview.WebViewTracking
 
@@ -26,17 +30,24 @@ internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfigurat
     }
 }
 
-@OptIn(ExperimentalSessionReplayApi::class)
-internal actual fun platformSpecificSetup(sessionReplayConfigurationBuilder: SessionReplayConfiguration.Builder) {
-    with(sessionReplayConfigurationBuilder) {
-        addExtensionSupport(ComposeExtensionSupport())
-    }
-}
-
 actual fun startWebViewTracking(webView: Any) {
     WebViewTracking.enable(webView as WebView, WEB_VIEW_TRACKING_ALLOWED_HOSTS)
 }
 
 actual fun stopWebViewTracking(webView: Any) {
     // no-op
+}
+
+@Suppress("MagicNumber")
+@OptIn(ExperimentalSessionReplayApi::class)
+internal actual fun initSessionReplay() {
+    // alternatively it is possible to use classes from com.datadog.android.sessionreplay package
+    SessionReplay.enable(
+        SessionReplayConfiguration.Builder(100f)
+            .setImagePrivacy(ImagePrivacy.MASK_LARGE_ONLY)
+            .setTouchPrivacy(TouchPrivacy.SHOW)
+            .setTextAndInputPrivacy(TextAndInputPrivacy.MASK_SENSITIVE_INPUTS)
+            .addExtensionSupport(ComposeExtensionSupport())
+            .build()
+    )
 }

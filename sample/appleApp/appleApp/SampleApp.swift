@@ -8,7 +8,7 @@ import SwiftUI
 import sharedLib
 
 @main
-struct iOSApp: App {
+struct SampleApp: App {
 	init() {
 		UtilsKt.doInitDatadog(context: nil)
 	}

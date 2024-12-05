@@ -28,6 +28,7 @@ kotlin {
     cocoapods {
         // need to build with XCode 15
         ios.deploymentTarget = "12.0"
+        tvos.deploymentTarget = "12.0"
         noPodspec()
 
         framework {

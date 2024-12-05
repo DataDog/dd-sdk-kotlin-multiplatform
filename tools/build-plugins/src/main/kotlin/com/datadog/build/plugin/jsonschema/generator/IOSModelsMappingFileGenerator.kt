@@ -35,7 +35,7 @@ internal class IOSModelsMappingFileGenerator(
 ) : NativeModelsMappingFileGenerator(commonModelsPackageName, mutableSetOf()) {
 
     override fun generate(definition: TypeDefinition, rootTypeName: String) {
-        logger.info("Generating iOS mapping functions for type $definition with package name $packageName")
+        logger.info("Generating Apple (iOS/tvOS) mapping functions for type $definition with package name $packageName")
 
         if (definition is TypeDefinition.Class) {
             val fileBuilder = FileSpec.builder(packageName, "${definition.name}MappingExt")

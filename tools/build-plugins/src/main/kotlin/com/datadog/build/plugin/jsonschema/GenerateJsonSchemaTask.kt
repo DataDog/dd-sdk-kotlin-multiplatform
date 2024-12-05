@@ -102,11 +102,11 @@ abstract class GenerateJsonSchemaTask : DefaultTask() {
     }
 
     /**
-     * The [OutputDirectory] (`src/iosMain/kotlin/{out_package}`) iOS model mapping files.
+     * The [OutputDirectory] (`src/appleMain/kotlin/{out_package}`) Apple model mapping files.
      */
     @OutputDirectory
     fun getIOSMappingOutputDirectory(): File =
-        File(getOutputPackage().absolutePath.replace("commonMain", "iosMain"))
+        File(getOutputPackage().absolutePath.replace("commonMain", "appleMain"))
 
     /**
      * The [OutputDirectory] (`src/androidMain/kotlin/{out_package}`) Android model mapping files.
@@ -153,7 +153,7 @@ abstract class GenerateJsonSchemaTask : DefaultTask() {
             with(iosModelsMappingGeneration.get()) {
                 if (enabled.getOrElse(false)) {
                     val mappingGenerator = IOSModelsMappingFileGenerator(
-                        File(outputDir.path.replace("commonMain", "iosMain")),
+                        File(outputDir.path.replace("commonMain", "appleMain")),
                         commonModelsPackageName = targetPackageName,
                         iosModelsPackageName = iosModelsPackageName.get(),
                         iosModelsClassNamePrefix = iosModelsClassNamePrefix.getOrElse(""),

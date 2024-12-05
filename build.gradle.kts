@@ -119,11 +119,23 @@ tasks.register("jvmUnitTestAll") {
     )
 }
 
-tasks.register("iosUnitTestAll") {
+val iosUnitTestAllTask = tasks.register("iosUnitTestAll") {
     val subProjectsTestTasks = publishableProjects.map {
         "${it.identityPath.path}:iosSimulatorArm64Test"
     }
     dependsOn(subProjectsTestTasks)
+}
+
+val tvosUnitTestAllTask = tasks.register("tvosUnitTestAll") {
+    val subProjectsTestTasks = publishableProjects
+        // by some reason something like `projects.features.webview == projects.features.webview` evaluates to false
+        .filter { it.identityPath.path !in setOf(":features:session-replay", ":features:webview") }
+        .map { "${it.identityPath.path}:tvosSimulatorArm64Test" }
+    dependsOn(subProjectsTestTasks)
+}
+
+tasks.register("appleUnitTestAll") {
+    dependsOn(iosUnitTestAllTask, tvosUnitTestAllTask)
 }
 
 tasks.register("lintCheckAll") {

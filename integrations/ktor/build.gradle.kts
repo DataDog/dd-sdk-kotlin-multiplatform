@@ -26,6 +26,7 @@ kotlin {
     cocoapods {
         // need to build with XCode 15
         ios.deploymentTarget = "12.0"
+        tvos.deploymentTarget = "12.0"
         noPodspec()
 
         framework {
@@ -54,7 +55,7 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        iosMain.dependencies {
+        appleMain.dependencies {
             implementation(libs.kotlinx.datetime)
         }
     }
