@@ -9,6 +9,7 @@
 package com.datadog.tools.random
 
 import kotlin.random.Random
+import kotlin.random.nextULong
 
 /**
  * Set of methods generating random value. NB: Use `Forge` if writing JVM/Android-specific test.
@@ -22,12 +23,22 @@ fun randomFloat(from: Float = -Float.MAX_VALUE, until: Float = Float.MAX_VALUE):
 fun randomLong(from: Long = Long.MIN_VALUE, until: Long = Long.MAX_VALUE): Long =
     Random.nextLong(from, until)
 
+fun randomULong(from: ULong = ULong.MIN_VALUE, until: ULong = ULong.MAX_VALUE): ULong =
+    Random.nextULong(from, until)
+
 fun randomInt(from: Int = Int.MIN_VALUE, until: Int = Int.MAX_VALUE): Int =
     Random.nextInt(from, until)
 
 inline fun <reified T : Enum<T>> randomEnumValue(): T {
     val values = enumValues<T>()
     return values[Random.nextInt(values.size)]
+}
+
+inline fun <reified T : Enum<T>> randomEnumValues(): Set<T> {
+    val values = enumValues<T>()
+    values.shuffle()
+
+    return values.take(randomInt(from = 1, until = values.size)).toSet()
 }
 
 fun exhaustiveAttributes(): Map<String, Any?> {

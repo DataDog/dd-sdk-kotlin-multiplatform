@@ -6,6 +6,8 @@
 
 package com.datadog.kmp.ktor.internal.plugin
 
+import io.ktor.client.plugins.api.OnRequestContext
+import io.ktor.client.plugins.api.OnResponseContext
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
 
@@ -14,13 +16,13 @@ internal interface KtorPlugin {
     val pluginName: String
 
     fun onRequest(
-        onRequestContext: Any,
+        onRequestContext: OnRequestContext,
         request: HttpRequestBuilder,
         content: Any
     )
 
     fun onResponse(
-        onResponseContext: Any,
+        onResponseContext: OnResponseContext,
         response: HttpResponse
     )
 
