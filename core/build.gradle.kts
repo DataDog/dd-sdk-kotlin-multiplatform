@@ -93,6 +93,13 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.datadog.android.core)
+            // Android SDK will bring it
+            compileOnly(libs.okHttp)
+        }
+        androidUnitTest.dependencies {
+            implementation(libs.bundles.jUnit5)
+            implementation(libs.bundles.jvmTestTools)
+            compileOnly(libs.okHttp)
         }
         commonMain.dependencies {
             // put your multiplatform dependencies here

@@ -28,7 +28,8 @@ internal constructor(
         val uploadFrequency: UploadFrequency,
         val site: DatadogSite,
         val batchProcessingLevel: BatchProcessingLevel,
-        val trackCrashes: Boolean
+        val trackCrashes: Boolean,
+        val proxyConfiguration: ProxyConfiguration?
     )
 
     // region Builder
@@ -115,6 +116,15 @@ internal constructor(
             coreConfig = coreConfig.copy(trackCrashes = enabled)
             return this
         }
+
+        /**
+         * Enables a custom proxy for uploading tracked data to Datadog's intake.
+         * @param proxyConfiguration the [ProxyConfiguration]
+         */
+        fun setProxy(proxyConfiguration: ProxyConfiguration): Builder {
+            coreConfig = coreConfig.copy(proxyConfiguration = proxyConfiguration)
+            return this
+        }
     }
 
     // endregion
@@ -131,7 +141,8 @@ internal constructor(
             uploadFrequency = UploadFrequency.AVERAGE,
             site = DatadogSite.US1,
             batchProcessingLevel = BatchProcessingLevel.MEDIUM,
-            trackCrashes = true
+            trackCrashes = true,
+            proxyConfiguration = null
         )
     }
 }
