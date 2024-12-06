@@ -43,12 +43,15 @@ import io.ktor.client.plugins.ConnectTimeoutException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.HttpRequestData
 import io.ktor.client.request.request
+import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.client.statement.request
+import io.ktor.http.ContentType
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
 import kotlinx.coroutines.runBlocking
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -123,6 +126,12 @@ class DatadogKtorPluginTest {
                 url(fakeUrl)
                 headers["fake-header-name"] = "fake-header-value"
                 method = fakeMethod
+                if (method in setOf(HttpMethod.Post, HttpMethod.Put, HttpMethod.Patch)) {
+                    setBody(
+                        listOf("body", TextContent("body", ContentType.Any))
+                            .randomElement()
+                    )
+                }
             }
 
         val fakeStatusCode = HttpStatusCode.allStatusCodes.randomElement()
@@ -199,6 +208,12 @@ class DatadogKtorPluginTest {
                 url(fakeUrl)
                 headers["fake-header-name"] = "fake-header-value"
                 method = fakeMethod
+                if (method in setOf(HttpMethod.Post, HttpMethod.Put, HttpMethod.Patch)) {
+                    setBody(
+                        listOf("body", TextContent("body", ContentType.Any))
+                            .randomElement()
+                    )
+                }
             }
 
         val fakeStatusCode = HttpStatusCode.allStatusCodes.randomElement()
@@ -254,6 +269,12 @@ class DatadogKtorPluginTest {
                 url(fakeUrl)
                 headers["fake-header-name"] = "fake-header-value"
                 method = fakeMethod
+                if (method in setOf(HttpMethod.Post, HttpMethod.Put, HttpMethod.Patch)) {
+                    setBody(
+                        listOf("body", TextContent("body", ContentType.Any))
+                            .randomElement()
+                    )
+                }
             }
         val fakeThrowable = ConnectTimeoutException(fakeUrl, timeout = randomLong())
         everySuspend {

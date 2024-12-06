@@ -6,11 +6,11 @@
 
 package com.datadog.kmp.sample.network
 
+import com.datadog.kmp.ktor.HttpRequestSnapshot
 import com.datadog.kmp.ktor.RumResourceAttributesProvider
 import com.datadog.kmp.ktor.TracingHeaderType
 import com.datadog.kmp.ktor.datadogKtorPlugin
 import io.ktor.client.HttpClient
-import io.ktor.client.request.HttpRequestData
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -34,13 +34,13 @@ object NetworkClient {
                 ),
                 traceSamplingRate = 100f,
                 rumResourceAttributesProvider = object : RumResourceAttributesProvider {
-                    override fun onRequest(request: HttpRequestData) =
+                    override fun onRequest(request: HttpRequestSnapshot) =
                         mapOf("custom-header-value" to request.headers[CUSTOM_HEADER_NAME])
 
                     override fun onResponse(response: HttpResponse) =
                         mapOf("http-protocol-version" to response.version.toString())
 
-                    override fun onError(request: HttpRequestData, throwable: Throwable) =
+                    override fun onError(request: HttpRequestSnapshot, throwable: Throwable) =
                         mapOf("custom-header-value" to request.headers[CUSTOM_HEADER_NAME])
                 }
             )
