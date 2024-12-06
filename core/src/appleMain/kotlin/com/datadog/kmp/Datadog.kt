@@ -29,6 +29,7 @@ import com.datadog.kmp.core.configuration.BatchProcessingLevel
 import com.datadog.kmp.core.configuration.BatchSize
 import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.core.configuration.UploadFrequency
+import com.datadog.kmp.core.configuration.setProxy
 import com.datadog.kmp.internal.InternalAttributes
 import com.datadog.kmp.privacy.TrackingConsent
 import kotlin.concurrent.Volatile
@@ -180,6 +181,7 @@ private val Configuration.native: DDConfiguration
                 InternalAttributes.SDK_VERSION_ATTRIBUTE
             )
         )
+        nativeConfig.setProxy(coreConfig.proxyConfiguration)
         return nativeConfig
     }
 

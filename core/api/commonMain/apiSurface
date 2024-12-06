@@ -36,6 +36,14 @@ data class com.datadog.kmp.core.configuration.Configuration
     fun setUploadFrequency(UploadFrequency): Builder
     fun setBatchProcessingLevel(BatchProcessingLevel): Builder
     fun trackCrashes(Boolean): Builder
+    fun setProxy(ProxyConfiguration): Builder
+class com.datadog.kmp.core.configuration.ProxyConfiguration
+  constructor(ProxyType, String, UInt)
+  fun withBasicAuthentication(String, String): ProxyConfiguration
+  override fun toString(): String
+enum com.datadog.kmp.core.configuration.ProxyType
+  - HTTP
+  - SOCKS
 enum com.datadog.kmp.core.configuration.UploadFrequency
   - FREQUENT
   - AVERAGE
