@@ -80,8 +80,7 @@ sealed class TypeDefinition {
         val originalName: String,
         val properties: List<TypeProperty>,
         override val description: String = "",
-        val additionalProperties: TypeDefinition? = null,
-        val readOnlyAdditionalProperties: Boolean = false,
+        val additionalProperties: TypeProperty? = null,
         val parentType: OneOfClass? = null
     ) : TypeDefinition() {
 
@@ -124,7 +123,8 @@ sealed class TypeDefinition {
         }
 
         override fun matches(other: TypeDefinition): Boolean {
-            return (other is Class) && (other.properties == properties) &&
+            return (other is Class) &&
+                (other.properties == properties) &&
                 (other.additionalProperties == additionalProperties)
         }
 
