@@ -33,6 +33,8 @@ import dev.mokkery.matcher.any
 import dev.mokkery.matcher.matching
 import dev.mokkery.mock
 import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode
+import dev.mokkery.verifyNoMoreCalls
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockEngineConfig
@@ -134,7 +136,9 @@ class DatadogKtorPluginTest {
                 }
             }
 
-        val fakeStatusCode = HttpStatusCode.allStatusCodes.randomElement()
+        val fakeStatusCode = HttpStatusCode.allStatusCodes
+            .filter { it.value !in 300..399 }
+            .randomElement()
         val fakeContextLength = nullable(randomLong())
         everySuspend {
             mockRequestHandler.invoke(
@@ -143,7 +147,8 @@ class DatadogKtorPluginTest {
             )
         } calls { (scope: MockRequestHandleScope, _: HttpRequestData) ->
             scope.respond(
-                content = "", status = fakeStatusCode,
+                content = "",
+                status = fakeStatusCode,
                 headers = Headers.build {
                     if (fakeContextLength != null) {
                         set(HttpHeaders.ContentLength, fakeContextLength.toString())
@@ -195,6 +200,139 @@ class DatadogKtorPluginTest {
                 }
             )
         }
+
+        verifyNoMoreCalls(mockRumMonitor)
+    }
+
+    // TODO RUM-7625 Redirect tracking is wrong: first redirect response will stop resource and it won't be any
+    //  new `onRequest` call. See ticket for more details.
+    @Test
+    fun `M start + stop resource tracking W request succeeded + sampled for tracing + redirect`() {
+        // Given
+        val fakeUrl = "https://$fakeHost/track"
+        // Only Get and Head are allowed for implicit redirect, see Ktor HttpRedirect.kt
+        val fakeMethod = listOf(HttpMethod.Get, HttpMethod.Head)
+            .randomElement()
+        val request = HttpRequestBuilder()
+            .apply {
+                url(fakeUrl)
+                headers["fake-header-name"] = "fake-header-value"
+                method = fakeMethod
+                if (method in setOf(HttpMethod.Post, HttpMethod.Put, HttpMethod.Patch)) {
+                    setBody(
+                        listOf("body", TextContent("body", ContentType.Any))
+                            .randomElement()
+                    )
+                }
+            }
+
+        val fakeStatusCode = HttpStatusCode.allStatusCodes
+            .filter { it.value !in 300..399 }
+            .randomElement()
+        val fakeRedirectStatusCode = HttpStatusCode.redirectStatusCodes()
+            .randomElement()
+        val fakeContextLength = nullable(randomLong())
+        var redirected = false
+        everySuspend {
+            mockRequestHandler.invoke(
+                any(),
+                any()
+            )
+        } calls { (scope: MockRequestHandleScope, _: HttpRequestData) ->
+            if (!redirected) {
+                scope.respond(
+                    content = "",
+                    status = fakeRedirectStatusCode,
+                    headers = Headers.build {
+                        set(HttpHeaders.Location, "$fakeUrl/redirected")
+                    }
+                ).also {
+                    redirected = true
+                }
+            } else {
+                scope.respond(
+                    content = "",
+                    status = fakeStatusCode,
+                    headers = Headers.build {
+                        if (fakeContextLength != null) {
+                            set(HttpHeaders.ContentLength, fakeContextLength.toString())
+                        }
+                    }
+                )
+            }
+        }
+
+        // When
+        val response = runBlocking {
+            fakeClient.request(request)
+        }
+
+        // Then
+        verify(VerifyMode.exhaustiveOrder) {
+            // TODO RUM-6456 verify request headers
+            mockRumMonitor.startResource(
+                key = response.request.attributes[DatadogKtorPlugin.DD_REQUEST_ID_ATTR],
+                method = fakeMethod.asRumMethod(),
+                url = fakeUrl,
+                attributes = fakeRumRequestAttributes
+            )
+
+            mockRumMonitor.stopResource(
+                key = response.request.attributes[DatadogKtorPlugin.DD_REQUEST_ID_ATTR],
+                statusCode = fakeRedirectStatusCode.value,
+                kind = RumResourceKind.NATIVE,
+                size = null,
+                // seems capture doesn't work yet for verify blocks, so using matching instead
+                // see https://github.com/lupuuss/Mokkery/issues/65
+                attributes = matching {
+                    assertContains(it, RUM_TRACE_ID)
+                    assertContains(it, RUM_SPAN_ID)
+                    assertContains(it, RUM_RULE_PSR)
+
+                    checkNotNull(it[RUM_TRACE_ID])
+                    checkNotNull(it[RUM_SPAN_ID])
+                    checkNotNull(it[RUM_RULE_PSR])
+
+                    assertEquals(
+                        fakeRumResponseAttributes,
+                        it.toMutableMap().apply {
+                            remove(RUM_TRACE_ID)
+                            remove(RUM_SPAN_ID)
+                            remove(RUM_RULE_PSR)
+                        }
+                    )
+                    true
+                }
+            )
+
+            mockRumMonitor.stopResource(
+                key = response.request.attributes[DatadogKtorPlugin.DD_REQUEST_ID_ATTR],
+                statusCode = fakeStatusCode.value,
+                kind = RumResourceKind.NATIVE,
+                size = fakeContextLength,
+                // seems capture doesn't work yet for verify blocks, so using matching instead
+                // see https://github.com/lupuuss/Mokkery/issues/65
+                attributes = matching {
+                    assertContains(it, RUM_TRACE_ID)
+                    assertContains(it, RUM_SPAN_ID)
+                    assertContains(it, RUM_RULE_PSR)
+
+                    checkNotNull(it[RUM_TRACE_ID])
+                    checkNotNull(it[RUM_SPAN_ID])
+                    checkNotNull(it[RUM_RULE_PSR])
+
+                    assertEquals(
+                        fakeRumResponseAttributes,
+                        it.toMutableMap().apply {
+                            remove(RUM_TRACE_ID)
+                            remove(RUM_SPAN_ID)
+                            remove(RUM_RULE_PSR)
+                        }
+                    )
+                    true
+                }
+            )
+        }
     }
 
     @Test
@@ -216,7 +354,9 @@ class DatadogKtorPluginTest {
                 }
             }
 
-        val fakeStatusCode = HttpStatusCode.allStatusCodes.randomElement()
+        val fakeStatusCode = HttpStatusCode.allStatusCodes
+            .filter { it.value !in 300..399 }
+            .randomElement()
         val fakeContextLength = nullable(randomLong())
         everySuspend {
             mockRequestHandler.invoke(
@@ -225,7 +365,8 @@ class DatadogKtorPluginTest {
             )
         } calls { (scope: MockRequestHandleScope, _: HttpRequestData) ->
             scope.respond(
-                content = "", status = fakeStatusCode,
+                content = "",
+                status = fakeStatusCode,
                 headers = Headers.build {
                     if (fakeContextLength != null) {
                         set(HttpHeaders.ContentLength, fakeContextLength.toString())
@@ -247,6 +388,98 @@ class DatadogKtorPluginTest {
                 method = fakeMethod.asRumMethod(),
                 url = fakeUrl,
                 attributes = fakeRumRequestAttributes
+            )
+
+            mockRumMonitor.stopResource(
+                key = response.request.attributes[DatadogKtorPlugin.DD_REQUEST_ID_ATTR],
+                statusCode = fakeStatusCode.value,
+                kind = RumResourceKind.NATIVE,
+                size = fakeContextLength,
+                attributes = fakeRumResponseAttributes
+            )
+        }
+    }
+
+    // TODO RUM-7625 Redirect tracking is wrong: first redirect response will stop resource and it won't be any
+    //  new `onRequest` call. See ticket for more details.
+    @Test
+    fun `M start + stop resource tracking W request succeeded + not sampled for tracing + redirect`() {
+        // Given
+        every { mockTraceSampler.sample() } returns false
+        val fakeUrl = "https://$fakeHost/track"
+        // Only Get and Head are allowed for implicit redirect, see Ktor HttpRedirect.kt
+        val fakeMethod = listOf(HttpMethod.Get, HttpMethod.Head)
+            .randomElement()
+        val request = HttpRequestBuilder()
+            .apply {
+                url(fakeUrl)
+                headers["fake-header-name"] = "fake-header-value"
+                method = fakeMethod
+                if (method in setOf(HttpMethod.Post, HttpMethod.Put, HttpMethod.Patch)) {
+                    setBody(
+                        listOf("body", TextContent("body", ContentType.Any))
+                            .randomElement()
+                    )
+                }
+            }
+
+        val fakeStatusCode = HttpStatusCode.allStatusCodes
+            .filter { it.value !in 300..399 }
+            .randomElement()
+        val fakeRedirectStatusCode = HttpStatusCode.redirectStatusCodes()
+            .randomElement()
+        val fakeContextLength = nullable(randomLong())
+        var redirected = false
+        everySuspend {
+            mockRequestHandler.invoke(
+                any(),
+                any()
+            )
+        } calls { (scope: MockRequestHandleScope, _: HttpRequestData) ->
+            if (!redirected) {
+                scope.respond(
+                    content = "",
+                    status = fakeRedirectStatusCode,
+                    headers = Headers.build {
+                        set(HttpHeaders.Location, "$fakeUrl/redirected")
+                    }
+                ).also {
+                    redirected = true
+                }
+            } else {
+                scope.respond(
+                    content = "",
+                    status = fakeStatusCode,
+                    headers = Headers.build {
+                        if (fakeContextLength != null) {
+                            set(HttpHeaders.ContentLength, fakeContextLength.toString())
+                        }
+                    }
+                )
+            }
+        }
+
+        // When
+        val response = runBlocking {
+            fakeClient.request(request)
+        }
+
+        // Then
+        verify(VerifyMode.exhaustiveOrder) {
+            // TODO RUM-6456 verify request headers
+            mockRumMonitor.startResource(
+                key = response.request.attributes[DatadogKtorPlugin.DD_REQUEST_ID_ATTR],
+                method = fakeMethod.asRumMethod(),
+                url = fakeUrl,
+                attributes = fakeRumRequestAttributes
+            )
+
+            mockRumMonitor.stopResource(
+                key = response.request.attributes[DatadogKtorPlugin.DD_REQUEST_ID_ATTR],
+                statusCode = fakeRedirectStatusCode.value,
+                kind = RumResourceKind.NATIVE,
+                size = null,
+                attributes = fakeRumResponseAttributes
             )
 
             mockRumMonitor.stopResource(
@@ -365,6 +598,15 @@ class DatadogKtorPluginTest {
     // not the same as in production files
     private fun HttpMethod.asRumMethod() =
         RumResourceMethod.entries.firstOrNull { it.name == value } ?: RumResourceMethod.CONNECT
+
+    // see Ktor HttpRedirect.kt
+    private fun HttpStatusCode.Companion.redirectStatusCodes() = listOf(
+        MovedPermanently,
+        Found,
+        SeeOther,
+        TemporaryRedirect,
+        PermanentRedirect
+    )
 
     // endregion
 }
