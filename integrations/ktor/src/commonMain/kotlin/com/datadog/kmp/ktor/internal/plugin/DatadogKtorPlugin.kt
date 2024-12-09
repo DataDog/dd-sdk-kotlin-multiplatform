@@ -7,6 +7,7 @@
 package com.datadog.kmp.ktor.internal.plugin
 
 import com.benasher44.uuid.uuid4
+import com.datadog.kmp.ktor.HttpRequestSnapshot
 import com.datadog.kmp.ktor.RUM_RULE_PSR
 import com.datadog.kmp.ktor.RUM_SPAN_ID
 import com.datadog.kmp.ktor.RUM_TRACE_ID
@@ -65,7 +66,7 @@ internal class DatadogKtorPlugin(
             key = requestId,
             method = request.method.asRumMethod(),
             url = request.url.buildString(),
-            attributes = rumResourceAttributesProvider.onRequest(request.build())
+            attributes = rumResourceAttributesProvider.onRequest(HttpRequestSnapshot.takeFrom(builder = request))
         )
     }
 
@@ -105,7 +106,10 @@ internal class DatadogKtorPlugin(
                 statusCode = null,
                 message = "Ktor request error $method $url",
                 throwable = throwable,
-                attributes = rumResourceAttributesProvider.onError(request.build(), throwable)
+                attributes = rumResourceAttributesProvider.onError(
+                    HttpRequestSnapshot.takeFrom(builder = request),
+                    throwable
+                )
             )
         } else {
             // TODO RUM-5254 handle missing request id case
