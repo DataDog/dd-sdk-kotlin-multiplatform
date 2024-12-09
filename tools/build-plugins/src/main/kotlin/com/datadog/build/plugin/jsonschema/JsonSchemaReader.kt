@@ -150,28 +150,42 @@ class JsonSchemaReader(
     // region Internal
 
     @Suppress("FunctionMaxLength")
-    private fun extractAdditionalPropertiesType(
+    private fun extractAdditionalProperties(
         definition: JsonDefinition,
         fromFile: File
-    ): Pair<TypeDefinition?, Boolean> {
+    ): TypeProperty? {
         return when (val additional = definition.additionalProperties) {
-            null -> null to false // TODO additionalProperties is true by default !
+            null -> null // TODO additionalProperties is true by default !
             is Map<*, *> -> {
-                val value = additional["type"]?.toString()
-                if (value == null) {
+                val type = additional["type"]?.toString()
+                val readOnly = additional["readOnly"] as? Boolean
+                if (type == null) {
                     error("additionalProperties object is missing a `type`")
                 } else {
-                    val readOnly = additional.getOrDefault("readOnly", false) as Boolean
-                    val type = JsonType.values().firstOrNull { it.name.equals(value, true) }
-                    transform(JsonDefinition.ANY.copy(type = type), "?", fromFile) to readOnly
+                    val jsonType = JsonType.values().firstOrNull { it.name.equals(type, true) }
+                    val typeDef = transform(JsonDefinition.ANY.copy(type = jsonType), "?", fromFile)
+                    TypeProperty(
+                        name = "",
+                        type = typeDef,
+                        optional = true,
+                        readOnly = readOnly ?: false,
+                        defaultValue = null
+                    )
                 }
             }
 
             is Boolean -> {
                 if (additional) {
-                    transform(JsonDefinition.EMPTY.copy(type = JsonType.OBJECT), "?", fromFile) to false
+                    val typeDef = transform(JsonDefinition.ANY.copy(type = JsonType.OBJECT), "?", fromFile)
+                    TypeProperty(
+                        name = "",
+                        type = typeDef,
+                        optional = true,
+                        readOnly = false,
+                        defaultValue = null
+                    )
                 } else {
-                    null to false
+                    null
                 }
             }
 
@@ -373,15 +387,14 @@ class JsonSchemaReader(
                 )
             )
         }
-        val (additionalType, readOnly) = extractAdditionalPropertiesType(definition, fromFile)
+        val additionalType = extractAdditionalProperties(definition, fromFile)
 
         return TypeDefinition.Class(
             name = typeName,
             originalName = typeName,
             description = definition.description.orEmpty(),
             properties = properties,
-            additionalProperties = additionalType,
-            readOnlyAdditionalProperties = readOnly
+            additionalProperties = additionalType
         )
     }
 
