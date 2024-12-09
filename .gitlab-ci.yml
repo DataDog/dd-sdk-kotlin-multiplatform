@@ -204,6 +204,7 @@ publish:release-core:
   stage: publish
   timeout: 30m
   script:
+    - xcodebuild -downloadPlatform tvOS -quiet
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :core:publishToSonatype --stacktrace --no-daemon
@@ -215,6 +216,7 @@ publish:release-logs:
   stage: publish
   timeout: 30m
   script:
+    - xcodebuild -downloadPlatform tvOS -quiet
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:logs:publishToSonatype --stacktrace --no-daemon
@@ -226,6 +228,7 @@ publish:release-rum:
   stage: publish
   timeout: 30m
   script:
+    - xcodebuild -downloadPlatform tvOS -quiet
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:rum:publishToSonatype --stacktrace --no-daemon
@@ -237,6 +240,9 @@ publish:release-webview:
   stage: publish
   timeout: 30m
   script:
+    # even though WebView tracking doesn't support tvOS, Gradle will trigger core module pod
+    # compilation for tvOS by some reason
+    - xcodebuild -downloadPlatform tvOS -quiet
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:webview:publishToSonatype --stacktrace --no-daemon
@@ -248,6 +254,9 @@ publish:release-session-replay:
   stage: publish
   timeout: 30m
   script:
+    # even though Session Replay doesn't support tvOS, Gradle will trigger core module pod
+    # compilation for tvOS by some reason
+    - xcodebuild -downloadPlatform tvOS -quiet
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:session-replay:publishToSonatype --stacktrace --no-daemon
@@ -259,6 +268,7 @@ publish:release-ktor:
   stage: publish
   timeout: 30m
   script:
+    - xcodebuild -downloadPlatform tvOS -quiet
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :integrations:ktor:publishToSonatype --stacktrace --no-daemon
