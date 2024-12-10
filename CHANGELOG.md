@@ -1,3 +1,21 @@
+# 0.4.0 / 2024-12-09
+
+* [FEATURE] Session Replay: Support fine-grained masking and privacy overrides. See [#112](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/112)
+* [FEATURE] Support tvOS target. See [#115](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/115)
+* [FEATURE] RUM: Add RUM Resource attributes provider for Ktor instrumentation. See [#116](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/116)
+* [FEATURE] Core: Support proxy. See [#117](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/117)
+* [IMPROVEMENT] Support mutable additional properties. See [#113](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/113)
+* [IMPROVEMENT] Style Android sample app similar to iOS. See [#114](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/114)
+* [IMPROVEMENT] Avoid using `HttpRequestData` for resource attributes collection in Ktor instrumentation. See [#119](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/119)
+* [MAINTENANCE] Next dev iteration. See [#101](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/101)
+* [MAINTENANCE] Switch to Android API 35. See [#102](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/102)
+* [MAINTENANCE] Migrate Slack notifier to k8s runner. See [#104](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/104)
+* [MAINTENANCE] Kotlin 2.0.21 & AGP 8.6.1. See [#105](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/105)
+* [MAINTENANCE] Update transitive dependencies after Kotlin 2.0.21 update. See [#109](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/109)
+* [MAINTENANCE] Update iOS SDK to 2.20.0, Android SDK to 2.16.0. See [#112](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/112)
+* [MAINTENANCE] Update Gradle to 8.11.1, AGP to 8.7.3. See [#120](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/120)
+* [MAINTENANCE] Fix flaky Ktor instrumentation tests for redirects. See [#121](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/121)
+
 # 0.0.3 / 2024-10-10
 
 * [FEATURE] Add Ktor network errors tracking. See [#92](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/92)
