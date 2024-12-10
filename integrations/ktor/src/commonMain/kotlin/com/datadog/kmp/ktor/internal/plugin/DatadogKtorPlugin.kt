@@ -7,16 +7,20 @@
 package com.datadog.kmp.ktor.internal.plugin
 
 import com.benasher44.uuid.uuid4
-import com.datadog.kmp.ktor.RNG
+import com.datadog.kmp.ktor.HttpRequestSnapshot
 import com.datadog.kmp.ktor.RUM_RULE_PSR
 import com.datadog.kmp.ktor.RUM_SPAN_ID
 import com.datadog.kmp.ktor.RUM_TRACE_ID
+import com.datadog.kmp.ktor.RumResourceAttributesProvider
 import com.datadog.kmp.ktor.TracingHeaderType
 import com.datadog.kmp.ktor.internal.trace.SpanIdGenerator
 import com.datadog.kmp.ktor.internal.trace.TraceIdGenerator
+import com.datadog.kmp.ktor.sampling.Sampler
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import io.ktor.client.plugins.api.OnRequestContext
+import io.ktor.client.plugins.api.OnResponseContext
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.request
@@ -28,15 +32,16 @@ import io.ktor.util.AttributeKey
 internal class DatadogKtorPlugin(
     private val rumMonitor: RumMonitor,
     private val tracedHosts: Map<String, Set<TracingHeaderType>>,
-    private val traceSamplingRate: Float,
+    private val traceSampler: Sampler,
     private val traceIdGenerator: TraceIdGenerator,
-    private val spanIdGenerator: SpanIdGenerator
+    private val spanIdGenerator: SpanIdGenerator,
+    private val rumResourceAttributesProvider: RumResourceAttributesProvider
 ) : KtorPlugin {
 
     override val pluginName: String = PLUGIN_NAME
 
-    override fun onRequest(onRequestContext: Any, request: HttpRequestBuilder, content: Any) {
-        val isSampledIn = RNG.nextDouble(MIN_SAMPLE_RATE, MAX_SAMPLE_RATE).toFloat() < traceSamplingRate
+    override fun onRequest(onRequestContext: OnRequestContext, request: HttpRequestBuilder, content: Any) {
+        val isSampledIn = traceSampler.sample()
         val traceHeaderTypes = traceHeaderTypesForHost(request.url.host)
 
         val traceId = traceIdGenerator.generateTraceId()
@@ -48,7 +53,7 @@ internal class DatadogKtorPlugin(
             }
             request.attributes.put(DD_TRACE_ID_ATTR, traceId.toHexString())
             request.attributes.put(DD_SPAN_ID_ATTR, spanId.raw.toString())
-            request.attributes.put(DD_RULE_PSR_ATTR, traceSamplingRate)
+            request.attributes.put(DD_RULE_PSR_ATTR, traceSampler.sampleRate)
         } else {
             TracingHeaderType.entries.forEach { headerType ->
                 headerType.injectHeaders(request, false, traceId, spanId)
@@ -61,28 +66,30 @@ internal class DatadogKtorPlugin(
             key = requestId,
             method = request.method.asRumMethod(),
             url = request.url.buildString(),
-            attributes = emptyMap()
+            attributes = rumResourceAttributesProvider.onRequest(HttpRequestSnapshot.takeFrom(builder = request))
         )
     }
-    override fun onResponse(onResponseContext: Any, response: HttpResponse) {
+
+    override fun onResponse(onResponseContext: OnResponseContext, response: HttpResponse) {
         val requestAttributes = response.request.attributes
         val requestId = requestAttributes.getOrNull(DD_REQUEST_ID_ATTR)
         if (requestId != null) {
+            val tracingAttributes = mutableMapOf<String, Any?>().apply {
+                val traceId = requestAttributes.getOrNull(DD_TRACE_ID_ATTR)
+                val spanId = requestAttributes.getOrNull(DD_SPAN_ID_ATTR)
+                val rulePsr = requestAttributes.getOrNull(DD_RULE_PSR_ATTR)
+                if (traceId != null && spanId != null && rulePsr != null) {
+                    put(RUM_TRACE_ID, traceId)
+                    put(RUM_SPAN_ID, spanId)
+                    put(RUM_RULE_PSR, rulePsr)
+                }
+            }
             rumMonitor.stopResource(
                 key = requestId,
                 statusCode = response.status.value,
                 size = response.contentLength(), // TODO RUM-6382 Report content size if header is missing
                 kind = RumResourceKind.NATIVE,
-                attributes = mutableMapOf<String, Any?>().apply {
-                    val traceId = requestAttributes.getOrNull(DD_TRACE_ID_ATTR)
-                    val spanId = requestAttributes.getOrNull(DD_SPAN_ID_ATTR)
-                    val rulePsr = requestAttributes.getOrNull(DD_RULE_PSR_ATTR)
-                    if (traceId != null && spanId != null && rulePsr != null) {
-                        put(RUM_TRACE_ID, traceId)
-                        put(RUM_SPAN_ID, spanId)
-                        put(RUM_RULE_PSR, rulePsr)
-                    }
-                }
+                attributes = rumResourceAttributesProvider.onResponse(response) + tracingAttributes
             )
         } else {
             // TODO RUM-5254 handle missing request id case
@@ -98,14 +105,18 @@ internal class DatadogKtorPlugin(
                 key = requestId,
                 statusCode = null,
                 message = "Ktor request error $method $url",
-                throwable = throwable
+                throwable = throwable,
+                attributes = rumResourceAttributesProvider.onError(
+                    HttpRequestSnapshot.takeFrom(builder = request),
+                    throwable
+                )
             )
         } else {
             // TODO RUM-5254 handle missing request id case
         }
     }
 
-    private fun traceHeaderTypesForHost(host: String): Set<TracingHeaderType>? {
+    internal fun traceHeaderTypesForHost(host: String): Set<TracingHeaderType>? {
         return tracedHosts.getOrElse(host) {
             tracedHosts.entries.firstOrNull { host.endsWith(".${it.key}") }?.value ?: tracedHosts["*"]
         }
@@ -136,7 +147,5 @@ internal class DatadogKtorPlugin(
         internal val DD_TRACE_ID_ATTR = AttributeKey<String>(RUM_TRACE_ID)
         internal val DD_SPAN_ID_ATTR = AttributeKey<String>(RUM_SPAN_ID)
         internal val DD_RULE_PSR_ATTR = AttributeKey<Float>(RUM_RULE_PSR)
-        internal const val MIN_SAMPLE_RATE: Double = 0.0
-        internal const val MAX_SAMPLE_RATE: Double = 100.0
     }
 }

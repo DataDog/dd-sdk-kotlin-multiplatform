@@ -78,8 +78,6 @@ kotlin {
             implementation(projects.core)
             api(projects.features.logs)
             api(projects.features.rum)
-            api(projects.features.webview)
-            api(projects.features.sessionReplay)
             api(projects.integrations.ktor)
 
             implementation(libs.ktor.client.core)
@@ -89,11 +87,19 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.kotlinx.coroutines.android)
-            implementation(libs.datadog.android.sessionReplayMaterial)
+            implementation(libs.datadog.android.sessionReplayCompose)
+
+            implementation(projects.features.webview)
+            implementation(projects.features.sessionReplay)
+        }
+
+        appleMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
 
         iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
+            api(projects.features.webview)
+            api(projects.features.sessionReplay)
         }
 
         commonMain {

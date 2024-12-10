@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.konan.target.Family
 
 class DatadogProjectConfigurationPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -111,13 +112,21 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
             } else {
                 jvm()
             }
-            // TODO RUM-4231 Add other Apple targets (tvOS, watchOS, etc.)
+            // TODO RUM-4231 Add watchOS target
             iosX64()
             iosArm64()
             iosSimulatorArm64()
 
+            // at this point DatadogBuildConfigExtension is not yet read, so just use project names instead of
+            // doing `afterEvaluate` tricks
+            if (projectToApply.path !in setOf(":features:session-replay", ":features:webview")) {
+                tvosX64()
+                tvosArm64()
+                tvosSimulatorArm64()
+            }
+
             sourceSets.all {
-                if (name.startsWith("ios")) {
+                if (name.startsWith("apple") || name.startsWith("ios") || name.startsWith("tvos")) {
                     languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
                 }
             }
@@ -128,7 +137,19 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
                         if (this is KotlinNativeSimulatorTestRun) {
                             // Need to find a way to be more precise, to specify OS runtime version. Should be
                             // aligned with what is in CI file.
-                            deviceId = "iPhone 15 Pro Max"
+                            deviceId = when (konanTarget.family) {
+                                Family.IOS -> {
+                                    "iPhone 15 Pro Max"
+                                }
+
+                                Family.TVOS -> {
+                                    "Apple TV"
+                                }
+
+                                else -> throw IllegalArgumentException(
+                                    "Unknown family for the device ID selection: ${konanTarget.family}"
+                                )
+                            }
                         }
                     }
                 }

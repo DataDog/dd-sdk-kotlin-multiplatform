@@ -10,7 +10,7 @@ import android.view.View
 import com.datadog.android.rum.RumAttributes
 
 /**
- * Provides the extra attributes for the  as Map<String,Any?>.
+ * Provides the extra attributes for the [View] as Map<String,Any?>.
  */
 fun interface ViewAttributesProvider {
 

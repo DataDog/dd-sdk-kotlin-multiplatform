@@ -1,0 +1,5 @@
+fun RumConfiguration.Builder.trackUiKitActions(com.datadog.kmp.rum.tracking.UIKitRUMActionsPredicate = DefaultUIKitRUMActionsPredicate()): RumConfiguration.Builder
+class com.datadog.kmp.rum.tracking.DefaultUIKitRUMActionsPredicate : UIKitRUMActionsPredicate
+  override fun createAction(platform.UIKit.UIPressType, platform.UIKit.UIView): RumAction?
+fun interface com.datadog.kmp.rum.tracking.UIKitRUMActionsPredicate
+  fun createAction(platform.UIKit.UIPressType, platform.UIKit.UIView): RumAction?

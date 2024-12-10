@@ -49,6 +49,7 @@ kotlin {
     cocoapods {
         // need to build with XCode 15
         ios.deploymentTarget = "12.0"
+        tvos.deploymentTarget = "12.0"
         noPodspec()
 
         framework {
@@ -92,6 +93,13 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.datadog.android.core)
+            // Android SDK will bring it
+            compileOnly(libs.okHttp)
+        }
+        androidUnitTest.dependencies {
+            implementation(libs.bundles.jUnit5)
+            implementation(libs.bundles.jvmTestTools)
+            compileOnly(libs.okHttp)
         }
         commonMain.dependencies {
             // put your multiplatform dependencies here
@@ -99,7 +107,7 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        iosTest.dependencies {
+        appleTest.dependencies {
             implementation(projects.tools.unit)
         }
         commonMain {

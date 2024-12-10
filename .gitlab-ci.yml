@@ -1,11 +1,9 @@
-include:
-  - 'https://gitlab-templates.ddbuild.io/slack-notifier/v1/template.yml'
-
 # SETUP
 
 variables:
-  CURRENT_CI_IMAGE: "2"
+  CURRENT_CI_IMAGE: "4"
   CI_IMAGE_DOCKER: registry.ddbuild.io/ci/dd-sdk-kotlin-multiplatform:$CURRENT_CI_IMAGE
+  SLACK_NOTIFIER_IMAGE: registry.ddbuild.io/slack-notifier:latest
   GIT_DEPTH: 6
 
   DD_SERVICE: "dd-sdk-kotlin-multiplatform"
@@ -67,7 +65,8 @@ env-info:
     - xcodebuild -version
     - xcode-select -p # default Xcode
     - ls /Applications/ | grep Xcode # other Xcodes
-    - xcodebuild -project sample/iosApp/iosApp.xcodeproj -scheme iosApp -showdestinations -quiet # installed iOS destinations
+    - xcodebuild -project sample/appleApp/appleApp.xcodeproj -scheme "Sample iOS" -showdestinations -quiet # installed iOS destinations
+    - xcodebuild -project sample/appleApp/appleApp.xcodeproj -scheme "Sample tvOS" -showdestinations -quiet # installed tvOS destinations
     - xcbeautify --version
     - swiftlint --version
     - carthage version
@@ -144,6 +143,23 @@ ios-unit-test:
       junit:
         - "**/build/test-results/iosSimulatorArm64Test/*.xml"
 
+tvos-unit-test:
+  stage: test
+  tags: [ "macos:sonoma" ]
+  image: $CI_IMAGE_DOCKER
+  timeout: 1h
+  script:
+    - xcodebuild -downloadPlatform tvOS -quiet
+    # TODO RUM-4602 Datadog Java Agent fails to start (macOS problem? arm64 problem?)
+    - pod repo update
+    - ./gradlew tvosUnitTestAll
+  artifacts:
+    when: always
+    expire_in: 1 week
+    reports:
+      junit:
+        - "**/build/test-results/tvosSimulatorArm64Test/*.xml"
+
 sample-app-build-ios:
   stage: test
   tags: [ "macos:sonoma" ]
@@ -154,7 +170,20 @@ sample-app-build-ios:
     - pod repo update
     # temporary workaround for RUM-4282
     - ./gradlew :core:podBuildDatadogObjcIphonesimulator :core:podBuildDatadogCrashReportingIphonesimulator
-    - xcodebuild -project sample/iosApp/iosApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme iosApp build | xcbeautify --preserve-unbeautified
+    - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample iOS" build | xcbeautify --preserve-unbeautified
+
+sample-app-build-tvos:
+  stage: test
+  tags: [ "macos:sonoma" ]
+  timeout: 1h
+  variables:
+    BUILD_DESTINATION: "platform=tvOS Simulator,name=Apple TV,OS=17.4"
+  script:
+    - xcodebuild -downloadPlatform tvOS -quiet
+    - pod repo update
+    # temporary workaround for RUM-4282
+    - ./gradlew :core:podBuildDatadogObjcAppletvsimulator :core:podBuildDatadogCrashReportingAppletvsimulator
+    - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample tvOS" build | xcbeautify --preserve-unbeautified
 
 sample-app-build-android:
   stage: test
@@ -175,6 +204,7 @@ publish:release-core:
   stage: publish
   timeout: 30m
   script:
+    - xcodebuild -downloadPlatform tvOS -quiet
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :core:publishToSonatype --stacktrace --no-daemon
@@ -186,6 +216,7 @@ publish:release-logs:
   stage: publish
   timeout: 30m
   script:
+    - xcodebuild -downloadPlatform tvOS -quiet
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:logs:publishToSonatype --stacktrace --no-daemon
@@ -197,6 +228,7 @@ publish:release-rum:
   stage: publish
   timeout: 30m
   script:
+    - xcodebuild -downloadPlatform tvOS -quiet
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:rum:publishToSonatype --stacktrace --no-daemon
@@ -208,6 +240,9 @@ publish:release-webview:
   stage: publish
   timeout: 30m
   script:
+    # even though WebView tracking doesn't support tvOS, Gradle will trigger core module pod
+    # compilation for tvOS by some reason
+    - xcodebuild -downloadPlatform tvOS -quiet
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:webview:publishToSonatype --stacktrace --no-daemon
@@ -219,6 +254,9 @@ publish:release-session-replay:
   stage: publish
   timeout: 30m
   script:
+    # even though Session Replay doesn't support tvOS, Gradle will trigger core module pod
+    # compilation for tvOS by some reason
+    - xcodebuild -downloadPlatform tvOS -quiet
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:session-replay:publishToSonatype --stacktrace --no-daemon
@@ -230,6 +268,7 @@ publish:release-ktor:
   stage: publish
   timeout: 30m
   script:
+    - xcodebuild -downloadPlatform tvOS -quiet
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :integrations:ktor:publishToSonatype --stacktrace --no-daemon
@@ -237,7 +276,8 @@ publish:release-ktor:
 # SLACK NOTIFICATIONS
 
 notify:publish-release-success:
-  extends: .slack-notifier-base
+  image: $SLACK_NOTIFIER_IMAGE
+  tags: [ "arch:amd64" ]
   stage: notify
   when: on_success
   only:
@@ -248,7 +288,8 @@ notify:publish-release-success:
     - postmessage "#mobile-sdk-ops" "$MESSAGE_TEXT"
 
 notify:publish-release-failure:
-  extends: .slack-notifier-base
+  image: $SLACK_NOTIFIER_IMAGE
+  tags: [ "arch:amd64" ]
   stage: notify
   when: on_failure
   only:

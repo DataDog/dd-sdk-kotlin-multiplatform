@@ -11,9 +11,13 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.process.ExecOperations
 import java.io.File
+import javax.inject.Inject
 
-open class CheckApiSurfaceTask : DefaultTask() {
+open class CheckApiSurfaceTask @Inject constructor(
+    private val execOperations: ExecOperations
+) : DefaultTask() {
 
     @Input
     lateinit var sourceSetName: String
@@ -29,7 +33,7 @@ open class CheckApiSurfaceTask : DefaultTask() {
 
     @TaskAction
     fun applyTask() {
-        val lines = project.execShell(
+        val lines = execOperations.execShell(
             "git",
             "diff",
             "--color=never",

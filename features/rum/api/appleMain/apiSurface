@@ -1,0 +1,18 @@
+actual object com.datadog.kmp.rum.Rum
+  actual fun enable(com.datadog.kmp.rum.configuration.RumConfiguration)
+fun RumMonitor.stopResource(String, platform.Foundation.NSURLResponse, Long?, Map<String, Any?>)
+fun RumMonitor.stopResourceWithError(String, platform.Foundation.NSError, platform.Foundation.NSURLResponse?, Map<String, Any?>)
+fun RumMonitor.stopResourceWithError(String, String, platform.Foundation.NSURLResponse?, Map<String, Any?>)
+fun RumMonitor.addError(RumErrorSource, platform.Foundation.NSError, Map<String, Any?>)
+fun RumConfiguration.Builder.trackUiKitViews(com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate = DefaultUIKitRUMViewsPredicate()): RumConfiguration.Builder
+fun RumConfiguration.Builder.setAppHangThreshold(Long?): RumConfiguration.Builder
+interface com.datadog.kmp.rum.internal.AdvancedRumNetworkMonitor
+  fun addResourceMetrics(String, platform.Foundation.NSURLSessionTaskMetrics, Map<String, Any?>)
+class com.datadog.kmp.rum.tracking.DefaultUIKitRUMViewsPredicate : UIKitRUMViewsPredicate
+  override fun createView(platform.UIKit.UIViewController): RumView?
+data class com.datadog.kmp.rum.tracking.RumAction
+  constructor(String, Map<String, Any?>)
+data class com.datadog.kmp.rum.tracking.RumView
+  constructor(String, Map<String, Any?>)
+fun interface com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
+  fun createView(platform.UIKit.UIViewController): RumView?

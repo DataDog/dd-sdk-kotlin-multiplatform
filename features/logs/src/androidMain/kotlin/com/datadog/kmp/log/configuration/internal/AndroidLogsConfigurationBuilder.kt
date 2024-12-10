@@ -28,6 +28,8 @@ internal class AndroidLogsConfigurationBuilder(
             logEvent.error?.fingerprint = mapped.error?.fingerprint
             logEvent.error?.sourceType = mapped.error?.sourceType
 
+            // root and usr additional properties are exposed as a reference, so no need to copy things back
+
             logEvent
         }
     }

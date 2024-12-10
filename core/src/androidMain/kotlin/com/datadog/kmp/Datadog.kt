@@ -11,6 +11,7 @@ import com.datadog.kmp.core.configuration.BatchProcessingLevel
 import com.datadog.kmp.core.configuration.BatchSize
 import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.core.configuration.UploadFrequency
+import com.datadog.kmp.core.configuration.setProxy
 import com.datadog.kmp.internal.InternalAttributes
 import com.datadog.kmp.privacy.TrackingConsent
 import android.util.Log as AndroidLog
@@ -163,6 +164,7 @@ private val Configuration.native: ConfigurationAndroid
                     InternalAttributes.SDK_VERSION_ATTRIBUTE
                 )
             )
+            .setProxy(coreConfig.proxyConfiguration)
             .build()
     }
 

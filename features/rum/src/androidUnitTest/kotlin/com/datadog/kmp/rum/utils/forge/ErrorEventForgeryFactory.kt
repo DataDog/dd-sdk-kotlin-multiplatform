@@ -26,7 +26,7 @@ internal class ErrorEventForgeryFactory : ForgeryFactory<ErrorEvent> {
                 id = forge.aNullable { getForgery<UUID>().toString() },
                 message = forge.anAlphabeticalString(),
                 source = forge.getForgery(),
-                stack = forge.aNullable { aThrowable().loggableStackTrace() },
+                stack = forge.aNullable { aThrowable().stackTrace.loggableStackTrace() },
                 resource = forge.aNullable {
                     ErrorEvent.Resource(
                         url = aStringMatching("https://[a-z]+.[a-z]{3}/[a-z0-9_/]+"),
@@ -45,7 +45,7 @@ internal class ErrorEventForgeryFactory : ForgeryFactory<ErrorEvent> {
                 isCrash = forge.aNullable { aBool() },
                 type = forge.aNullable { anAlphabeticalString() },
                 handling = forge.aNullable { getForgery() },
-                handlingStack = forge.aNullable { aThrowable().loggableStackTrace() },
+                handlingStack = forge.aNullable { aThrowable().stackTrace.loggableStackTrace() },
                 category = forge.aNullable { getForgery() },
                 threads = forge.aNullable {
                     aList {

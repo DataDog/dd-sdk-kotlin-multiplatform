@@ -306,7 +306,7 @@ internal fun DDRUMViewEventRUMUser.toCommonModel(): ViewEvent.Usr = ViewEvent.Us
   id = id(),
   name = name(),
   email = email(),
-  additionalProperties = usrInfo().mapKeys { it.key as String }
+  additionalProperties = usrInfo().mapKeys { it.key as String }.toMutableMap()
 )
 
 internal fun DDRUMViewEventRUMConnectivity.toCommonModel(): ViewEvent.Connectivity =
@@ -474,7 +474,7 @@ internal fun DDRUMViewEventDDReplayStats.toCommonModel(): ViewEvent.ReplayStats 
 
 internal fun DDRUMViewEventRUMEventAttributes.toCommonModel(): ViewEvent.Context =
     ViewEvent.Context(
-  additionalProperties = contextInfo().mapKeys { it.key as String }
+  additionalProperties = contextInfo().mapKeys { it.key as String }.toMutableMap()
 )
 
 internal fun DDRUMViewEventContainer.toCommonModel(): ViewEvent.Container = ViewEvent.Container(
@@ -501,7 +501,7 @@ internal fun viewEventContainerSourceToCommonEnum(enumValue: DDRUMViewEventConta
 }
 
 internal fun DDRUMViewEventFeatureFlags.toCommonModel(): ViewEvent.Context = ViewEvent.Context(
-  additionalProperties = featureFlagsInfo().mapKeys { it.key as String }
+  additionalProperties = featureFlagsInfo().mapKeys { it.key as String }.toMutableMap()
 )
 
 internal fun DDRUMViewEventPrivacy.toCommonModel(): ViewEvent.Privacy = ViewEvent.Privacy(

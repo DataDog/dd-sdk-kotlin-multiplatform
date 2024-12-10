@@ -1,8 +1,8 @@
 Dependencies List
 
-com.datadoghq:dd-sdk-android-core:2.13.1                        :  726 Kb
-com.datadoghq:dd-sdk-android-webview:2.13.1                     :   85 Kb
-org.jetbrains.kotlin:kotlin-stdlib:2.0.20                       : 1706 Kb
+com.datadoghq:dd-sdk-android-core:2.16.0                        :  734 Kb
+com.datadoghq:dd-sdk-android-webview:2.16.0                     :   86 Kb
+org.jetbrains.kotlin:kotlin-stdlib:2.0.21                       : 1706 Kb
 org.jetbrains:annotations:13.0                                  :   17 Kb
 
 Total transitive dependencies size                              :    2 Mb

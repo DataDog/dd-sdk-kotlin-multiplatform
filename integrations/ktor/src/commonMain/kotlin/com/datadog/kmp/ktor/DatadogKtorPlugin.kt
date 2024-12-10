@@ -10,6 +10,7 @@ import com.datadog.kmp.ktor.internal.plugin.DatadogKtorPlugin
 import com.datadog.kmp.ktor.internal.plugin.buildClientPlugin
 import com.datadog.kmp.ktor.internal.trace.DefaultSpanIdGenerator
 import com.datadog.kmp.ktor.internal.trace.DefaultTraceIdGenerator
+import com.datadog.kmp.ktor.sampling.FixedRateSampler
 import com.datadog.kmp.rum.RumMonitor
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.api.ClientPlugin
@@ -22,16 +23,20 @@ internal const val DEFAULT_TRACE_SAMPLE_RATE: Float = 20f
  * to use to handle distributed traces. For a default setup, we recommend using the DATADOG + TRACECONTEXT header types
  * for the hosts you own.
  * @param traceSamplingRate the sampling rate for the tracing (between 0 and 100)
+ * @param rumResourceAttributesProvider which listens on the intercepted Ktor call chain
+ * and offers the possibility to add custom attributes to the RUM resource events.
  */
 fun datadogKtorPlugin(
     tracedHosts: Map<String, Set<TracingHeaderType>> = emptyMap(),
-    traceSamplingRate: Float = DEFAULT_TRACE_SAMPLE_RATE
+    traceSamplingRate: Float = DEFAULT_TRACE_SAMPLE_RATE,
+    rumResourceAttributesProvider: RumResourceAttributesProvider = DefaultRumResourceAttributesProvider
 ): ClientPlugin<Unit> {
     return DatadogKtorPlugin(
         RumMonitor.get(),
         tracedHosts,
-        traceSamplingRate,
+        FixedRateSampler(traceSamplingRate),
         DefaultTraceIdGenerator(),
-        DefaultSpanIdGenerator()
+        DefaultSpanIdGenerator(),
+        rumResourceAttributesProvider
     ).buildClientPlugin()
 }
