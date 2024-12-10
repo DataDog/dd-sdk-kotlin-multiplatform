@@ -23,8 +23,6 @@ import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
-import com.datadog.kmp.sessionreplay.SessionReplay
-import com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration
 
 const val HOME_SCREEN_NAME = "Home"
 const val LOGS_SCREEN_NAME = "Logs"
@@ -38,7 +36,7 @@ const val WEB_VIEW_TRACKING_LOAD_URL = "https://datadoghq.dev/browser-sdk-test-p
     "&application_id=${LibraryConfig.DD_APPLICATION_ID}" +
     "&site=datadoghq.com"
 
-@Suppress("MagicNumber")
+@Suppress("MagicNumber", "LongMethod")
 fun initDatadog(context: Any? = null) {
     Datadog.verbosity = SdkLogVerbosity.DEBUG
 
@@ -57,7 +55,7 @@ fun initDatadog(context: Any? = null) {
 
     val logsConfiguration = LogsConfiguration.Builder()
         .setEventMapper {
-            it.ddtags += ",mapped_tag:mapped_value"
+            it.additionalProperties.putAll(extensiveAdditionalProperties)
             it
         }
         .build()
@@ -82,13 +80,7 @@ fun initDatadog(context: Any? = null) {
         .build()
     Rum.enable(rumConfiguration)
 
-    SessionReplay.enable(
-        SessionReplayConfiguration.Builder(100f)
-            .apply {
-                platformSpecificSetup(this)
-            }
-            .build()
-    )
+    initSessionReplay()
 
     Datadog.setUserInfo(
         name = "Random User",
@@ -164,32 +156,48 @@ fun triggerUncheckedException() {
 }
 
 private fun RumConfiguration.Builder.setupRumMappers() {
-    // TODO RUM-5992 additionalProperties cannot be mutable because of iOS SDK API, so using a referrer for
-    //  the mapping example
-    val referrer = "https://www.datadoghq.com"
     setViewEventMapper {
-        it.view.referrer = referrer
+        it.context?.additionalProperties?.putAll(extensiveAdditionalProperties)
         it
     }
     setResourceEventMapper {
-        it.view.referrer = referrer
+        it.context?.additionalProperties?.putAll(extensiveAdditionalProperties)
         it
     }
     setActionEventMapper {
-        it.view.referrer = referrer
+        it.context?.additionalProperties?.putAll(extensiveAdditionalProperties)
         it
     }
     setErrorEventMapper {
-        it.view.referrer = referrer
+        it.context?.additionalProperties?.putAll(extensiveAdditionalProperties)
         it
     }
     setLongTaskEventMapper {
-        it.view.referrer = referrer
+        it.context?.additionalProperties?.putAll(extensiveAdditionalProperties)
         it
     }
 }
 
+@Suppress("MagicNumber")
+private val extensiveAdditionalProperties = mapOf(
+    "int-value" to 1,
+    "long-value" to Int.MAX_VALUE.toLong() + 1,
+    "bool-value" to true,
+    "float-value" to 42.5f,
+    "null-value" to null,
+    "string-value" to "foobar",
+    "nested-value" to mapOf("foo" to "bar")
+    // TODO RUM-7478 iOS SDK will reject whole event if some attribute is not of known type
+    // "object-value" to SampleClassAttributeProperty()
+)
+
+@Suppress("UnusedPrivateClass")
+private data class SampleClassAttributeProperty(
+    private val foo: String = "not actually foo",
+    private val bar: String = "not actually bar"
+)
+
 expect fun startWebViewTracking(webView: Any)
 expect fun stopWebViewTracking(webView: Any)
+internal expect fun initSessionReplay()
 internal expect fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder)
-internal expect fun platformSpecificSetup(sessionReplayConfigurationBuilder: SessionReplayConfiguration.Builder)

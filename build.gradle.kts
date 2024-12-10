@@ -111,7 +111,7 @@ val jvmUnitTestReleaseAllTask = tasks.register("jvmUnitTestReleaseAll") {
 }
 
 // will cover Android-specific tests + tests from common source set
-tasks.register("jvmUnitTestAll") {
+val jvmUnitTestAllTask = tasks.register("jvmUnitTestAll") {
     dependsOn(
         jvmUnitTestDebugAllTask,
         jvmUnitTestReleaseAllTask,
@@ -119,11 +119,27 @@ tasks.register("jvmUnitTestAll") {
     )
 }
 
-tasks.register("iosUnitTestAll") {
+val iosUnitTestAllTask = tasks.register("iosUnitTestAll") {
     val subProjectsTestTasks = publishableProjects.map {
         "${it.identityPath.path}:iosSimulatorArm64Test"
     }
     dependsOn(subProjectsTestTasks)
+}
+
+val tvosUnitTestAllTask = tasks.register("tvosUnitTestAll") {
+    val subProjectsTestTasks = publishableProjects
+        // by some reason something like `projects.features.webview == projects.features.webview` evaluates to false
+        .filter { it.identityPath.path !in setOf(":features:session-replay", ":features:webview") }
+        .map { "${it.identityPath.path}:tvosSimulatorArm64Test" }
+    dependsOn(subProjectsTestTasks)
+}
+
+val appleUnitTestAllTask = tasks.register("appleUnitTestAll") {
+    dependsOn(iosUnitTestAllTask, tvosUnitTestAllTask)
+}
+
+tasks.register("unitTestAll") {
+    dependsOn(jvmUnitTestAllTask, appleUnitTestAllTask)
 }
 
 tasks.register("lintCheckAll") {

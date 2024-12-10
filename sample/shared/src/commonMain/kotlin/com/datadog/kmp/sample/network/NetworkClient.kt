@@ -6,20 +6,24 @@
 
 package com.datadog.kmp.sample.network
 
+import com.datadog.kmp.ktor.HttpRequestSnapshot
+import com.datadog.kmp.ktor.RumResourceAttributesProvider
 import com.datadog.kmp.ktor.TracingHeaderType
 import com.datadog.kmp.ktor.datadogKtorPlugin
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 
-@Suppress("TooGenericExceptionCaught")
 object NetworkClient {
+
+    private const val CUSTOM_HEADER_NAME = "x-custom-header"
 
     private val client = HttpClient {
         followRedirects = true
@@ -28,7 +32,17 @@ object NetworkClient {
                 tracedHosts = mapOf(
                     "httpbin.org" to setOf(TracingHeaderType.DATADOG)
                 ),
-                traceSamplingRate = 100f
+                traceSamplingRate = 100f,
+                rumResourceAttributesProvider = object : RumResourceAttributesProvider {
+                    override fun onRequest(request: HttpRequestSnapshot) =
+                        mapOf("custom-header-value" to request.headers[CUSTOM_HEADER_NAME])
+
+                    override fun onResponse(response: HttpResponse) =
+                        mapOf("http-protocol-version" to response.version.toString())
+
+                    override fun onError(request: HttpRequestSnapshot, throwable: Throwable) =
+                        mapOf("custom-header-value" to request.headers[CUSTOM_HEADER_NAME])
+                }
             )
         )
     }
@@ -40,14 +54,16 @@ object NetworkClient {
     ) {
         withContext(Dispatchers.IO) {
             try {
-                val response = client.get(url)
+                val response = client.get(url) {
+                    headers[CUSTOM_HEADER_NAME] = "some-get-value"
+                }
                 if (response.status.value >= HttpStatusCode.BadRequest.value) {
                     onFailure(response.status.value, null)
                 } else {
                     val responseBody = response.bodyAsText()
                     onSuccess(responseBody)
                 }
-            } catch (e: Exception) {
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                 onFailure(0, e)
             }
         }
@@ -63,6 +79,7 @@ object NetworkClient {
             try {
                 val response = client.post(url) {
                     setBody(payload)
+                    headers[CUSTOM_HEADER_NAME] = "some-post-value"
                 }
                 if (response.status.value >= HttpStatusCode.BadRequest.value) {
                     onFailure(response.status.value, null)
@@ -70,7 +87,7 @@ object NetworkClient {
                     val responseBody = response.bodyAsText()
                     onSuccess(responseBody)
                 }
-            } catch (e: Exception) {
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                 onFailure(0, e)
             }
         }

@@ -21,4 +21,14 @@ expect object SessionReplay {
     fun enable(
         sessionReplayConfiguration: SessionReplayConfiguration
     )
+
+    /**
+     * Start recording session replay data.
+     */
+    fun startRecording()
+
+    /**
+     * Stop recording session replay data.
+     */
+    fun stopRecording()
 }

@@ -8,6 +8,7 @@ package com.datadog.build.utils
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.process.ExecOperations
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStreamReader
@@ -20,7 +21,7 @@ inline fun <reified T : Task> Project.taskConfig(
     }
 }
 
-fun Project.execShell(vararg command: String): List<String> {
+fun ExecOperations.execShell(vararg command: String): List<String> {
     val outputStream = ByteArrayOutputStream()
     this.exec {
         commandLine(*command)

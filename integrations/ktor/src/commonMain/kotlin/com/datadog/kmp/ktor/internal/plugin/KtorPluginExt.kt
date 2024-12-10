@@ -13,7 +13,9 @@ import io.ktor.client.plugins.api.createClientPlugin
 internal fun KtorPlugin.buildClientPlugin(): ClientPlugin<Unit> {
     val plugin = this
 
+    // Ktor pipeline is Before -> State -> Transform -> Render -> Send. See [HttpRequestPipeline.Phases].
     return createClientPlugin(pluginName) {
+        // executed at the Send pipeline stage
         on(Send) {
             try {
                 proceed(it)
@@ -23,6 +25,12 @@ internal fun KtorPlugin.buildClientPlugin(): ClientPlugin<Unit> {
             }
         }
 
+        // executed at the State pipeline stage. Request body is not yet transformed to OutgoingContent instance
+        // (it is done at the Render stage)
+        //
+        // Maybe we should call this in on(Send) instead? There request is finalized and unlikely be modified after.
+        // The only problem is that in on(Send) request payload will be already serialized, which makes it more
+        // difficult to capture attributes from it, and there won't be any access to the original payload.
         onRequest { request, content ->
             plugin.onRequest(onRequestContext = this, request = request, content = content)
         }
