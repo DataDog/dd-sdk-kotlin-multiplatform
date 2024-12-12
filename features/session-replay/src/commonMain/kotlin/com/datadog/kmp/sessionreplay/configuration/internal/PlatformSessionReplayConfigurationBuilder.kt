@@ -21,5 +21,7 @@ internal interface PlatformSessionReplayConfigurationBuilder<T : Any> {
 
     fun setTextAndInputPrivacy(privacy: TextAndInputPrivacy)
 
+    fun startRecordingImmediately(enabled: Boolean)
+
     fun build(): T
 }

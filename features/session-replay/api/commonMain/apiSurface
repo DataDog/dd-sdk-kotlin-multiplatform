@@ -13,6 +13,7 @@ data class com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguratio
     fun setImagePrivacy(ImagePrivacy): Builder
     fun setTouchPrivacy(TouchPrivacy): Builder
     fun setTextAndInputPrivacy(TextAndInputPrivacy): Builder
+    fun startRecordingImmediately(Boolean): Builder
     fun build(): SessionReplayConfiguration
 enum com.datadog.kmp.sessionreplay.configuration.SessionReplayPrivacy
   - ALLOW

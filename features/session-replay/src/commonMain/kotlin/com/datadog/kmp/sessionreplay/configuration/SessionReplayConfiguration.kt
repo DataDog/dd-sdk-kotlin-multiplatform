@@ -86,6 +86,16 @@ data class SessionReplayConfiguration internal constructor(
         }
 
         /**
+         * Should recording start automatically (or be manually started).
+         * If not specified then by default it starts automatically.
+         * @param enabled whether recording should start automatically or not.
+         */
+        fun startRecordingImmediately(enabled: Boolean): Builder {
+            platformBuilder.startRecordingImmediately(enabled)
+            return this
+        }
+
+        /**
          * Builds a [SessionReplayConfiguration] based on the current state of this Builder.
          */
         fun build(): SessionReplayConfiguration {

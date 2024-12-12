@@ -132,6 +132,17 @@ class AndroidSessionReplayConfigurationBuilderTest {
     }
 
     @Test
+    fun `M call platform configuration builder+startRecordingImmediately W startRecordingImmediately`(
+        @BoolForgery fakeEnabled: Boolean
+    ) {
+        // When
+        testedBuilder.startRecordingImmediately(fakeEnabled)
+
+        // Then
+        verify(mockNativeRumConfigurationBuilder).startRecordingImmediately(fakeEnabled)
+    }
+
+    @Test
     fun `M call platform configuration builder+build W build`() {
         // Given
         val mockNativeConfiguration = mock<NativeSessionReplayConfiguration>()

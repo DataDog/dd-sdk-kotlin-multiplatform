@@ -59,6 +59,10 @@ internal class AndroidSessionReplayConfigurationBuilder :
         nativeBuilder.setTextAndInputPrivacy(privacy.native)
     }
 
+    override fun startRecordingImmediately(enabled: Boolean) {
+        nativeBuilder.startRecordingImmediately(enabled)
+    }
+
     override fun build(): SessionReplayConfiguration {
         return nativeBuilder.build()
     }
