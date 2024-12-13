@@ -48,6 +48,10 @@ internal class IOSSessionReplayConfigurationBuilder(sampleRate: Float) :
         nativeConfiguration.setTextAndInputPrivacyLevel(privacy.native)
     }
 
+    override fun startRecordingImmediately(enabled: Boolean) {
+        nativeConfiguration.setStartRecordingImmediately(enabled)
+    }
+
     override fun build(): DDSessionReplayConfiguration {
         return nativeConfiguration
     }

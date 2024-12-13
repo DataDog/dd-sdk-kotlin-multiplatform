@@ -25,6 +25,7 @@ import com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
 import com.datadog.kmp.sessionreplay.configuration.SessionReplayPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
+import com.datadog.tools.random.randomBoolean
 import com.datadog.tools.random.randomEnumValue
 import com.datadog.tools.random.randomFloat
 import kotlin.test.BeforeTest
@@ -97,6 +98,21 @@ class IOSSessionReplayConfigurationBuilderTest {
         assertEquals(
             fakeTextAndInputPrivacy.native,
             testedConfigurationBuilder.nativeConfiguration.textAndInputPrivacyLevel()
+        )
+    }
+
+    @Test
+    fun `M call platform configuration builder+setStartRecordingImmediately W startRecordingImmediately`() {
+        // Given
+        val fakeEnabled = randomBoolean()
+
+        // When
+        testedConfigurationBuilder.startRecordingImmediately(fakeEnabled)
+
+        // Then
+        assertEquals(
+            fakeEnabled,
+            testedConfigurationBuilder.nativeConfiguration.startRecordingImmediately()
         )
     }
 
