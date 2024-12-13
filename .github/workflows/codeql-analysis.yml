@@ -53,7 +53,8 @@ jobs:
 
     # Manually build the java bytecode
     - name: Execute Gradle build
-      run: ./gradlew assembleRelease
+      # disable build caching, otherwise CodeQL cannot properly pick output, it seems
+      run: ./gradlew assembleRelease --no-build-cache
 
     # Perform the analysis
     - name: Perform CodeQL Analysis
