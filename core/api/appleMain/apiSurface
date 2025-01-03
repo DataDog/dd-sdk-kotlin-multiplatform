@@ -7,6 +7,7 @@ actual object com.datadog.kmp.Datadog
   actual fun addUserExtraInfo(Map<String, Any?>)
   actual fun clearAllData()
   actual fun stopInstance()
+fun Configuration.Builder.enableBackgroundTasks(Boolean): Configuration.Builder
 const val INCLUDE_BINARY_IMAGES: String
 const val RUM_ERROR_IS_CRASH: String
 const val LOG_ERROR_IS_CRASH: String

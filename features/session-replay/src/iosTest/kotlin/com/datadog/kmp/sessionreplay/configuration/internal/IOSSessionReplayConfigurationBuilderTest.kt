@@ -51,7 +51,7 @@ class IOSSessionReplayConfigurationBuilderTest {
     }
 
     @Test
-    fun `M call platform configuration builder+setPrivacy W setPrivacy`() {
+    fun `M call platform configuration setPrivacy W setPrivacy`() {
         // Given
         val fakePrivacy = randomEnumValue<SessionReplayPrivacy>()
 
@@ -63,7 +63,7 @@ class IOSSessionReplayConfigurationBuilderTest {
     }
 
     @Test
-    fun `M call platform configuration builder+setImagePrivacy W setImagePrivacy`() {
+    fun `M call platform configuration setImagePrivacy W setImagePrivacy`() {
         // Given
         val fakeImagePrivacy = randomEnumValue<ImagePrivacy>()
 
@@ -75,7 +75,7 @@ class IOSSessionReplayConfigurationBuilderTest {
     }
 
     @Test
-    fun `M call platform configuration builder+setTouchPrivacy W setTouchPrivacy`() {
+    fun `M call platform configuration setTouchPrivacy W setTouchPrivacy`() {
         // Given
         val fakeTouchPrivacy = randomEnumValue<TouchPrivacy>()
 
@@ -87,7 +87,7 @@ class IOSSessionReplayConfigurationBuilderTest {
     }
 
     @Test
-    fun `M call platform configuration builder+setTextAndInputPrivacy W setTextAndInputPrivacy`() {
+    fun `M call platform configuration setTextAndInputPrivacy W setTextAndInputPrivacy`() {
         // Given
         val fakeTextAndInputPrivacy = randomEnumValue<TextAndInputPrivacy>()
 
@@ -102,7 +102,7 @@ class IOSSessionReplayConfigurationBuilderTest {
     }
 
     @Test
-    fun `M call platform configuration builder+setStartRecordingImmediately W startRecordingImmediately`() {
+    fun `M call platform configuration setStartRecordingImmediately W startRecordingImmediately`() {
         // Given
         val fakeEnabled = randomBoolean()
 
@@ -113,6 +113,21 @@ class IOSSessionReplayConfigurationBuilderTest {
         assertEquals(
             fakeEnabled,
             testedConfigurationBuilder.nativeConfiguration.startRecordingImmediately()
+        )
+    }
+
+    @Test
+    fun `M call platform configuration setFeatureFlags W enableSwiftUISupport`() {
+        // Given
+        val enableSwiftUISupport = randomBoolean()
+
+        // When
+        testedConfigurationBuilder.enableSwiftUISupport(enableSwiftUISupport)
+
+        // Then
+        assertEquals(
+            enableSwiftUISupport,
+            testedConfigurationBuilder.nativeConfiguration.featureFlags()["swiftui"] as Boolean
         )
     }
 

@@ -29,13 +29,15 @@ internal constructor(
         val site: DatadogSite,
         val batchProcessingLevel: BatchProcessingLevel,
         val trackCrashes: Boolean,
-        val proxyConfiguration: ProxyConfiguration?
+        val proxyConfiguration: ProxyConfiguration?,
+        // iOS only
+        val backgroundTasksEnabled: Boolean
     )
 
     // region Builder
 
     /**
-     * A Builder class for a [Configuration].
+     * A Builder class for a [Configuration]. See more methods in platform-specific source sets.
      *
      * @param clientToken your API key of type Client Token
      * @param env the environment name that will be sent with each event. This can be used to
@@ -53,7 +55,7 @@ internal constructor(
         private val service: String? = null
     ) {
 
-        private var coreConfig = DEFAULT_CORE_CONFIG
+        internal var coreConfig = DEFAULT_CORE_CONFIG
 
         /**
          * Builds a [Configuration] based on the current state of this Builder.
@@ -142,7 +144,8 @@ internal constructor(
             site = DatadogSite.US1,
             batchProcessingLevel = BatchProcessingLevel.MEDIUM,
             trackCrashes = true,
-            proxyConfiguration = null
+            proxyConfiguration = null,
+            backgroundTasksEnabled = false
         )
     }
 }

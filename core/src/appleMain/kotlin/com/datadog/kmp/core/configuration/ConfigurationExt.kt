@@ -10,6 +10,22 @@ import cocoapods.DatadogObjc.DDConfiguration
 import cocoapods.DatadogObjc.DDCoreLoggerLevelDebug
 import cocoapods.DatadogObjc.DDInternalLogger
 
+/**
+ * Flag that determines if [platform.UIKit.UIApplication] methods `beginBackgroundTask(expirationHandler:)`
+ * and `endBackgroundTask:` are utilized to perform background uploads. It may extend the amount of time the app is
+ * operating in background by 30 seconds.
+ *
+ * Tasks are normally stopped when there's nothing to upload or when encountering any upload blocker such us no
+ * internet connection or low battery.
+ *
+ * `false` by default.
+ */
+
+fun Configuration.Builder.enableBackgroundTasks(enabled: Boolean): Configuration.Builder {
+    coreConfig = coreConfig.copy(backgroundTasksEnabled = enabled)
+    return this
+}
+
 internal fun DDConfiguration.setProxy(proxyConfiguration: ProxyConfiguration?) {
     if (proxyConfiguration == null) return
 

@@ -9,6 +9,7 @@ package com.datadog.kmp.sample
 import android.webkit.WebView
 import com.datadog.android.sessionreplay.compose.ComposeExtensionSupport
 import com.datadog.android.sessionreplay.compose.ExperimentalSessionReplayApi
+import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.trackNonFatalAnrs
 import com.datadog.kmp.rum.configuration.trackUserInteractions
@@ -28,6 +29,10 @@ internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfigurat
         trackUserInteractions()
         trackNonFatalAnrs(true)
     }
+}
+
+internal actual fun platformSpecificSetup(configurationBuilder: Configuration.Builder) {
+    // nothing
 }
 
 actual fun startWebViewTracking(webView: Any) {

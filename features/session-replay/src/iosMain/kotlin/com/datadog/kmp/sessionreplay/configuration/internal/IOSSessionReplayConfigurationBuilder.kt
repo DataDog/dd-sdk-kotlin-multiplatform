@@ -27,7 +27,7 @@ import com.datadog.kmp.sessionreplay.configuration.SessionReplayPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
 
-internal class IOSSessionReplayConfigurationBuilder(sampleRate: Float) :
+internal open class IOSSessionReplayConfigurationBuilder(sampleRate: Float) :
     PlatformSessionReplayConfigurationBuilder<DDSessionReplayConfiguration> {
 
     internal val nativeConfiguration = DDSessionReplayConfiguration(sampleRate)
@@ -50,6 +50,12 @@ internal class IOSSessionReplayConfigurationBuilder(sampleRate: Float) :
 
     override fun startRecordingImmediately(enabled: Boolean) {
         nativeConfiguration.setStartRecordingImmediately(enabled)
+    }
+
+    fun enableSwiftUISupport(enabled: Boolean) {
+        val featureFlags = nativeConfiguration.featureFlags().toMutableMap()
+        featureFlags["swiftui"] = enabled
+        nativeConfiguration.setFeatureFlags(featureFlags)
     }
 
     override fun build(): DDSessionReplayConfiguration {
