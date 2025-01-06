@@ -182,6 +182,7 @@ private val Configuration.native: DDConfiguration
             )
         )
         nativeConfig.setProxy(coreConfig.proxyConfiguration)
+        nativeConfig.setBackgroundTasksEnabled(coreConfig.backgroundTasksEnabled)
         return nativeConfig
     }
 

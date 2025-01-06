@@ -42,6 +42,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.datadog.android.compose.ExperimentalTrackingApi
 import com.datadog.android.compose.NavigationViewTrackingEffect
+import com.datadog.android.sessionreplay.TextAndInputPrivacy
+import com.datadog.android.sessionreplay.compose.sessionReplayTextAndInputPrivacy
 import com.datadog.kmp.sample.CRASH_SCREEN_NAME
 import com.datadog.kmp.sample.HOME_SCREEN_NAME
 import com.datadog.kmp.sample.LOGS_SCREEN_NAME
@@ -116,6 +118,13 @@ fun HomeView(navController: NavController) {
             ) {
                 Text(text = "WEBVIEW")
             }
+
+            Text(
+                "Session Replay Hidden Text",
+                modifier = Modifier
+                    .padding(top = 64.dp)
+                    .sessionReplayTextAndInputPrivacy(TextAndInputPrivacy.MASK_ALL)
+            )
         }
     }
 }

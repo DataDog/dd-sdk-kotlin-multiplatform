@@ -16,7 +16,7 @@ data class SessionReplayConfiguration internal constructor(
 ) {
 
     /**
-     * A Builder class for a [SessionReplayConfiguration].
+     * A Builder class for a [SessionReplayConfiguration]. See more methods in platform-specific source sets.
      */
     class Builder {
 
