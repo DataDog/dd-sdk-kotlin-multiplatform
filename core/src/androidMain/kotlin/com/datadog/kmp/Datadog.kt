@@ -15,7 +15,7 @@ import com.datadog.kmp.core.configuration.setProxy
 import com.datadog.kmp.internal.InternalAttributes
 import com.datadog.kmp.privacy.TrackingConsent
 import android.util.Log as AndroidLog
-import com.datadog.android.Datadog as DatadogAndroid
+import com.datadog.android.Datadog as DatadogAndroidImpl
 import com.datadog.android.DatadogSite as DatadogSiteAndroid
 import com.datadog.android.core.configuration.BatchProcessingLevel as BatchProcessingLevelAndroid
 import com.datadog.android.core.configuration.BatchSize as BatchSizeAndroid
@@ -37,8 +37,8 @@ actual object Datadog {
      * @see [SdkLogVerbosity]
      */
     actual var verbosity: SdkLogVerbosity?
-        get() = DatadogAndroid.getVerbosity().toSdkLogVerbosity
-        set(value) = DatadogAndroid.setVerbosity(value.native)
+        get() = platformImplementation.getVerbosity().toSdkLogVerbosity
+        set(value) = platformImplementation.setVerbosity(value.native)
 
     @Volatile
     internal actual var isCrashReportingEnabled: Boolean = false
@@ -59,7 +59,7 @@ actual object Datadog {
         trackingConsent: TrackingConsent
     ) {
         requireNotNull(context)
-        DatadogAndroid.initialize(context as Context, configuration.native, trackingConsent.native)
+        platformImplementation.initialize(context as Context, configuration.native, trackingConsent.native)
         isCrashReportingEnabled = configuration.coreConfig.trackCrashes
     }
 
@@ -68,7 +68,7 @@ actual object Datadog {
      * @return whenever the instance is initialized or not.
      */
     actual fun isInitialized(): Boolean {
-        return DatadogAndroid.isInitialized()
+        return platformImplementation.isInitialized()
     }
 
     /**
@@ -78,7 +78,7 @@ actual object Datadog {
      * ([TrackingConsent.PENDING], [TrackingConsent.GRANTED], [TrackingConsent.NOT_GRANTED])
      */
     actual fun setTrackingConsent(consent: TrackingConsent) {
-        DatadogAndroid.setTrackingConsent(consent.native)
+        platformImplementation.setTrackingConsent(consent.native)
     }
 
     /**
@@ -96,7 +96,7 @@ actual object Datadog {
         email: String?,
         extraInfo: Map<String, Any?>
     ) {
-        DatadogAndroid.setUserInfo(id, name, email, extraInfo)
+        platformImplementation.setUserInfo(id, name, email, extraInfo)
     }
 
     /**
@@ -109,22 +109,25 @@ actual object Datadog {
      * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
      */
     actual fun addUserExtraInfo(extraInfo: Map<String, Any?>) {
-        DatadogAndroid.addUserProperties(extraInfo)
+        platformImplementation.addUserProperties(extraInfo)
     }
 
     /**
      * Clears all unsent data in all registered features.
      */
     actual fun clearAllData() {
-        DatadogAndroid.clearAllData()
+        platformImplementation.clearAllData()
     }
 
     /**
      * Stop the initialized SDK instance.
      */
     actual fun stopInstance() {
-        DatadogAndroid.stopInstance()
+        platformImplementation.stopInstance()
     }
+
+    internal val platformImplementation: DatadogAndroidImpl
+        get() = DatadogAndroidImpl
 }
 
 private val SdkLogVerbosity?.native: Int
