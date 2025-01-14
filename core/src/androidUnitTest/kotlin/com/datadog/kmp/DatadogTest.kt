@@ -22,26 +22,19 @@ import fr.xgouchet.elmyr.annotation.StringForgeryType
 import fr.xgouchet.elmyr.junit5.ForgeConfiguration
 import fr.xgouchet.elmyr.junit5.ForgeExtension
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.Extensions
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.spy
-import org.mockito.Mockito.times
+import org.mockito.MockedStatic
+import org.mockito.Mockito.mockStatic
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.junit.jupiter.MockitoSettings
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.atLeastOnce
 import org.mockito.quality.Strictness
-
-/*
- * Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
- * This product includes software developed at Datadog (https://www.datadoghq.com/).
- * Copyright 2016-Present Datadog, Inc.
- */
+import com.datadog.android.Datadog as DatadogAndroid
 
 @Extensions(
     ExtendWith(MockitoExtension::class),
@@ -52,15 +45,16 @@ import org.mockito.quality.Strictness
 @MockitoSettings(strictness = Strictness.LENIENT)
 class DatadogTest {
 
-    private val datadogAndroid = mock<com.datadog.android.Datadog>()
-
-    private lateinit var datadog: Datadog
+    private lateinit var datadogAndroidStatic: MockedStatic<DatadogAndroid>
 
     @BeforeEach
     fun setUp() {
-        datadog = spy(Datadog).also { spy: Datadog ->
-            whenever(spy.platformImplementation).doReturn(datadogAndroid)
-        }
+        datadogAndroidStatic = mockStatic(DatadogAndroid::class.java)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        datadogAndroidStatic.close()
     }
 
     @Test
@@ -69,31 +63,37 @@ class DatadogTest {
         @Forgery trackingConsent: TrackingConsent
     ) {
         // When
-        datadog.initialize(
+        Datadog.initialize(
             context = appContext.mockInstance,
             configuration = configuration,
             trackingConsent = trackingConsent
         )
 
         // Then
-        verify(datadog, times(1))
-            .initialize(
-                context = appContext.mockInstance,
-                configuration = configuration,
-                trackingConsent = trackingConsent
-            )
+        datadogAndroidStatic.verify(
+            {
+                DatadogAndroid.initialize(
+                    context = appContext.mockInstance,
+                    configuration = configuration.native,
+                    trackingConsent = trackingConsent.native
+                )
+            },
+            // this instruction is required here because
+            // there will be some other static calls and mockito will fail otherwise
+            atLeastOnce()
+        )
 
-        assertThat(datadog.isCrashReportingEnabled).isEqualTo(configuration.coreConfig.trackCrashes)
+        assertThat(Datadog.isCrashReportingEnabled).isEqualTo(configuration.coreConfig.trackCrashes)
     }
 
     @Test
-    fun `M throw IllegalArgumentException W initialize { context is null}`(
+    fun `M throw IllegalArgumentException W initialize { context is null }`(
         @Forgery configuration: Configuration,
         @Forgery trackingConsent: TrackingConsent
     ) {
         // When
         assertThrows<IllegalArgumentException> {
-            datadog.initialize(
+            Datadog.initialize(
                 context = null,
                 configuration = configuration,
                 trackingConsent = trackingConsent
@@ -104,21 +104,19 @@ class DatadogTest {
     @Test
     fun `M call isInitialized on implementation instance W isInitialized`() {
         // When
-        datadog.isInitialized()
+        Datadog.isInitialized()
 
         // Then
-        verify(datadog, times(1))
-            .isInitialized()
+        datadogAndroidStatic.verify { DatadogAndroid.isInitialized() }
     }
 
     @Test
     fun `M call clearAllData on implementation instance W clearAllData`() {
         // When
-        datadog.clearAllData()
+        Datadog.clearAllData()
 
         // Then
-        verify(datadog, times(1))
-            .clearAllData()
+        datadogAndroidStatic.verify { DatadogAndroid.clearAllData() }
     }
 
     @Test
@@ -132,33 +130,35 @@ class DatadogTest {
         ) extraInfo: Map<String, String>
     ) {
         // When
-        datadog.setUserInfo(id, name, email, extraInfo)
+        Datadog.setUserInfo(id, name, email, extraInfo)
 
         // Then
-        verify(datadog, times(1))
-            .setUserInfo(
+        datadogAndroidStatic.verify {
+            DatadogAndroid.setUserInfo(
                 id = id,
                 name = name,
                 email = email,
                 extraInfo = extraInfo
             )
+        }
     }
 
     @Test
-    fun `M call addUserExtraInfo on implementation instance W addUserExtraInfo`(
+    fun `M call addUserProperties on implementation instance W addUserExtraInfo`(
         @MapForgery(
             key = AdvancedForgery(string = [StringForgery(StringForgeryType.ALPHABETICAL)]),
             value = AdvancedForgery(string = [StringForgery(StringForgeryType.ALPHABETICAL)])
         ) extraInfo: Map<String, String>
     ) {
         // When
-        datadog.addUserExtraInfo(extraInfo)
+        Datadog.addUserExtraInfo(extraInfo)
 
         // Then
-        verify(datadog, times(1))
-            .addUserExtraInfo(
+        datadogAndroidStatic.verify {
+            DatadogAndroid.addUserProperties(
                 extraInfo = extraInfo
             )
+        }
     }
 
     @Test
@@ -166,23 +166,23 @@ class DatadogTest {
         @Forgery trackingConsent: TrackingConsent
     ) {
         // When
-        datadog.setTrackingConsent(trackingConsent)
+        Datadog.setTrackingConsent(trackingConsent)
 
         // Then
-        verify(datadog, times(1))
-            .setTrackingConsent(
-                consent = trackingConsent
+        datadogAndroidStatic.verify {
+            DatadogAndroid.setTrackingConsent(
+                consent = trackingConsent.native
             )
+        }
     }
 
     @Test
     fun `M call stopInstance on implementation instance W stopInstance`() {
         // When
-        datadog.stopInstance()
+        Datadog.stopInstance()
 
         // Then
-        verify(datadog, times(1))
-            .stopInstance()
+        datadogAndroidStatic.verify { DatadogAndroid.stopInstance() }
     }
 
     companion object {

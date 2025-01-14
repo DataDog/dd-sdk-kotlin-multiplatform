@@ -15,7 +15,7 @@ import com.datadog.kmp.core.configuration.setProxy
 import com.datadog.kmp.internal.InternalAttributes
 import com.datadog.kmp.privacy.TrackingConsent
 import android.util.Log as AndroidLog
-import com.datadog.android.Datadog as DatadogAndroidImpl
+import com.datadog.android.Datadog as DatadogAndroid
 import com.datadog.android.DatadogSite as DatadogSiteAndroid
 import com.datadog.android.core.configuration.BatchProcessingLevel as BatchProcessingLevelAndroid
 import com.datadog.android.core.configuration.BatchSize as BatchSizeAndroid
@@ -37,8 +37,8 @@ actual object Datadog {
      * @see [SdkLogVerbosity]
      */
     actual var verbosity: SdkLogVerbosity?
-        get() = platformImplementation.getVerbosity().toSdkLogVerbosity
-        set(value) = platformImplementation.setVerbosity(value.native)
+        get() = DatadogAndroid.getVerbosity().toSdkLogVerbosity
+        set(value) = DatadogAndroid.setVerbosity(value.native)
 
     @Volatile
     internal actual var isCrashReportingEnabled: Boolean = false
@@ -59,7 +59,7 @@ actual object Datadog {
         trackingConsent: TrackingConsent
     ) {
         requireNotNull(context)
-        platformImplementation.initialize(context as Context, configuration.native, trackingConsent.native)
+        DatadogAndroid.initialize(context as Context, configuration.native, trackingConsent.native)
         isCrashReportingEnabled = configuration.coreConfig.trackCrashes
     }
 
@@ -68,7 +68,7 @@ actual object Datadog {
      * @return whenever the instance is initialized or not.
      */
     actual fun isInitialized(): Boolean {
-        return platformImplementation.isInitialized()
+        return DatadogAndroid.isInitialized()
     }
 
     /**
@@ -78,7 +78,7 @@ actual object Datadog {
      * ([TrackingConsent.PENDING], [TrackingConsent.GRANTED], [TrackingConsent.NOT_GRANTED])
      */
     actual fun setTrackingConsent(consent: TrackingConsent) {
-        platformImplementation.setTrackingConsent(consent.native)
+        DatadogAndroid.setTrackingConsent(consent.native)
     }
 
     /**
@@ -96,7 +96,7 @@ actual object Datadog {
         email: String?,
         extraInfo: Map<String, Any?>
     ) {
-        platformImplementation.setUserInfo(id, name, email, extraInfo)
+        DatadogAndroid.setUserInfo(id, name, email, extraInfo)
     }
 
     /**
@@ -109,28 +109,25 @@ actual object Datadog {
      * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
      */
     actual fun addUserExtraInfo(extraInfo: Map<String, Any?>) {
-        platformImplementation.addUserProperties(extraInfo)
+        DatadogAndroid.addUserProperties(extraInfo)
     }
 
     /**
      * Clears all unsent data in all registered features.
      */
     actual fun clearAllData() {
-        platformImplementation.clearAllData()
+        DatadogAndroid.clearAllData()
     }
 
     /**
      * Stop the initialized SDK instance.
      */
     actual fun stopInstance() {
-        platformImplementation.stopInstance()
+        DatadogAndroid.stopInstance()
     }
-
-    internal val platformImplementation: DatadogAndroidImpl
-        get() = DatadogAndroidImpl
 }
 
-private val SdkLogVerbosity?.native: Int
+internal val SdkLogVerbosity?.native: Int
     get() = when (this) {
         SdkLogVerbosity.DEBUG -> AndroidLog.DEBUG
         SdkLogVerbosity.WARN -> AndroidLog.WARN
@@ -139,7 +136,7 @@ private val SdkLogVerbosity?.native: Int
         null -> Int.MAX_VALUE
     }
 
-private val Int.toSdkLogVerbosity: SdkLogVerbosity?
+internal val Int.toSdkLogVerbosity: SdkLogVerbosity?
     get() = when (this) {
         AndroidLog.DEBUG -> SdkLogVerbosity.DEBUG
         AndroidLog.WARN -> SdkLogVerbosity.WARN
@@ -148,7 +145,7 @@ private val Int.toSdkLogVerbosity: SdkLogVerbosity?
         else -> null
     }
 
-private val Configuration.native: ConfigurationAndroid
+internal val Configuration.native: ConfigurationAndroid
     get() {
         return ConfigurationAndroid.Builder(
             clientToken = clientToken,
@@ -171,35 +168,35 @@ private val Configuration.native: ConfigurationAndroid
             .build()
     }
 
-private val TrackingConsent.native: TrackingConsentAndroid
+internal val TrackingConsent.native: TrackingConsentAndroid
     get() = when (this) {
         TrackingConsent.GRANTED -> TrackingConsentAndroid.GRANTED
         TrackingConsent.PENDING -> TrackingConsentAndroid.PENDING
         TrackingConsent.NOT_GRANTED -> TrackingConsentAndroid.NOT_GRANTED
     }
 
-private val UploadFrequency.native: UploadFrequencyAndroid
+internal val UploadFrequency.native: UploadFrequencyAndroid
     get() = when (this) {
         UploadFrequency.FREQUENT -> UploadFrequencyAndroid.FREQUENT
         UploadFrequency.AVERAGE -> UploadFrequencyAndroid.AVERAGE
         UploadFrequency.RARE -> UploadFrequencyAndroid.RARE
     }
 
-private val BatchProcessingLevel.native: BatchProcessingLevelAndroid
+internal val BatchProcessingLevel.native: BatchProcessingLevelAndroid
     get() = when (this) {
         BatchProcessingLevel.HIGH -> BatchProcessingLevelAndroid.HIGH
         BatchProcessingLevel.MEDIUM -> BatchProcessingLevelAndroid.MEDIUM
         BatchProcessingLevel.LOW -> BatchProcessingLevelAndroid.LOW
     }
 
-private val BatchSize.native: BatchSizeAndroid
+internal val BatchSize.native: BatchSizeAndroid
     get() = when (this) {
         BatchSize.LARGE -> BatchSizeAndroid.LARGE
         BatchSize.MEDIUM -> BatchSizeAndroid.MEDIUM
         BatchSize.SMALL -> BatchSizeAndroid.SMALL
     }
 
-private val DatadogSite.native: DatadogSiteAndroid
+internal val DatadogSite.native: DatadogSiteAndroid
     get() = when (this) {
         DatadogSite.US1 -> DatadogSiteAndroid.US1
         DatadogSite.US1_FED -> DatadogSiteAndroid.US1_FED

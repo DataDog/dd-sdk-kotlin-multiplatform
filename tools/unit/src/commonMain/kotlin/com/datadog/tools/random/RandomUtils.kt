@@ -9,6 +9,7 @@
 package com.datadog.tools.random
 
 import kotlin.random.Random
+import kotlin.random.nextUInt
 import kotlin.random.nextULong
 
 /**
@@ -25,6 +26,9 @@ fun randomLong(from: Long = Long.MIN_VALUE, until: Long = Long.MAX_VALUE): Long 
 
 fun randomULong(from: ULong = ULong.MIN_VALUE, until: ULong = ULong.MAX_VALUE): ULong =
     Random.nextULong(from, until)
+
+fun randomUInt(from: UInt = UInt.MIN_VALUE, until: UInt = UInt.MAX_VALUE): UInt =
+    Random.nextUInt(from, until)
 
 fun randomInt(from: Int = Int.MIN_VALUE, until: Int = Int.MAX_VALUE): Int =
     Random.nextInt(from, until)
