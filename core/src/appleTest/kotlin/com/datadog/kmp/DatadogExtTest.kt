@@ -125,7 +125,7 @@ internal class DatadogExtTest {
         assertEquals(commonConfig.clientToken, nativeConfig.clientToken())
         assertEquals(commonConfig.env, nativeConfig.env())
         assertEquals(commonConfig.service, nativeConfig.service())
-        // todo RUM-8122: support site equality verification
+        // TODO RUM-8122: support site equality verification
     }
 
     companion object {
