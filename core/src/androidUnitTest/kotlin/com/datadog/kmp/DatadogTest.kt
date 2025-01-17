@@ -43,7 +43,7 @@ import com.datadog.android.Datadog as DatadogAndroid
 )
 @ForgeConfiguration(Configurator::class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class DatadogTest {
+internal class DatadogTest {
 
     private lateinit var datadogAndroidStatic: MockedStatic<DatadogAndroid>
 

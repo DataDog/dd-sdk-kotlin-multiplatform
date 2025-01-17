@@ -31,7 +31,7 @@ import com.datadog.android.privacy.TrackingConsent as TrackingConsentAndroid
 
 @Extensions(ExtendWith(ForgeExtension::class))
 @ForgeConfiguration(Configurator::class)
-class DatadogExtTest {
+internal class DatadogExtTest {
 
     @Test
     fun `M return valid SDK value W SdkLogVerbosity_toSdkLogVerbosity`() {
