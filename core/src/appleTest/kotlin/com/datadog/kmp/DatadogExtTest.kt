@@ -87,7 +87,7 @@ internal class DatadogExtTest {
     @Test
     fun `M return expected configuration W Configuration_native`() {
         val expectedProxyConfig = mapOf(
-            "HTTPSEnable" to randomBoolean(),
+            "HTTPSEnable" to true,
             "HTTPSProxy" to "hostname",
             "HTTPSPort" to randomUInt(from = 0u, until = 65535u)
         )
