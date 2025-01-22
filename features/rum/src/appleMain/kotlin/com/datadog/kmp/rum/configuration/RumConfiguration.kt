@@ -48,5 +48,17 @@ fun RumConfiguration.Builder.setAppHangThreshold(thresholdMs: Long?): RumConfigu
     return this
 }
 
+/**
+ * Determines whether the SDK should track application termination by the watchdog.
+ *
+ * Read more about watchdog terminations [the Apple official documentation](https://developer.apple.com/documentation/xcode/addressing-watchdog-terminations).
+ *
+ * @param enabled Enable or disable watchdog terminations tracking. Default: `false`.
+ */
+fun RumConfiguration.Builder.trackWatchdogTerminations(enabled: Boolean): RumConfiguration.Builder {
+    nativePlatformBuilder.trackWatchdogTerminations(enabled)
+    return this
+}
+
 private val RumConfiguration.Builder.nativePlatformBuilder
     get() = platformBuilder as AppleRumConfigurationBuilder
