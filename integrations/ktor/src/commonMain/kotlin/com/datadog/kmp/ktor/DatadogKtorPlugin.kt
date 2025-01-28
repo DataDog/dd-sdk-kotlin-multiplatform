@@ -22,7 +22,7 @@ internal const val DEFAULT_TRACE_SAMPLE_RATE: Float = 20f
  * @param tracedHosts the map of all the hosts to track, and the header types that you want
  * to use to handle distributed traces. For a default setup, we recommend using the DATADOG + TRACECONTEXT header types
  * for the hosts you own.
- * @param traceSamplingRate the sampling rate for the tracing (between 0 and 100).
+ * @param traceSampleRate the sampling rate for the tracing (between 0 and 100).
  * @param traceContextInjection the trace context injection behavior for this interceptor in the intercepted
  * requests. By default this is set to [TraceContextInjection.All] meaning that all the trace context will be
  * propagated in the intercepted requests no matter if the span created around the request is sampled or not. In case
@@ -32,14 +32,14 @@ internal const val DEFAULT_TRACE_SAMPLE_RATE: Float = 20f
  */
 fun datadogKtorPlugin(
     tracedHosts: Map<String, Set<TracingHeaderType>> = emptyMap(),
-    traceSamplingRate: Float = DEFAULT_TRACE_SAMPLE_RATE,
+    traceSampleRate: Float = DEFAULT_TRACE_SAMPLE_RATE,
     traceContextInjection: TraceContextInjection = TraceContextInjection.All,
     rumResourceAttributesProvider: RumResourceAttributesProvider = DefaultRumResourceAttributesProvider
 ): ClientPlugin<Unit> {
     return DatadogKtorPlugin(
         RumMonitor.get(),
         tracedHosts,
-        DeterministicTraceSampler(traceSamplingRate),
+        DeterministicTraceSampler(traceSampleRate),
         traceContextInjection,
         DefaultTraceIdGenerator(),
         DefaultSpanIdGenerator(),
