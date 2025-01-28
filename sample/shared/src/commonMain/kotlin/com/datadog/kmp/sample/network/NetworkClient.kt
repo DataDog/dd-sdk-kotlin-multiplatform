@@ -8,7 +8,6 @@ package com.datadog.kmp.sample.network
 
 import com.datadog.kmp.ktor.HttpRequestSnapshot
 import com.datadog.kmp.ktor.RumResourceAttributesProvider
-import com.datadog.kmp.ktor.TracingHeaderType
 import com.datadog.kmp.ktor.datadogKtorPlugin
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -24,14 +23,13 @@ import kotlinx.coroutines.withContext
 object NetworkClient {
 
     private const val CUSTOM_HEADER_NAME = "x-custom-header"
+    private const val HTTPBIN_HOST = "httpbin.org"
 
     private val client = HttpClient {
         followRedirects = true
         install(
             datadogKtorPlugin(
-                tracedHosts = mapOf(
-                    "httpbin.org" to setOf(TracingHeaderType.DATADOG)
-                ),
+                tracedHosts = listOf(HTTPBIN_HOST),
                 traceSampleRate = 100f,
                 rumResourceAttributesProvider = object : RumResourceAttributesProvider {
                     override fun onRequest(request: HttpRequestSnapshot) =

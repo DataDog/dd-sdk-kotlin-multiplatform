@@ -1,4 +1,5 @@
 fun datadogKtorPlugin(Map<String, Set<TracingHeaderType>> = emptyMap(), Float = DEFAULT_TRACE_SAMPLE_RATE, TraceContextInjection = TraceContextInjection.All, RumResourceAttributesProvider = DefaultRumResourceAttributesProvider): io.ktor.client.plugins.api.ClientPlugin<Unit>
+fun datadogKtorPlugin(List<String> = emptyList(), Float = DEFAULT_TRACE_SAMPLE_RATE, RumResourceAttributesProvider = DefaultRumResourceAttributesProvider): io.ktor.client.plugins.api.ClientPlugin<Unit>
 const val RUM_TRACE_ID: String
 const val RUM_SPAN_ID: String
 const val RUM_RULE_PSR: String
