@@ -13,7 +13,9 @@ import com.datadog.kmp.ktor.RUM_SPAN_ID
 import com.datadog.kmp.ktor.RUM_TRACE_ID
 import com.datadog.kmp.ktor.RumResourceAttributesProvider
 import com.datadog.kmp.ktor.TracingHeaderType
+import com.datadog.kmp.ktor.internal.trace.SpanId
 import com.datadog.kmp.ktor.internal.trace.SpanIdGenerator
+import com.datadog.kmp.ktor.internal.trace.TraceId
 import com.datadog.kmp.ktor.internal.trace.TraceIdGenerator
 import com.datadog.kmp.ktor.sampling.Sampler
 import com.datadog.kmp.rum.RumMonitor
@@ -25,10 +27,10 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.request
 import io.ktor.http.HttpMethod
+import io.ktor.http.content.OutgoingContent
 import io.ktor.http.contentLength
 import io.ktor.util.AttributeKey
 
-// TODO RUM-6456 Write unit tests
 internal class DatadogKtorPlugin(
     private val rumMonitor: RumMonitor,
     private val tracedHosts: Map<String, Set<TracingHeaderType>>,
@@ -41,19 +43,24 @@ internal class DatadogKtorPlugin(
     override val pluginName: String = PLUGIN_NAME
 
     override fun onRequest(onRequestContext: OnRequestContext, request: HttpRequestBuilder, content: Any) {
-        val isSampledIn = traceSampler.sample()
+        request.attributes.put(DD_ORIGINAL_BODY_ATTR, content)
+    }
+
+    override fun onSend(request: HttpRequestBuilder, content: OutgoingContent) {
+        val isSampledIn = request.attributes.getOrNull(DD_IS_SAMPLED_ATTR) ?: traceSampler.sample()
         val traceHeaderTypes = traceHeaderTypesForHost(request.url.host)
 
-        val traceId = traceIdGenerator.generateTraceId()
+        val traceId = request.attributes.getOrNull(DD_TRACE_ID_ATTR)
+            ?: traceIdGenerator.generateTraceId()
         val spanId = spanIdGenerator.generateSpanId()
 
         if (isSampledIn && !traceHeaderTypes.isNullOrEmpty()) {
             traceHeaderTypes.forEach { headerType ->
                 headerType.injectHeaders(request, true, traceId, spanId)
             }
-            request.attributes.put(DD_TRACE_ID_ATTR, traceId.toHexString())
-            request.attributes.put(DD_SPAN_ID_ATTR, spanId.raw.toString())
-            request.attributes.put(DD_RULE_PSR_ATTR, traceSampler.sampleRate)
+            request.attributes.put(DD_TRACE_ID_ATTR, traceId)
+            request.attributes.put(DD_SPAN_ID_ATTR, spanId)
+            request.attributes.put(DD_RULE_PSR_ATTR, traceSampler.sampleRate / ALL_IN_SAMPLE_RATE)
         } else {
             TracingHeaderType.entries.forEach { headerType ->
                 headerType.injectHeaders(request, false, traceId, spanId)
@@ -62,11 +69,12 @@ internal class DatadogKtorPlugin(
 
         val requestId = uuid4().toString()
         request.attributes.put(DD_REQUEST_ID_ATTR, requestId)
+        request.attributes.put(DD_IS_SAMPLED_ATTR, isSampledIn)
         rumMonitor.startResource(
             key = requestId,
             method = request.method.asRumMethod(),
             url = request.url.buildString(),
-            attributes = rumResourceAttributesProvider.onRequest(HttpRequestSnapshot.takeFrom(builder = request))
+            attributes = rumResourceAttributesProvider.onRequest(HttpRequestSnapshot.takeFrom(request))
         )
     }
 
@@ -79,8 +87,8 @@ internal class DatadogKtorPlugin(
                 val spanId = requestAttributes.getOrNull(DD_SPAN_ID_ATTR)
                 val rulePsr = requestAttributes.getOrNull(DD_RULE_PSR_ATTR)
                 if (traceId != null && spanId != null && rulePsr != null) {
-                    put(RUM_TRACE_ID, traceId)
-                    put(RUM_SPAN_ID, spanId)
+                    put(RUM_TRACE_ID, traceId.toHexString())
+                    put(RUM_SPAN_ID, spanId.raw.toString())
                     put(RUM_RULE_PSR, rulePsr)
                 }
             }
@@ -107,7 +115,7 @@ internal class DatadogKtorPlugin(
                 message = "Ktor request error $method $url",
                 throwable = throwable,
                 attributes = rumResourceAttributesProvider.onError(
-                    HttpRequestSnapshot.takeFrom(builder = request),
+                    HttpRequestSnapshot.takeFrom(request),
                     throwable
                 )
             )
@@ -141,11 +149,17 @@ internal class DatadogKtorPlugin(
 
     companion object {
 
+        private const val ALL_IN_SAMPLE_RATE = 100f
+
         internal const val PLUGIN_NAME = "Datadog"
         internal const val DD_REQUEST_ID = "X-Datadog-Request-ID"
+        internal const val DD_IS_SAMPLED = "X-Datadog-Sampled"
+        internal const val DD_ORIGINAL_BODY = "X-Datadog-Original-Body"
         internal val DD_REQUEST_ID_ATTR = AttributeKey<String>(DD_REQUEST_ID)
-        internal val DD_TRACE_ID_ATTR = AttributeKey<String>(RUM_TRACE_ID)
-        internal val DD_SPAN_ID_ATTR = AttributeKey<String>(RUM_SPAN_ID)
+        internal val DD_TRACE_ID_ATTR = AttributeKey<TraceId>(RUM_TRACE_ID)
+        internal val DD_SPAN_ID_ATTR = AttributeKey<SpanId>(RUM_SPAN_ID)
         internal val DD_RULE_PSR_ATTR = AttributeKey<Float>(RUM_RULE_PSR)
+        internal val DD_IS_SAMPLED_ATTR = AttributeKey<Boolean>(DD_IS_SAMPLED)
+        internal val DD_ORIGINAL_BODY_ATTR = AttributeKey<Any>(DD_ORIGINAL_BODY)
     }
 }
