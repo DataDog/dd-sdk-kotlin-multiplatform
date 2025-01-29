@@ -56,6 +56,7 @@ import com.datadog.kmp.sample.network.startGetRequest
 import com.datadog.kmp.sample.network.startPostRequest
 import com.datadog.kmp.sample.startWebViewTracking
 import com.datadog.kmp.sample.trackAction
+import kotlin.random.Random
 import android.webkit.WebView as AndroidWebView
 
 class MainActivity : ComponentActivity() {
@@ -195,7 +196,12 @@ fun RumView() {
         ) {
             Button(onClick = {
                 trackAction("Start GET request")
-                startGetRequest("https://httpbin.org/get")
+                val url = if (Random.nextBoolean()) {
+                    "https://httpbin.org/get"
+                } else {
+                    "https://httpbin.org/redirect-to?url=get"
+                }
+                startGetRequest(url)
             }, colors = ButtonDefaults.buttonColors(containerColor = Color.Orange)) {
                 Text(text = "Trigger GET request")
             }
