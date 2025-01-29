@@ -12,11 +12,11 @@ import com.datadog.kmp.ktor.RUM_SPAN_ID
 import com.datadog.kmp.ktor.RUM_TRACE_ID
 import com.datadog.kmp.ktor.RumResourceAttributesProvider
 import com.datadog.kmp.ktor.TracingHeaderType
+import com.datadog.kmp.ktor.internal.sampling.Sampler
 import com.datadog.kmp.ktor.internal.trace.SpanId
 import com.datadog.kmp.ktor.internal.trace.SpanIdGenerator
 import com.datadog.kmp.ktor.internal.trace.TraceId
 import com.datadog.kmp.ktor.internal.trace.TraceIdGenerator
-import com.datadog.kmp.ktor.sampling.Sampler
 import com.datadog.kmp.ktor.test.HeadersAssert.Companion.assertThat
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
@@ -75,7 +75,7 @@ class DatadogKtorPluginTest {
     private val fakeTracingHeaderTypes = randomEnumValues<TracingHeaderType>()
     private val mockRumMonitor = mock<RumMonitor>()
     private val fakeTracedHosts = mapOf(fakeHost to fakeTracingHeaderTypes)
-    private val mockTraceSampler = mock<Sampler>()
+    private val mockTraceSampler = mock<Sampler<TraceId>>()
     private val mockTraceIdGenerator = mock<TraceIdGenerator>()
     private val mockSpanIdGenerator = mock<SpanIdGenerator>()
     private val mockRumResourceAttributesProvider = mock<RumResourceAttributesProvider>()
@@ -108,7 +108,7 @@ class DatadogKtorPluginTest {
 
     @BeforeTest
     fun `set up`() {
-        every { mockTraceSampler.sample() } returns true
+        every { mockTraceSampler.sample(any()) } returns true
         every { mockTraceSampler.sampleRate } returns 100f
         every { mockTraceIdGenerator.generateTraceId() } returnsBy {
             TraceId(
@@ -371,7 +371,7 @@ class DatadogKtorPluginTest {
     @Test
     fun `M start + stop resource tracking W request succeeded + not sampled for tracing`() {
         // Given
-        every { mockTraceSampler.sample() } returns false
+        every { mockTraceSampler.sample(any()) } returns false
         val fakeUrl = "https://$fakeHost/track"
         val fakeMethod = HttpMethod.DefaultMethods.randomElement()
         val request = HttpRequestBuilder()
@@ -436,7 +436,7 @@ class DatadogKtorPluginTest {
     @Test
     fun `M start + stop resource tracking W request succeeded + not sampled for tracing + redirect`() {
         // Given
-        every { mockTraceSampler.sample() } returns false
+        every { mockTraceSampler.sample(any()) } returns false
         val fakeUrl = "https://$fakeHost/track"
         val fakeMethod = randomRedirectMethod()
         val request = HttpRequestBuilder()
@@ -538,7 +538,7 @@ class DatadogKtorPluginTest {
     @Test
     fun `M carry sampling decision W request is made`() {
         // Given
-        every { mockTraceSampler.sample() } returnsBy { randomBoolean() }
+        every { mockTraceSampler.sample(any()) } returnsBy { randomBoolean() }
         val fakeUrl = "https://$fakeHost/track"
         val fakeMethod = randomRedirectMethod()
         val request = HttpRequestBuilder()
@@ -596,7 +596,7 @@ class DatadogKtorPluginTest {
         // Given
         val fakeSampleRate = randomFloat(from = 40f, until = 100f)
         every { mockTraceSampler.sampleRate } returns fakeSampleRate
-        every { mockTraceSampler.sample() } returnsBy { randomFloat(0f, 100f) < fakeSampleRate }
+        every { mockTraceSampler.sample(any()) } returnsBy { randomFloat(0f, 100f) < fakeSampleRate }
         val fakeUrl = "https://$fakeHost/track"
         val fakeMethod = HttpMethod.DefaultMethods.randomElement()
         val request = HttpRequestBuilder()
