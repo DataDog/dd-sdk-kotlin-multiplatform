@@ -7,5 +7,6 @@
 package com.datadog.kmp.ktor
 
 import kotlinx.datetime.Clock
+import kotlin.random.Random
 
-internal actual fun seed(): Long = Clock.System.now().nanosecondsOfSecond.toLong()
+internal actual val RNG: Random = Random(Clock.System.now().nanosecondsOfSecond.toLong())
