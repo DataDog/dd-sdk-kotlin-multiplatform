@@ -23,8 +23,8 @@ import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
 import com.datadog.tools.random.exhaustiveAttributes
-import com.datadog.tools.random.nullable
 import com.datadog.tools.random.randomBoolean
+import com.datadog.tools.random.randomBytes
 import com.datadog.tools.random.randomElement
 import com.datadog.tools.random.randomEnumValues
 import com.datadog.tools.random.randomFloat
@@ -144,16 +144,17 @@ class DatadogKtorPluginTest {
         val fakeStatusCode = HttpStatusCode.allStatusCodes
             .filter { it.value !in 300..399 }
             .randomElement()
-        val fakeContextLength = nullable(randomLong())
+        val addContentLengthHeader = randomBoolean()
+        val fakeContent = randomBytes()
         everySuspend {
             mockRequestHandler.invoke(any(), any())
         } calls { (scope: MockRequestHandleScope, _: HttpRequestData) ->
             scope.respond(
-                content = "",
+                content = fakeContent,
                 status = fakeStatusCode,
                 headers = Headers.build {
-                    if (fakeContextLength != null) {
-                        set(HttpHeaders.ContentLength, fakeContextLength.toString())
+                    if (addContentLengthHeader) {
+                        set(HttpHeaders.ContentLength, fakeContent.size.toString())
                     }
                 }
             )
@@ -178,7 +179,7 @@ class DatadogKtorPluginTest {
                 key = response.request.requestId,
                 statusCode = fakeStatusCode.value,
                 kind = RumResourceKind.NATIVE,
-                size = fakeContextLength,
+                size = if (addContentLengthHeader) fakeContent.size.toLong() else null,
                 // seems capture doesn't work yet for verify blocks, so using matching instead
                 // see https://github.com/lupuuss/Mokkery/issues/65
                 attributes = matching {
@@ -233,7 +234,8 @@ class DatadogKtorPluginTest {
             .randomElement()
         val fakeRedirectStatusCode = HttpStatusCode.redirectStatusCodes()
             .randomElement()
-        val fakeContextLength = nullable(randomLong())
+        val addContentLengthHeader = randomBoolean()
+        val fakeContent = randomBytes()
         everySuspend {
             mockRequestHandler.invoke(any(), any())
         } calls { (scope: MockRequestHandleScope, request: HttpRequestData) ->
@@ -247,11 +249,11 @@ class DatadogKtorPluginTest {
                 )
             } else {
                 scope.respond(
-                    content = "",
+                    content = fakeContent,
                     status = fakeStatusCode,
                     headers = Headers.build {
-                        if (fakeContextLength != null) {
-                            set(HttpHeaders.ContentLength, fakeContextLength.toString())
+                        if (addContentLengthHeader) {
+                            set(HttpHeaders.ContentLength, fakeContent.size.toString())
                         }
                     }
                 )
@@ -332,7 +334,7 @@ class DatadogKtorPluginTest {
                 key = redirectRequestId,
                 statusCode = fakeStatusCode.value,
                 kind = RumResourceKind.NATIVE,
-                size = fakeContextLength,
+                size = if (addContentLengthHeader) fakeContent.size.toLong() else null,
                 // seems capture doesn't work yet for verify blocks, so using matching instead
                 // see https://github.com/lupuuss/Mokkery/issues/65
                 attributes = matching {
@@ -387,16 +389,17 @@ class DatadogKtorPluginTest {
         val fakeStatusCode = HttpStatusCode.allStatusCodes
             .filter { it.value !in 300..399 }
             .randomElement()
-        val fakeContextLength = nullable(randomLong())
+        val addContentLengthHeader = randomBoolean()
+        val fakeContent = randomBytes()
         everySuspend {
             mockRequestHandler.invoke(any(), any())
         } calls { (scope: MockRequestHandleScope, _: HttpRequestData) ->
             scope.respond(
-                content = "",
+                content = fakeContent,
                 status = fakeStatusCode,
                 headers = Headers.build {
-                    if (fakeContextLength != null) {
-                        set(HttpHeaders.ContentLength, fakeContextLength.toString())
+                    if (addContentLengthHeader) {
+                        set(HttpHeaders.ContentLength, fakeContent.size.toString())
                     }
                 }
             )
@@ -420,7 +423,7 @@ class DatadogKtorPluginTest {
                 key = response.request.requestId,
                 statusCode = fakeStatusCode.value,
                 kind = RumResourceKind.NATIVE,
-                size = fakeContextLength,
+                size = if (addContentLengthHeader) fakeContent.size.toLong() else null,
                 attributes = fakeRumResponseAttributes
             )
         }
@@ -453,7 +456,8 @@ class DatadogKtorPluginTest {
             .randomElement()
         val fakeRedirectStatusCode = HttpStatusCode.redirectStatusCodes()
             .randomElement()
-        val fakeContextLength = nullable(randomLong())
+        val addContentLengthHeader = randomBoolean()
+        val fakeContent = randomBytes()
         everySuspend {
             mockRequestHandler.invoke(any(), any())
         } calls { (scope: MockRequestHandleScope, request: HttpRequestData) ->
@@ -467,11 +471,11 @@ class DatadogKtorPluginTest {
                 )
             } else {
                 scope.respond(
-                    content = "",
+                    content = fakeContent,
                     status = fakeStatusCode,
                     headers = Headers.build {
-                        if (fakeContextLength != null) {
-                            set(HttpHeaders.ContentLength, fakeContextLength.toString())
+                        if (addContentLengthHeader) {
+                            set(HttpHeaders.ContentLength, fakeContent.size.toString())
                         }
                     }
                 )
@@ -520,7 +524,7 @@ class DatadogKtorPluginTest {
                 key = redirectRequestId,
                 statusCode = fakeStatusCode.value,
                 kind = RumResourceKind.NATIVE,
-                size = fakeContextLength,
+                size = if (addContentLengthHeader) fakeContent.size.toLong() else null,
                 attributes = fakeRumResponseAttributes
             )
         }
@@ -555,7 +559,8 @@ class DatadogKtorPluginTest {
             .randomElement()
         val fakeRedirectStatusCode = HttpStatusCode.redirectStatusCodes()
             .randomElement()
-        val fakeContextLength = nullable(randomLong())
+        val addContentLengthHeader = randomBoolean()
+        val fakeContent = randomBytes()
         everySuspend {
             mockRequestHandler.invoke(any(), any())
         } calls { (scope: MockRequestHandleScope, request: HttpRequestData) ->
@@ -569,11 +574,11 @@ class DatadogKtorPluginTest {
                 )
             } else {
                 scope.respond(
-                    content = "",
+                    content = fakeContent,
                     status = fakeStatusCode,
                     headers = Headers.build {
-                        if (fakeContextLength != null) {
-                            set(HttpHeaders.ContentLength, fakeContextLength.toString())
+                        if (addContentLengthHeader) {
+                            set(HttpHeaders.ContentLength, fakeContent.size.toString())
                         }
                     }
                 )
@@ -612,16 +617,17 @@ class DatadogKtorPluginTest {
         val fakeStatusCode = HttpStatusCode.allStatusCodes
             .filter { it.value !in 300..399 }
             .randomElement()
-        val fakeContextLength = nullable(randomLong())
+        val addContentLengthHeader = randomBoolean()
+        val fakeContent = randomBytes()
         everySuspend {
             mockRequestHandler.invoke(any(), any())
         } calls { (scope: MockRequestHandleScope, _: HttpRequestData) ->
             scope.respond(
-                content = "",
+                content = fakeContent,
                 status = fakeStatusCode,
                 headers = Headers.build {
-                    if (fakeContextLength != null) {
-                        set(HttpHeaders.ContentLength, fakeContextLength.toString())
+                    if (addContentLengthHeader) {
+                        set(HttpHeaders.ContentLength, fakeContent.size.toString())
                     }
                 }
             )
@@ -640,7 +646,7 @@ class DatadogKtorPluginTest {
             mockRumMonitor.stopResource(
                 key = isIn(mockEngine.requestHistory.map { it.requestId }),
                 statusCode = fakeStatusCode.value,
-                size = fakeContextLength,
+                size = if (addContentLengthHeader) fakeContent.size.toLong() else null,
                 kind = RumResourceKind.NATIVE,
                 attributes = matching {
                     val rulePsr = it[RUM_RULE_PSR] as? Float
@@ -819,16 +825,17 @@ class DatadogKtorPluginTest {
         val fakeStatusCode = HttpStatusCode.allStatusCodes
             .filter { it.value !in 300..399 }
             .randomElement()
-        val fakeContextLength = nullable(randomLong())
+        val addContentLengthHeader = randomBoolean()
+        val fakeContent = randomBytes()
         everySuspend {
             mockRequestHandler.invoke(any(), any())
         } calls { (scope: MockRequestHandleScope, _: HttpRequestData) ->
             scope.respond(
-                content = "",
+                content = fakeContent,
                 status = fakeStatusCode,
                 headers = Headers.build {
-                    if (fakeContextLength != null) {
-                        set(HttpHeaders.ContentLength, fakeContextLength.toString())
+                    if (addContentLengthHeader) {
+                        set(HttpHeaders.ContentLength, fakeContent.size.toString())
                     }
                 }
             )
@@ -874,16 +881,17 @@ class DatadogKtorPluginTest {
         val fakeStatusCode = HttpStatusCode.allStatusCodes
             .filter { it.value !in 300..399 }
             .randomElement()
-        val fakeContextLength = nullable(randomLong())
+        val addContentLengthHeader = randomBoolean()
+        val fakeContent = randomBytes()
         everySuspend {
             mockRequestHandler.invoke(any(), any())
         } calls { (scope: MockRequestHandleScope, _: HttpRequestData) ->
             scope.respond(
-                content = "",
+                content = fakeContent,
                 status = fakeStatusCode,
                 headers = Headers.build {
-                    if (fakeContextLength != null) {
-                        set(HttpHeaders.ContentLength, fakeContextLength.toString())
+                    if (addContentLengthHeader) {
+                        set(HttpHeaders.ContentLength, fakeContent.size.toString())
                     }
                 }
             )
@@ -900,7 +908,7 @@ class DatadogKtorPluginTest {
                 key = mockEngine.requestHistory.first().requestId,
                 statusCode = fakeStatusCode.value,
                 kind = RumResourceKind.NATIVE,
-                size = fakeContextLength,
+                size = if (addContentLengthHeader) fakeContent.size.toLong() else null,
                 attributes = matching {
                     assertContains(it, RUM_TRACE_ID)
                     assertContains(it, RUM_SPAN_ID)

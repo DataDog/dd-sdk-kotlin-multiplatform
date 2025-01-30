@@ -33,6 +33,17 @@ fun randomUInt(from: UInt = UInt.MIN_VALUE, until: UInt = UInt.MAX_VALUE): UInt 
 fun randomInt(from: Int = Int.MIN_VALUE, until: Int = Int.MAX_VALUE): Int =
     Random.nextInt(from, until)
 
+@Suppress("MagicNumber")
+fun randomBytes(size: Int = -1): ByteArray {
+    val arraySize = if (size == -1) {
+        randomInt(1, 32)
+    } else {
+        check(size > 0) { "Byte array size should be positive, was $size" }
+        size
+    }
+    return Random.nextBytes(arraySize)
+}
+
 inline fun <reified T : Enum<T>> randomEnumValue(): T {
     val values = enumValues<T>()
     return values[Random.nextInt(values.size)]

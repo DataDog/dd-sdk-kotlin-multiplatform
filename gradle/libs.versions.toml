@@ -19,7 +19,8 @@ kotlinAntlrRuntime = "v0.1.0"
 kotlinPoet = "1.18.1"
 gson = "2.11.0"
 
-ktor = "2.3.11"
+ktor2 = "2.3.13"
+ktor3 = "3.0.3"
 kotlinxCoroutines = "1.8.1"
 kotlinxDatetime = "0.6.0"
 uuid = "0.8.4"
@@ -62,10 +63,15 @@ kotlinAntlrRuntime = { module = "com.github.drieks.antlr-kotlin:antlr-kotlin-run
 kotlinPoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinPoet" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
-ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
-ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
-ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+ktor2-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor2" }
+ktor2-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor2" }
+ktor2-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor2" }
+ktor2-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor2" }
+
+ktor3-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor3" }
+ktor3-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor3" }
+ktor3-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor3" }
+ktor3-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor3" }
 
 okHttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okHttp" }
 

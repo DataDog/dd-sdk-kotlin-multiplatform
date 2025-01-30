@@ -93,7 +93,8 @@ val publishableProjects = listOf(
     projects.features.rum,
     projects.features.webview,
     projects.features.sessionReplay,
-    projects.integrations.ktor
+    projects.integrations.ktor,
+    projects.integrations.ktor3
 )
 
 val jvmUnitTestDebugAllTask = tasks.register("jvmUnitTestDebugAll") {
