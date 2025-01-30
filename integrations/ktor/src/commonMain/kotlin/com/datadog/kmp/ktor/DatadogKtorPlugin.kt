@@ -8,9 +8,9 @@ package com.datadog.kmp.ktor
 
 import com.datadog.kmp.ktor.internal.plugin.DatadogKtorPlugin
 import com.datadog.kmp.ktor.internal.plugin.buildClientPlugin
+import com.datadog.kmp.ktor.internal.sampling.DeterministicTraceSampler
 import com.datadog.kmp.ktor.internal.trace.DefaultSpanIdGenerator
 import com.datadog.kmp.ktor.internal.trace.DefaultTraceIdGenerator
-import com.datadog.kmp.ktor.sampling.FixedRateSampler
 import com.datadog.kmp.rum.RumMonitor
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.api.ClientPlugin
@@ -34,7 +34,7 @@ fun datadogKtorPlugin(
     return DatadogKtorPlugin(
         RumMonitor.get(),
         tracedHosts,
-        FixedRateSampler(traceSamplingRate),
+        DeterministicTraceSampler(traceSamplingRate),
         DefaultTraceIdGenerator(),
         DefaultSpanIdGenerator(),
         rumResourceAttributesProvider

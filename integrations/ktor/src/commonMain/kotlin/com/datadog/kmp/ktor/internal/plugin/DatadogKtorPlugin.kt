@@ -13,11 +13,11 @@ import com.datadog.kmp.ktor.RUM_SPAN_ID
 import com.datadog.kmp.ktor.RUM_TRACE_ID
 import com.datadog.kmp.ktor.RumResourceAttributesProvider
 import com.datadog.kmp.ktor.TracingHeaderType
+import com.datadog.kmp.ktor.internal.sampling.Sampler
 import com.datadog.kmp.ktor.internal.trace.SpanId
 import com.datadog.kmp.ktor.internal.trace.SpanIdGenerator
 import com.datadog.kmp.ktor.internal.trace.TraceId
 import com.datadog.kmp.ktor.internal.trace.TraceIdGenerator
-import com.datadog.kmp.ktor.sampling.Sampler
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
@@ -34,7 +34,7 @@ import io.ktor.util.AttributeKey
 internal class DatadogKtorPlugin(
     private val rumMonitor: RumMonitor,
     private val tracedHosts: Map<String, Set<TracingHeaderType>>,
-    private val traceSampler: Sampler,
+    private val traceSampler: Sampler<TraceId>,
     private val traceIdGenerator: TraceIdGenerator,
     private val spanIdGenerator: SpanIdGenerator,
     private val rumResourceAttributesProvider: RumResourceAttributesProvider
@@ -47,11 +47,10 @@ internal class DatadogKtorPlugin(
     }
 
     override fun onSend(request: HttpRequestBuilder, content: OutgoingContent) {
-        val isSampledIn = request.attributes.getOrNull(DD_IS_SAMPLED_ATTR) ?: traceSampler.sample()
-        val traceHeaderTypes = traceHeaderTypesForHost(request.url.host)
-
         val traceId = request.attributes.getOrNull(DD_TRACE_ID_ATTR)
             ?: traceIdGenerator.generateTraceId()
+        val isSampledIn = request.attributes.getOrNull(DD_IS_SAMPLED_ATTR) ?: traceSampler.sample(traceId)
+        val traceHeaderTypes = traceHeaderTypesForHost(request.url.host)
         val spanId = spanIdGenerator.generateSpanId()
 
         if (isSampledIn && !traceHeaderTypes.isNullOrEmpty()) {
