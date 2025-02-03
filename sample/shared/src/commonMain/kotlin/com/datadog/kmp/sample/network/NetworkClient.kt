@@ -32,7 +32,7 @@ object NetworkClient {
                 tracedHosts = mapOf(
                     "httpbin.org" to setOf(TracingHeaderType.DATADOG)
                 ),
-                traceSamplingRate = 100f,
+                traceSampleRate = 100f,
                 rumResourceAttributesProvider = object : RumResourceAttributesProvider {
                     override fun onRequest(request: HttpRequestSnapshot) =
                         mapOf("custom-header-value" to request.headers[CUSTOM_HEADER_NAME])
