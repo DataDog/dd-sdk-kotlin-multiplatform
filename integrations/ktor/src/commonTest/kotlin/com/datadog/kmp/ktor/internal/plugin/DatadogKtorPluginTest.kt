@@ -11,6 +11,7 @@ import com.datadog.kmp.ktor.RUM_RULE_PSR
 import com.datadog.kmp.ktor.RUM_SPAN_ID
 import com.datadog.kmp.ktor.RUM_TRACE_ID
 import com.datadog.kmp.ktor.RumResourceAttributesProvider
+import com.datadog.kmp.ktor.TraceContextInjection
 import com.datadog.kmp.ktor.TracingHeaderType
 import com.datadog.kmp.ktor.internal.sampling.Sampler
 import com.datadog.kmp.ktor.internal.trace.SpanId
@@ -88,6 +89,7 @@ class DatadogKtorPluginTest {
         rumMonitor = mockRumMonitor,
         tracedHosts = fakeTracedHosts,
         traceSampler = mockTraceSampler,
+        traceContextInjection = TraceContextInjection.All,
         traceIdGenerator = mockTraceIdGenerator,
         spanIdGenerator = mockSpanIdGenerator,
         rumResourceAttributesProvider = mockRumResourceAttributesProvider
@@ -788,6 +790,150 @@ class DatadogKtorPluginTest {
         verifyNoMoreCalls(mockRumMonitor)
     }
 
+    @Test
+    fun `M not inject any tracing headers W request is made + sampled out + sampled injection control`() {
+        // Given
+        val testedPlugin = DatadogKtorPlugin(
+            rumMonitor = mockRumMonitor,
+            tracedHosts = fakeTracedHosts,
+            traceSampler = mockTraceSampler,
+            traceContextInjection = TraceContextInjection.Sampled,
+            traceIdGenerator = mockTraceIdGenerator,
+            spanIdGenerator = mockSpanIdGenerator,
+            rumResourceAttributesProvider = mockRumResourceAttributesProvider
+        )
+        val fakeClient = HttpClient(mockEngine) {
+            install(testedPlugin.buildClientPlugin())
+        }
+        every { mockTraceSampler.sample(any()) } returns false
+        val fakeUrl = "https://$fakeHost/track"
+        val fakeMethod = HttpMethod.DefaultMethods.randomElement()
+        val request = HttpRequestBuilder()
+            .apply {
+                url(fakeUrl)
+                headers["fake-header-name"] = "fake-header-value"
+                method = fakeMethod
+                setRandomBody()
+            }
+
+        val fakeStatusCode = HttpStatusCode.allStatusCodes
+            .filter { it.value !in 300..399 }
+            .randomElement()
+        val fakeContextLength = nullable(randomLong())
+        everySuspend {
+            mockRequestHandler.invoke(any(), any())
+        } calls { (scope: MockRequestHandleScope, _: HttpRequestData) ->
+            scope.respond(
+                content = "",
+                status = fakeStatusCode,
+                headers = Headers.build {
+                    if (fakeContextLength != null) {
+                        set(HttpHeaders.ContentLength, fakeContextLength.toString())
+                    }
+                }
+            )
+        }
+
+        // When
+        runBlocking {
+            fakeClient.request(request)
+        }
+
+        // Then
+        val headersSeen = mockEngine.requestHistory.flatMap { it.headers.names() }.toSet()
+        assertEquals(3, headersSeen.size)
+        assertEquals(setOf("fake-header-name", "Accept-Charset", "Accept"), headersSeen)
+    }
+
+    @Test
+    fun `M inject tracing headers W request is made + sampled in + sampled injection control`() {
+        // Given
+        val testedPlugin = DatadogKtorPlugin(
+            rumMonitor = mockRumMonitor,
+            tracedHosts = fakeTracedHosts,
+            traceSampler = mockTraceSampler,
+            traceContextInjection = TraceContextInjection.Sampled,
+            traceIdGenerator = mockTraceIdGenerator,
+            spanIdGenerator = mockSpanIdGenerator,
+            rumResourceAttributesProvider = mockRumResourceAttributesProvider
+        )
+        val fakeClient = HttpClient(mockEngine) {
+            install(testedPlugin.buildClientPlugin())
+        }
+        every { mockTraceSampler.sample(any()) } returns true
+        val fakeUrl = "https://$fakeHost/track"
+        val fakeMethod = HttpMethod.DefaultMethods.randomElement()
+        val request = HttpRequestBuilder()
+            .apply {
+                url(fakeUrl)
+                headers["fake-header-name"] = "fake-header-value"
+                method = fakeMethod
+                setRandomBody()
+            }
+
+        val fakeStatusCode = HttpStatusCode.allStatusCodes
+            .filter { it.value !in 300..399 }
+            .randomElement()
+        val fakeContextLength = nullable(randomLong())
+        everySuspend {
+            mockRequestHandler.invoke(any(), any())
+        } calls { (scope: MockRequestHandleScope, _: HttpRequestData) ->
+            scope.respond(
+                content = "",
+                status = fakeStatusCode,
+                headers = Headers.build {
+                    if (fakeContextLength != null) {
+                        set(HttpHeaders.ContentLength, fakeContextLength.toString())
+                    }
+                }
+            )
+        }
+
+        // When
+        runBlocking {
+            fakeClient.request(request)
+        }
+
+        // Then
+        verify {
+            mockRumMonitor.stopResource(
+                key = mockEngine.requestHistory.first().requestId,
+                statusCode = fakeStatusCode.value,
+                kind = RumResourceKind.NATIVE,
+                size = fakeContextLength,
+                attributes = matching {
+                    assertContains(it, RUM_TRACE_ID)
+                    assertContains(it, RUM_SPAN_ID)
+                    assertContains(it, RUM_RULE_PSR)
+
+                    val traceId = checkNotNull(it[RUM_TRACE_ID] as? String)
+                    val spanId = checkNotNull(it[RUM_SPAN_ID] as? String)
+                    val rulePsr = checkNotNull(it[RUM_RULE_PSR])
+
+                    assertEquals(1f, rulePsr)
+                    assertThat(mockEngine.requestHistory.first().headers)
+                        .apply {
+                            fakeTracingHeaderTypes.forEach {
+                                hasTraceId(expectedTraceId(traceId, it), it)
+                                hasSpanId(expectedSpanId(spanId, it), it)
+                                hasSamplingDecision(1, it)
+                            }
+                        }
+
+                    assertEquals(
+                        fakeRumResponseAttributes,
+                        it.toMutableMap().apply {
+                            remove(RUM_TRACE_ID)
+                            remove(RUM_SPAN_ID)
+                            remove(RUM_RULE_PSR)
+                        }
+                    )
+                    true
+                }
+            )
+        }
+    }
+
     // endregion
 
     // region Host matching
@@ -818,6 +964,7 @@ class DatadogKtorPluginTest {
             rumMonitor = mockRumMonitor,
             tracedHosts = fakeTracedHosts + mapOf("*" to fakeWildcardTracHeaderTypes),
             traceSampler = mockTraceSampler,
+            traceContextInjection = TraceContextInjection.All,
             traceIdGenerator = mockTraceIdGenerator,
             spanIdGenerator = mockSpanIdGenerator,
             rumResourceAttributesProvider = mockRumResourceAttributesProvider

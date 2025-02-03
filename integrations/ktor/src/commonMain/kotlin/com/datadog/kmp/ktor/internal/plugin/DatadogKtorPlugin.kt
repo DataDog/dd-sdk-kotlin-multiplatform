@@ -12,6 +12,7 @@ import com.datadog.kmp.ktor.RUM_RULE_PSR
 import com.datadog.kmp.ktor.RUM_SPAN_ID
 import com.datadog.kmp.ktor.RUM_TRACE_ID
 import com.datadog.kmp.ktor.RumResourceAttributesProvider
+import com.datadog.kmp.ktor.TraceContextInjection
 import com.datadog.kmp.ktor.TracingHeaderType
 import com.datadog.kmp.ktor.internal.sampling.Sampler
 import com.datadog.kmp.ktor.internal.trace.SpanId
@@ -35,6 +36,7 @@ internal class DatadogKtorPlugin(
     private val rumMonitor: RumMonitor,
     private val tracedHosts: Map<String, Set<TracingHeaderType>>,
     private val traceSampler: Sampler<TraceId>,
+    private val traceContextInjection: TraceContextInjection,
     private val traceIdGenerator: TraceIdGenerator,
     private val spanIdGenerator: SpanIdGenerator,
     private val rumResourceAttributesProvider: RumResourceAttributesProvider
@@ -53,7 +55,7 @@ internal class DatadogKtorPlugin(
         val traceHeaderTypes = traceHeaderTypesForHost(request.url.host)
         val spanId = spanIdGenerator.generateSpanId()
 
-        if (isSampledIn && !traceHeaderTypes.isNullOrEmpty()) {
+        if (isSampledIn && traceHeaderTypes.isNotEmpty()) {
             traceHeaderTypes.forEach { headerType ->
                 headerType.injectHeaders(request, true, traceId, spanId)
             }
@@ -61,8 +63,10 @@ internal class DatadogKtorPlugin(
             request.attributes.put(DD_SPAN_ID_ATTR, spanId)
             request.attributes.put(DD_RULE_PSR_ATTR, traceSampler.sampleRate / ALL_IN_SAMPLE_RATE)
         } else {
-            TracingHeaderType.entries.forEach { headerType ->
-                headerType.injectHeaders(request, false, traceId, spanId)
+            if (traceContextInjection == TraceContextInjection.All) {
+                traceHeaderTypes.forEach { headerType ->
+                    headerType.injectHeaders(request, false, traceId, spanId)
+                }
             }
         }
 
@@ -123,10 +127,10 @@ internal class DatadogKtorPlugin(
         }
     }
 
-    internal fun traceHeaderTypesForHost(host: String): Set<TracingHeaderType>? {
+    internal fun traceHeaderTypesForHost(host: String): Set<TracingHeaderType> {
         return tracedHosts.getOrElse(host) {
             tracedHosts.entries.firstOrNull { host.endsWith(".${it.key}") }?.value ?: tracedHosts["*"]
-        }
+        }.orEmpty()
     }
 
     private fun HttpMethod.asRumMethod(): RumResourceMethod {
