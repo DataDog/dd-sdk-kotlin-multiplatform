@@ -7,6 +7,7 @@
 import dev.mokkery.MockMode
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithSimulatorTests
+import java.nio.file.Paths
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -32,7 +33,7 @@ kotlin {
         noPodspec()
 
         framework {
-            baseName = "DatadogKMPKtor"
+            baseName = "DatadogKMPKtor3"
         }
 
         // need to link it only for the tests so far (maybe this will change
@@ -48,19 +49,39 @@ kotlin {
     }
 
     sourceSets {
-        commonMain.dependencies {
-            api(projects.core)
-            api(projects.features.rum)
-            implementation(libs.ktor2.client.core)
-            implementation(libs.uuid)
+        commonMain {
+            kotlin {
+                srcDirs(Paths.get("..", "ktor", "src", "commonMain").toFile())
+            }
+            dependencies {
+                api(projects.core)
+                api(projects.features.rum)
+                implementation(libs.ktor3.client.core)
+                implementation(libs.uuid)
+            }
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.ktor2.client.mock)
-            implementation(projects.tools.unit)
+        commonTest {
+            kotlin {
+                srcDirs(Paths.get("..", "ktor", "src", "commonTest").toFile())
+            }
+            dependencies {
+                implementation(libs.kotlin.test)
+                implementation(libs.ktor3.client.mock)
+                implementation(projects.tools.unit)
+            }
         }
-        appleMain.dependencies {
-            implementation(libs.kotlinx.datetime)
+        appleMain {
+            kotlin {
+                srcDirs(Paths.get("..", "ktor", "src", "appleMain").toFile())
+            }
+            dependencies {
+                implementation(libs.kotlinx.datetime)
+            }
+        }
+        androidMain {
+            kotlin {
+                srcDirs(Paths.get("..", "ktor", "src", "androidMain").toFile())
+            }
         }
     }
 
@@ -82,5 +103,5 @@ mokkery {
 }
 
 datadogBuildConfig {
-    pomDescription = "The Ktor 2 integration to use with the Datadog monitoring library for Kotlin Multiplatform."
+    pomDescription = "The Ktor 3 integration to use with the Datadog monitoring library for Kotlin Multiplatform."
 }

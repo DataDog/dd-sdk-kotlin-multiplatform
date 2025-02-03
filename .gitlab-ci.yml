@@ -276,6 +276,18 @@ publish:release-ktor:
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :integrations:ktor:publishToSonatype --stacktrace --no-daemon
 
+publish:release-ktor3:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - xcodebuild -downloadPlatform tvOS -quiet
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
+    - ./gradlew :integrations:ktor3:publishToSonatype --stacktrace --no-daemon
+
 # SLACK NOTIFICATIONS
 
 notify:publish-release-success:
