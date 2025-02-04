@@ -13,6 +13,7 @@ import com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
 import com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration
 import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
+import com.datadog.kmp.sessionreplay.configuration.enableSwiftUISupport
 import com.datadog.kmp.webview.WebViewTracking
 import platform.WebKit.WKWebView
 
@@ -36,6 +37,7 @@ internal actual fun initSessionReplay() {
             .setImagePrivacy(ImagePrivacy.MASK_LARGE_ONLY)
             .setTouchPrivacy(TouchPrivacy.SHOW)
             .setTextAndInputPrivacy(TextAndInputPrivacy.MASK_SENSITIVE_INPUTS)
+            .enableSwiftUISupport(true)
             .build()
     )
 }

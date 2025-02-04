@@ -15,6 +15,8 @@ import kotlin.test.assertNull
 
 class ConfigurationExtTest {
 
+    // region proxy
+
     @Test
     fun `M set proxy configuration W setProxy + HTTP proxy + auth`() {
         // Given
@@ -211,5 +213,20 @@ class ConfigurationExtTest {
 
         // Then
         assertNull(testSdkConfiguration.proxyConfiguration())
+    }
+
+    // endregion
+
+    @Test
+    fun `M set backgroundTasksEnabled config option W enableBackgroundTasks`() {
+        // Given
+        val fakeConfigurationBuilder = Configuration.Builder(clientToken = "fake-token", env = "fake-env")
+        val enableBackgroundTasks = randomBoolean()
+
+        // When
+        fakeConfigurationBuilder.enableBackgroundTasks(enableBackgroundTasks)
+
+        // Then
+        assertEquals(enableBackgroundTasks, fakeConfigurationBuilder.coreConfig.backgroundTasksEnabled)
     }
 }

@@ -6,16 +6,24 @@
 
 package com.datadog.kmp.sample
 
+import com.datadog.kmp.core.configuration.Configuration
+import com.datadog.kmp.core.configuration.enableBackgroundTasks
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.setAppHangThreshold
 import com.datadog.kmp.rum.configuration.trackUiKitViews
+import com.datadog.kmp.rum.configuration.trackWatchdogTerminations
 
 internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder) {
     with(rumConfigurationBuilder) {
         trackUiKitViews()
         setupUiKitActionsTracking(this)
         setAppHangThreshold(APP_HANG_THRESHOLD_MS)
+        trackWatchdogTerminations(true)
     }
+}
+
+internal actual fun platformSpecificSetup(configurationBuilder: Configuration.Builder) {
+    configurationBuilder.enableBackgroundTasks(true)
 }
 
 const val APP_HANG_THRESHOLD_MS = 100L

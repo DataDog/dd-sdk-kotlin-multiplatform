@@ -10,17 +10,27 @@ import io.ktor.client.plugins.api.OnRequestContext
 import io.ktor.client.plugins.api.OnResponseContext
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.content.OutgoingContent
 
 internal interface KtorPlugin {
 
     val pluginName: String
 
+    // user-initiated request: doesn't include HTTP client-initiated requests (e.g. redirect) and context here is
+    // not yet transformed
     fun onRequest(
         onRequestContext: OnRequestContext,
         request: HttpRequestBuilder,
         content: Any
     )
 
+    // will be called on any request (both user-initiated and ktor-initiated)
+    fun onSend(
+        request: HttpRequestBuilder,
+        content: OutgoingContent
+    )
+
+    // will be called on any response (both user-initiated and ktor-initiated)
     fun onResponse(
         onResponseContext: OnResponseContext,
         response: HttpResponse

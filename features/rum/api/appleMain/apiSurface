@@ -6,6 +6,7 @@ fun RumMonitor.stopResourceWithError(String, String, platform.Foundation.NSURLRe
 fun RumMonitor.addError(RumErrorSource, platform.Foundation.NSError, Map<String, Any?>)
 fun RumConfiguration.Builder.trackUiKitViews(com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate = DefaultUIKitRUMViewsPredicate()): RumConfiguration.Builder
 fun RumConfiguration.Builder.setAppHangThreshold(Long?): RumConfiguration.Builder
+fun RumConfiguration.Builder.trackWatchdogTerminations(Boolean): RumConfiguration.Builder
 interface com.datadog.kmp.rum.internal.AdvancedRumNetworkMonitor
   fun addResourceMetrics(String, platform.Foundation.NSURLSessionTaskMetrics, Map<String, Any?>)
 class com.datadog.kmp.rum.tracking.DefaultUIKitRUMViewsPredicate : UIKitRUMViewsPredicate

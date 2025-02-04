@@ -6,4 +6,12 @@
 
 package com.datadog.kmp.ktor
 
-internal actual fun seed(): Long = System.nanoTime()
+import java.security.SecureRandom
+import kotlin.random.Random
+import kotlin.random.asKotlinRandom
+
+/**
+ * Creates implementation of [Random] backed by [SecureRandom], which is thread-safe instead of default JVM platform
+ * implementation.
+ */
+internal actual val RNG: Random = SecureRandom().asKotlinRandom()

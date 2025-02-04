@@ -8,7 +8,4 @@ package com.datadog.kmp.ktor
 
 import kotlin.random.Random
 
-// TODO RUM-6453 Documentation says that it is not thread-safe for JVM target, we need to handle this
-internal val RNG = Random(seed())
-
-internal expect fun seed(): Long
+internal expect val RNG: Random

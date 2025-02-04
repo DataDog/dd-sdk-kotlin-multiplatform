@@ -60,7 +60,6 @@ class ClassGenerator(
             typeBuilder.addProperty(
                 generateAdditionalProperties(
                     definition.additionalProperties,
-                    definition.readOnlyAdditionalProperties,
                     rootTypeName
                 )
             )
@@ -96,10 +95,10 @@ class ClassGenerator(
 
         if (
             definition.additionalProperties != null &&
-            definition.additionalProperties.description.isNotBlank()
+            definition.additionalProperties.type.description.isNotBlank()
         ) {
             docBuilder.add(
-                "@param ${Identifier.PARAM_ADDITIONAL_PROPS} ${definition.additionalProperties.description}\n"
+                "@param ${Identifier.PARAM_ADDITIONAL_PROPS} ${definition.additionalProperties.type.description}\n"
             )
         }
         return docBuilder.build()
@@ -126,13 +125,13 @@ class ClassGenerator(
         }
 
         if (definition.additionalProperties != null) {
-            val mapType = definition.additionalProperties.additionalPropertyType(
-                definition.readOnlyAdditionalProperties,
-                rootTypeName
+            val mapType = definition.additionalProperties.type.asAdditionalPropertiesType(
+                rootTypeName,
+                definition.additionalProperties.readOnly
             )
             constructorBuilder.addParameter(
                 ParameterSpec.builder(Identifier.PARAM_ADDITIONAL_PROPS, mapType)
-                    .defaultValue(if (definition.readOnlyAdditionalProperties) "mapOf()" else "mutableMapOf()")
+                    .defaultValue(if (definition.additionalProperties.readOnly) "mapOf()" else "mutableMapOf()")
                     .build()
             )
         }
@@ -160,11 +159,10 @@ class ClassGenerator(
     }
 
     private fun generateAdditionalProperties(
-        additionalPropertyType: TypeDefinition,
-        readOnly: Boolean,
+        additionalPropertyType: TypeProperty,
         rootTypeName: String
     ): PropertySpec {
-        val type = additionalPropertyType.additionalPropertyType(readOnly, rootTypeName)
+        val type = additionalPropertyType.type.asAdditionalPropertiesType(rootTypeName, additionalPropertyType.readOnly)
 
         return PropertySpec.builder(Identifier.PARAM_ADDITIONAL_PROPS, type)
             .mutable(false)
@@ -242,7 +240,7 @@ class ClassGenerator(
         return this
     }
 
-    private fun TypeDefinition.additionalPropertyType(readOnly: Boolean, rootTypeName: String): TypeName {
+    private fun TypeDefinition.asAdditionalPropertiesType(rootTypeName: String, readOnly: Boolean): TypeName {
         val valueType = if (this is TypeDefinition.Primitive) {
             this.asKotlinTypeName(rootTypeName)
         } else {

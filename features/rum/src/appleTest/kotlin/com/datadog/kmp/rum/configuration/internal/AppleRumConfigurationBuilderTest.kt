@@ -338,6 +338,18 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
     // endregion
 
     @Test
+    fun `M set watchdog terminations tracking W trackWatchdogTerminations`() {
+        // Given
+        val fakeTrackWatchdogTerminations = randomBoolean()
+
+        // When
+        testedBuilder.trackWatchdogTerminations(fakeTrackWatchdogTerminations)
+
+        // Then
+        assertEquals(fakeTrackWatchdogTerminations, fakeNativeRumConfiguration.trackWatchdogTerminations())
+    }
+
+    @Test
     fun `M return native configuration W build`() {
         // When
         val nativeConfiguration = testedBuilder.build()

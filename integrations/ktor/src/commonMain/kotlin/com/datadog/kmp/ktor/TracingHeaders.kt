@@ -39,6 +39,6 @@ internal const val W3C_SAMPLING_DECISION_INDEX = 3
 internal const val W3C_TRACE_ID_LENGTH = 32
 internal const val W3C_PARENT_ID_LENGTH = 16
 internal const val W3C_SAMPLE_PRIORITY_ACCEPT = "01"
-internal const val W3C_SAMPLE_PRIORITY_DROP = "01"
+internal const val W3C_SAMPLE_PRIORITY_DROP = "00"
 
 internal const val HEX_RADIX: Int = 16

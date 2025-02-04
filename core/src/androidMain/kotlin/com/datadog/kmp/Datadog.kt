@@ -127,7 +127,7 @@ actual object Datadog {
     }
 }
 
-private val SdkLogVerbosity?.native: Int
+internal val SdkLogVerbosity?.native: Int
     get() = when (this) {
         SdkLogVerbosity.DEBUG -> AndroidLog.DEBUG
         SdkLogVerbosity.WARN -> AndroidLog.WARN
@@ -136,7 +136,7 @@ private val SdkLogVerbosity?.native: Int
         null -> Int.MAX_VALUE
     }
 
-private val Int.toSdkLogVerbosity: SdkLogVerbosity?
+internal val Int.toSdkLogVerbosity: SdkLogVerbosity?
     get() = when (this) {
         AndroidLog.DEBUG -> SdkLogVerbosity.DEBUG
         AndroidLog.WARN -> SdkLogVerbosity.WARN
@@ -145,7 +145,7 @@ private val Int.toSdkLogVerbosity: SdkLogVerbosity?
         else -> null
     }
 
-private val Configuration.native: ConfigurationAndroid
+internal val Configuration.native: ConfigurationAndroid
     get() {
         return ConfigurationAndroid.Builder(
             clientToken = clientToken,
@@ -168,35 +168,35 @@ private val Configuration.native: ConfigurationAndroid
             .build()
     }
 
-private val TrackingConsent.native: TrackingConsentAndroid
+internal val TrackingConsent.native: TrackingConsentAndroid
     get() = when (this) {
         TrackingConsent.GRANTED -> TrackingConsentAndroid.GRANTED
         TrackingConsent.PENDING -> TrackingConsentAndroid.PENDING
         TrackingConsent.NOT_GRANTED -> TrackingConsentAndroid.NOT_GRANTED
     }
 
-private val UploadFrequency.native: UploadFrequencyAndroid
+internal val UploadFrequency.native: UploadFrequencyAndroid
     get() = when (this) {
         UploadFrequency.FREQUENT -> UploadFrequencyAndroid.FREQUENT
         UploadFrequency.AVERAGE -> UploadFrequencyAndroid.AVERAGE
         UploadFrequency.RARE -> UploadFrequencyAndroid.RARE
     }
 
-private val BatchProcessingLevel.native: BatchProcessingLevelAndroid
+internal val BatchProcessingLevel.native: BatchProcessingLevelAndroid
     get() = when (this) {
         BatchProcessingLevel.HIGH -> BatchProcessingLevelAndroid.HIGH
         BatchProcessingLevel.MEDIUM -> BatchProcessingLevelAndroid.MEDIUM
         BatchProcessingLevel.LOW -> BatchProcessingLevelAndroid.LOW
     }
 
-private val BatchSize.native: BatchSizeAndroid
+internal val BatchSize.native: BatchSizeAndroid
     get() = when (this) {
         BatchSize.LARGE -> BatchSizeAndroid.LARGE
         BatchSize.MEDIUM -> BatchSizeAndroid.MEDIUM
         BatchSize.SMALL -> BatchSizeAndroid.SMALL
     }
 
-private val DatadogSite.native: DatadogSiteAndroid
+internal val DatadogSite.native: DatadogSiteAndroid
     get() = when (this) {
         DatadogSite.US1 -> DatadogSiteAndroid.US1
         DatadogSite.US1_FED -> DatadogSiteAndroid.US1_FED
