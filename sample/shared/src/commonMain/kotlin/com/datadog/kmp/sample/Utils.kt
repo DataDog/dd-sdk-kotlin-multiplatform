@@ -49,6 +49,9 @@ fun initDatadog(context: Any? = null) {
         .setBatchSize(BatchSize.MEDIUM)
         .setUploadFrequency(UploadFrequency.AVERAGE)
         .setBatchProcessingLevel(BatchProcessingLevel.MEDIUM)
+        .apply {
+            platformSpecificSetup(this)
+        }
         .build()
 
     Datadog.initialize(context = context, configuration = configuration, trackingConsent = TrackingConsent.GRANTED)
@@ -201,3 +204,4 @@ expect fun startWebViewTracking(webView: Any)
 expect fun stopWebViewTracking(webView: Any)
 internal expect fun initSessionReplay()
 internal expect fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder)
+internal expect fun platformSpecificSetup(configurationBuilder: Configuration.Builder)

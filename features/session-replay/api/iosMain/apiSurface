@@ -6,3 +6,4 @@ fun platform.UIKit.UIView.setSessionReplayHidden(Boolean)
 fun platform.UIKit.UIView.setSessionReplayImagePrivacy(com.datadog.kmp.sessionreplay.configuration.ImagePrivacy?)
 fun platform.UIKit.UIView.setSessionReplayTextAndInputPrivacy(com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy?)
 fun platform.UIKit.UIView.setSessionReplayTouchPrivacy(com.datadog.kmp.sessionreplay.configuration.TouchPrivacy?)
+fun SessionReplayConfiguration.Builder.enableSwiftUISupport(Boolean): SessionReplayConfiguration.Builder

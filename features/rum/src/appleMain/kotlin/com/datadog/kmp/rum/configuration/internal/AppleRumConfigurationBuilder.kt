@@ -243,6 +243,10 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
         nativeConfiguration.setAppHangThreshold(thresholdSeconds)
     }
 
+    fun trackWatchdogTerminations(enabled: Boolean) {
+        nativeConfiguration.setTrackWatchdogTerminations(enabled)
+    }
+
     override fun build(): DDRUMConfiguration {
         return nativeConfiguration
     }

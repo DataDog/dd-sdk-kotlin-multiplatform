@@ -146,7 +146,7 @@ actual object Datadog {
     }
 }
 
-private val SdkLogVerbosity?.native: Long
+internal val SdkLogVerbosity?.native: Long
     get() = when (this) {
         SdkLogVerbosity.DEBUG -> DDSDKVerbosityLevelDebug
         SdkLogVerbosity.WARN -> DDSDKVerbosityLevelWarn
@@ -155,7 +155,7 @@ private val SdkLogVerbosity?.native: Long
         null -> DDSDKVerbosityLevelNone
     }
 
-private val Long.toSdkLogVerbosity: SdkLogVerbosity?
+internal val Long.toSdkLogVerbosity: SdkLogVerbosity?
     get() = when (this) {
         DDSDKVerbosityLevelDebug -> SdkLogVerbosity.DEBUG
         DDSDKVerbosityLevelWarn -> SdkLogVerbosity.WARN
@@ -164,7 +164,7 @@ private val Long.toSdkLogVerbosity: SdkLogVerbosity?
         else -> null
     }
 
-private val Configuration.native: DDConfiguration
+internal val Configuration.native: DDConfiguration
     get() {
         val nativeConfig = DDConfiguration(
             clientToken = clientToken,
@@ -182,6 +182,7 @@ private val Configuration.native: DDConfiguration
             )
         )
         nativeConfig.setProxy(coreConfig.proxyConfiguration)
+        nativeConfig.setBackgroundTasksEnabled(coreConfig.backgroundTasksEnabled)
         return nativeConfig
     }
 
@@ -192,21 +193,21 @@ private val TrackingConsent.native: DDTrackingConsent
         TrackingConsent.NOT_GRANTED -> DDTrackingConsent.notGranted()
     }
 
-private val UploadFrequency.native: DDUploadFrequency
+internal val UploadFrequency.native: DDUploadFrequency
     get() = when (this) {
         UploadFrequency.FREQUENT -> DDUploadFrequencyFrequent
         UploadFrequency.AVERAGE -> DDUploadFrequencyAverage
         UploadFrequency.RARE -> DDUploadFrequencyRare
     }
 
-private val BatchProcessingLevel.native: DDUploadFrequency
+internal val BatchProcessingLevel.native: DDUploadFrequency
     get() = when (this) {
         BatchProcessingLevel.HIGH -> DDBatchProcessingLevelHigh
         BatchProcessingLevel.MEDIUM -> DDBatchProcessingLevelMedium
         BatchProcessingLevel.LOW -> DDBatchProcessingLevelLow
     }
 
-private val BatchSize.native: DDUploadFrequency
+internal val BatchSize.native: DDUploadFrequency
     get() = when (this) {
         BatchSize.LARGE -> DDBatchSizeLarge
         BatchSize.MEDIUM -> DDBatchSizeMedium

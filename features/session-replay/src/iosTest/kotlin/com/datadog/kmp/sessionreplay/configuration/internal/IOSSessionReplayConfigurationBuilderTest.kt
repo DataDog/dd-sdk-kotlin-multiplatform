@@ -25,6 +25,7 @@ import com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
 import com.datadog.kmp.sessionreplay.configuration.SessionReplayPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
+import com.datadog.tools.random.randomBoolean
 import com.datadog.tools.random.randomEnumValue
 import com.datadog.tools.random.randomFloat
 import kotlin.test.BeforeTest
@@ -50,7 +51,7 @@ class IOSSessionReplayConfigurationBuilderTest {
     }
 
     @Test
-    fun `M call platform configuration builder+setPrivacy W setPrivacy`() {
+    fun `M call platform configuration setPrivacy W setPrivacy`() {
         // Given
         val fakePrivacy = randomEnumValue<SessionReplayPrivacy>()
 
@@ -62,7 +63,7 @@ class IOSSessionReplayConfigurationBuilderTest {
     }
 
     @Test
-    fun `M call platform configuration builder+setImagePrivacy W setImagePrivacy`() {
+    fun `M call platform configuration setImagePrivacy W setImagePrivacy`() {
         // Given
         val fakeImagePrivacy = randomEnumValue<ImagePrivacy>()
 
@@ -74,7 +75,7 @@ class IOSSessionReplayConfigurationBuilderTest {
     }
 
     @Test
-    fun `M call platform configuration builder+setTouchPrivacy W setTouchPrivacy`() {
+    fun `M call platform configuration setTouchPrivacy W setTouchPrivacy`() {
         // Given
         val fakeTouchPrivacy = randomEnumValue<TouchPrivacy>()
 
@@ -86,7 +87,7 @@ class IOSSessionReplayConfigurationBuilderTest {
     }
 
     @Test
-    fun `M call platform configuration builder+setTextAndInputPrivacy W setTextAndInputPrivacy`() {
+    fun `M call platform configuration setTextAndInputPrivacy W setTextAndInputPrivacy`() {
         // Given
         val fakeTextAndInputPrivacy = randomEnumValue<TextAndInputPrivacy>()
 
@@ -97,6 +98,36 @@ class IOSSessionReplayConfigurationBuilderTest {
         assertEquals(
             fakeTextAndInputPrivacy.native,
             testedConfigurationBuilder.nativeConfiguration.textAndInputPrivacyLevel()
+        )
+    }
+
+    @Test
+    fun `M call platform configuration setStartRecordingImmediately W startRecordingImmediately`() {
+        // Given
+        val fakeEnabled = randomBoolean()
+
+        // When
+        testedConfigurationBuilder.startRecordingImmediately(fakeEnabled)
+
+        // Then
+        assertEquals(
+            fakeEnabled,
+            testedConfigurationBuilder.nativeConfiguration.startRecordingImmediately()
+        )
+    }
+
+    @Test
+    fun `M call platform configuration setFeatureFlags W enableSwiftUISupport`() {
+        // Given
+        val enableSwiftUISupport = randomBoolean()
+
+        // When
+        testedConfigurationBuilder.enableSwiftUISupport(enableSwiftUISupport)
+
+        // Then
+        assertEquals(
+            enableSwiftUISupport,
+            testedConfigurationBuilder.nativeConfiguration.featureFlags()["swiftui"] as Boolean
         )
     }
 

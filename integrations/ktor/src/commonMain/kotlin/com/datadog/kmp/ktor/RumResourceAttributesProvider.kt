@@ -6,13 +6,16 @@
 
 package com.datadog.kmp.ktor
 
+import com.datadog.kmp.ktor.internal.plugin.DatadogKtorPlugin
 import io.ktor.client.request.HttpRequest
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.utils.EmptyContent
 import io.ktor.http.Headers
 import io.ktor.http.HttpMethod
 import io.ktor.http.Url
 import io.ktor.http.clone
+import io.ktor.http.content.OutgoingContent
 import io.ktor.util.Attributes
 import io.ktor.util.putAll
 
@@ -52,6 +55,7 @@ interface RumResourceAttributesProvider {
  * @param method the [HttpMethod] to be used.
  * @param headers the [Headers] to be used.
  * @param body the body of the request (if any). Note: it is a raw body, before any content transformation is applied.
+ * @param transformedBody the transformed body of the request (if any).
  * @param attributes the [Attributes] of the request.
  */
 class HttpRequestSnapshot internal constructor(
@@ -59,16 +63,18 @@ class HttpRequestSnapshot internal constructor(
     val method: HttpMethod,
     val headers: Headers,
     val body: Any,
+    val transformedBody: OutgoingContent,
     val attributes: Attributes
 ) {
     internal companion object {
-        fun takeFrom(builder: HttpRequestBuilder) = HttpRequestSnapshot(
+        fun takeFrom(sendRequest: HttpRequestBuilder) = HttpRequestSnapshot(
             // build() mutates the builder, so using clone to have a separate copy
-            url = builder.url.clone().build(),
-            method = builder.method,
-            headers = builder.headers.build(),
-            body = builder.body,
-            attributes = Attributes().apply { putAll(builder.attributes) }
+            url = sendRequest.url.clone().build(),
+            method = sendRequest.method,
+            headers = sendRequest.headers.build(),
+            body = sendRequest.attributes.getOrNull(DatadogKtorPlugin.DD_ORIGINAL_BODY_ATTR) ?: EmptyContent,
+            transformedBody = sendRequest.body as? OutgoingContent ?: EmptyContent,
+            attributes = Attributes().apply { putAll(sendRequest.attributes) }
         )
     }
 }

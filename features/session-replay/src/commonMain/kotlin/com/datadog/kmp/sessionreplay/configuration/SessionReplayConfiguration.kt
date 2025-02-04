@@ -16,7 +16,7 @@ data class SessionReplayConfiguration internal constructor(
 ) {
 
     /**
-     * A Builder class for a [SessionReplayConfiguration].
+     * A Builder class for a [SessionReplayConfiguration]. See more methods in platform-specific source sets.
      */
     class Builder {
 
@@ -82,6 +82,16 @@ data class SessionReplayConfiguration internal constructor(
          */
         fun setTextAndInputPrivacy(privacy: TextAndInputPrivacy): Builder {
             platformBuilder.setTextAndInputPrivacy(privacy)
+            return this
+        }
+
+        /**
+         * Should recording start automatically (or be manually started).
+         * If not specified then by default it starts automatically.
+         * @param enabled whether recording should start automatically or not.
+         */
+        fun startRecordingImmediately(enabled: Boolean): Builder {
+            platformBuilder.startRecordingImmediately(enabled)
             return this
         }
 

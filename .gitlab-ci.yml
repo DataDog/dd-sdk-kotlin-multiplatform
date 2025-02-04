@@ -11,6 +11,7 @@ variables:
   DD_CIVISIBILITY_ENABLED: "true"
   DD_INSIDE_CI: "true"
   DD_COMMON_AGENT_CONFIG: "dd.env=ci,dd.trace.enabled=false,dd.jmx.fetch.enabled=false"
+  DD_JAVA_AGENT_FILE: "dd-java-agent-1.45.1.jar"
 
 stages:
   - ci-image
@@ -106,7 +107,7 @@ analysis:licenses:
   stage: analysis
   timeout: 30m
   script:
-    - GRADLE_OPTS="-Xmx3072m" ./gradlew checkDependencyLicenses --stacktrace --no-daemon
+    - ./gradlew checkDependencyLicenses --stacktrace --no-daemon
 
 # Test
 
@@ -118,7 +119,8 @@ jvm-unit-test:
   script:
     - rm -rf ~/.gradle/daemon/
     - export DD_AGENT_HOST="$BUILDENV_HOST_IP"
-    - GRADLE_OPTS="-Xmx4096m" ./gradlew jvmUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_TRACER_FOLDER/dd-java-agent.jar=$DD_COMMON_AGENT_CONFIG
+    - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
+    - ./gradlew jvmUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
   artifacts:
     when: always
     expire_in: 1 week
@@ -130,12 +132,11 @@ jvm-unit-test:
 ios-unit-test:
   stage: test
   tags: [ "macos:sonoma" ]
-  image: $CI_IMAGE_DOCKER
   timeout: 1h
   script:
-    # TODO RUM-4602 Datadog Java Agent fails to start (macOS problem? arm64 problem?)
     - pod repo update
-    - ./gradlew iosUnitTestAll
+    - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
+    - ./gradlew iosUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
   artifacts:
     when: always
     expire_in: 1 week
@@ -146,13 +147,12 @@ ios-unit-test:
 tvos-unit-test:
   stage: test
   tags: [ "macos:sonoma" ]
-  image: $CI_IMAGE_DOCKER
   timeout: 1h
   script:
     - xcodebuild -downloadPlatform tvOS -quiet
-    # TODO RUM-4602 Datadog Java Agent fails to start (macOS problem? arm64 problem?)
     - pod repo update
-    - ./gradlew tvosUnitTestAll
+    - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
+    - ./gradlew tvosUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
   artifacts:
     when: always
     expire_in: 1 week
@@ -168,8 +168,9 @@ sample-app-build-ios:
     BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.4"
   script:
     - pod repo update
+    - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
     # temporary workaround for RUM-4282
-    - ./gradlew :core:podBuildDatadogObjcIphonesimulator :core:podBuildDatadogCrashReportingIphonesimulator
+    - ./gradlew :core:podBuildDatadogObjcIphonesimulator :core:podBuildDatadogCrashReportingIphonesimulator --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
     - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample iOS" build | xcbeautify --preserve-unbeautified
 
 sample-app-build-tvos:
@@ -181,8 +182,9 @@ sample-app-build-tvos:
   script:
     - xcodebuild -downloadPlatform tvOS -quiet
     - pod repo update
+    - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
     # temporary workaround for RUM-4282
-    - ./gradlew :core:podBuildDatadogObjcAppletvsimulator :core:podBuildDatadogCrashReportingAppletvsimulator
+    - ./gradlew :core:podBuildDatadogObjcAppletvsimulator :core:podBuildDatadogCrashReportingAppletvsimulator --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
     - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample tvOS" build | xcbeautify --preserve-unbeautified
 
 sample-app-build-android:
@@ -193,7 +195,8 @@ sample-app-build-android:
   script:
     - rm -rf ~/.gradle/daemon/
     - export DD_AGENT_HOST="$BUILDENV_HOST_IP"
-    - GRADLE_OPTS="-Xmx4096m" ./gradlew :sample:androidApp:assembleDebug --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_TRACER_FOLDER/dd-java-agent.jar=$DD_COMMON_AGENT_CONFIG
+    - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
+    - ./gradlew :sample:androidApp:assembleDebug --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
 
 # PUBLISH ARTIFACTS ON MAVEN
 
@@ -272,6 +275,18 @@ publish:release-ktor:
     - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :integrations:ktor:publishToSonatype --stacktrace --no-daemon
+
+publish:release-ktor3:
+  tags: [ "macos:sonoma" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - xcodebuild -downloadPlatform tvOS -quiet
+    - !reference [.snippets, install-android-sdk]
+    - !reference [.snippets, set-publishing-credentials]
+    - ./gradlew :integrations:ktor3:publishToSonatype --stacktrace --no-daemon
 
 # SLACK NOTIFICATIONS
 

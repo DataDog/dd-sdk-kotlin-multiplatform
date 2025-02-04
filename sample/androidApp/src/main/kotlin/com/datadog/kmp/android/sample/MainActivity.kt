@@ -42,6 +42,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.datadog.android.compose.ExperimentalTrackingApi
 import com.datadog.android.compose.NavigationViewTrackingEffect
+import com.datadog.android.sessionreplay.TextAndInputPrivacy
+import com.datadog.android.sessionreplay.compose.sessionReplayTextAndInputPrivacy
 import com.datadog.kmp.sample.CRASH_SCREEN_NAME
 import com.datadog.kmp.sample.HOME_SCREEN_NAME
 import com.datadog.kmp.sample.LOGS_SCREEN_NAME
@@ -54,6 +56,7 @@ import com.datadog.kmp.sample.network.startGetRequest
 import com.datadog.kmp.sample.network.startPostRequest
 import com.datadog.kmp.sample.startWebViewTracking
 import com.datadog.kmp.sample.trackAction
+import kotlin.random.Random
 import android.webkit.WebView as AndroidWebView
 
 class MainActivity : ComponentActivity() {
@@ -116,6 +119,13 @@ fun HomeView(navController: NavController) {
             ) {
                 Text(text = "WEBVIEW")
             }
+
+            Text(
+                "Session Replay Hidden Text",
+                modifier = Modifier
+                    .padding(top = 64.dp)
+                    .sessionReplayTextAndInputPrivacy(TextAndInputPrivacy.MASK_ALL)
+            )
         }
     }
 }
@@ -186,7 +196,12 @@ fun RumView() {
         ) {
             Button(onClick = {
                 trackAction("Start GET request")
-                startGetRequest("https://httpbin.org/get")
+                val url = if (Random.nextBoolean()) {
+                    "https://httpbin.org/get"
+                } else {
+                    "https://httpbin.org/redirect-to?url=get"
+                }
+                startGetRequest(url)
             }, colors = ButtonDefaults.buttonColors(containerColor = Color.Orange)) {
                 Text(text = "Trigger GET request")
             }

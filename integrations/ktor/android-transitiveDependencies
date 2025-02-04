@@ -1,14 +1,14 @@
 Dependencies List
 
 com.benasher44:uuid-jvm:0.8.4                                   :    8 Kb
-io.ktor:ktor-client-core-jvm:2.3.11                             :  816 Kb
-io.ktor:ktor-events-jvm:2.3.11                                  :    7 Kb
-io.ktor:ktor-http-jvm:2.3.11                                    :  404 Kb
-io.ktor:ktor-io-jvm:2.3.11                                      :  791 Kb
-io.ktor:ktor-serialization-jvm:2.3.11                           :   24 Kb
-io.ktor:ktor-utils-jvm:2.3.11                                   :  328 Kb
-io.ktor:ktor-websocket-serialization-jvm:2.3.11                 :    6 Kb
-io.ktor:ktor-websockets-jvm:2.3.11                              :  173 Kb
+io.ktor:ktor-client-core-jvm:2.3.13                             :  816 Kb
+io.ktor:ktor-events-jvm:2.3.13                                  :    7 Kb
+io.ktor:ktor-http-jvm:2.3.13                                    :  404 Kb
+io.ktor:ktor-io-jvm:2.3.13                                      :  791 Kb
+io.ktor:ktor-serialization-jvm:2.3.13                           :   24 Kb
+io.ktor:ktor-utils-jvm:2.3.13                                   :  328 Kb
+io.ktor:ktor-websocket-serialization-jvm:2.3.13                 :    6 Kb
+io.ktor:ktor-websockets-jvm:2.3.13                              :  173 Kb
 org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22                  :  963 b 
 org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22                  :  969 b 
 org.jetbrains.kotlin:kotlin-stdlib:2.0.21                       : 1706 Kb

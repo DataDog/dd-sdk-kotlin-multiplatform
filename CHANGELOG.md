@@ -1,3 +1,24 @@
+# 0.5.0 / 2025-02-04
+
+* [FEATURE] Session Replay: Add Session Replay `startRecordingImmediately` configuration API. See [#129](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/129)
+* [FEATURE] RUM: Support tracking Watchdog terminations on iOS/tvOS. See [#135](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/135)
+* [FEATURE] Ktor instrumentation: Trace context injection control. See [#141](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/141)
+* [FEATURE] Ktor 3 support. See [#143](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/143)
+* [IMPROVEMENT] Core: Update additional properties handling from json schema. See [#118](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/118)
+* [IMPROVEMENT] Supporting tests for core module. See [#133](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/133)
+* [IMPROVEMENT] Support redirects in Ktor instrumentation. See [#136](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/136)
+* [IMPROVEMENT] Ktor instrumentation: Rename `traceSamplingRate` to `traceSampleRate`. See [#137](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/137)
+* [IMPROVEMENT] Add Ktor plugin initializer with default tracing header types. See [#138](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/138)
+* [IMPROVEMENT] Ktor instrumentation: Use deterministic trace sampling. See [#139](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/139)
+* [IMPROVEMENT] Ktor instrumentation: Use thread-safe random. See [#140](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/140)
+* [IMPROVEMENT] Add unit tests for tracing headers injection in Ktor instrumentation. See [#142](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/142)
+* [MAINTENANCE] Next dev iteration. See [#123](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/123)
+* [MAINTENANCE] Update Datadog iOS SDK to 2.21.0. See [#127](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/127)
+* [MAINTENANCE] Disable Gradle build cache for CodeQL job. See [#130](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/130)
+* [MAINTENANCE] Update iOS SDK to 2.22.0, Android SDK to 2.17.0. See [#132](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/132)
+* [MAINTENANCE] Attach Datadog Java Agent to test jobs. See [#134](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/134)
+* [MAINTENANCE] Update Android SDK to 2.18.0, iOS SDK to 2.22.1. See [#144](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/144)
+
 # 0.4.0 / 2024-12-09
 
 * [FEATURE] Session Replay: Support fine-grained masking and privacy overrides. See [#112](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/112)

@@ -179,8 +179,13 @@ internal struct RumView: View {
             }
 
             Button(action: {
+                let url = if (Bool.random()) {
+                    "https://httpbin.org/get"
+                } else {
+                    "https://httpbin.org/redirect-to?url=get"
+                }
                 UtilsKt.trackAction(actionName: ContentView.GET_REQUEST_LABEL)
-                NetworkUtilsKt.startGetRequest(url: "https://httpbin.org/get")
+                NetworkUtilsKt.startGetRequest(url: url)
             }) {
                 Text(ContentView.GET_REQUEST_LABEL)
                     .padding()

@@ -41,5 +41,6 @@ dependencies {
     // has to be here, because compose module above has some classes from Android RUM in public API and
     // compose module has RUM as "implementation", not "api". This is mentioned in README
     implementation(libs.datadog.android.rum)
+    implementation(libs.datadog.android.sessionReplayCompose)
     debugImplementation(libs.compose.ui.tooling)
 }

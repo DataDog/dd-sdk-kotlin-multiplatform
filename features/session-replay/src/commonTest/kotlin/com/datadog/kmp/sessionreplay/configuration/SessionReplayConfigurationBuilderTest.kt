@@ -7,6 +7,7 @@
 package com.datadog.kmp.sessionreplay.configuration
 
 import com.datadog.kmp.sessionreplay.configuration.internal.PlatformSessionReplayConfigurationBuilder
+import com.datadog.tools.random.randomBoolean
 import com.datadog.tools.random.randomEnumValue
 import dev.mokkery.answering.returns
 import dev.mokkery.every
@@ -89,6 +90,20 @@ class SessionReplayConfigurationBuilderTest {
         // Then
         verify {
             mockPlatformSessionReplayConfigurationBuilder.setTextAndInputPrivacy(fakeTextAndInputPrivacy)
+        }
+    }
+
+    @Test
+    fun `M call platform configuration builder+startRecordingImmediately W startRecordingImmediately`() {
+        // Given
+        val fakeEnabled = randomBoolean()
+
+        // When
+        testedSessionReplayConfigurationBuilder.startRecordingImmediately(fakeEnabled)
+
+        // Then
+        verify {
+            mockPlatformSessionReplayConfigurationBuilder.startRecordingImmediately(fakeEnabled)
         }
     }
 }

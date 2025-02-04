@@ -51,12 +51,12 @@ kotlin {
         commonMain.dependencies {
             api(projects.core)
             api(projects.features.rum)
-            implementation(libs.ktor.client.core)
+            implementation(libs.ktor2.client.core)
             implementation(libs.uuid)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
-            implementation(libs.ktor.client.mock)
+            implementation(libs.ktor2.client.mock)
             implementation(projects.tools.unit)
         }
         appleMain.dependencies {
@@ -82,5 +82,5 @@ mokkery {
 }
 
 datadogBuildConfig {
-    pomDescription = "The Ktor integration to use with the Datadog monitoring library for Kotlin Multiplatform."
+    pomDescription = "The Ktor 2 integration to use with the Datadog monitoring library for Kotlin Multiplatform."
 }
