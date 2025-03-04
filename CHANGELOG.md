@@ -1,3 +1,12 @@
+# 1.0.0 / 2025-03-03
+
+* [MAINTENANCE] Add Android sample app name. See [#147](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/147)
+* [MAINTENANCE] Update `github/codeql-action` to latest version. See [#152](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/152)
+* [MAINTENANCE] Pin github actions to commit hash. See [#153](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/153)
+* [MAINTENANCE] Update Ktor instrumentation API surface with proper signature of the `datadogKtorPlugin` overload. See [#146](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/146)
+* [MAINTENANCE] Update iOS SDK to 2.23.0. See [#157](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/157)
+* [MAINTENANCE] Update AGP version to 8.8.2. See [#158](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/158)
+
 # 0.5.0 / 2025-02-04
 
 * [FEATURE] Session Replay: Add Session Replay `startRecordingImmediately` configuration API. See [#129](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/129)
