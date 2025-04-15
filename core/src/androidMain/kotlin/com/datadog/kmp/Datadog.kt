@@ -96,6 +96,7 @@ actual object Datadog {
         email: String?,
         extraInfo: Map<String, Any?>
     ) {
+        @Suppress("DEPRECATION")
         DatadogAndroid.setUserInfo(id, name, email, extraInfo)
     }
 
