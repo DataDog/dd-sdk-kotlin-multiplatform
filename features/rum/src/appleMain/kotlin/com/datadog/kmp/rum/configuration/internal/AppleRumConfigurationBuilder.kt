@@ -211,6 +211,10 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
         }
     }
 
+    override fun trackAnonymousUser(enabled: Boolean) {
+        nativeConfiguration.setTrackAnonymousUser(enabled)
+    }
+
     fun setUiKitViewsPredicate(uiKitViewsPredicate: UIKitRUMViewsPredicate) {
         val nativePredicate = if (uiKitViewsPredicate is DefaultUIKitRUMViewsPredicate) {
             // just a short path to avoid creating unnecessary layers. NB: if DefaultUIKitRUMViewsPredicate becomes

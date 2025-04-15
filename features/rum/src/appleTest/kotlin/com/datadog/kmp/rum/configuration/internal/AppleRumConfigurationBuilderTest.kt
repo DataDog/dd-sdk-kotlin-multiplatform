@@ -350,6 +350,18 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
     }
 
     @Test
+    fun `M set track anonymous user W trackAnonymousUser`() {
+        // Given
+        val fakeTrackAnonymousUser = randomBoolean()
+
+        // When
+        testedBuilder.trackAnonymousUser(fakeTrackAnonymousUser)
+
+        // Then
+        assertEquals(fakeTrackAnonymousUser, fakeNativeRumConfiguration.trackAnonymousUser())
+    }
+
+    @Test
     fun `M return native configuration W build`() {
         // When
         val nativeConfiguration = testedBuilder.build()

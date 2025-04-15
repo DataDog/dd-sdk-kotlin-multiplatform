@@ -176,6 +176,18 @@ class RumConfiguration internal constructor(internal val nativeConfiguration: An
         }
 
         /**
+         * Enables/Disables collection of an anonymous user ID across sessions.
+         *
+         * By default, the SDK generates a unique, non-personal anonymous user ID that is
+         * persisted across app launches. This ID is attached to each RUM session, allowing
+         * to link sessions originating from the same user/device without collecting personal data.
+         */
+        fun trackAnonymousUser(enabled: Boolean): Builder {
+            platformBuilder.trackAnonymousUser(enabled)
+            return this
+        }
+
+        /**
          * Builds a [RumConfiguration] based on the current state of this Builder.
          */
         fun build(): RumConfiguration {

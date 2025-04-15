@@ -42,5 +42,7 @@ internal interface PlatformRumConfigurationBuilder<out T : Any> {
 
     fun setLongTaskEventMapper(eventMapper: EventMapper<LongTaskEvent>)
 
+    fun trackAnonymousUser(enabled: Boolean)
+
     fun build(): T
 }

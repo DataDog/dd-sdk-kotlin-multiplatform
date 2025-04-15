@@ -71,6 +71,7 @@ class com.datadog.kmp.rum.configuration.RumConfiguration
     fun setActionEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ActionEvent>): Builder
     fun setErrorEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ErrorEvent>): Builder
     fun setLongTaskEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.LongTaskEvent>): Builder
+    fun trackAnonymousUser(Boolean): Builder
     fun build(): RumConfiguration
 fun interface com.datadog.kmp.rum.configuration.RumSessionListener
   fun onSessionStarted(String, Boolean)
