@@ -74,6 +74,7 @@ fun initDatadog(context: Any? = null) {
         }
         .trackLongTasks()
         .trackFrustrations(true)
+        .trackAnonymousUser(true)
         .apply {
             setupRumMappers()
         }
