@@ -66,8 +66,27 @@ expect object Datadog {
      * @param extraInfo additional information. An extra information can be
      * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
      */
+    @Deprecated(
+        "Use setUserInfo call with mandatory User ID instead."
+    )
     fun setUserInfo(
         id: String? = null,
+        name: String? = null,
+        email: String? = null,
+        extraInfo: Map<String, Any?> = emptyMap()
+    )
+
+    /**
+     * Sets the user information.
+     *
+     * @param id (mandatory) a unique user identifier (relevant to your business domain)
+     * @param name (nullable) the user name or alias
+     * @param email (nullable) the user email
+     * @param extraInfo additional information. An extra information can be
+     * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
+     */
+    fun setUserInfo(
+        id: String,
         name: String? = null,
         email: String? = null,
         extraInfo: Map<String, Any?> = emptyMap()

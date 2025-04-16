@@ -87,6 +87,7 @@ fun initDatadog(context: Any? = null) {
     initSessionReplay()
 
     Datadog.setUserInfo(
+        id = "123456789",
         name = "Random User",
         email = "user@example.com",
         extraInfo = mapOf(
