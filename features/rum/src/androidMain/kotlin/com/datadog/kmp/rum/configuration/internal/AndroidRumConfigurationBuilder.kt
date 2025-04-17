@@ -173,6 +173,10 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
         }
     }
 
+    override fun trackAnonymousUser(enabled: Boolean) {
+        nativeConfigurationBuilder.trackAnonymousUser(enabled)
+    }
+
     fun trackNonFatalAnrs(enabled: Boolean) {
         nativeConfigurationBuilder.trackNonFatalAnrs(enabled)
     }
