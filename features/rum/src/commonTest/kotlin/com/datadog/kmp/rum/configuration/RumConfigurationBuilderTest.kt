@@ -206,4 +206,18 @@ class RumConfigurationBuilderTest {
             mockPlatformRumConfigurationBuilder.setLongTaskEventMapper(fakeLongTaskEventMapper)
         }
     }
+
+    @Test
+    fun `M call platform RUM configuration builder+trackAnonymousUser W trackAnonymousUser`() {
+        // Given
+        val fakeTrackAnonymousUser = true
+
+        // When
+        testedRumConfigurationBuilder.trackAnonymousUser(fakeTrackAnonymousUser)
+
+        // Then
+        verify {
+            mockPlatformRumConfigurationBuilder.trackAnonymousUser(fakeTrackAnonymousUser)
+        }
+    }
 }

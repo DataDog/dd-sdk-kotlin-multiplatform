@@ -417,6 +417,17 @@ internal class AndroidRumConfigurationBuilderTest {
     }
 
     @Test
+    fun `M call platform RUM configuration builder+trackAnonymousUser W trackAnonymousUser`(
+        @BoolForgery fakeTrackAnonymousUser: Boolean
+    ) {
+        // When
+        testedBuilder.trackAnonymousUser(fakeTrackAnonymousUser)
+
+        // Then
+        verify(mockNativeRumConfigurationBuilder).trackAnonymousUser(fakeTrackAnonymousUser)
+    }
+
+    @Test
     fun `M call platform RUM configuration builder+build W build`() {
         // Given
         val mockNativeConfiguration = mock<NativeAndroidConfiguration>()
