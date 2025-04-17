@@ -1,3 +1,10 @@
+# 1.1.0 / 2025-04-17
+
+* [FEATURE] Add API to track anonymous user. See [#166](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/166)
+* [IMPROVEMENT] Add `setUserInfo` API with mandatory user ID. See [#167](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/167)
+* [MAINTENANCE] Script to automatically create/update `NATIVE_SDK_VERSIONS.md`. See [#164](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/164)
+* [MAINTENANCE] Update Datadog iOS SDK to 2.26.0, Datadog Android SDK to 2.20.0. See [#165](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/165)
+
 # 1.0.0 / 2025-03-03
 
 * [MAINTENANCE] Add Android sample app name. See [#147](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/147)
