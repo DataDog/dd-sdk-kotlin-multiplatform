@@ -11,7 +11,7 @@ variables:
   DD_CIVISIBILITY_ENABLED: "true"
   DD_INSIDE_CI: "true"
   DD_COMMON_AGENT_CONFIG: "dd.env=ci,dd.trace.enabled=false,dd.jmx.fetch.enabled=false"
-  DD_JAVA_AGENT_FILE: "dd-java-agent-1.45.1.jar"
+  DD_JAVA_AGENT_FILE: "dd-java-agent-1.50.0.jar"
 
 stages:
   - ci-image
