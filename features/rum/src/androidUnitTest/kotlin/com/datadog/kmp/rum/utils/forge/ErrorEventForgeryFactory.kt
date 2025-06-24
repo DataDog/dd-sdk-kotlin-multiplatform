@@ -6,7 +6,6 @@
 
 package com.datadog.kmp.rum.utils.forge
 
-import com.datadog.android.core.internal.utils.loggableStackTrace
 import com.datadog.android.rum.model.ErrorEvent
 import com.datadog.tools.unit.forge.aThrowable
 import com.datadog.tools.unit.forge.exhaustiveAttributes
@@ -26,7 +25,7 @@ internal class ErrorEventForgeryFactory : ForgeryFactory<ErrorEvent> {
                 id = forge.aNullable { getForgery<UUID>().toString() },
                 message = forge.anAlphabeticalString(),
                 source = forge.getForgery(),
-                stack = forge.aNullable { aThrowable().stackTrace.loggableStackTrace() },
+                stack = forge.aNullable { aThrowable().stackTraceToString() },
                 resource = forge.aNullable {
                     ErrorEvent.Resource(
                         url = aStringMatching("https://[a-z]+.[a-z]{3}/[a-z0-9_/]+"),
@@ -45,7 +44,7 @@ internal class ErrorEventForgeryFactory : ForgeryFactory<ErrorEvent> {
                 isCrash = forge.aNullable { aBool() },
                 type = forge.aNullable { anAlphabeticalString() },
                 handling = forge.aNullable { getForgery() },
-                handlingStack = forge.aNullable { aThrowable().stackTrace.loggableStackTrace() },
+                handlingStack = forge.aNullable { aThrowable().stackTraceToString() },
                 category = forge.aNullable { getForgery() },
                 threads = forge.aNullable {
                     aList {
