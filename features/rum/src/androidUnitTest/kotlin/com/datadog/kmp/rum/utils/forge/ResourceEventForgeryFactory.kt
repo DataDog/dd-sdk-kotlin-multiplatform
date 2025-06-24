@@ -131,6 +131,13 @@ internal class ResourceEventForgeryFactory :
                     additionalProperties = exhaustiveAttributes(excludedKeys = setOf("id", "name", "email"))
                 )
             },
+            account = forge.aNullable {
+                ResourceEvent.Account(
+                    id = anHexadecimalString(),
+                    name = aNullable { aStringMatching("[A-Z][a-z]+ [A-Z]\\. [A-Z][a-z]+") },
+                    additionalProperties = exhaustiveAttributes(excludedKeys = setOf("id", "name"))
+                )
+            },
             action = forge.aNullable {
                 ResourceEvent.Action(aList { getForgery<UUID>().toString() })
             },

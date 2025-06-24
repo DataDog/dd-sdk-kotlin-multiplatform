@@ -105,6 +105,26 @@
       },
       "readOnly": true
     },
+    "account": {
+      "type": "object",
+      "description": "Account properties",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identifier of the account",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the account",
+          "readOnly": true
+        }
+      },
+      "additionalProperties": {
+        "type": "object"
+      },
+      "readOnly": true
+    },
     "error": {
       "type": "object",
       "description": "The additional error information in case this log is marked as an error",
