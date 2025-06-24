@@ -40,7 +40,7 @@ RUN apt update && apt install -y python3
 
 #  Install pip for aws
 RUN set -x \
- && curl -OL https://bootstrap.pypa.io/get-pip.py \
+ && curl -OL https://bootstrap.pypa.io/pip/3.8/get-pip.py \
  && python3 get-pip.py \
  && rm get-pip.py
 
