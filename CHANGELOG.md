@@ -1,3 +1,11 @@
+# 1.2.0 / 2025-06-26
+
+* [FEATURE] Add `AP2` datacenter support. See [#176](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/176)
+* [FEATURE] Add support for `account` info APIs. See [#177](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/177)
+* [MAINTENANCE] Add workflow: Changelog update to Confluence. See [#173](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/173)
+* [MAINTENANCE] Update Android SDK to 2.23.0, iOS SDK to 2.29.0. See [#174](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/174)
+* [MAINTENANCE] Update build infrastructure. See [#175](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/175)
+
 # 1.1.0 / 2025-04-17
 
 * [FEATURE] Add API to track anonymous user. See [#166](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/166)
