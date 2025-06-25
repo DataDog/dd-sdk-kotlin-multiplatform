@@ -91,6 +91,13 @@ internal class ErrorEventForgeryFactory : ForgeryFactory<ErrorEvent> {
                     additionalProperties = exhaustiveAttributes(excludedKeys = setOf("id", "name", "email"))
                 )
             },
+            account = forge.aNullable {
+                ErrorEvent.Account(
+                    id = anHexadecimalString(),
+                    name = aNullable { aStringMatching("[A-Z][a-z]+ [A-Z]\\. [A-Z][a-z]+") },
+                    additionalProperties = exhaustiveAttributes(excludedKeys = setOf("id", "name"))
+                )
+            },
             action = forge.aNullable { ErrorEvent.Action(aList { getForgery<UUID>().toString() }) },
             application = ErrorEvent.Application(forge.getForgery<UUID>().toString()),
             service = forge.aNullable { anAlphabeticalString() },

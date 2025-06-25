@@ -36,7 +36,7 @@ const val WEB_VIEW_TRACKING_LOAD_URL = "https://datadoghq.dev/browser-sdk-test-p
     "&application_id=${LibraryConfig.DD_APPLICATION_ID}" +
     "&site=datadoghq.com"
 
-@Suppress("MagicNumber", "LongMethod")
+@Suppress("MagicNumber", "LongMethod", "StringLiteralDuplication")
 fun initDatadog(context: Any? = null) {
     Datadog.verbosity = SdkLogVerbosity.DEBUG
 
@@ -94,8 +94,18 @@ fun initDatadog(context: Any? = null) {
             "age" to 42,
             "location" to "universe",
             "boolean-attribute" to true,
-            "null-attribute" to null,
-            "boolean-attribute" to true
+            "null-attribute" to null
+        )
+    )
+
+    Datadog.setAccountInfo(
+        id = "987654321",
+        name = "Random Account",
+        extraInfo = mapOf(
+            "age" to 42,
+            "location" to "universe",
+            "boolean-attribute" to true,
+            "null-attribute" to null
         )
     )
 }

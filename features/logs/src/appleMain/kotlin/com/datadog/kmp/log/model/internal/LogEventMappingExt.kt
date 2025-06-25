@@ -34,6 +34,7 @@ internal fun DDLogEvent.toCommonModel(): LogEvent = LogEvent(
     ),
     dd = dd().toCommonModel(),
     usr = userInfo().toCommonModel(),
+    // TODO RUM-10485 LogEvent.account is missing in iOS SDK ObjC API
     // TODO RUM-6098 The way network/carrier information is passed varies a lot between Android and iOS, removing it
     //  from the model for now
     error = error()?.toCommonModel(),

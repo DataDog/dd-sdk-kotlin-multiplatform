@@ -89,6 +89,10 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
                 view.usr()?.setUsrInfo(eraseKeyType(it))
             }
 
+            mapped.account?.additionalProperties?.let {
+                view.account()?.setAccountInfo(eraseKeyType(it))
+            }
+
             mapped.context?.additionalProperties?.let {
                 view.context()?.setContextInfo(eraseKeyType(it))
             }
@@ -115,6 +119,10 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
                 resource.usr()?.setUsrInfo(eraseKeyType(it))
             }
 
+            mapped.account?.additionalProperties?.let {
+                resource.account()?.setAccountInfo(eraseKeyType(it))
+            }
+
             mapped.context?.additionalProperties?.let {
                 resource.context()?.setContextInfo(eraseKeyType(it))
             }
@@ -138,6 +146,10 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
 
             mapped.usr?.additionalProperties?.let {
                 action.usr()?.setUsrInfo(eraseKeyType(it))
+            }
+
+            mapped.account?.additionalProperties?.let {
+                action.account()?.setAccountInfo(eraseKeyType(it))
             }
 
             mapped.context?.additionalProperties?.let {
@@ -190,6 +202,10 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
                 error.usr()?.setUsrInfo(eraseKeyType(it))
             }
 
+            mapped.account?.additionalProperties?.let {
+                error.account()?.setAccountInfo(eraseKeyType(it))
+            }
+
             mapped.context?.additionalProperties?.let {
                 error.context()?.setContextInfo(eraseKeyType(it))
             }
@@ -206,6 +222,18 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
             longTask.view().setReferrer(mapped.view.referrer)
             longTask.view().setUrl(mapped.view.url)
             longTask.view().setName(mapped.view.name)
+
+            mapped.usr?.additionalProperties?.let {
+                longTask.usr()?.setUsrInfo(eraseKeyType(it))
+            }
+
+            mapped.account?.additionalProperties?.let {
+                longTask.account()?.setAccountInfo(eraseKeyType(it))
+            }
+
+            mapped.context?.additionalProperties?.let {
+                longTask.context()?.setContextInfo(eraseKeyType(it))
+            }
 
             longTask
         }
