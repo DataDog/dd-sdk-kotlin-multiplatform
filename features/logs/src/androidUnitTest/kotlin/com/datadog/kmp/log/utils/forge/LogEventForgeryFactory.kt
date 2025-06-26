@@ -81,6 +81,13 @@ internal class LogEventForgeryFactory : ForgeryFactory<LogEvent> {
                     additionalProperties = forge.exhaustiveAttributes(excludedKeys = setOf("id", "name", "email"))
                 )
             },
+            account = forge.aNullable {
+                LogEvent.Account(
+                    id = anHexadecimalString(),
+                    name = forge.aNullable { forge.aStringMatching("[A-Z][a-z]+ [A-Z]\\. [A-Z][a-z]+") },
+                    additionalProperties = forge.exhaustiveAttributes(excludedKeys = setOf("id", "name", "email"))
+                )
+            },
             network = forge.aNullable {
                 LogEvent.Network(
                     client = LogEvent.Client(

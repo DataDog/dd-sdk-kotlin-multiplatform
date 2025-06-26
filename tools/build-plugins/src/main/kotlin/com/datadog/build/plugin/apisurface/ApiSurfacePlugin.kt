@@ -17,12 +17,12 @@ import java.util.Locale
 class ApiSurfacePlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        val commonGenerateApiSurfaceTask = target.tasks.create("generateApiSurface") {
+        val commonGenerateApiSurfaceTask = target.tasks.register("generateApiSurface") {
             group = "datadog"
             description = "Generate the API surface for all eligible source sets"
         }
 
-        val commonCheckApiSurfaceChangesTask = target.tasks.create("checkApiSurfaceChanges") {
+        val commonCheckApiSurfaceChangesTask = target.tasks.register("checkApiSurfaceChanges") {
             group = "datadog"
             description = "Check the API surface changes for all eligible source sets"
         }
@@ -46,16 +46,16 @@ class ApiSurfacePlugin : Plugin<Project> {
                     this.sourceFiles = sourceFiles
                     this.surfaceFile = surfaceFile
                     this.description = "Generate the API surface of the $sourceSetName source set"
-                    commonGenerateApiSurfaceTask.dependsOn(this)
                 }
-            target.tasks
+            commonGenerateApiSurfaceTask.configure { dependsOn(generateApiSurfaceTask) }
+            val checkApiSurfaceTask = target.tasks
                 .register(checkApiSurfaceTaskName, CheckApiSurfaceTask::class.java) {
                     this.sourceSetName = sourceSetName
                     this.description = "Check the API surface of the $sourceSetName source set"
                     this.surfaceFile = surfaceFile
                     dependsOn(generateApiSurfaceTask)
-                    commonCheckApiSurfaceChangesTask.dependsOn(this)
                 }
+            commonCheckApiSurfaceChangesTask.configure { dependsOn(checkApiSurfaceTask) }
 
             target.taskConfig<KotlinCompile> {
                 finalizedBy(generateApiSurfaceTask)

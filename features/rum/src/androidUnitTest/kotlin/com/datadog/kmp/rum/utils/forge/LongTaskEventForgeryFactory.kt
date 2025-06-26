@@ -56,6 +56,13 @@ internal class LongTaskEventForgeryFactory :
                     additionalProperties = exhaustiveAttributes(excludedKeys = setOf("id", "name", "email"))
                 )
             },
+            account = forge.aNullable {
+                LongTaskEvent.Account(
+                    id = anHexadecimalString(),
+                    name = aNullable { aStringMatching("[A-Z][a-z]+ [A-Z]\\. [A-Z][a-z]+") },
+                    additionalProperties = exhaustiveAttributes(excludedKeys = setOf("id", "name"))
+                )
+            },
             action = forge.aNullable {
                 LongTaskEvent.Action(aList { getForgery<UUID>().toString() })
             },

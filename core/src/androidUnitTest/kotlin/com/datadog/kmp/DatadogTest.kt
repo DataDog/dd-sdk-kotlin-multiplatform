@@ -162,6 +162,57 @@ internal class DatadogTest {
     }
 
     @Test
+    fun `M call setAccountInfo on implementation instance W setAccountInfo`(
+        @StringForgery id: String,
+        @StringForgery name: String,
+        @MapForgery(
+            key = AdvancedForgery(string = [StringForgery(StringForgeryType.ALPHABETICAL)]),
+            value = AdvancedForgery(string = [StringForgery(StringForgeryType.ALPHABETICAL)])
+        ) extraInfo: Map<String, String>
+    ) {
+        // When
+        Datadog.setAccountInfo(id, name, extraInfo)
+
+        // Then
+        datadogAndroidStatic.verify {
+            DatadogAndroid.setAccountInfo(
+                id = id,
+                name = name,
+                extraInfo = extraInfo
+            )
+        }
+    }
+
+    @Test
+    fun `M call addAccountExtraInfo on implementation instance W addAccountExtraInfo`(
+        @MapForgery(
+            key = AdvancedForgery(string = [StringForgery(StringForgeryType.ALPHABETICAL)]),
+            value = AdvancedForgery(string = [StringForgery(StringForgeryType.ALPHABETICAL)])
+        ) extraInfo: Map<String, String>
+    ) {
+        // When
+        Datadog.addAccountExtraInfo(extraInfo)
+
+        // Then
+        datadogAndroidStatic.verify {
+            DatadogAndroid.addAccountExtraInfo(
+                extraInfo = extraInfo
+            )
+        }
+    }
+
+    @Test
+    fun `M call clearAccountInfo on implementation instance W clearAccountInfo`() {
+        // When
+        Datadog.clearAccountInfo()
+
+        // Then
+        datadogAndroidStatic.verify {
+            DatadogAndroid.clearAccountInfo()
+        }
+    }
+
+    @Test
     fun `M call setTrackingConsent on implementation instance W setTrackingConsent`(
         @Forgery trackingConsent: TrackingConsent
     ) {

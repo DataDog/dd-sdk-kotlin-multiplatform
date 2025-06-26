@@ -158,6 +158,59 @@ actual object Datadog {
     }
 
     /**
+     * Sets the account information that the user is currently logged into.
+     *
+     * This API should be used to assign an identifier for the user's account which represents a
+     * contextual identity within the app, typically tied to business or tenant logic. The
+     * information set here will be added to logs, traces and RUM events.
+     *
+     * This value should be set when user logs in with his account, and cleared by calling
+     * [clearAccountInfo] when he logs out.
+     *
+     * @param id Account ID.
+     * @param name representing the account, if exists.
+     * @param extraInfo Account's custom attributes, if exists.
+     */
+    actual fun setAccountInfo(
+        id: String,
+        name: String?,
+        extraInfo: Map<String, Any?>
+    ) {
+        DatadogIOS.setAccountInfoWithAccountId(id, name, extraInfo.eraseKeyType())
+    }
+
+    /**
+     * Add custom attributes to the current account information.
+     *
+     * This extra info will be added to already existing extra info that is added
+     * to Logs, Traces and RUM events automatically.
+     *
+     * @param extraInfo Account's additional custom attributes.
+     */
+    actual fun addAccountExtraInfo(extraInfo: Map<String, Any?>) {
+        DatadogIOS.addAccountExtraInfo(extraInfo.eraseKeyType())
+    }
+
+    /**
+     * Clear the current account information.
+     *
+     * Account information will set to null
+     * Following Logs, Traces, RUM Events will not include the account information anymore.
+     *
+     * Any active RUM Session, active RUM View at the time of call will have their `account` attribute cleared
+     *
+     * If you want to retain the current `account` on the active RUM session,
+     * you need to stop the session first by using `RumMonitor.get().stopSession()`
+     *
+     * If you want to retain the current `account` on the active RUM views,
+     * you need to stop the view first by using `RumMonitor.get().stopView()`.
+     *
+     */
+    actual fun clearAccountInfo() {
+        DatadogIOS.clearAccountInfo()
+    }
+
+    /**
      * Clears all unsent data in all registered features.
      */
     actual fun clearAllData() {
@@ -248,6 +301,7 @@ private val DatadogSite.native: DDSite
         DatadogSite.US5 -> DDSite.us5()
         DatadogSite.EU1 -> DDSite.eu1()
         DatadogSite.AP1 -> DDSite.ap1()
+        DatadogSite.AP2 -> DDSite.ap2()
     }
 
 private fun Map<String, Any?>.eraseKeyType(): Map<Any?, *> {
