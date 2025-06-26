@@ -190,6 +190,7 @@ jsonSchemaGenerator {
             typeNameRemapping = mapOf(
                 "Connectivity" to "RUMConnectivity",
                 "USR" to "RUMUser",
+                "Account" to "RUMAccount",
                 "Method" to "RUMMethod",
                 "Context" to "RUMEventAttributes",
                 "CiTest" to "RUMCITest",

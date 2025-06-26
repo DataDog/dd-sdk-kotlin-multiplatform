@@ -71,6 +71,13 @@ internal class ActionEventForgeryFactory :
                     additionalProperties = exhaustiveAttributes(excludedKeys = setOf("id", "name", "email"))
                 )
             },
+            account = forge.aNullable {
+                ActionEvent.Account(
+                    id = anHexadecimalString(),
+                    name = aNullable { aStringMatching("[A-Z][a-z]+ [A-Z]\\. [A-Z][a-z]+") },
+                    additionalProperties = exhaustiveAttributes(excludedKeys = setOf("id", "name"))
+                )
+            },
             application = ActionEvent.Application(forge.getForgery<UUID>().toString()),
             service = forge.aNullable { anAlphabeticalString() },
             session = ActionEvent.ActionEventSession(

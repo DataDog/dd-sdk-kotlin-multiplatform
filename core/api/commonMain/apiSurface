@@ -6,6 +6,9 @@ expect object com.datadog.kmp.Datadog
   DEPRECATED fun setUserInfo(String? = null, String? = null, String? = null, Map<String, Any?> = emptyMap())
   fun setUserInfo(String, String? = null, String? = null, Map<String, Any?> = emptyMap())
   fun addUserExtraInfo(Map<String, Any?>)
+  fun setAccountInfo(String, String? = null, Map<String, Any?> = emptyMap())
+  fun addAccountExtraInfo(Map<String, Any?>)
+  fun clearAccountInfo()
   fun clearAllData()
   fun stopInstance()
 enum com.datadog.kmp.DatadogSite
@@ -14,6 +17,7 @@ enum com.datadog.kmp.DatadogSite
   - US5
   - EU1
   - AP1
+  - AP2
   - US1_FED
 enum com.datadog.kmp.SdkLogVerbosity
   - DEBUG

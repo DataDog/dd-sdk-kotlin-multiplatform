@@ -99,14 +99,14 @@ val publishableProjects = listOf(
 
 val jvmUnitTestDebugAllTask = tasks.register("jvmUnitTestDebugAll") {
     val subProjectsTestTasks = publishableProjects.map {
-        "${it.identityPath.path}:testDebugUnitTest"
+        "${it.targetProjectIdentity.buildTreePath.path}:testDebugUnitTest"
     }
     dependsOn(subProjectsTestTasks)
 }
 
 val jvmUnitTestReleaseAllTask = tasks.register("jvmUnitTestReleaseAll") {
     val subProjectsTestTasks = publishableProjects.map {
-        "${it.identityPath.path}:testReleaseUnitTest"
+        "${it.targetProjectIdentity.buildTreePath.path}:testReleaseUnitTest"
     }
     dependsOn(subProjectsTestTasks)
 }
@@ -122,7 +122,7 @@ val jvmUnitTestAllTask = tasks.register("jvmUnitTestAll") {
 
 val iosUnitTestAllTask = tasks.register("iosUnitTestAll") {
     val subProjectsTestTasks = publishableProjects.map {
-        "${it.identityPath.path}:iosSimulatorArm64Test"
+        "${it.targetProjectIdentity.buildTreePath.path}:iosSimulatorArm64Test"
     }
     dependsOn(subProjectsTestTasks)
 }
@@ -130,8 +130,10 @@ val iosUnitTestAllTask = tasks.register("iosUnitTestAll") {
 val tvosUnitTestAllTask = tasks.register("tvosUnitTestAll") {
     val subProjectsTestTasks = publishableProjects
         // by some reason something like `projects.features.webview == projects.features.webview` evaluates to false
-        .filter { it.identityPath.path !in setOf(":features:session-replay", ":features:webview") }
-        .map { "${it.identityPath.path}:tvosSimulatorArm64Test" }
+        .filter {
+            it.targetProjectIdentity.buildTreePath.path !in setOf(":features:session-replay", ":features:webview")
+        }
+        .map { "${it.targetProjectIdentity.buildTreePath.path}:tvosSimulatorArm64Test" }
     dependsOn(subProjectsTestTasks)
 }
 
@@ -145,7 +147,7 @@ tasks.register("unitTestAll") {
 
 tasks.register("lintCheckAll") {
     val subProjectsLintTasks = publishableProjects.map {
-        "${it.identityPath.path}:lintRelease"
+        "${it.targetProjectIdentity.buildTreePath.path}:lintRelease"
     }
     dependsOn(subProjectsLintTasks)
 }

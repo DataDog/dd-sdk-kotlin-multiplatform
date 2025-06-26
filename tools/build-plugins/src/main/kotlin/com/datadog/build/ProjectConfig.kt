@@ -11,11 +11,11 @@ import com.datadog.build.utils.Version
 object ProjectConfig {
     object Android {
         const val MIN_SDK = 21
-        const val COMPILE_SDK = 35
-        const val BUILD_TOOLS_VERSION = "35.0.0"
+        const val COMPILE_SDK = 36
+        const val BUILD_TOOLS_VERSION = "36.0.0"
     }
 
     const val GROUP_ID = "com.datadoghq"
 
-    val VERSION = Version(1, 1, 0, Version.Type.Release)
+    val VERSION = Version(1, 2, 0, Version.Type.Release)
 }

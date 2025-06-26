@@ -40,6 +40,8 @@ internal class IOSLogsConfigurationBuilder : PlatformLogsConfigurationBuilder<DD
                 logEvent.userInfo().setExtraInfo(eraseKeyType(it))
             }
 
+            // TODO RUM-10485 LogEvent.account is missing in iOS SDK ObjC API
+
             logEvent
         }
     }
