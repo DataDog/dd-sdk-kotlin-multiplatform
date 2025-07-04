@@ -53,8 +53,8 @@ Pull requests are welcome. First, open an issue to discuss what you would like t
 
 [Apache License, v2.0](LICENSE)
 
-[1]: https://docs.datadoghq.com/logs/log_collection/kotlin-multiplatform/
-[2]: https://docs.datadoghq.com/real_user_monitoring/kotlin-multiplatform/
+[1]: https://docs.datadoghq.com/logs/log_collection/kotlin_multiplatform/
+[2]: https://docs.datadoghq.com/real_user_monitoring/kotlin_multiplatform/
 [3]: https://app.datadoghq.com/logs
 [4]: https://app.datadoghq.com/rum/explorer
-[5]: https://docs.datadoghq.com/real_user_monitoring/mobile_and_tv_monitoring/troubleshooting/kotlin-multiplatform/
+[5]: https://docs.datadoghq.com/real_user_monitoring/mobile_and_tv_monitoring/troubleshooting/kotlin_multiplatform/
