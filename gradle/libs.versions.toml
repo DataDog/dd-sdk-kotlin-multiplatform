@@ -9,7 +9,7 @@ androidx-navigation-forApp = "2.7.7"
 androidx-activityCompose = "1.8.0"
 datadog-android = "2.23.0"
 datadog-ios = "2.29.0"
-dependencyLicense = "0.3"
+dependencyLicense = "0.4.0"
 nexusPublish = "2.0.0"
 kotlinGrammarParser = "0.1.0"
 # version d4384e4d90 of com.github.drieks.antlr-kotlin:antlr-kotlin-runtime
