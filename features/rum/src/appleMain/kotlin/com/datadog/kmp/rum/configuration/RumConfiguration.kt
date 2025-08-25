@@ -6,8 +6,13 @@
 
 package com.datadog.kmp.rum.configuration
 
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.configuration.internal.AppleRumConfigurationBuilder
+import com.datadog.kmp.rum.tracking.DefaultSwiftUIRUMActionsPredicate
+import com.datadog.kmp.rum.tracking.DefaultSwiftUIRUMViewsPredicate
 import com.datadog.kmp.rum.tracking.DefaultUIKitRUMViewsPredicate
+import com.datadog.kmp.rum.tracking.SwiftUIRUMActionsPredicate
+import com.datadog.kmp.rum.tracking.SwiftUIRUMViewsPredicate
 import com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
 
 /**
@@ -19,12 +24,83 @@ import com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
  * [DefaultUIKitRUMViewsPredicate] will be used by default, or you can create your own predicate
  * by implementing [UIKitRUMViewsPredicate].
  *
- * Note: Automatic RUM views tracking involves swizzling the `UIViewController` lifecycle methods.
+ * Note: Automatic RUM views tracking involves swizzling the [platform.UIKit.UIViewController] lifecycle methods.
  */
 fun RumConfiguration.Builder.trackUiKitViews(
     uiKitViewsPredicate: UIKitRUMViewsPredicate = DefaultUIKitRUMViewsPredicate()
 ): RumConfiguration.Builder {
     nativePlatformBuilder.setUiKitViewsPredicate(uiKitViewsPredicate)
+    return this
+}
+
+/**
+ * Enable automatic tracking of SwiftUI views as RUM views.
+ *
+ * RUM will query this predicate for each SwiftUI view detected through hosting controllers. The SDK extracts
+ * view names from the SwiftUI view hierarchy within those controllers, then passes those names to this predicate to
+ * determine which views should be tracked. The predicate implementation should return RUM view parameters if the
+ * given view should be tracked, or `null` to ignore it.
+ *
+ * [DefaultSwiftUIRUMViewsPredicate] will be used by default, or you can create your own predicate
+ * by implementing [SwiftUIRUMViewsPredicate].
+ *
+ * This API is experimental and may change in future. If the result is not good enough, please use manual
+ * instrumentation instead.
+ *
+ * Note: Automatic RUM views tracking involves swizzling the [platform.UIKit.UIViewController] lifecycle methods.
+ */
+@ExperimentalRumApi
+fun RumConfiguration.Builder.trackSwiftUIViews(
+    swiftUIViewsPredicate: SwiftUIRUMViewsPredicate = DefaultSwiftUIRUMViewsPredicate()
+): RumConfiguration.Builder {
+    nativePlatformBuilder.setSwiftUIViewsPredicate(swiftUIViewsPredicate)
+    return this
+}
+
+/**
+ * Enable automatic tracking of SwiftUI view touches as RUM actions.
+ *
+ * RUM will query this predicate for each view that the user interacts with. The predicate implementation
+ * should return RUM action parameters if the given interaction should be accepted, or `null` to ignore it.
+ * Touch events on the keyboard are ignored for privacy reasons.
+ *
+ * [DefaultSwiftUIRUMActionsPredicate] will be used.
+ *
+ * This API is experimental and may change in future. If the result is not good enough, please use manual
+ * instrumentation instead.
+ *
+ * Note: Automatic RUM action tracking involves swizzling the `UIApplication.sendEvent(_:)` method.
+ *
+ * @param isLegacyDetectionEnabled Whether to enable SwiftUI action detection on iOS 17 and below. When set to `false`,
+ * actions will only be detected on iOS 18+ where the detection is more reliable.
+ */
+@ExperimentalRumApi
+fun RumConfiguration.Builder.trackSwiftUIActions(
+    isLegacyDetectionEnabled: Boolean
+): RumConfiguration.Builder {
+    nativePlatformBuilder.setSwiftUIActionsPredicate(DefaultSwiftUIRUMActionsPredicate(isLegacyDetectionEnabled))
+    return this
+}
+
+/**
+ * Enable automatic tracking of SwiftUI view touches as RUM actions.
+ *
+ * RUM will query this predicate for each view that the user interacts with. The predicate implementation
+ * should return RUM action parameters if the given interaction should be accepted, or `null` to ignore it.
+ * Touch events on the keyboard are ignored for privacy reasons.
+ *
+ * [DefaultSwiftUIRUMActionsPredicate] will be used.
+ *
+ * This API is experimental and may change in future. If the result is not good enough, please use manual
+ * instrumentation instead.
+ *
+ * Note: Automatic RUM action tracking involves swizzling the `UIApplication.sendEvent(_:)` method.
+ */
+@ExperimentalRumApi
+fun RumConfiguration.Builder.trackSwiftUIActions(
+    swiftUIActionsPredicate: SwiftUIRUMActionsPredicate
+): RumConfiguration.Builder {
+    nativePlatformBuilder.setSwiftUIActionsPredicate(swiftUIActionsPredicate)
     return this
 }
 
