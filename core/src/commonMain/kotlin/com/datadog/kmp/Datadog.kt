@@ -12,6 +12,7 @@ import com.datadog.kmp.privacy.TrackingConsent
 /**
  * This class initializes the Datadog SDK, and sets up communication with the server.
  */
+@Suppress("TooManyFunctions")
 expect object Datadog {
 
     /**
@@ -102,6 +103,22 @@ expect object Datadog {
      * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
      */
     fun addUserExtraInfo(extraInfo: Map<String, Any?>)
+
+    /**
+     * Clear the current user information.
+     *
+     * User information will be set to null.
+     * Following Logs, Traces, RUM Events will not include the user information anymore.
+     *
+     * Any active RUM Session, active RUM View at the time of call will have their `usr` attribute cleared.
+     *
+     * If you want to retain the current `usr` on the active RUM session,
+     * you need to stop the session first by using `RumMonitor.get().stopSession()`
+     *
+     * If you want to retain the current `usr` on the active RUM views,
+     * you need to stop the view first by using `RumMonitor.get().stopView()`
+     */
+    fun clearUserInfo()
 
     /**
      * Sets the account information that the user is currently logged into.

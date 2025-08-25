@@ -38,6 +38,7 @@ import cocoapods.DatadogObjc.DDDatadog as DatadogIOS
 /**
  * This class initializes the Datadog SDK, and sets up communication with the server.
  */
+@Suppress("TooManyFunctions")
 actual object Datadog {
 
     /**
@@ -155,6 +156,24 @@ actual object Datadog {
      */
     actual fun addUserExtraInfo(extraInfo: Map<String, Any?>) {
         DatadogIOS.addUserExtraInfo(extraInfo.eraseKeyType())
+    }
+
+    /**
+     * Clear the current user information.
+     *
+     * User information will be set to null.
+     * Following Logs, Traces, RUM Events will not include the user information anymore.
+     *
+     * Any active RUM Session, active RUM View at the time of call will have their `usr` attribute cleared.
+     *
+     * If you want to retain the current `usr` on the active RUM session,
+     * you need to stop the session first by using `RumMonitor.get().stopSession()`
+     *
+     * If you want to retain the current `usr` on the active RUM views,
+     * you need to stop the view first by using `RumMonitor.get().stopView()`
+     */
+    actual fun clearUserInfo() {
+        DatadogIOS.clearUserInfo()
     }
 
     /**
