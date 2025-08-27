@@ -162,6 +162,17 @@ internal class DatadogTest {
     }
 
     @Test
+    fun `M call clearUserInfo on implementation instance W clearUserInfo`() {
+        // When
+        Datadog.clearUserInfo()
+
+        // Then
+        datadogAndroidStatic.verify {
+            DatadogAndroid.clearUserInfo()
+        }
+    }
+
+    @Test
     fun `M call setAccountInfo on implementation instance W setAccountInfo`(
         @StringForgery id: String,
         @StringForgery name: String,
