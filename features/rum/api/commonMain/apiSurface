@@ -1,3 +1,4 @@
+annotation com.datadog.kmp.rum.ExperimentalRumApi
 expect object com.datadog.kmp.rum.Rum
   fun enable(com.datadog.kmp.rum.configuration.RumConfiguration)
 enum com.datadog.kmp.rum.RumActionType

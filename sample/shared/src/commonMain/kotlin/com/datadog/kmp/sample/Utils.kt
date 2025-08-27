@@ -134,18 +134,6 @@ fun logErrorWithThrowable() {
     )
 }
 
-fun trackView(viewName: String) {
-    RumMonitor.get().startView(
-        viewName,
-        viewName,
-        mapOf(
-            "custom-view-attribute" to "view-attribute-value",
-            "boolean-view-attribute" to true,
-            "nullable-view-attribute" to null
-        )
-    )
-}
-
 fun trackAction(actionName: String) {
     RumMonitor.get().addAction(
         RumActionType.TAP,

@@ -20,7 +20,10 @@ import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.RumSessionListener
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
+import com.datadog.kmp.rum.tracking.RumAction
 import com.datadog.kmp.rum.tracking.RumView
+import com.datadog.kmp.rum.tracking.SwiftUIRUMActionsPredicate
+import com.datadog.kmp.rum.tracking.SwiftUIRUMViewsPredicate
 import com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
 import com.datadog.tools.concurrent.CountDownLatch
 import com.datadog.tools.random.exhaustiveAttributes
@@ -164,6 +167,54 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
         assertEquals(
             expected = fakeViewAttributes,
             actual = nativeRumView.attributes().mapKeys {
+                it.key as String
+            }
+        )
+    }
+
+    @Test
+    fun `M set SwiftUI views predicate W setSwiftUIViewsPredicate`() {
+        // Given
+        val fakeViewName = "fake-view-name"
+        val fakeViewAttributes = exhaustiveAttributes()
+        val fakeRumView = RumView(fakeViewName, fakeViewAttributes)
+        val stubPredicate = SwiftUIRUMViewsPredicate { fakeRumView }
+
+        // When
+        testedBuilder.setSwiftUIViewsPredicate(stubPredicate)
+
+        // Then
+        val nativeRumView = checkNotNull(fakeNativeRumConfiguration.swiftUIViewsPredicate())
+            .rumViewFor("fake-swiftui-component")
+        checkNotNull(nativeRumView)
+        assertEquals(fakeViewName, nativeRumView.name())
+        assertEquals(
+            expected = fakeViewAttributes,
+            actual = nativeRumView.attributes().mapKeys {
+                it.key as String
+            }
+        )
+    }
+
+    @Test
+    fun `M set SwiftUI views predicate W setSwiftUIActionsPredicate`() {
+        // Given
+        val fakeActionName = "fake-view-name"
+        val fakeActionAttributes = exhaustiveAttributes()
+        val fakeRumAction = RumAction(fakeActionName, fakeActionAttributes)
+        val stubPredicate = SwiftUIRUMActionsPredicate { fakeRumAction }
+
+        // When
+        testedBuilder.setSwiftUIActionsPredicate(stubPredicate)
+
+        // Then
+        val nativeRumAction = checkNotNull(fakeNativeRumConfiguration.swiftUIActionsPredicate())
+            .rumActionWith("fake-swiftui-component")
+        checkNotNull(nativeRumAction)
+        assertEquals(fakeActionName, nativeRumAction.name())
+        assertEquals(
+            expected = fakeActionAttributes,
+            actual = nativeRumAction.attributes().mapKeys {
                 it.key as String
             }
         )

@@ -5,15 +5,27 @@ fun RumMonitor.stopResourceWithError(String, platform.Foundation.NSError, platfo
 fun RumMonitor.stopResourceWithError(String, String, platform.Foundation.NSURLResponse?, Map<String, Any?>)
 fun RumMonitor.addError(RumErrorSource, platform.Foundation.NSError, Map<String, Any?>)
 fun RumConfiguration.Builder.trackUiKitViews(com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate = DefaultUIKitRUMViewsPredicate()): RumConfiguration.Builder
+fun RumConfiguration.Builder.trackSwiftUIViews(com.datadog.kmp.rum.tracking.SwiftUIRUMViewsPredicate = DefaultSwiftUIRUMViewsPredicate()): RumConfiguration.Builder
+fun RumConfiguration.Builder.trackSwiftUIActions(Boolean): RumConfiguration.Builder
+fun RumConfiguration.Builder.trackSwiftUIActions(com.datadog.kmp.rum.tracking.SwiftUIRUMActionsPredicate): RumConfiguration.Builder
 fun RumConfiguration.Builder.setAppHangThreshold(Long?): RumConfiguration.Builder
 fun RumConfiguration.Builder.trackWatchdogTerminations(Boolean): RumConfiguration.Builder
 interface com.datadog.kmp.rum.internal.AdvancedRumNetworkMonitor
   fun addResourceMetrics(String, platform.Foundation.NSURLSessionTaskMetrics, Map<String, Any?>)
+class com.datadog.kmp.rum.tracking.DefaultSwiftUIRUMActionsPredicate : SwiftUIRUMActionsPredicate
+  constructor(Boolean)
+  override fun createAction(String): RumAction?
+class com.datadog.kmp.rum.tracking.DefaultSwiftUIRUMViewsPredicate : SwiftUIRUMViewsPredicate
+  override fun createView(String): RumView?
 class com.datadog.kmp.rum.tracking.DefaultUIKitRUMViewsPredicate : UIKitRUMViewsPredicate
   override fun createView(platform.UIKit.UIViewController): RumView?
 data class com.datadog.kmp.rum.tracking.RumAction
   constructor(String, Map<String, Any?>)
 data class com.datadog.kmp.rum.tracking.RumView
   constructor(String, Map<String, Any?>)
+fun interface com.datadog.kmp.rum.tracking.SwiftUIRUMActionsPredicate
+  fun createAction(String): RumAction?
+fun interface com.datadog.kmp.rum.tracking.SwiftUIRUMViewsPredicate
+  fun createView(String): RumView?
 fun interface com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
   fun createView(platform.UIKit.UIViewController): RumView?
