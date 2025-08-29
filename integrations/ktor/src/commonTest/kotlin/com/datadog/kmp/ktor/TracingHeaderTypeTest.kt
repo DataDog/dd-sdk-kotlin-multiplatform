@@ -128,11 +128,9 @@ class TracingHeaderTypeTest {
         val expectedHeaders = mapOf(
             Fixture(TraceId(0u, 1337u), SpanId(42u), true, fakeRumSessionId) to buildMap {
                 put("b3", "539-2a-1")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
             },
             Fixture(TraceId(1234567890u, 1337u), SpanId(42u), true, fakeRumSessionId) to buildMap {
                 put("b3", "499602d20000000000000539-2a-1")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
             },
             Fixture(
                 TraceId(ULong.MAX_VALUE, ULong.MAX_VALUE),
@@ -141,11 +139,9 @@ class TracingHeaderTypeTest {
                 fakeRumSessionId
             ) to buildMap {
                 put("b3", "ffffffffffffffffffffffffffffffff-ffffffffffffffff-1")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
             },
             Fixture(TraceId(1234567890u, 1337u), SpanId(42u), false, fakeRumSessionId) to buildMap {
                 put("b3", "0")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
             }
         )
 
@@ -176,13 +172,11 @@ class TracingHeaderTypeTest {
                 put("X-B3-TraceId", "539")
                 put("X-B3-SpanId", "2a")
                 put("X-B3-Sampled", "1")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
             },
             Fixture(TraceId(1234567890u, 1337u), SpanId(42u), true, fakeRumSessionId) to buildMap {
                 put("X-B3-TraceId", "499602d20000000000000539")
                 put("X-B3-SpanId", "2a")
                 put("X-B3-Sampled", "1")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
             },
             Fixture(
                 TraceId(ULong.MAX_VALUE, ULong.MAX_VALUE),
@@ -193,11 +187,9 @@ class TracingHeaderTypeTest {
                 put("X-B3-TraceId", "ffffffffffffffffffffffffffffffff")
                 put("X-B3-SpanId", "ffffffffffffffff")
                 put("X-B3-Sampled", "1")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
             },
             Fixture(TraceId(1234567890u, 1337u), SpanId(42u), false, fakeRumSessionId) to buildMap {
                 put("X-B3-Sampled", "0")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
             }
         )
 

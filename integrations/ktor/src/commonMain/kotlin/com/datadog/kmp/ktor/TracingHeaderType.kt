@@ -70,6 +70,11 @@ enum class TracingHeaderType {
                     } else {
                         append(DATADOG_SAMPLING_PRIORITY_KEY, DATADOG_DROP_SAMPLING_DECISION)
                     }
+
+                    if (rumSessionId != null) {
+                        // even if it is Datadog headers, we re-use W3C header here
+                        addToW3cBaggage(DATADOG_RUM_SESSION_ID_TAG, rumSessionId)
+                    }
                 }
 
                 B3 -> {
@@ -105,11 +110,11 @@ enum class TracingHeaderType {
                     val paddedSpanId = spanId.toHexString().padStart(W3C_PARENT_ID_LENGTH, '0')
                     val decision = if (sampledIn) W3C_SAMPLE_PRIORITY_ACCEPT else W3C_SAMPLE_PRIORITY_DROP
                     append(W3C_TRACEPARENT_KEY, "00-$paddedTraceId-$paddedSpanId-$decision")
-                }
-            }
 
-            if (rumSessionId != null) {
-                addToW3cBaggage(DATADOG_RUM_SESSION_ID_TAG, rumSessionId)
+                    if (rumSessionId != null) {
+                        addToW3cBaggage(DATADOG_RUM_SESSION_ID_TAG, rumSessionId)
+                    }
+                }
             }
         }
     }
