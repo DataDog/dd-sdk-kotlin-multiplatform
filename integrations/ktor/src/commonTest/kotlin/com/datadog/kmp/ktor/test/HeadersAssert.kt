@@ -10,6 +10,8 @@ import com.datadog.kmp.ktor.HEX_RADIX
 import com.datadog.kmp.ktor.TracingHeaderType
 import io.ktor.http.Headers
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class HeadersAssert private constructor(private val actual: Headers) {
 
@@ -28,6 +30,32 @@ class HeadersAssert private constructor(private val actual: Headers) {
     fun hasSamplingDecision(samplingDecision: Int, format: TracingHeaderType): HeadersAssert {
         traceContextAssert(format)
             .assertSamplingDecision(actual, samplingDecision)
+        return this
+    }
+
+    fun hasRumSessionId(rumSessionId: String): HeadersAssert {
+        val baggage = actual["baggage"]
+        assertNotNull(baggage, "Baggage header is missing")
+        val rumSessionIdPair = baggage.split(",")
+            .map { it.substringBefore("=") to it.substringAfter("=") }
+            .firstOrNull { it.first == "session.id" }
+        assertNotNull(rumSessionIdPair, "RUM session ID is missing, value of baggage header is $baggage")
+        assertEquals(
+            rumSessionId,
+            rumSessionIdPair.second,
+            "Expected RUM session ID to be $rumSessionId, but was ${rumSessionIdPair.second}"
+        )
+        return this
+    }
+
+    fun hasNoRumSessionId(): HeadersAssert {
+        val baggage = actual["baggage"]
+        if (baggage != null) {
+            val rumSessionIdPair = baggage.split(",")
+                .map { it.substringBefore("=") to it.substringAfter("=") }
+                .firstOrNull { it.first == "session.id" }
+            assertNull(rumSessionIdPair, "Expected headers to not have RUM session ID, but was $rumSessionIdPair")
+        }
         return this
     }
 

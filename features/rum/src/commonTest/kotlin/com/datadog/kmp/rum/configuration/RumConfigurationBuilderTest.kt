@@ -7,6 +7,7 @@
 package com.datadog.kmp.rum.configuration
 
 import com.datadog.kmp.event.EventMapper
+import com.datadog.kmp.rum.configuration.internal.CombinedRumSessionListener
 import com.datadog.kmp.rum.configuration.internal.PlatformRumConfigurationBuilder
 import com.datadog.kmp.rum.event.ViewEventMapper
 import com.datadog.kmp.rum.model.ActionEvent
@@ -15,9 +16,11 @@ import com.datadog.kmp.rum.model.LongTaskEvent
 import com.datadog.kmp.rum.model.ResourceEvent
 import dev.mokkery.answering.returns
 import dev.mokkery.every
+import dev.mokkery.matcher.matching
 import dev.mokkery.mock
 import dev.mokkery.verify
 import kotlin.test.Test
+import kotlin.test.assertIs
 import kotlin.test.assertSame
 
 class RumConfigurationBuilderTest {
@@ -124,16 +127,25 @@ class RumConfigurationBuilderTest {
     }
 
     @Test
-    fun `M call platform RUM configuration builder+setSessionListener W setSessionListener`() {
+    fun `M call platform RUM configuration builder+setSessionListener W setSessionListener + build`() {
         // Given
+        val fakeNativeConfiguration = Any()
+        every { mockPlatformRumConfigurationBuilder.build() } returns fakeNativeConfiguration
         val fakeSessionListener = RumSessionListener { _, _ -> }
 
         // When
         testedRumConfigurationBuilder.setSessionListener(fakeSessionListener)
+            .build()
 
         // Then
         verify {
-            mockPlatformRumConfigurationBuilder.setSessionListener(fakeSessionListener)
+            mockPlatformRumConfigurationBuilder.setSessionListener(
+                matching {
+                    val value = assertIs<CombinedRumSessionListener>(it)
+                    assertSame(fakeSessionListener, value.userListener)
+                    true
+                }
+            )
         }
     }
 

@@ -76,6 +76,10 @@ class com.datadog.kmp.rum.configuration.RumConfiguration
     fun build(): RumConfiguration
 fun interface com.datadog.kmp.rum.configuration.RumSessionListener
   fun onSessionStarted(String, Boolean)
+interface com.datadog.kmp.rum.configuration.RumSessionProvider
+  val sessionId: String?
+  companion object 
+    fun get(): RumSessionProvider
 enum com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
   - FREQUENT
   - AVERAGE
