@@ -6,6 +6,7 @@
 
 package com.datadog.kmp.ktor
 
+import com.datadog.kmp.ktor.internal.addToW3cBaggage
 import com.datadog.kmp.ktor.internal.trace.SpanId
 import com.datadog.kmp.ktor.internal.trace.TraceId
 import io.ktor.client.request.HttpRequestBuilder
@@ -41,12 +42,14 @@ enum class TracingHeaderType {
      * @param sampledIn whether the trace is sampled in
      * @param traceId the trace id
      * @param spanId the span id
+     * @param rumSessionId the RUM session id
      */
     internal fun injectHeaders(
         request: HttpRequestBuilder,
         sampledIn: Boolean,
         traceId: TraceId,
-        spanId: SpanId
+        spanId: SpanId,
+        rumSessionId: String?
     ) {
         request.headers {
             when (this@TracingHeaderType) {
@@ -103,6 +106,10 @@ enum class TracingHeaderType {
                     val decision = if (sampledIn) W3C_SAMPLE_PRIORITY_ACCEPT else W3C_SAMPLE_PRIORITY_DROP
                     append(W3C_TRACEPARENT_KEY, "00-$paddedTraceId-$paddedSpanId-$decision")
                 }
+            }
+
+            if (rumSessionId != null) {
+                addToW3cBaggage(DATADOG_RUM_SESSION_ID_TAG, rumSessionId)
             }
         }
     }

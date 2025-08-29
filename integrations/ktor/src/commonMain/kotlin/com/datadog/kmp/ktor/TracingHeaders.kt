@@ -16,6 +16,7 @@ internal const val DATADOG_KEEP_SAMPLING_DECISION = "1"
 internal const val DATADOG_ORIGIN_KEY = "x-datadog-origin"
 internal const val DATADOG_ORIGIN_RUM = "rum"
 internal const val DATADOG_MOST_SIGNIFICANT_TRACE_ID_TAG = "_dd.p.tid"
+internal const val DATADOG_RUM_SESSION_ID_TAG = "session.id"
 
 // taken from B3HttpCodec
 internal const val B3_HEADER_KEY = "b3"
@@ -31,6 +32,7 @@ internal const val B3M_KEEP_SAMPLING_DECISION = "1"
 // taken from W3CHttpCodec
 internal const val W3C_TRACEPARENT_KEY = "traceparent"
 internal const val W3C_TRACESTATE_KEY = "tracestate"
+internal const val W3C_BAGGAGE_KEY = "baggage"
 
 // https://www.w3.org/TR/trace-context/#traceparent-header
 internal const val W3C_TRACEPARENT_DROP_SAMPLING_DECISION = "00-%s-%s-00"
