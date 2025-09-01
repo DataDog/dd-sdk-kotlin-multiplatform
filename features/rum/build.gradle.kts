@@ -120,6 +120,7 @@ jsonSchemaGenerator {
             "_perf-metric-schema.json",
             "_action-child-schema.json",
             "_view-container-schema.json",
+            "_profiling-internal-context-schema.json",
             "vital-schema.json"
         )
         inputNameMapping = mapOf(
@@ -134,12 +135,15 @@ jsonSchemaGenerator {
         val defaultEnumValues = mapOf(
             "$VIEW_EVENT_MODEL_NAME.${VIEW_EVENT_MODEL_NAME}SessionType" to "USER",
             "$VIEW_EVENT_MODEL_NAME.Status" to "CONNECTED",
+            "$VIEW_EVENT_MODEL_NAME.ConnectivityStatus" to "CONNECTED",
             "$VIEW_EVENT_MODEL_NAME.EffectiveType" to "`4G`",
             "$VIEW_EVENT_MODEL_NAME.DeviceType" to "OTHER",
             "$VIEW_EVENT_MODEL_NAME.ReplayLevel" to "MASK_USER_INPUT",
             "$VIEW_EVENT_MODEL_NAME.Plan" to "PLAN_1",
             "$VIEW_EVENT_MODEL_NAME.SessionPrecondition" to "USER_APP_LAUNCH",
             "$VIEW_EVENT_MODEL_NAME.State" to "ACTIVE",
+            "$VIEW_EVENT_MODEL_NAME.ProfilingStatus" to "STOPPED",
+            "$VIEW_EVENT_MODEL_NAME.ErrorReason" to "UNEXPECTED_EXCEPTION",
             "$ACTION_EVENT_MODEL_NAME.${ACTION_EVENT_MODEL_NAME}ActionType" to "TAP",
             "$RESOURCE_EVENT_MODEL_NAME.ResourceType" to "OTHER",
             "$RESOURCE_EVENT_MODEL_NAME.OperationType" to "QUERY",

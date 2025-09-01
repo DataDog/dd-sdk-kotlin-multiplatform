@@ -62,9 +62,6 @@ internal struct ContentView: View {
                 }
                 #endif
             }
-            .onAppear {
-                UtilsKt.trackView(viewName: UtilsKt.HOME_SCREEN_NAME)
-            }
             .padding()
         }
     }
@@ -121,9 +118,6 @@ internal struct LoggingView: View {
                     .cornerRadius(8)
             }
         }
-        .onAppear {
-            UtilsKt.trackView(viewName: UtilsKt.LOGS_SCREEN_NAME)
-        }
         .padding()
     }
 }
@@ -152,9 +146,6 @@ internal struct CrashView: View {
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
-        }
-        .onAppear {
-            UtilsKt.trackView(viewName: UtilsKt.CRASH_SCREEN_NAME)
         }
         .padding()
     }
@@ -227,9 +218,6 @@ internal struct RumView: View {
                     .cornerRadius(8)
             }
         }
-        .onAppear {
-            UtilsKt.trackView(viewName: UtilsKt.RUM_SCREEN_NAME)
-        }
         .padding()
     }
 }
@@ -240,7 +228,6 @@ internal struct WebTrackingView: View {
         let view = SwiftUIWebView()
 
         view.onAppear {
-            UtilsKt.trackView(viewName: UtilsKt.WEBVIEW_SCREEN_NAME)
             Utils_iosKt.startWebViewTracking(webView: view.webView)
         }
         .onDisappear {

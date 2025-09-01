@@ -6,6 +6,7 @@
 
 package com.datadog.kmp.ktor.internal.plugin
 
+import com.benasher44.uuid.uuid4
 import com.datadog.kmp.ktor.HEX_RADIX
 import com.datadog.kmp.ktor.RUM_RULE_PSR
 import com.datadog.kmp.ktor.RUM_SPAN_ID
@@ -22,7 +23,9 @@ import com.datadog.kmp.ktor.test.HeadersAssert.Companion.assertThat
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.configuration.RumSessionProvider
 import com.datadog.tools.random.exhaustiveAttributes
+import com.datadog.tools.random.nullable
 import com.datadog.tools.random.randomBoolean
 import com.datadog.tools.random.randomBytes
 import com.datadog.tools.random.randomElement
@@ -80,10 +83,13 @@ class DatadogKtorPluginTest {
     private val mockTraceIdGenerator = mock<TraceIdGenerator>()
     private val mockSpanIdGenerator = mock<SpanIdGenerator>()
     private val mockRumResourceAttributesProvider = mock<RumResourceAttributesProvider>()
+    private val mockRumSessionProvider = mock<RumSessionProvider>()
 
     private val fakeRumRequestAttributes = exhaustiveAttributes()
     private val fakeRumResponseAttributes = exhaustiveAttributes()
     private val fakeRumErrorAttributes = exhaustiveAttributes()
+
+    private var fakeRumSessionId = nullable(uuid4().toString())
 
     private var testedPlugin = DatadogKtorPlugin(
         rumMonitor = mockRumMonitor,
@@ -92,6 +98,7 @@ class DatadogKtorPluginTest {
         traceContextInjection = TraceContextInjection.All,
         traceIdGenerator = mockTraceIdGenerator,
         spanIdGenerator = mockSpanIdGenerator,
+        rumSessionProvider = mockRumSessionProvider,
         rumResourceAttributesProvider = mockRumResourceAttributesProvider
     )
 
@@ -119,6 +126,7 @@ class DatadogKtorPluginTest {
             )
         }
         every { mockSpanIdGenerator.generateSpanId() } returnsBy { SpanId(randomULong()) }
+        every { mockRumSessionProvider.sessionId } returnsBy { fakeRumSessionId }
         with(mockRumResourceAttributesProvider) {
             every { onRequest(any()) } returns fakeRumRequestAttributes
             every { onResponse(any()) } returns fakeRumResponseAttributes
@@ -213,6 +221,19 @@ class DatadogKtorPluginTest {
                 }
             )
         }
+
+        assertThat(capturedRequestHeaders.first())
+            .run {
+                val rumSessionId = fakeRumSessionId
+                val shouldInjectRumSessionId = with(fakeTracingHeaderTypes) {
+                    contains(TracingHeaderType.DATADOG) || contains(TracingHeaderType.TRACECONTEXT)
+                }
+                if (shouldInjectRumSessionId) {
+                    if (rumSessionId == null) hasNoRumSessionId() else hasRumSessionId(rumSessionId)
+                } else {
+                    hasNoRumSessionId()
+                }
+            }
 
         verifyNoMoreCalls(mockRumMonitor)
     }
@@ -369,6 +390,19 @@ class DatadogKtorPluginTest {
             )
         }
 
+        assertThat(capturedRequestHeaders.first())
+            .run {
+                val rumSessionId = fakeRumSessionId
+                val shouldInjectRumSessionId = with(fakeTracingHeaderTypes) {
+                    contains(TracingHeaderType.DATADOG) || contains(TracingHeaderType.TRACECONTEXT)
+                }
+                if (shouldInjectRumSessionId) {
+                    if (rumSessionId == null) hasNoRumSessionId() else hasRumSessionId(rumSessionId)
+                } else {
+                    hasNoRumSessionId()
+                }
+            }
+
         verifyNoMoreCalls(mockRumMonitor)
     }
 
@@ -435,9 +469,19 @@ class DatadogKtorPluginTest {
                 fakeTracingHeaderTypes.forEach {
                     hasSamplingDecision(0, it)
                 }
+                val rumSessionId = fakeRumSessionId
+                val shouldInjectRumSessionId = with(fakeTracingHeaderTypes) {
+                    contains(TracingHeaderType.DATADOG) || contains(TracingHeaderType.TRACECONTEXT)
+                }
+                if (shouldInjectRumSessionId) {
+                    if (rumSessionId == null) hasNoRumSessionId() else hasRumSessionId(rumSessionId)
+                } else {
+                    hasNoRumSessionId()
+                }
             }
     }
 
+    @Suppress("NestedBlockDepth")
     @Test
     fun `M start + stop resource tracking W request succeeded + not sampled for tracing + redirect`() {
         // Given
@@ -536,6 +580,15 @@ class DatadogKtorPluginTest {
                 .apply {
                     fakeTracingHeaderTypes.forEach {
                         hasSamplingDecision(0, it)
+                    }
+                    val rumSessionId = fakeRumSessionId
+                    val shouldInjectRumSessionId = with(fakeTracingHeaderTypes) {
+                        contains(TracingHeaderType.DATADOG) || contains(TracingHeaderType.TRACECONTEXT)
+                    }
+                    if (shouldInjectRumSessionId) {
+                        if (rumSessionId == null) hasNoRumSessionId() else hasRumSessionId(rumSessionId)
+                    } else {
+                        hasNoRumSessionId()
                     }
                 }
         }
@@ -806,6 +859,7 @@ class DatadogKtorPluginTest {
             traceContextInjection = TraceContextInjection.Sampled,
             traceIdGenerator = mockTraceIdGenerator,
             spanIdGenerator = mockSpanIdGenerator,
+            rumSessionProvider = mockRumSessionProvider,
             rumResourceAttributesProvider = mockRumResourceAttributesProvider
         )
         val fakeClient = HttpClient(mockEngine) {
@@ -862,6 +916,7 @@ class DatadogKtorPluginTest {
             traceContextInjection = TraceContextInjection.Sampled,
             traceIdGenerator = mockTraceIdGenerator,
             spanIdGenerator = mockSpanIdGenerator,
+            rumSessionProvider = mockRumSessionProvider,
             rumResourceAttributesProvider = mockRumResourceAttributesProvider
         )
         val fakeClient = HttpClient(mockEngine) {
@@ -940,6 +995,19 @@ class DatadogKtorPluginTest {
                 }
             )
         }
+
+        assertThat(mockEngine.requestHistory.first().headers)
+            .run {
+                val rumSessionId = fakeRumSessionId
+                val shouldInjectRumSessionId = with(fakeTracingHeaderTypes) {
+                    contains(TracingHeaderType.DATADOG) || contains(TracingHeaderType.TRACECONTEXT)
+                }
+                if (shouldInjectRumSessionId) {
+                    if (rumSessionId == null) hasNoRumSessionId() else hasRumSessionId(rumSessionId)
+                } else {
+                    hasNoRumSessionId()
+                }
+            }
     }
 
     // endregion
@@ -975,6 +1043,7 @@ class DatadogKtorPluginTest {
             traceContextInjection = TraceContextInjection.All,
             traceIdGenerator = mockTraceIdGenerator,
             spanIdGenerator = mockSpanIdGenerator,
+            rumSessionProvider = mockRumSessionProvider,
             rumResourceAttributesProvider = mockRumResourceAttributesProvider
         )
 

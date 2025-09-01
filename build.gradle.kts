@@ -26,11 +26,15 @@ plugins {
 nexusPublishing {
     repositories {
         sonatype {
-            val sonatypeUsername = System.getenv("OSSRH_USERNAME")
-            val sonatypePassword = System.getenv("OSSRH_PASSWORD")
+            val sonatypeUsername = System.getenv("CENTRAL_PUBLISHER_USERNAME")
+            val sonatypePassword = System.getenv("CENTRAL_PUBLISHER_PASSWORD")
             stagingProfileId.set("378eecbbe2cf9")
             if (sonatypeUsername != null) username.set(sonatypeUsername)
             if (sonatypePassword != null) password.set(sonatypePassword)
+            // see https://github.com/gradle-nexus/publish-plugin#publishing-to-maven-central-via-sonatype-central
+            // For official documentation:
+            // staging repo publishing https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#configuration
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
         }
     }
 }

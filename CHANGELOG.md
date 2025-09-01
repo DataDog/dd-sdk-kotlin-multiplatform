@@ -1,3 +1,20 @@
+# 1.3.0 / 2025-09-01
+
+* [FEATURE] Core: Add `Datadog.clearUserInfo` API. See [#192](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/192)
+* [FEATURE] RUM: Add automatic tracking of SwiftUI views and actions. See [#193](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/193)
+* [FEATURE] Ktor: Add RUM Session ID to the trace context propagation headers. See [#195](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/195)
+* [IMPROVEMENT] Ktor: Add RUM Session ID in the `baggage` header only for Datadog and TraceContext style propagation. See [#197](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/197)
+* [DOCS] Update links to the docs. See [#188](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/188)
+* [MAINTENANCE] Update base docker image to jammy. See [#181](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/181)
+* [MAINTENANCE] Update docker image for ci-image job to jammy. See [#184](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/184)
+* [MAINTENANCE] Use project-specific macOS runner. See [#186](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/186)
+* [MAINTENANCE] Migrate publication to Central Publisher portal. See [#185](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/185)
+* [MAINTENANCE] Update `gradle-dependency-license` plugin to version 0.4.0. See [#189](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/189)
+* [MAINTENANCE] Add Github action to automatically close stale issues. See [#190](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/190)
+* [MAINTENANCE] Update iOS SDK to 2.30.0, Android SDK to 2.25.0. See [#191](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/191)
+* [MAINTENANCE] Update Datadog Android SDK to version 2.26.0. See [#196](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/196)
+* [MAINTENANCE] Fix flaky `DefaultSwiftUIRUMActionsPredicateTest`. See [#198](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/198)
+
 # 1.2.0 / 2025-06-26
 
 * [FEATURE] Add `AP2` datacenter support. See [#176](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/176)
