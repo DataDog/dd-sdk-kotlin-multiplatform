@@ -7,12 +7,14 @@
 package com.datadog.kmp.rum.configuration
 
 import com.datadog.kmp.event.EventMapper
+import com.datadog.kmp.rum.configuration.internal.CombinedRumSessionListener
 import com.datadog.kmp.rum.configuration.internal.PlatformRumConfigurationBuilder
 import com.datadog.kmp.rum.event.ViewEventMapper
 import com.datadog.kmp.rum.model.ActionEvent
 import com.datadog.kmp.rum.model.ErrorEvent
 import com.datadog.kmp.rum.model.LongTaskEvent
 import com.datadog.kmp.rum.model.ResourceEvent
+import com.datadog.kmp.rum.model.ViewEvent
 
 /**
  * Describes configuration to be used for the RUM feature.
@@ -26,6 +28,7 @@ class RumConfiguration internal constructor(internal val nativeConfiguration: An
     class Builder {
 
         internal val platformBuilder: PlatformRumConfigurationBuilder<*>
+        private var userSessionListener: RumSessionListener? = null
 
         /**
          * Creates a new instance of [Builder].
@@ -116,7 +119,7 @@ class RumConfiguration internal constructor(internal val nativeConfiguration: An
          * @param sessionListener the listener to notify whenever a new Session starts.
          */
         fun setSessionListener(sessionListener: RumSessionListener): Builder {
-            platformBuilder.setSessionListener(sessionListener)
+            this.userSessionListener = sessionListener
             return this
         }
 
@@ -191,6 +194,11 @@ class RumConfiguration internal constructor(internal val nativeConfiguration: An
          * Builds a [RumConfiguration] based on the current state of this Builder.
          */
         fun build(): RumConfiguration {
+            val internalSessionListener = InternalRumSessionProvider
+            val combinedListener = CombinedRumSessionListener(internalSessionListener, userSessionListener)
+
+            platformBuilder.setSessionListener(combinedListener)
+
             return RumConfiguration(platformBuilder.build())
         }
 

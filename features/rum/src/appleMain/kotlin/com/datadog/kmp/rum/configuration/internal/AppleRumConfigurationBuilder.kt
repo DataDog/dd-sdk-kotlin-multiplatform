@@ -6,6 +6,7 @@
 
 package com.datadog.kmp.rum.configuration.internal
 
+import cocoapods.DatadogObjc.DDRUMAction
 import cocoapods.DatadogObjc.DDRUMConfiguration
 import cocoapods.DatadogObjc.DDRUMErrorEventErrorCauses
 import cocoapods.DatadogObjc.DDRUMView
@@ -14,6 +15,8 @@ import cocoapods.DatadogObjc.DDRUMVitalsFrequencyAverage
 import cocoapods.DatadogObjc.DDRUMVitalsFrequencyFrequent
 import cocoapods.DatadogObjc.DDRUMVitalsFrequencyNever
 import cocoapods.DatadogObjc.DDRUMVitalsFrequencyRare
+import cocoapods.DatadogObjc.DDSwiftUIRUMActionsPredicateProtocol
+import cocoapods.DatadogObjc.DDSwiftUIRUMViewsPredicateProtocol
 import cocoapods.DatadogObjc.DDUIKitRUMViewsPredicateProtocol
 import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.internal.eraseKeyType
@@ -26,7 +29,11 @@ import com.datadog.kmp.rum.model.LongTaskEvent
 import com.datadog.kmp.rum.model.ResourceEvent
 import com.datadog.kmp.rum.model.errorEventErrorCausesSourceToCommonEnum
 import com.datadog.kmp.rum.model.toCommonModel
+import com.datadog.kmp.rum.tracking.DefaultSwiftUIRUMActionsPredicate
+import com.datadog.kmp.rum.tracking.DefaultSwiftUIRUMViewsPredicate
 import com.datadog.kmp.rum.tracking.DefaultUIKitRUMViewsPredicate
+import com.datadog.kmp.rum.tracking.SwiftUIRUMActionsPredicate
+import com.datadog.kmp.rum.tracking.SwiftUIRUMViewsPredicate
 import com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
 import platform.UIKit.UIViewController
 import platform.darwin.NSObject
@@ -264,6 +271,54 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
             }
         }
         nativeConfiguration.setUiKitViewsPredicate(nativePredicate)
+    }
+
+    fun setSwiftUIViewsPredicate(swiftUIRUMViewsPredicate: SwiftUIRUMViewsPredicate) {
+        val nativePredicate = if (swiftUIRUMViewsPredicate is DefaultSwiftUIRUMViewsPredicate) {
+            // just a short path to avoid creating unnecessary layers. NB: if DefaultSwiftUIRUMViewsPredicate becomes
+            // open, it is better to remove this branch, because its behavior may become different
+            // from the wrapped value
+            swiftUIRUMViewsPredicate.nativeDelegate
+        } else {
+            object : NSObject(), DDSwiftUIRUMViewsPredicateProtocol {
+                override fun rumViewFor(extractedViewName: String): DDRUMView? {
+                    val rumView = swiftUIRUMViewsPredicate.createView(extractedViewName) ?: return null
+                    return DDRUMView(
+                        rumView.name,
+                        rumView.attributes.mapKeys {
+                            @Suppress("USELESS_CAST")
+                            it.key as Any
+                        }
+                    )
+                }
+            }
+        }
+        nativeConfiguration.setSwiftUIViewsPredicate(nativePredicate)
+    }
+
+    fun setSwiftUIActionsPredicate(
+        swiftUIRUMActionsPredicate: SwiftUIRUMActionsPredicate
+    ) {
+        val nativePredicate = if (swiftUIRUMActionsPredicate is DefaultSwiftUIRUMActionsPredicate) {
+            // just a short path to avoid creating unnecessary layers. NB: if DefaultSwiftUIRUMActionsPredicate becomes
+            // open, it is better to remove this branch, because its behavior may become different
+            // from the wrapped value
+            swiftUIRUMActionsPredicate.nativeDelegate
+        } else {
+            object : NSObject(), DDSwiftUIRUMActionsPredicateProtocol {
+                override fun rumActionWith(componentName: String): DDRUMAction? {
+                    val rumAction = swiftUIRUMActionsPredicate.createAction(componentName) ?: return null
+                    return DDRUMAction(
+                        rumAction.name,
+                        rumAction.attributes.mapKeys {
+                            @Suppress("USELESS_CAST")
+                            it.key as Any
+                        }
+                    )
+                }
+            }
+        }
+        nativeConfiguration.setSwiftUIActionsPredicate(nativePredicate)
     }
 
     fun setAppHangThreshold(thresholdMs: Long?) {

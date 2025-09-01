@@ -22,6 +22,7 @@ import com.datadog.kmp.ktor.internal.trace.TraceIdGenerator
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.configuration.RumSessionProvider
 import io.ktor.client.plugins.api.OnRequestContext
 import io.ktor.client.plugins.api.OnResponseContext
 import io.ktor.client.request.HttpRequestBuilder
@@ -34,6 +35,7 @@ import io.ktor.util.AttributeKey
 
 internal class DatadogKtorPlugin(
     private val rumMonitor: RumMonitor,
+    private val rumSessionProvider: RumSessionProvider,
     private val tracedHosts: Map<String, Set<TracingHeaderType>>,
     private val traceSampler: Sampler<TraceId>,
     private val traceContextInjection: TraceContextInjection,
@@ -57,7 +59,7 @@ internal class DatadogKtorPlugin(
 
         if (isSampledIn && traceHeaderTypes.isNotEmpty()) {
             traceHeaderTypes.forEach { headerType ->
-                headerType.injectHeaders(request, true, traceId, spanId)
+                headerType.injectHeaders(request, true, traceId, spanId, rumSessionProvider.sessionId)
             }
             request.attributes.put(DD_TRACE_ID_ATTR, traceId)
             request.attributes.put(DD_SPAN_ID_ATTR, spanId)
@@ -65,7 +67,7 @@ internal class DatadogKtorPlugin(
         } else {
             if (traceContextInjection == TraceContextInjection.All) {
                 traceHeaderTypes.forEach { headerType ->
-                    headerType.injectHeaders(request, false, traceId, spanId)
+                    headerType.injectHeaders(request, false, traceId, spanId, rumSessionProvider.sessionId)
                 }
             }
         }

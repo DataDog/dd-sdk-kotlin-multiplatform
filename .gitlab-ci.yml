@@ -1,7 +1,7 @@
 # SETUP
 
 variables:
-  CURRENT_CI_IMAGE: "5"
+  CURRENT_CI_IMAGE: "6"
   CI_IMAGE_DOCKER: registry.ddbuild.io/ci/dd-sdk-kotlin-multiplatform:$CURRENT_CI_IMAGE
   SLACK_NOTIFIER_IMAGE: registry.ddbuild.io/slack-notifier:latest
   GIT_DEPTH: 6
@@ -25,18 +25,8 @@ stages:
   set-publishing-credentials:
     - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
     - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
-    - export OSSRH_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.ossrh_username --with-decryption --query "Parameter.Value" --out text)
-    - export OSSRH_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.ossrh_password --with-decryption --query "Parameter.Value" --out text)
-  install-android-sdk:
-    - curl -sSL -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip
-    - rm -rf ~/android_sdk
-    - rm -rf ~/cmdline-tools
-    - unzip -q commandlinetools -d ~/
-    - mkdir -p ~/android_sdk/cmdline-tools/latest
-    - mv ~/cmdline-tools/* ~/android_sdk/cmdline-tools/latest
-    - rm ./commandlinetools.zip
-    - export ANDROID_HOME="$HOME/android_sdk/"
-    - yes | ~/android_sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+    - export CENTRAL_PUBLISHER_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.publishing.central_username --with-decryption --query "Parameter.Value" --out text)
+    - export CENTRAL_PUBLISHER_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.publishing.central_password --with-decryption --query "Parameter.Value" --out text)
 
 # Security
 
@@ -52,14 +42,14 @@ ci-image:
   when: manual
   except: [ tags, schedules ]
   tags: [ "arch:amd64" ]
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/docker:24.0.4-gbi-focal
+  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/docker:24.0.4-jammy
   script:
     - docker buildx build --tag $CI_IMAGE_DOCKER --label target=build -f Dockerfile.gitlab --push .
 
 env-info:
   stage: info
   when: manual
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   allow_failure: true # do not block GH PRs
   script:
     - system_profiler SPSoftwareDataType # system info
@@ -81,7 +71,7 @@ env-info:
 
 static-analysis-ios:
   stage: analysis
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   timeout: 1h
   script:
 #    - ./tools/lint/run-linter.sh
@@ -131,7 +121,7 @@ jvm-unit-test:
 
 ios-unit-test:
   stage: test
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   timeout: 1h
   script:
     - pod repo update
@@ -146,10 +136,9 @@ ios-unit-test:
 
 tvos-unit-test:
   stage: test
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   timeout: 1h
   script:
-    - xcodebuild -downloadPlatform tvOS -quiet
     - pod repo update
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
     - ./gradlew tvosUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
@@ -162,25 +151,26 @@ tvos-unit-test:
 
 sample-app-build-ios:
   stage: test
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   timeout: 1h
   variables:
-    BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.4"
+    BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5"
   script:
     - pod repo update
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
     # temporary workaround for RUM-4282
     - ./gradlew :core:podBuildDatadogObjcIphonesimulator :core:podBuildDatadogCrashReportingIphonesimulator --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
+    # by some reason without this line xcodebuild below fails
+    - ./gradlew :features:session-replay:podBuildDatadogSessionReplayIphonesimulator --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
     - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample iOS" build | xcbeautify --preserve-unbeautified
 
 sample-app-build-tvos:
   stage: test
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   timeout: 1h
   variables:
-    BUILD_DESTINATION: "platform=tvOS Simulator,name=Apple TV,OS=17.4"
+    BUILD_DESTINATION: "platform=tvOS Simulator,name=Apple TV,OS=17.5"
   script:
-    - xcodebuild -downloadPlatform tvOS -quiet
     - pod repo update
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
     # temporary workaround for RUM-4282
@@ -201,92 +191,74 @@ sample-app-build-android:
 # PUBLISH ARTIFACTS ON MAVEN
 
 publish:release-core:
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   only:
     - tags
   stage: publish
   timeout: 30m
   script:
-    - xcodebuild -downloadPlatform tvOS -quiet
-    - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :core:publishToSonatype --stacktrace --no-daemon
+    - ./gradlew :core:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-logs:
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   only:
     - tags
   stage: publish
   timeout: 30m
   script:
-    - xcodebuild -downloadPlatform tvOS -quiet
-    - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :features:logs:publishToSonatype --stacktrace --no-daemon
+    - ./gradlew :features:logs:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-rum:
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   only:
     - tags
   stage: publish
   timeout: 30m
   script:
-    - xcodebuild -downloadPlatform tvOS -quiet
-    - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :features:rum:publishToSonatype --stacktrace --no-daemon
+    - ./gradlew :features:rum:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-webview:
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   only:
     - tags
   stage: publish
   timeout: 30m
   script:
-    # even though WebView tracking doesn't support tvOS, Gradle will trigger core module pod
-    # compilation for tvOS by some reason
-    - xcodebuild -downloadPlatform tvOS -quiet
-    - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :features:webview:publishToSonatype --stacktrace --no-daemon
+    - ./gradlew :features:webview:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-session-replay:
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   only:
     - tags
   stage: publish
   timeout: 30m
   script:
-    # even though Session Replay doesn't support tvOS, Gradle will trigger core module pod
-    # compilation for tvOS by some reason
-    - xcodebuild -downloadPlatform tvOS -quiet
-    - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :features:session-replay:publishToSonatype --stacktrace --no-daemon
+    - ./gradlew :features:session-replay:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-ktor:
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   only:
     - tags
   stage: publish
   timeout: 30m
   script:
-    - xcodebuild -downloadPlatform tvOS -quiet
-    - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :integrations:ktor:publishToSonatype --stacktrace --no-daemon
+    - ./gradlew :integrations:ktor:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-ktor3:
-  tags: [ "macos:sonoma" ]
+  tags: [ "macos:sonoma-arm64, specific:true" ]
   only:
     - tags
   stage: publish
   timeout: 30m
   script:
-    - xcodebuild -downloadPlatform tvOS -quiet
-    - !reference [.snippets, install-android-sdk]
     - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :integrations:ktor3:publishToSonatype --stacktrace --no-daemon
+    - ./gradlew :integrations:ktor3:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 # SLACK NOTIFICATIONS
 
@@ -298,7 +270,7 @@ notify:publish-release-success:
   only:
     - tags
   script:
-    - MAVEN_URL="https://central.sonatype.com/artifact/com.datadoghq/dd-sdk-kotlin-multiplatform-core/$CI_COMMIT_TAG"
+    - MAVEN_URL="https://search.maven.org/artifact/com.datadoghq/dd-sdk-kotlin-multiplatform-core/$CI_COMMIT_TAG/jar"
     - 'MESSAGE_TEXT=":rocket: $CI_PROJECT_NAME $CI_COMMIT_TAG published on :maven: $MAVEN_URL"'
     - postmessage "#mobile-sdk-ops" "$MESSAGE_TEXT"
 

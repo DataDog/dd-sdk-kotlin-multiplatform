@@ -8,15 +8,21 @@ package com.datadog.kmp.sample
 
 import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.core.configuration.enableBackgroundTasks
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.setAppHangThreshold
-import com.datadog.kmp.rum.configuration.trackUiKitViews
+import com.datadog.kmp.rum.configuration.trackSwiftUIViews
 import com.datadog.kmp.rum.configuration.trackWatchdogTerminations
 
+@OptIn(ExperimentalRumApi::class)
 internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder) {
     with(rumConfigurationBuilder) {
-        trackUiKitViews()
-        setupUiKitActionsTracking(this)
+        // uncomment the following if your application is UIKit-based
+        // trackUiKitViews()
+        // setupUiKitActionsTracking(this)
+        trackSwiftUIViews()
+        // SwiftUI actions detection is not capable of capturing labels yet, so we will track them manually
+        // trackSwiftUIActions(isLegacyDetectionEnabled = true)
         setAppHangThreshold(APP_HANG_THRESHOLD_MS)
         trackWatchdogTerminations(true)
     }
