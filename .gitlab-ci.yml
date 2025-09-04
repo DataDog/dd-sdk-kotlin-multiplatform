@@ -158,10 +158,13 @@ sample-app-build-ios:
   script:
     - pod repo update
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
-    # temporary workaround for RUM-4282
-    - ./gradlew :core:podBuildDatadogObjcIphonesimulator :core:podBuildDatadogCrashReportingIphonesimulator --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
     # by some reason without this line xcodebuild below fails
-    - ./gradlew :features:session-replay:podBuildDatadogSessionReplayIphonesimulator --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
+    - ./gradlew :core:podBuildDatadogCoreIphonesimulator
+      :core:podBuildDatadogCrashReportingIphonesimulator
+      :features:rum:podBuildDatadogRUMIphonesimulator
+      :features:logs:podBuildDatadogLogsIphonesimulator
+      :features:session-replay:podBuildDatadogSessionReplayIphonesimulator
+      --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
     - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample iOS" build | xcbeautify --preserve-unbeautified
 
 sample-app-build-tvos:
@@ -174,7 +177,12 @@ sample-app-build-tvos:
     - pod repo update
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
     # temporary workaround for RUM-4282
-    - ./gradlew :core:podBuildDatadogObjcAppletvsimulator :core:podBuildDatadogCrashReportingAppletvsimulator --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
+    # by some reason without this line xcodebuild below fails
+    - ./gradlew :core:podBuildDatadogCoreAppletvsimulator
+      :core:podBuildDatadogCrashReportingAppletvsimulator
+      :features:rum:podBuildDatadogRUMAppletvsimulator
+      :features:logs:podBuildDatadogLogsAppletvsimulator
+      --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
     - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample tvOS" build | xcbeautify --preserve-unbeautified
 
 sample-app-build-android:

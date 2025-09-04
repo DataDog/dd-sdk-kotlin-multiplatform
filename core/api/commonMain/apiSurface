@@ -3,7 +3,6 @@ expect object com.datadog.kmp.Datadog
   fun initialize(Any? = null, com.datadog.kmp.core.configuration.Configuration, com.datadog.kmp.privacy.TrackingConsent)
   fun isInitialized(): Boolean
   fun setTrackingConsent(com.datadog.kmp.privacy.TrackingConsent)
-  DEPRECATED fun setUserInfo(String? = null, String? = null, String? = null, Map<String, Any?> = emptyMap())
   fun setUserInfo(String, String? = null, String? = null, Map<String, Any?> = emptyMap())
   fun addUserExtraInfo(Map<String, Any?>)
   fun clearUserInfo()

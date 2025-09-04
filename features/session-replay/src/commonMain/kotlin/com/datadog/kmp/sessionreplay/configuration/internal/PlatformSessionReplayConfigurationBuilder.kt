@@ -7,13 +7,10 @@
 package com.datadog.kmp.sessionreplay.configuration.internal
 
 import com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
-import com.datadog.kmp.sessionreplay.configuration.SessionReplayPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
 
 internal interface PlatformSessionReplayConfigurationBuilder<T : Any> {
-
-    fun setPrivacy(privacy: SessionReplayPrivacy)
 
     fun setImagePrivacy(privacy: ImagePrivacy)
 

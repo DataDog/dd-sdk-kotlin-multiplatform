@@ -9,7 +9,6 @@ package com.datadog.kmp.sessionreplay.configuration.internal
 import com.datadog.android.sessionreplay.ExtensionSupport
 import com.datadog.android.sessionreplay.SystemRequirementsConfiguration
 import com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
-import com.datadog.kmp.sessionreplay.configuration.SessionReplayPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
 import fr.xgouchet.elmyr.annotation.BoolForgery
@@ -30,7 +29,6 @@ import org.mockito.kotlin.whenever
 import org.mockito.quality.Strictness
 import com.datadog.android.sessionreplay.ImagePrivacy as NativeImagePrivacy
 import com.datadog.android.sessionreplay.SessionReplayConfiguration as NativeSessionReplayConfiguration
-import com.datadog.android.sessionreplay.SessionReplayPrivacy as NativeSessionReplayPrivacy
 import com.datadog.android.sessionreplay.TextAndInputPrivacy as NativeTextAndInputPrivacy
 import com.datadog.android.sessionreplay.TouchPrivacy as NativeTouchPrivacy
 
@@ -49,18 +47,6 @@ class AndroidSessionReplayConfigurationBuilderTest {
     @BeforeEach
     fun `set up`() {
         testedBuilder = AndroidSessionReplayConfigurationBuilder(mockNativeRumConfigurationBuilder)
-    }
-
-    @Test
-    fun `M call platform configuration builder+setPrivacy W setPrivacy`(
-        @Forgery fakePrivacy: SessionReplayPrivacy
-    ) {
-        // When
-        testedBuilder.setPrivacy(fakePrivacy)
-
-        // Then
-        @Suppress("DEPRECATION")
-        verify(mockNativeRumConfigurationBuilder).setPrivacy(fakePrivacy.native)
     }
 
     @Test
@@ -154,13 +140,6 @@ class AndroidSessionReplayConfigurationBuilderTest {
         // Then
         assertThat(sessionReplayConfiguration).isSameAs(mockNativeConfiguration)
     }
-
-    private val SessionReplayPrivacy.native: NativeSessionReplayPrivacy
-        get() = when (this) {
-            SessionReplayPrivacy.MASK -> NativeSessionReplayPrivacy.MASK
-            SessionReplayPrivacy.MASK_USER_INPUT -> NativeSessionReplayPrivacy.MASK_USER_INPUT
-            SessionReplayPrivacy.ALLOW -> NativeSessionReplayPrivacy.ALLOW
-        }
 
     private val ImagePrivacy.native: com.datadog.android.sessionreplay.ImagePrivacy
         get() = when (this) {

@@ -6,7 +6,7 @@
 
 package com.datadog.kmp.core.configuration
 
-import cocoapods.DatadogObjc.DDConfiguration
+import cocoapods.DatadogCore.DDConfiguration
 import com.datadog.tools.random.randomBoolean
 import com.datadog.tools.random.randomInt
 import kotlin.test.Test

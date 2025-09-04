@@ -6,11 +6,11 @@
 
 package com.datadog.kmp.rum.configuration.internal
 
-import cocoapods.DatadogObjc.DDRUMConfiguration
-import cocoapods.DatadogObjc.DDRUMVitalsFrequencyAverage
-import cocoapods.DatadogObjc.DDRUMVitalsFrequencyFrequent
-import cocoapods.DatadogObjc.DDRUMVitalsFrequencyNever
-import cocoapods.DatadogObjc.DDRUMVitalsFrequencyRare
+import cocoapods.DatadogRUM.DDRUMConfiguration
+import cocoapods.DatadogRUM.DDRUMVitalsFrequencyAverage
+import cocoapods.DatadogRUM.DDRUMVitalsFrequencyFrequent
+import cocoapods.DatadogRUM.DDRUMVitalsFrequencyNever
+import cocoapods.DatadogRUM.DDRUMVitalsFrequencyRare
 import com.datadog.kmp.Datadog
 import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.privacy.TrackingConsent

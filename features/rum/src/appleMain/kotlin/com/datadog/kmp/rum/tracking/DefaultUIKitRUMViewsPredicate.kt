@@ -6,7 +6,7 @@
 
 package com.datadog.kmp.rum.tracking
 
-import cocoapods.DatadogObjc.DDDefaultUIKitRUMViewsPredicate
+import cocoapods.DatadogRUM.DDDefaultUIKitRUMViewsPredicate
 import platform.UIKit.UIViewController
 
 /**

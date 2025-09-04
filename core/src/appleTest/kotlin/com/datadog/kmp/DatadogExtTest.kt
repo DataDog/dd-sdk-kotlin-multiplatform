@@ -6,20 +6,20 @@
 
 package com.datadog.kmp
 
-import cocoapods.DatadogObjc.DDBatchProcessingLevelHigh
-import cocoapods.DatadogObjc.DDBatchProcessingLevelLow
-import cocoapods.DatadogObjc.DDBatchProcessingLevelMedium
-import cocoapods.DatadogObjc.DDBatchSizeLarge
-import cocoapods.DatadogObjc.DDBatchSizeMedium
-import cocoapods.DatadogObjc.DDBatchSizeSmall
-import cocoapods.DatadogObjc.DDSDKVerbosityLevelCritical
-import cocoapods.DatadogObjc.DDSDKVerbosityLevelDebug
-import cocoapods.DatadogObjc.DDSDKVerbosityLevelError
-import cocoapods.DatadogObjc.DDSDKVerbosityLevelNone
-import cocoapods.DatadogObjc.DDSDKVerbosityLevelWarn
-import cocoapods.DatadogObjc.DDUploadFrequencyAverage
-import cocoapods.DatadogObjc.DDUploadFrequencyFrequent
-import cocoapods.DatadogObjc.DDUploadFrequencyRare
+import cocoapods.DatadogCore.DDBatchProcessingLevelHigh
+import cocoapods.DatadogCore.DDBatchProcessingLevelLow
+import cocoapods.DatadogCore.DDBatchProcessingLevelMedium
+import cocoapods.DatadogCore.DDBatchSizeLarge
+import cocoapods.DatadogCore.DDBatchSizeMedium
+import cocoapods.DatadogCore.DDBatchSizeSmall
+import cocoapods.DatadogCore.DDCoreLoggerLevelCritical
+import cocoapods.DatadogCore.DDCoreLoggerLevelDebug
+import cocoapods.DatadogCore.DDCoreLoggerLevelError
+import cocoapods.DatadogCore.DDCoreLoggerLevelNone
+import cocoapods.DatadogCore.DDCoreLoggerLevelWarn
+import cocoapods.DatadogCore.DDUploadFrequencyAverage
+import cocoapods.DatadogCore.DDUploadFrequencyFrequent
+import cocoapods.DatadogCore.DDUploadFrequencyRare
 import com.datadog.kmp.core.configuration.BatchProcessingLevel
 import com.datadog.kmp.core.configuration.BatchSize
 import com.datadog.kmp.core.configuration.Configuration
@@ -130,11 +130,11 @@ internal class DatadogExtTest {
 
     companion object {
         private val LOG_VERBOSITY_MAP = mapOf(
-            SdkLogVerbosity.DEBUG to DDSDKVerbosityLevelDebug,
-            SdkLogVerbosity.WARN to DDSDKVerbosityLevelWarn,
-            SdkLogVerbosity.ERROR to DDSDKVerbosityLevelError,
-            SdkLogVerbosity.CRITICAL to DDSDKVerbosityLevelCritical,
-            null to DDSDKVerbosityLevelNone
+            SdkLogVerbosity.DEBUG to DDCoreLoggerLevelDebug,
+            SdkLogVerbosity.WARN to DDCoreLoggerLevelWarn,
+            SdkLogVerbosity.ERROR to DDCoreLoggerLevelError,
+            SdkLogVerbosity.CRITICAL to DDCoreLoggerLevelCritical,
+            null to DDCoreLoggerLevelNone
         ).assertExhaustive(SdkLogVerbosity.entries)
 
         private fun <K, V> Map<K, V>.assertExhaustive(expected: Collection<K>) =

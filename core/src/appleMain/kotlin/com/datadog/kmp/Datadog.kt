@@ -6,25 +6,25 @@
 
 package com.datadog.kmp
 
+import cocoapods.DatadogCore.DDBatchProcessingLevelHigh
+import cocoapods.DatadogCore.DDBatchProcessingLevelLow
+import cocoapods.DatadogCore.DDBatchProcessingLevelMedium
+import cocoapods.DatadogCore.DDBatchSizeLarge
+import cocoapods.DatadogCore.DDBatchSizeMedium
+import cocoapods.DatadogCore.DDBatchSizeSmall
+import cocoapods.DatadogCore.DDConfiguration
+import cocoapods.DatadogCore.DDCoreLoggerLevelCritical
+import cocoapods.DatadogCore.DDCoreLoggerLevelDebug
+import cocoapods.DatadogCore.DDCoreLoggerLevelError
+import cocoapods.DatadogCore.DDCoreLoggerLevelNone
+import cocoapods.DatadogCore.DDCoreLoggerLevelWarn
+import cocoapods.DatadogCore.DDSite
+import cocoapods.DatadogCore.DDTrackingConsent
+import cocoapods.DatadogCore.DDUploadFrequency
+import cocoapods.DatadogCore.DDUploadFrequencyAverage
+import cocoapods.DatadogCore.DDUploadFrequencyFrequent
+import cocoapods.DatadogCore.DDUploadFrequencyRare
 import cocoapods.DatadogCrashReporting.DDCrashReporter
-import cocoapods.DatadogObjc.DDBatchProcessingLevelHigh
-import cocoapods.DatadogObjc.DDBatchProcessingLevelLow
-import cocoapods.DatadogObjc.DDBatchProcessingLevelMedium
-import cocoapods.DatadogObjc.DDBatchSizeLarge
-import cocoapods.DatadogObjc.DDBatchSizeMedium
-import cocoapods.DatadogObjc.DDBatchSizeSmall
-import cocoapods.DatadogObjc.DDConfiguration
-import cocoapods.DatadogObjc.DDSDKVerbosityLevelCritical
-import cocoapods.DatadogObjc.DDSDKVerbosityLevelDebug
-import cocoapods.DatadogObjc.DDSDKVerbosityLevelError
-import cocoapods.DatadogObjc.DDSDKVerbosityLevelNone
-import cocoapods.DatadogObjc.DDSDKVerbosityLevelWarn
-import cocoapods.DatadogObjc.DDSite
-import cocoapods.DatadogObjc.DDTrackingConsent
-import cocoapods.DatadogObjc.DDUploadFrequency
-import cocoapods.DatadogObjc.DDUploadFrequencyAverage
-import cocoapods.DatadogObjc.DDUploadFrequencyFrequent
-import cocoapods.DatadogObjc.DDUploadFrequencyRare
 import com.datadog.kmp.core.configuration.BatchProcessingLevel
 import com.datadog.kmp.core.configuration.BatchSize
 import com.datadog.kmp.core.configuration.Configuration
@@ -33,7 +33,7 @@ import com.datadog.kmp.core.configuration.setProxy
 import com.datadog.kmp.internal.InternalAttributes
 import com.datadog.kmp.privacy.TrackingConsent
 import kotlin.concurrent.Volatile
-import cocoapods.DatadogObjc.DDDatadog as DatadogIOS
+import cocoapods.DatadogCore.DDDatadog as DatadogIOS
 
 /**
  * This class initializes the Datadog SDK, and sets up communication with the server.
@@ -94,32 +94,6 @@ actual object Datadog {
      */
     actual fun setTrackingConsent(consent: TrackingConsent) {
         DatadogIOS.setTrackingConsentWithConsent(consent.native)
-    }
-
-    /**
-     * Sets the user information.
-     *
-     * @param id (nullable) a unique user identifier (relevant to your business domain)
-     * @param name (nullable) the user name or alias
-     * @param email (nullable) the user email
-     * @param extraInfo additional information. An extra information can be
-     * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
-     */
-    @Deprecated(
-        "Use setUserInfo call with mandatory User ID instead."
-    )
-    actual fun setUserInfo(
-        id: String?,
-        name: String?,
-        email: String?,
-        extraInfo: Map<String, Any?>
-    ) {
-        DatadogIOS.setUserInfoWithId(
-            id,
-            name,
-            email,
-            extraInfo.eraseKeyType()
-        )
     }
 
     /**
@@ -246,19 +220,19 @@ actual object Datadog {
 
 internal val SdkLogVerbosity?.native: Long
     get() = when (this) {
-        SdkLogVerbosity.DEBUG -> DDSDKVerbosityLevelDebug
-        SdkLogVerbosity.WARN -> DDSDKVerbosityLevelWarn
-        SdkLogVerbosity.ERROR -> DDSDKVerbosityLevelError
-        SdkLogVerbosity.CRITICAL -> DDSDKVerbosityLevelCritical
-        null -> DDSDKVerbosityLevelNone
+        SdkLogVerbosity.DEBUG -> DDCoreLoggerLevelDebug
+        SdkLogVerbosity.WARN -> DDCoreLoggerLevelWarn
+        SdkLogVerbosity.ERROR -> DDCoreLoggerLevelError
+        SdkLogVerbosity.CRITICAL -> DDCoreLoggerLevelCritical
+        null -> DDCoreLoggerLevelNone
     }
 
 internal val Long.toSdkLogVerbosity: SdkLogVerbosity?
     get() = when (this) {
-        DDSDKVerbosityLevelDebug -> SdkLogVerbosity.DEBUG
-        DDSDKVerbosityLevelWarn -> SdkLogVerbosity.WARN
-        DDSDKVerbosityLevelError -> SdkLogVerbosity.ERROR
-        DDSDKVerbosityLevelCritical -> SdkLogVerbosity.CRITICAL
+        DDCoreLoggerLevelDebug -> SdkLogVerbosity.DEBUG
+        DDCoreLoggerLevelWarn -> SdkLogVerbosity.WARN
+        DDCoreLoggerLevelError -> SdkLogVerbosity.ERROR
+        DDCoreLoggerLevelCritical -> SdkLogVerbosity.CRITICAL
         else -> null
     }
 

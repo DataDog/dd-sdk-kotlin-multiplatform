@@ -10,12 +10,10 @@ import com.datadog.android.sessionreplay.ExtensionSupport
 import com.datadog.android.sessionreplay.SessionReplayConfiguration
 import com.datadog.android.sessionreplay.SystemRequirementsConfiguration
 import com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
-import com.datadog.kmp.sessionreplay.configuration.SessionReplayPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
 import com.datadog.android.sessionreplay.ImagePrivacy as NativeImagePrivacy
 import com.datadog.android.sessionreplay.SessionReplayConfiguration as NativeSessionReplayConfiguration
-import com.datadog.android.sessionreplay.SessionReplayPrivacy as NativeSessionReplayPrivacy
 import com.datadog.android.sessionreplay.TextAndInputPrivacy as NativeTextAndInputPrivacy
 import com.datadog.android.sessionreplay.TouchPrivacy as NativeTouchPrivacy
 
@@ -42,11 +40,6 @@ internal class AndroidSessionReplayConfigurationBuilder :
         nativeBuilder.setSystemRequirements(systemRequirementsConfiguration)
     }
 
-    override fun setPrivacy(privacy: SessionReplayPrivacy) {
-        @Suppress("DEPRECATION")
-        nativeBuilder.setPrivacy(privacy.native)
-    }
-
     override fun setImagePrivacy(privacy: ImagePrivacy) {
         nativeBuilder.setImagePrivacy(privacy.native)
     }
@@ -67,13 +60,6 @@ internal class AndroidSessionReplayConfigurationBuilder :
         return nativeBuilder.build()
     }
 }
-
-private val SessionReplayPrivacy.native: NativeSessionReplayPrivacy
-    get() = when (this) {
-        SessionReplayPrivacy.MASK -> NativeSessionReplayPrivacy.MASK
-        SessionReplayPrivacy.MASK_USER_INPUT -> NativeSessionReplayPrivacy.MASK_USER_INPUT
-        SessionReplayPrivacy.ALLOW -> NativeSessionReplayPrivacy.ALLOW
-    }
 
 private val ImagePrivacy.native: NativeImagePrivacy
     get() = when (this) {

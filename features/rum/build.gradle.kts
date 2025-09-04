@@ -35,9 +35,25 @@ kotlin {
             baseName = "DatadogKMPRUM"
         }
 
+        val compilerOptionFlag = "-compiler-option"
+        pod("DatadogRUM") {
+            extraOpts += listOf(
+                // proposed by KMP because of the @import usage in the binary
+                compilerOptionFlag,
+                "-fmodules",
+                // see https://youtrack.jetbrains.com/issue/KT-61799
+                // TL;DR: Kotlin interop adds "<ClassName>Meta" class for every "<ClassName>" class,
+                // so since there is DDRUMErrorEventError, it generates DDRUMErrorEventErrorMeta, but such
+                // class is already declared, leading to error: 'DDRUMErrorEventErrorMeta' is going
+                // to be declared twice
+                compilerOptionFlag,
+                "-DDDRUMErrorEventErrorMeta=DDRUMErrorEventErrorMetaInfo"
+            )
+            version = libs.versions.datadog.ios.get()
+        }
         // need to link it only for the tests so far (maybe this will change
         // later with SDK setup changes)
-        pod("DatadogObjc") {
+        pod("DatadogCore") {
             linkOnly = true
             version = libs.versions.datadog.ios.get()
         }
@@ -189,7 +205,7 @@ jsonSchemaGenerator {
 
         iosModelsMappingGeneration {
             enabled = true
-            iosModelsPackageName = "cocoapods.DatadogObjc"
+            iosModelsPackageName = "cocoapods.DatadogRUM"
             iosModelsClassNamePrefix = "DDRUM"
             typeNameRemapping = mapOf(
                 "Connectivity" to "RUMConnectivity",
@@ -200,8 +216,8 @@ jsonSchemaGenerator {
                 "CiTest" to "RUMCITest",
                 "SessionType" to "RUMSessionType",
                 "Synthetics" to "RUMSyntheticsTest",
-                "Device" to "RUMDevice",
-                "OS" to "RUMOperatingSystem",
+                "Device" to "Device",
+                "OS" to "OperatingSystem",
                 "SessionPrecondition" to "RUMSessionPrecondition"
             )
             defaultCommonEnumValues = commonizeDefaultEnumValues(

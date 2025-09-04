@@ -6,9 +6,7 @@
 
 package com.datadog.kmp.core.configuration
 
-import cocoapods.DatadogObjc.DDConfiguration
-import cocoapods.DatadogObjc.DDCoreLoggerLevelDebug
-import cocoapods.DatadogObjc.DDInternalLogger
+import cocoapods.DatadogCore.DDConfiguration
 
 /**
  * Flag that determines if [platform.UIKit.UIApplication] methods `beginBackgroundTask(expirationHandler:)`
@@ -42,7 +40,9 @@ private fun ProxyConfiguration.toConfigurationMap(): Map<String, Any> {
         proxyConfigMap["kCFProxyUsernameKey"] = username
         proxyConfigMap["kCFProxyPasswordKey"] = password
     } else {
-        DDInternalLogger.consolePrint("Proxy credentials are not provided", DDCoreLoggerLevelDebug)
+        // TODO RUM-11618 Not able to use iOS SDK internal logger due to DatadogInternal way of declaration
+//        DDInternalLogger.consolePrint("Proxy credentials are not provided", DDCoreLoggerLevelDebug)
+        println("Proxy credentials are not provided")
     }
 
     when (type) {

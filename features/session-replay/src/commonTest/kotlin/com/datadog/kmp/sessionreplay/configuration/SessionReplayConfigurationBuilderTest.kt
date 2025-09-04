@@ -37,21 +37,6 @@ class SessionReplayConfigurationBuilderTest {
     }
 
     @Test
-    fun `M call platform configuration builder+setPrivacy W setPrivacy`() {
-        // Given
-        val fakePrivacy = randomEnumValue<SessionReplayPrivacy>()
-
-        // When
-        @Suppress("DEPRECATION")
-        testedSessionReplayConfigurationBuilder.setPrivacy(fakePrivacy)
-
-        // Then
-        verify {
-            mockPlatformSessionReplayConfigurationBuilder.setPrivacy(fakePrivacy)
-        }
-    }
-
-    @Test
     fun `M call platform configuration builder+setImagePrivacy W setImagePrivacy`() {
         // Given
         val fakeImagePrivacy = randomEnumValue<ImagePrivacy>()

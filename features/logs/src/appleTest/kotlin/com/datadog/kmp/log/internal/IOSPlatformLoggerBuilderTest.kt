@@ -6,12 +6,12 @@
 
 package com.datadog.kmp.log.internal
 
-import cocoapods.DatadogObjc.DDLogLevelCritical
-import cocoapods.DatadogObjc.DDLogLevelDebug
-import cocoapods.DatadogObjc.DDLogLevelError
-import cocoapods.DatadogObjc.DDLogLevelInfo
-import cocoapods.DatadogObjc.DDLogLevelWarn
-import cocoapods.DatadogObjc.DDLoggerConfiguration
+import cocoapods.DatadogLogs.DDLogLevelCritical
+import cocoapods.DatadogLogs.DDLogLevelDebug
+import cocoapods.DatadogLogs.DDLogLevelError
+import cocoapods.DatadogLogs.DDLogLevelInfo
+import cocoapods.DatadogLogs.DDLogLevelWarn
+import cocoapods.DatadogLogs.DDLoggerConfiguration
 import com.datadog.kmp.log.LogLevel
 import kotlin.test.Test
 import kotlin.test.assertEquals

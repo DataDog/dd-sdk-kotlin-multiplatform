@@ -11,10 +11,6 @@ import cocoapods.DatadogSessionReplay.DDImagePrivacyLevelMaskAll
 import cocoapods.DatadogSessionReplay.DDImagePrivacyLevelMaskNonBundledOnly
 import cocoapods.DatadogSessionReplay.DDImagePrivacyLevelMaskNone
 import cocoapods.DatadogSessionReplay.DDSessionReplayConfiguration
-import cocoapods.DatadogSessionReplay.DDSessionReplayConfigurationPrivacyLevel
-import cocoapods.DatadogSessionReplay.DDSessionReplayConfigurationPrivacyLevelAllow
-import cocoapods.DatadogSessionReplay.DDSessionReplayConfigurationPrivacyLevelMask
-import cocoapods.DatadogSessionReplay.DDSessionReplayConfigurationPrivacyLevelMaskUserInput
 import cocoapods.DatadogSessionReplay.DDTextAndInputPrivacyLevel
 import cocoapods.DatadogSessionReplay.DDTextAndInputPrivacyLevelMaskAll
 import cocoapods.DatadogSessionReplay.DDTextAndInputPrivacyLevelMaskAllInputs
@@ -23,52 +19,50 @@ import cocoapods.DatadogSessionReplay.DDTouchPrivacyLevel
 import cocoapods.DatadogSessionReplay.DDTouchPrivacyLevelHide
 import cocoapods.DatadogSessionReplay.DDTouchPrivacyLevelShow
 import com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
-import com.datadog.kmp.sessionreplay.configuration.SessionReplayPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
 
-internal open class IOSSessionReplayConfigurationBuilder(sampleRate: Float) :
+internal open class IOSSessionReplayConfigurationBuilder(private val sampleRate: Float) :
     PlatformSessionReplayConfigurationBuilder<DDSessionReplayConfiguration> {
 
-    internal val nativeConfiguration = DDSessionReplayConfiguration(sampleRate)
-
-    override fun setPrivacy(privacy: SessionReplayPrivacy) {
-        nativeConfiguration.setDefaultPrivacyLevel(privacy.native)
-    }
+    private var imagePrivacy: DDImagePrivacyLevel = DDImagePrivacyLevelMaskAll
+    private var textAndInputPrivacy: DDTextAndInputPrivacyLevel = DDTextAndInputPrivacyLevelMaskAll
+    private var touchPrivacy: DDTouchPrivacyLevel = DDTouchPrivacyLevelHide
+    private var startRecordingImmediately: Boolean = true
+    private var enableSwiftUISupport: Boolean = false
 
     override fun setImagePrivacy(privacy: ImagePrivacy) {
-        nativeConfiguration.setImagePrivacyLevel(privacy.native)
+        imagePrivacy = privacy.native
     }
 
     override fun setTouchPrivacy(privacy: TouchPrivacy) {
-        nativeConfiguration.setTouchPrivacyLevel(privacy.native)
+        touchPrivacy = privacy.native
     }
 
     override fun setTextAndInputPrivacy(privacy: TextAndInputPrivacy) {
-        nativeConfiguration.setTextAndInputPrivacyLevel(privacy.native)
+        textAndInputPrivacy = privacy.native
     }
 
     override fun startRecordingImmediately(enabled: Boolean) {
-        nativeConfiguration.setStartRecordingImmediately(enabled)
+        startRecordingImmediately = enabled
     }
 
     fun enableSwiftUISupport(enabled: Boolean) {
-        val featureFlags = nativeConfiguration.featureFlags().toMutableMap()
-        featureFlags["swiftui"] = enabled
-        nativeConfiguration.setFeatureFlags(featureFlags)
+        enableSwiftUISupport = enabled
     }
 
     override fun build(): DDSessionReplayConfiguration {
-        return nativeConfiguration
+        return DDSessionReplayConfiguration(
+            sampleRate,
+            textAndInputPrivacy,
+            imagePrivacy,
+            touchPrivacy,
+            mapOf("swiftui" to enableSwiftUISupport)
+        ).apply {
+            setStartRecordingImmediately(startRecordingImmediately)
+        }
     }
 }
-
-private val SessionReplayPrivacy.native: DDSessionReplayConfigurationPrivacyLevel
-    get() = when (this) {
-        SessionReplayPrivacy.MASK -> DDSessionReplayConfigurationPrivacyLevelMask
-        SessionReplayPrivacy.MASK_USER_INPUT -> DDSessionReplayConfigurationPrivacyLevelMaskUserInput
-        SessionReplayPrivacy.ALLOW -> DDSessionReplayConfigurationPrivacyLevelAllow
-    }
 
 private val ImagePrivacy.native: DDImagePrivacyLevel
     get() = when (this) {

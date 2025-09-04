@@ -85,29 +85,6 @@ actual object Datadog {
     /**
      * Sets the user information.
      *
-     * @param id (nullable) a unique user identifier (relevant to your business domain)
-     * @param name (nullable) the user name or alias
-     * @param email (nullable) the user email
-     * @param extraInfo additional information. An extra information can be
-     * nested up to 8 levels deep. Keys using more than 8 levels will be sanitized by SDK.
-     */
-    @Deprecated(
-        "Use setUserInfo call with mandatory User ID instead."
-    )
-    @JvmName("setUserInfoDeprecated")
-    actual fun setUserInfo(
-        id: String?,
-        name: String?,
-        email: String?,
-        extraInfo: Map<String, Any?>
-    ) {
-        @Suppress("DEPRECATION")
-        DatadogAndroid.setUserInfo(id, name, email, extraInfo)
-    }
-
-    /**
-     * Sets the user information.
-     *
      * @param id (mandatory) a unique user identifier (relevant to your business domain)
      * @param name (nullable) the user name or alias
      * @param email (nullable) the user email
