@@ -5,6 +5,39 @@
   "type": "object",
   "description": "Structure holding information about a Log",
   "properties": {
+    "os": {
+      "type": "object",
+      "description": "Operating system properties",
+      "required": ["name", "version", "version_major"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Operating system name, e.g. Android, iOS",
+          "readOnly": true
+        },
+        "version": {
+          "type": "string",
+          "description": "Full operating system version, e.g. 8.1.1",
+          "readOnly": true
+        },
+        "build": {
+          "type": "string",
+          "description": "Operating system build number, e.g. 15D21",
+          "readOnly": true
+        }
+      }
+    },
+    "device": {
+      "type": "object",
+      "description": "Device properties",
+      "properties": {
+        "architecture": {
+          "type": "string",
+          "description": "The CPU architecture of the device that is reporting the error",
+          "readOnly": true
+        }
+      }
+    },
     "status": {
       "type": "string",
       "description": "The severity of this log",
@@ -175,7 +208,9 @@
     "service",
     "logger",
     "_dd",
-    "ddtags"
+    "ddtags",
+    "os",
+    "device"
   ],
   "additionalProperties": {
     "type": "object",

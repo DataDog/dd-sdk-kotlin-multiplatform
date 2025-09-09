@@ -22,8 +22,8 @@ androidx.navigation:navigation-runtime:2.3.0                    :   46 Kb
 androidx.savedstate:savedstate:1.2.0                            :   18 Kb
 androidx.versionedparcelable:versionedparcelable:1.1.1          :   30 Kb
 androidx.viewpager:viewpager:1.0.0                              :   52 Kb
-com.datadoghq:dd-sdk-android-core:2.26.0                        :  765 Kb
-com.datadoghq:dd-sdk-android-rum:2.26.0                         :    2 Mb
+com.datadoghq:dd-sdk-android-core:3.0.0                         :  754 Kb
+com.datadoghq:dd-sdk-android-rum:3.0.0                          :    2 Mb
 org.jetbrains.kotlin:kotlin-stdlib:2.0.21                       : 1706 Kb
 org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1          :   19 Kb
 org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1         : 1457 Kb
