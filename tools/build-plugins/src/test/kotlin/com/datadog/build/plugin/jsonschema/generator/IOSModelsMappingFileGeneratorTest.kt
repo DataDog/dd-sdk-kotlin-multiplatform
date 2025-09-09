@@ -6,7 +6,7 @@ class IOSModelsMappingFileGeneratorTest : NativeModelsMappingFileGeneratorTest()
         return IOSModelsMappingFileGenerator(
             outputDir = tempDir,
             commonModelsPackageName = COMMON_MODELS_PACKAGE_NAME,
-            iosModelsPackageName = "cocoapods.DatadogObjc",
+            iosModelsPackageName = "cocoapods.DatadogRUM",
             iosModelsClassNamePrefix = "DDRUM",
             typeNameRemapping = mapOf(
                 "Connectivity" to "RUMConnectivity",

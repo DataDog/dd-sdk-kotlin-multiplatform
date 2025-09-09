@@ -6,10 +6,10 @@
 
 package com.datadog.kmp.rum
 
-import cocoapods.DatadogObjc.DDRUM
-import cocoapods.DatadogObjc.DDRUMConfiguration
-import cocoapods.DatadogObjc.DDRUMErrorSourceSource
-import cocoapods.DatadogObjc.DDRUMMonitor
+import cocoapods.DatadogRUM.DDRUM
+import cocoapods.DatadogRUM.DDRUMConfiguration
+import cocoapods.DatadogRUM.DDRUMErrorSourceSource
+import cocoapods.DatadogRUM.DDRUMMonitor
 import com.datadog.kmp.internal.INCLUDE_BINARY_IMAGES
 import com.datadog.kmp.internal.InternalProxy
 import com.datadog.kmp.internal.RUM_ERROR_IS_CRASH

@@ -6,7 +6,7 @@
 
 package com.datadog.kmp.rum
 
-import cocoapods.DatadogObjc.DDRUMMonitor
+import cocoapods.DatadogRUM.DDRUMMonitor
 import com.datadog.kmp.rum.internal.DDRumMonitorProxy
 import com.datadog.kmp.rum.internal.RumMonitorAdapter
 import platform.Foundation.NSError

@@ -10,10 +10,6 @@ import cocoapods.DatadogSessionReplay.DDImagePrivacyLevel
 import cocoapods.DatadogSessionReplay.DDImagePrivacyLevelMaskAll
 import cocoapods.DatadogSessionReplay.DDImagePrivacyLevelMaskNonBundledOnly
 import cocoapods.DatadogSessionReplay.DDImagePrivacyLevelMaskNone
-import cocoapods.DatadogSessionReplay.DDSessionReplayConfigurationPrivacyLevel
-import cocoapods.DatadogSessionReplay.DDSessionReplayConfigurationPrivacyLevelAllow
-import cocoapods.DatadogSessionReplay.DDSessionReplayConfigurationPrivacyLevelMask
-import cocoapods.DatadogSessionReplay.DDSessionReplayConfigurationPrivacyLevelMaskUserInput
 import cocoapods.DatadogSessionReplay.DDTextAndInputPrivacyLevel
 import cocoapods.DatadogSessionReplay.DDTextAndInputPrivacyLevelMaskAll
 import cocoapods.DatadogSessionReplay.DDTextAndInputPrivacyLevelMaskAllInputs
@@ -22,7 +18,6 @@ import cocoapods.DatadogSessionReplay.DDTouchPrivacyLevel
 import cocoapods.DatadogSessionReplay.DDTouchPrivacyLevelHide
 import cocoapods.DatadogSessionReplay.DDTouchPrivacyLevelShow
 import com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
-import com.datadog.kmp.sessionreplay.configuration.SessionReplayPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
 import com.datadog.tools.random.randomBoolean
@@ -45,25 +40,13 @@ class IOSSessionReplayConfigurationBuilderTest {
     }
 
     @Test
-    fun `M pass sample rate to native configuration W ctor`() {
+    fun `M pass sample rate to native configuration W ctor + build`() {
         // Then
-        assertEquals(fakeSampleRate, testedConfigurationBuilder.nativeConfiguration.replaySampleRate())
+        assertEquals(fakeSampleRate, testedConfigurationBuilder.build().replaySampleRate())
     }
 
     @Test
-    fun `M call platform configuration setPrivacy W setPrivacy`() {
-        // Given
-        val fakePrivacy = randomEnumValue<SessionReplayPrivacy>()
-
-        // When
-        testedConfigurationBuilder.setPrivacy(fakePrivacy)
-
-        // Then
-        assertEquals(fakePrivacy.native, testedConfigurationBuilder.nativeConfiguration.defaultPrivacyLevel())
-    }
-
-    @Test
-    fun `M call platform configuration setImagePrivacy W setImagePrivacy`() {
+    fun `M call platform configuration setImagePrivacy W setImagePrivacy + build`() {
         // Given
         val fakeImagePrivacy = randomEnumValue<ImagePrivacy>()
 
@@ -71,11 +54,11 @@ class IOSSessionReplayConfigurationBuilderTest {
         testedConfigurationBuilder.setImagePrivacy(fakeImagePrivacy)
 
         // Then
-        assertEquals(fakeImagePrivacy.native, testedConfigurationBuilder.nativeConfiguration.imagePrivacyLevel())
+        assertEquals(fakeImagePrivacy.native, testedConfigurationBuilder.build().imagePrivacyLevel())
     }
 
     @Test
-    fun `M call platform configuration setTouchPrivacy W setTouchPrivacy`() {
+    fun `M call platform configuration setTouchPrivacy W setTouchPrivacy + build`() {
         // Given
         val fakeTouchPrivacy = randomEnumValue<TouchPrivacy>()
 
@@ -83,11 +66,11 @@ class IOSSessionReplayConfigurationBuilderTest {
         testedConfigurationBuilder.setTouchPrivacy(fakeTouchPrivacy)
 
         // Then
-        assertEquals(fakeTouchPrivacy.native, testedConfigurationBuilder.nativeConfiguration.touchPrivacyLevel())
+        assertEquals(fakeTouchPrivacy.native, testedConfigurationBuilder.build().touchPrivacyLevel())
     }
 
     @Test
-    fun `M call platform configuration setTextAndInputPrivacy W setTextAndInputPrivacy`() {
+    fun `M call platform configuration setTextAndInputPrivacy W setTextAndInputPrivacy + build`() {
         // Given
         val fakeTextAndInputPrivacy = randomEnumValue<TextAndInputPrivacy>()
 
@@ -97,12 +80,12 @@ class IOSSessionReplayConfigurationBuilderTest {
         // Then
         assertEquals(
             fakeTextAndInputPrivacy.native,
-            testedConfigurationBuilder.nativeConfiguration.textAndInputPrivacyLevel()
+            testedConfigurationBuilder.build().textAndInputPrivacyLevel()
         )
     }
 
     @Test
-    fun `M call platform configuration setStartRecordingImmediately W startRecordingImmediately`() {
+    fun `M call platform configuration setStartRecordingImmediately W startRecordingImmediately + build`() {
         // Given
         val fakeEnabled = randomBoolean()
 
@@ -112,12 +95,12 @@ class IOSSessionReplayConfigurationBuilderTest {
         // Then
         assertEquals(
             fakeEnabled,
-            testedConfigurationBuilder.nativeConfiguration.startRecordingImmediately()
+            testedConfigurationBuilder.build().startRecordingImmediately()
         )
     }
 
     @Test
-    fun `M call platform configuration setFeatureFlags W enableSwiftUISupport`() {
+    fun `M call platform configuration setFeatureFlags W enableSwiftUISupport + build`() {
         // Given
         val enableSwiftUISupport = randomBoolean()
 
@@ -127,16 +110,9 @@ class IOSSessionReplayConfigurationBuilderTest {
         // Then
         assertEquals(
             enableSwiftUISupport,
-            testedConfigurationBuilder.nativeConfiguration.featureFlags()["swiftui"] as Boolean
+            testedConfigurationBuilder.build().featureFlags()["swiftui"] as Boolean
         )
     }
-
-    private val SessionReplayPrivacy.native: DDSessionReplayConfigurationPrivacyLevel
-        get() = when (this) {
-            SessionReplayPrivacy.MASK -> DDSessionReplayConfigurationPrivacyLevelMask
-            SessionReplayPrivacy.MASK_USER_INPUT -> DDSessionReplayConfigurationPrivacyLevelMaskUserInput
-            SessionReplayPrivacy.ALLOW -> DDSessionReplayConfigurationPrivacyLevelAllow
-        }
 
     private val ImagePrivacy.native: DDImagePrivacyLevel
         get() = when (this) {

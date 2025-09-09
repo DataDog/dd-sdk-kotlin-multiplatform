@@ -38,7 +38,11 @@ kotlin {
 
         // need to link it only for the tests so far (maybe this will change
         // later with SDK setup changes)
-        pod("DatadogObjc") {
+        pod("DatadogRUM") {
+            linkOnly = true
+            version = libs.versions.datadog.ios.get()
+        }
+        pod("DatadogCore") {
             linkOnly = true
             version = libs.versions.datadog.ios.get()
         }

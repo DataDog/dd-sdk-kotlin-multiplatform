@@ -34,23 +34,6 @@ data class SessionReplayConfiguration internal constructor(
         }
 
         /**
-         * Sets the privacy rule for the Session Replay feature.
-         * If not specified all the elements will be masked by default (MASK).
-         * @see SessionReplayPrivacy.ALLOW
-         * @see SessionReplayPrivacy.MASK
-         * @see SessionReplayPrivacy.MASK_USER_INPUT
-         */
-        @Deprecated(
-            message = "This method is deprecated and will be removed in future versions. " +
-                "Use the new Fine Grained Masking APIs instead: " +
-                "[setImagePrivacy], [setTouchPrivacy], [setTextAndInputPrivacy]."
-        )
-        fun setPrivacy(privacy: SessionReplayPrivacy): Builder {
-            platformBuilder.setPrivacy(privacy)
-            return this
-        }
-
-        /**
          * Sets the image recording level for the Session Replay feature.
          * If not specified then all images that are considered to be content images will be masked by default.
          * @see ImagePrivacy.MASK_NONE

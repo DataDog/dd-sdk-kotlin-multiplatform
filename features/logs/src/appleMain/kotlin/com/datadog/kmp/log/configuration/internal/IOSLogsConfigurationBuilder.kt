@@ -6,7 +6,7 @@
 
 package com.datadog.kmp.log.configuration.internal
 
-import cocoapods.DatadogObjc.DDLogsConfiguration
+import cocoapods.DatadogLogs.DDLogsConfiguration
 import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.internal.eraseKeyType
 import com.datadog.kmp.log.model.LogEvent

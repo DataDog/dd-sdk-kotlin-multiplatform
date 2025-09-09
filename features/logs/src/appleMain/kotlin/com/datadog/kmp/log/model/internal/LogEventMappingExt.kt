@@ -6,18 +6,18 @@
 
 package com.datadog.kmp.log.model.internal
 
-import cocoapods.DatadogObjc.DDLogEvent
-import cocoapods.DatadogObjc.DDLogEventDd
-import cocoapods.DatadogObjc.DDLogEventDeviceInfo
-import cocoapods.DatadogObjc.DDLogEventError
-import cocoapods.DatadogObjc.DDLogEventStatus
-import cocoapods.DatadogObjc.DDLogEventStatusCritical
-import cocoapods.DatadogObjc.DDLogEventStatusDebug
-import cocoapods.DatadogObjc.DDLogEventStatusEmergency
-import cocoapods.DatadogObjc.DDLogEventStatusError
-import cocoapods.DatadogObjc.DDLogEventStatusInfo
-import cocoapods.DatadogObjc.DDLogEventStatusWarn
-import cocoapods.DatadogObjc.DDLogEventUserInfo
+import cocoapods.DatadogLogs.DDLogEvent
+import cocoapods.DatadogLogs.DDLogEventDd
+import cocoapods.DatadogLogs.DDLogEventDevice
+import cocoapods.DatadogLogs.DDLogEventError
+import cocoapods.DatadogLogs.DDLogEventStatus
+import cocoapods.DatadogLogs.DDLogEventStatusCritical
+import cocoapods.DatadogLogs.DDLogEventStatusDebug
+import cocoapods.DatadogLogs.DDLogEventStatusEmergency
+import cocoapods.DatadogLogs.DDLogEventStatusError
+import cocoapods.DatadogLogs.DDLogEventStatusInfo
+import cocoapods.DatadogLogs.DDLogEventStatusWarn
+import cocoapods.DatadogLogs.DDLogEventUserInfo
 import com.datadog.kmp.log.model.LogEvent
 import platform.Foundation.NSISO8601DateFormatter
 
@@ -61,7 +61,7 @@ internal fun DDLogEventDd.toCommonModel(): LogEvent.Dd = LogEvent.Dd(
     device = device().toCommonModel()
 )
 
-internal fun DDLogEventDeviceInfo.toCommonModel(): LogEvent.Device = LogEvent.Device(
+internal fun DDLogEventDevice.toCommonModel(): LogEvent.Device = LogEvent.Device(
     architecture = architecture()
 )
 

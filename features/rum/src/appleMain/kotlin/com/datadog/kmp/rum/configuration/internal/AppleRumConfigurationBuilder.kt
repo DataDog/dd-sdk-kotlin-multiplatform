@@ -6,18 +6,18 @@
 
 package com.datadog.kmp.rum.configuration.internal
 
-import cocoapods.DatadogObjc.DDRUMAction
-import cocoapods.DatadogObjc.DDRUMConfiguration
-import cocoapods.DatadogObjc.DDRUMErrorEventErrorCauses
-import cocoapods.DatadogObjc.DDRUMView
-import cocoapods.DatadogObjc.DDRUMVitalsFrequency
-import cocoapods.DatadogObjc.DDRUMVitalsFrequencyAverage
-import cocoapods.DatadogObjc.DDRUMVitalsFrequencyFrequent
-import cocoapods.DatadogObjc.DDRUMVitalsFrequencyNever
-import cocoapods.DatadogObjc.DDRUMVitalsFrequencyRare
-import cocoapods.DatadogObjc.DDSwiftUIRUMActionsPredicateProtocol
-import cocoapods.DatadogObjc.DDSwiftUIRUMViewsPredicateProtocol
-import cocoapods.DatadogObjc.DDUIKitRUMViewsPredicateProtocol
+import cocoapods.DatadogRUM.DDRUMAction
+import cocoapods.DatadogRUM.DDRUMConfiguration
+import cocoapods.DatadogRUM.DDRUMErrorEventErrorCauses
+import cocoapods.DatadogRUM.DDRUMView
+import cocoapods.DatadogRUM.DDRUMVitalsFrequency
+import cocoapods.DatadogRUM.DDRUMVitalsFrequencyAverage
+import cocoapods.DatadogRUM.DDRUMVitalsFrequencyFrequent
+import cocoapods.DatadogRUM.DDRUMVitalsFrequencyNever
+import cocoapods.DatadogRUM.DDRUMVitalsFrequencyRare
+import cocoapods.DatadogRUM.DDSwiftUIRUMActionsPredicateProtocol
+import cocoapods.DatadogRUM.DDSwiftUIRUMViewsPredicateProtocol
+import cocoapods.DatadogRUM.DDUIKitRUMViewsPredicateProtocol
 import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.internal.eraseKeyType
 import com.datadog.kmp.rum.configuration.RumSessionListener

@@ -6,10 +6,10 @@
 
 package com.datadog.kmp.log
 
-import cocoapods.DatadogObjc.DDLogger
-import cocoapods.DatadogObjc.DDLoggerConfiguration
-import cocoapods.DatadogObjc.DDLogs
-import cocoapods.DatadogObjc.DDLogsConfiguration
+import cocoapods.DatadogLogs.DDLogger
+import cocoapods.DatadogLogs.DDLoggerConfiguration
+import cocoapods.DatadogLogs.DDLogs
+import cocoapods.DatadogLogs.DDLogsConfiguration
 import com.datadog.kmp.internal.INCLUDE_BINARY_IMAGES
 import com.datadog.kmp.internal.InternalProxy
 import com.datadog.kmp.internal.LOG_ERROR_IS_CRASH

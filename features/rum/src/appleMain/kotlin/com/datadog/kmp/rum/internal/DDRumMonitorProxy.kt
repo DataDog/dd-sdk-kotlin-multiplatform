@@ -6,11 +6,11 @@
 
 package com.datadog.kmp.rum.internal
 
-import cocoapods.DatadogObjc.DDRUMActionType
-import cocoapods.DatadogObjc.DDRUMErrorSource
-import cocoapods.DatadogObjc.DDRUMMethod
-import cocoapods.DatadogObjc.DDRUMMonitor
-import cocoapods.DatadogObjc.DDRUMResourceType
+import cocoapods.DatadogRUM.DDRUMActionType
+import cocoapods.DatadogRUM.DDRUMErrorSource
+import cocoapods.DatadogRUM.DDRUMMethod
+import cocoapods.DatadogRUM.DDRUMMonitor
+import cocoapods.DatadogRUM.DDRUMResourceType
 import platform.Foundation.NSError
 import platform.Foundation.NSNumber
 import platform.Foundation.NSURLRequest
