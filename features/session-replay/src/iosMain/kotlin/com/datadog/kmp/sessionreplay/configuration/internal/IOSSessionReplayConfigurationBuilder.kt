@@ -21,6 +21,7 @@ import cocoapods.DatadogSessionReplay.DDTouchPrivacyLevelShow
 import com.datadog.kmp.sessionreplay.configuration.ImagePrivacy
 import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
+import platform.Foundation.NSURL
 
 internal open class IOSSessionReplayConfigurationBuilder(private val sampleRate: Float) :
     PlatformSessionReplayConfigurationBuilder<DDSessionReplayConfiguration> {
@@ -30,6 +31,7 @@ internal open class IOSSessionReplayConfigurationBuilder(private val sampleRate:
     private var touchPrivacy: DDTouchPrivacyLevel = DDTouchPrivacyLevelHide
     private var startRecordingImmediately: Boolean = true
     private var enableSwiftUISupport: Boolean = false
+    private var customEndpoint: NSURL? = null
 
     override fun setImagePrivacy(privacy: ImagePrivacy) {
         imagePrivacy = privacy.native
@@ -47,6 +49,10 @@ internal open class IOSSessionReplayConfigurationBuilder(private val sampleRate:
         startRecordingImmediately = enabled
     }
 
+    override fun useCustomEndpoint(endpoint: String) {
+        customEndpoint = NSURL.URLWithString(endpoint)
+    }
+
     fun enableSwiftUISupport(enabled: Boolean) {
         enableSwiftUISupport = enabled
     }
@@ -60,6 +66,9 @@ internal open class IOSSessionReplayConfigurationBuilder(private val sampleRate:
             mapOf("swiftui" to enableSwiftUISupport)
         ).apply {
             setStartRecordingImmediately(startRecordingImmediately)
+            if (customEndpoint != null) {
+                setCustomEndpoint(customEndpoint)
+            }
         }
     }
 }

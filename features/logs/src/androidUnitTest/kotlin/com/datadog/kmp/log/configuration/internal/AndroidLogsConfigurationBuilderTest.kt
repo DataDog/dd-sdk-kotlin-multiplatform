@@ -83,6 +83,17 @@ class AndroidLogsConfigurationBuilderTest {
     }
 
     @Test
+    fun `M call platform Logs configuration builder+useCustomEndpoint W useCustomEndpoint`(
+        @StringForgery(regex = "https://[a-z]+\\.com(/[a-z]+)+") fakeCustomEndpoint: String
+    ) {
+        // When
+        testedBuilder.useCustomEndpoint(fakeCustomEndpoint)
+
+        // Then
+        verify(mockNativeRumConfigurationBuilder).useCustomEndpoint(fakeCustomEndpoint)
+    }
+
+    @Test
     fun `M call platform Logs configuration builder+build W build`() {
         // Given
         val mockNativeConfiguration = mock<NativeLogsConfiguration>()

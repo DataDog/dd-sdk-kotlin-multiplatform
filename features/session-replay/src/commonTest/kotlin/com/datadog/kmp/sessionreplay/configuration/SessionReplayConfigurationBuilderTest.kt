@@ -91,4 +91,18 @@ class SessionReplayConfigurationBuilderTest {
             mockPlatformSessionReplayConfigurationBuilder.startRecordingImmediately(fakeEnabled)
         }
     }
+
+    @Test
+    fun `M call platform configuration builder+useCustomEndpoint W useCustomEndpoint`() {
+        // Given
+        val fakeCustomEndpoint = "https://example.com/api/session-replay"
+
+        // When
+        testedSessionReplayConfigurationBuilder.useCustomEndpoint(fakeCustomEndpoint)
+
+        // Then
+        verify {
+            mockPlatformSessionReplayConfigurationBuilder.useCustomEndpoint(fakeCustomEndpoint)
+        }
+    }
 }

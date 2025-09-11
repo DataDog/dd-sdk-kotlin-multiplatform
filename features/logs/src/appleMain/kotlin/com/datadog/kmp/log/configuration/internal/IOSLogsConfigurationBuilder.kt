@@ -11,6 +11,7 @@ import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.internal.eraseKeyType
 import com.datadog.kmp.log.model.LogEvent
 import com.datadog.kmp.log.model.internal.toCommonModel
+import platform.Foundation.NSURL
 
 internal class IOSLogsConfigurationBuilder : PlatformLogsConfigurationBuilder<DDLogsConfiguration> {
     private val nativeLogsConfiguration = DDLogsConfiguration(customEndpoint = null)
@@ -46,6 +47,10 @@ internal class IOSLogsConfigurationBuilder : PlatformLogsConfigurationBuilder<DD
 
             logEvent
         }
+    }
+
+    override fun useCustomEndpoint(endpoint: String) {
+        nativeLogsConfiguration.setCustomEndpoint(NSURL.URLWithString(endpoint))
     }
 
     override fun build(): DDLogsConfiguration = nativeLogsConfiguration

@@ -177,6 +177,10 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
         nativeConfigurationBuilder.trackAnonymousUser(enabled)
     }
 
+    override fun useCustomEndpoint(endpoint: String) {
+        nativeConfigurationBuilder.useCustomEndpoint(endpoint)
+    }
+
     fun trackNonFatalAnrs(enabled: Boolean) {
         nativeConfigurationBuilder.trackNonFatalAnrs(enabled)
     }

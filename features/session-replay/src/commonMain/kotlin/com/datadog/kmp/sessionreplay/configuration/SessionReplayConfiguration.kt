@@ -79,6 +79,20 @@ data class SessionReplayConfiguration internal constructor(
         }
 
         /**
+         * Let the Session Replay feature target a custom server.
+         * The provided url should be the full endpoint url, e.g.: https://example.com/replay/upload
+         *
+         * This is a configuration for the reverse proxy, unlike
+         * [com.datadog.kmp.core.configuration.Configuration.Builder.setProxy] which is a configuration for the
+         * forward proxy. Prefer to use [com.datadog.kmp.core.configuration.Configuration.Builder.setProxy] instead if
+         * possible.
+         */
+        fun useCustomEndpoint(endpoint: String): Builder {
+            platformBuilder.useCustomEndpoint(endpoint)
+            return this
+        }
+
+        /**
          * Builds a [SessionReplayConfiguration] based on the current state of this Builder.
          */
         fun build(): SessionReplayConfiguration {

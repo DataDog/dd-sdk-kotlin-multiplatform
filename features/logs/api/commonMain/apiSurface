@@ -36,6 +36,7 @@ class com.datadog.kmp.log.configuration.LogsConfiguration
   class Builder
     constructor()
     fun setEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.log.model.LogEvent>): Builder
+    fun useCustomEndpoint(String): Builder
     fun build(): LogsConfiguration
 data class com.datadog.kmp.log.model.LogEvent
   constructor(Os, LogEventDevice, Status, kotlin.String, kotlin.String, kotlin.String, Logger, Dd, Usr? = null, Account? = null, Error? = null, kotlin.String? = null, kotlin.String, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())

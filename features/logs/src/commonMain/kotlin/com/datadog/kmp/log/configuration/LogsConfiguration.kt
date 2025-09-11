@@ -44,6 +44,20 @@ class LogsConfiguration internal constructor(internal val nativeConfiguration: A
         }
 
         /**
+         * Let the Logs feature target a custom server.
+         * The provided url should be the full endpoint url, e.g.: https://example.com/logs/upload
+         *
+         * This is a configuration for the reverse proxy, unlike
+         * [com.datadog.kmp.core.configuration.Configuration.Builder.setProxy] which is a configuration for the
+         * forward proxy. Prefer to use [com.datadog.kmp.core.configuration.Configuration.Builder.setProxy] instead if
+         * possible.
+         */
+        fun useCustomEndpoint(endpoint: String): Builder {
+            platformBuilder.useCustomEndpoint(endpoint)
+            return this
+        }
+
+        /**
          * Builds a [LogsConfiguration] based on the current state of this Builder.
          */
         fun build(): LogsConfiguration {

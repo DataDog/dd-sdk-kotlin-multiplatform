@@ -56,6 +56,10 @@ internal class AndroidSessionReplayConfigurationBuilder :
         nativeBuilder.startRecordingImmediately(enabled)
     }
 
+    override fun useCustomEndpoint(endpoint: String) {
+        nativeBuilder.useCustomEndpoint(endpoint)
+    }
+
     override fun build(): SessionReplayConfiguration {
         return nativeBuilder.build()
     }

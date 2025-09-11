@@ -413,6 +413,18 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
     }
 
     @Test
+    fun `M set custom endpoint W useCustomEndpoint`() {
+        // Given
+        val fakeCustomEndpoint = "https://example.com/api/rum"
+
+        // When
+        testedBuilder.useCustomEndpoint(fakeCustomEndpoint)
+
+        // Then
+        assertEquals(fakeCustomEndpoint, fakeNativeRumConfiguration.customEndpoint()?.absoluteString)
+    }
+
+    @Test
     fun `M return native configuration W build`() {
         // When
         val nativeConfiguration = testedBuilder.build()

@@ -20,5 +20,7 @@ internal interface PlatformSessionReplayConfigurationBuilder<T : Any> {
 
     fun startRecordingImmediately(enabled: Boolean)
 
+    fun useCustomEndpoint(endpoint: String)
+
     fun build(): T
 }
