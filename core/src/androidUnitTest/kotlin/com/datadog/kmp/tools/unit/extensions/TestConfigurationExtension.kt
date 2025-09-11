@@ -132,7 +132,7 @@ class TestConfigurationExtension :
                 it.isAnnotationPresent(TestConfigurationsProvider::class.java)
             }
         if (clazz.superclass != null) {
-            collectProviderMethods(clazz.superclass, accumulator)
+            collectProviderMethods(clazz.superclass as Class<*>, accumulator)
         }
     }
 

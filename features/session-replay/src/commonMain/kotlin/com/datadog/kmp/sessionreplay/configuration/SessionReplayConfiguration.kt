@@ -11,6 +11,7 @@ import com.datadog.kmp.sessionreplay.configuration.internal.PlatformSessionRepla
 /**
  * Describes configuration to be used for the Session Replay feature.
  */
+@ConsistentCopyVisibility
 data class SessionReplayConfiguration internal constructor(
     internal val nativeConfiguration: Any
 ) {
