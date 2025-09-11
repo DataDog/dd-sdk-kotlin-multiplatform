@@ -38,18 +38,22 @@ class com.datadog.kmp.log.configuration.LogsConfiguration
     fun setEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.log.model.LogEvent>): Builder
     fun build(): LogsConfiguration
 data class com.datadog.kmp.log.model.LogEvent
-  constructor(Status, kotlin.String, kotlin.String, kotlin.String, Logger, Dd, Usr? = null, Account? = null, Error? = null, kotlin.String? = null, kotlin.String, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+  constructor(Os, LogEventDevice, Status, kotlin.String, kotlin.String, kotlin.String, Logger, Dd, Usr? = null, Account? = null, Error? = null, kotlin.String? = null, kotlin.String, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+  data class Os
+    constructor(kotlin.String, kotlin.String, kotlin.String? = null)
+  data class LogEventDevice
+    constructor(kotlin.String? = null)
   data class Logger
     constructor(kotlin.String, kotlin.String)
   data class Dd
-    constructor(Device)
+    constructor(DdDevice)
   data class Usr
     constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
   data class Account
     constructor(kotlin.String? = null, kotlin.String? = null, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
   data class Error
     constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
-  data class Device
+  data class DdDevice
     constructor(kotlin.String)
   enum Status
     constructor(kotlin.String)

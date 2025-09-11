@@ -11,6 +11,7 @@ import cocoapods.DatadogLogs.DDLogEventAccountInfo
 import cocoapods.DatadogLogs.DDLogEventDd
 import cocoapods.DatadogLogs.DDLogEventDevice
 import cocoapods.DatadogLogs.DDLogEventError
+import cocoapods.DatadogLogs.DDLogEventOperatingSystem
 import cocoapods.DatadogLogs.DDLogEventStatus
 import cocoapods.DatadogLogs.DDLogEventStatusCritical
 import cocoapods.DatadogLogs.DDLogEventStatusDebug
@@ -25,6 +26,11 @@ import platform.Foundation.NSISO8601DateFormatter
 private val ISO_8601_DATE_FORMATTER = NSISO8601DateFormatter()
 
 internal fun DDLogEvent.toCommonModel(): LogEvent = LogEvent(
+    os = os().toCommonModel(),
+    // TODO RUM-11650 Update model definition once it is fixed in iOS SDK
+    device = LogEvent.LogEventDevice(
+        architecture = device().architecture()
+    ),
     status = logEventStatusToCommonEnum(status()),
     service = serviceName(),
     message = message(),
@@ -47,6 +53,12 @@ internal fun DDLogEvent.toCommonModel(): LogEvent = LogEvent(
         .toMutableMap()
 )
 
+internal fun DDLogEventOperatingSystem.toCommonModel(): LogEvent.Os = LogEvent.Os(
+    name = name(),
+    version = version(),
+    build = build()
+)
+
 internal fun logEventStatusToCommonEnum(enumValue: DDLogEventStatus): LogEvent.Status =
     when (enumValue) {
         DDLogEventStatusCritical -> LogEvent.Status.CRITICAL
@@ -62,7 +74,7 @@ internal fun DDLogEventDd.toCommonModel(): LogEvent.Dd = LogEvent.Dd(
     device = device().toCommonModel()
 )
 
-internal fun DDLogEventDevice.toCommonModel(): LogEvent.Device = LogEvent.Device(
+internal fun DDLogEventDevice.toCommonModel(): LogEvent.DdDevice = LogEvent.DdDevice(
     architecture = architecture()
 )
 

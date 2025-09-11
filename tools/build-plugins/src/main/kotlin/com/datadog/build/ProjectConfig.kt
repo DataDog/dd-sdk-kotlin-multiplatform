@@ -10,7 +10,7 @@ import com.datadog.build.utils.Version
 
 object ProjectConfig {
     object Android {
-        const val MIN_SDK = 21
+        const val MIN_SDK = 23
         const val COMPILE_SDK = 36
         const val BUILD_TOOLS_VERSION = "36.0.0"
     }
