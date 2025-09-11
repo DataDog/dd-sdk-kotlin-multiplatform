@@ -14,6 +14,7 @@ import com.datadog.kmp.DatadogSite
  *
  * This is necessary to initialize the SDK with the [Datadog.initialize] method.
  */
+@ConsistentCopyVisibility
 data class Configuration
 internal constructor(
     internal val coreConfig: Core,
