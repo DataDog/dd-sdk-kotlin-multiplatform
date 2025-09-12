@@ -339,6 +339,10 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
         nativeConfiguration.setTrackWatchdogTerminations(enabled)
     }
 
+    fun trackMemoryWarnings(enabled: Boolean) {
+        nativeConfiguration.setTrackMemoryWarnings(enabled)
+    }
+
     override fun build(): DDRUMConfiguration {
         return nativeConfiguration
     }

@@ -136,5 +136,17 @@ fun RumConfiguration.Builder.trackWatchdogTerminations(enabled: Boolean): RumCon
     return this
 }
 
+/**
+ * Determines whether the SDK should enable collection of memory warnings.
+ *
+ * When enabled, all the memory warnings are reported as RUM Errors.
+ *
+ * @param enabled Enable or disable the collection of memory warnings. Default: `true`.
+ */
+fun RumConfiguration.Builder.trackMemoryWarnings(enabled: Boolean): RumConfiguration.Builder {
+    nativePlatformBuilder.trackMemoryWarnings(enabled)
+    return this
+}
+
 private val RumConfiguration.Builder.nativePlatformBuilder
     get() = platformBuilder as AppleRumConfigurationBuilder

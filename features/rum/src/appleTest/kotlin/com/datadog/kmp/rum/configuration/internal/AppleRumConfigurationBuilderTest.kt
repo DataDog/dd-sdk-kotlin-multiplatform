@@ -425,6 +425,18 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
     }
 
     @Test
+    fun `M set memory warnings tracking W trackMemoryWarnings`() {
+        // Given
+        val fakeTrackMemoryWarnings = randomBoolean()
+
+        // When
+        testedBuilder.trackMemoryWarnings(fakeTrackMemoryWarnings)
+
+        // Then
+        assertEquals(fakeTrackMemoryWarnings, fakeNativeRumConfiguration.trackMemoryWarnings())
+    }
+
+    @Test
     fun `M return native configuration W build`() {
         // When
         val nativeConfiguration = testedBuilder.build()
