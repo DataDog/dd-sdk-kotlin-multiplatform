@@ -1,6 +1,6 @@
 [versions]
 agp = "8.10.1"
-kotlin = "2.0.21"
+kotlin = "2.1.21"
 compose = "1.6.6"
 compose-material3 = "1.1.2"
 androidx-fragment = "1.5.1"
@@ -36,7 +36,7 @@ jUnitMockitoExt = "5.12.0"
 assertJ = "3.18.1"
 elmyr = "1.4.0"
 mockitoKotlin = "5.3.1"
-mokkery = "2.3.0"
+mokkery = "2.7.3"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

@@ -464,17 +464,6 @@ internal class IOSModelsMappingFileGenerator(
         }
     }
 
-    private fun FunSpec.Builder.addSuppressAnnotation(ruleName: String) {
-        val alreadyExists = annotations.any {
-            it.typeName.toString() == "kotlin.Suppress" && it.members.any {
-                it.toString().contains(ruleName)
-            }
-        }
-        if (alreadyExists) return
-
-        addAnnotation(AnnotationSpec.builder(Suppress::class).addMember("%S", ruleName).build())
-    }
-
     private val TypeProperty.asPropertyName
         get() = name.trimStart { it == '_' }.toCamelCaseAsVar()
 

@@ -7,7 +7,9 @@
 package com.datadog.build.plugin.jsonschema.generator
 
 import com.datadog.build.plugin.jsonschema.TypeDefinition
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.FunSpec
 
 abstract class NativeModelsMappingFileGenerator(
     packageName: String,
@@ -36,6 +38,17 @@ abstract class NativeModelsMappingFileGenerator(
         } else {
             name
         }
+    }
+
+    protected fun FunSpec.Builder.addSuppressAnnotation(ruleName: String) {
+        val alreadyExists = annotations.any {
+            it.typeName.toString() == "kotlin.Suppress" && it.members.any {
+                it.toString().contains(ruleName)
+            }
+        }
+        if (alreadyExists) return
+
+        addAnnotation(AnnotationSpec.builder(Suppress::class).addMember("%S", ruleName).build())
     }
 
     protected companion object {
