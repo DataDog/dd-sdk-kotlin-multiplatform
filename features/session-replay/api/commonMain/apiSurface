@@ -13,6 +13,7 @@ data class com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguratio
     fun setTouchPrivacy(TouchPrivacy): Builder
     fun setTextAndInputPrivacy(TextAndInputPrivacy): Builder
     fun startRecordingImmediately(Boolean): Builder
+    fun useCustomEndpoint(String): Builder
     fun build(): SessionReplayConfiguration
 enum com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
   - MASK_SENSITIVE_INPUTS

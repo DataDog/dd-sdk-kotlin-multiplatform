@@ -114,6 +114,21 @@ class IOSSessionReplayConfigurationBuilderTest {
         )
     }
 
+    @Test
+    fun `M call platform configuration setCustomEndpoint W useCustomEndpoint + build`() {
+        // Given
+        val fakeCustomEndpoint = "https://example.com/api/session-replay"
+
+        // When
+        testedConfigurationBuilder.useCustomEndpoint(fakeCustomEndpoint)
+
+        // Then
+        assertEquals(
+            fakeCustomEndpoint,
+            testedConfigurationBuilder.build().customEndpoint()?.absoluteString
+        )
+    }
+
     private val ImagePrivacy.native: DDImagePrivacyLevel
         get() = when (this) {
             ImagePrivacy.MASK_NONE -> DDImagePrivacyLevelMaskNone

@@ -47,4 +47,18 @@ class LogsConfigurationBuilderTest {
             mockPlatformLogsConfigurationBuilder.setEventMapper(fakeLogsEventMapper)
         }
     }
+
+    @Test
+    fun `M call platform Logs configuration builder+useCustomEndpoint W useCustomEndpoint`() {
+        // Given
+        val fakeCustomEndpoint = "https://example.com/api/logs"
+
+        // When
+        testedLogsConfigurationBuilder.useCustomEndpoint(fakeCustomEndpoint)
+
+        // Then
+        verify {
+            mockPlatformLogsConfigurationBuilder.useCustomEndpoint(fakeCustomEndpoint)
+        }
+    }
 }

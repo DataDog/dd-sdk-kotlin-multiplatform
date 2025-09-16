@@ -35,6 +35,7 @@ import com.datadog.kmp.rum.tracking.DefaultUIKitRUMViewsPredicate
 import com.datadog.kmp.rum.tracking.SwiftUIRUMActionsPredicate
 import com.datadog.kmp.rum.tracking.SwiftUIRUMViewsPredicate
 import com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
+import platform.Foundation.NSURL
 import platform.UIKit.UIViewController
 import platform.darwin.NSObject
 
@@ -248,6 +249,10 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
 
     override fun trackAnonymousUser(enabled: Boolean) {
         nativeConfiguration.setTrackAnonymousUser(enabled)
+    }
+
+    override fun useCustomEndpoint(endpoint: String) {
+        nativeConfiguration.setCustomEndpoint(NSURL.URLWithString(endpoint))
     }
 
     fun setUiKitViewsPredicate(uiKitViewsPredicate: UIKitRUMViewsPredicate) {

@@ -232,4 +232,18 @@ class RumConfigurationBuilderTest {
             mockPlatformRumConfigurationBuilder.trackAnonymousUser(fakeTrackAnonymousUser)
         }
     }
+
+    @Test
+    fun `M call platform RUM configuration builder+useCustomEndpoint W useCustomEndpoint`() {
+        // Given
+        val fakeCustomEndpoint = "https://example.com/api/rum"
+
+        // When
+        testedRumConfigurationBuilder.useCustomEndpoint(fakeCustomEndpoint)
+
+        // Then
+        verify {
+            mockPlatformRumConfigurationBuilder.useCustomEndpoint(fakeCustomEndpoint)
+        }
+    }
 }

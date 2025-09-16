@@ -13,6 +13,7 @@ import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
 import fr.xgouchet.elmyr.annotation.BoolForgery
 import fr.xgouchet.elmyr.annotation.Forgery
+import fr.xgouchet.elmyr.annotation.StringForgery
 import fr.xgouchet.elmyr.junit5.ForgeExtension
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -126,6 +127,17 @@ class AndroidSessionReplayConfigurationBuilderTest {
 
         // Then
         verify(mockNativeRumConfigurationBuilder).startRecordingImmediately(fakeEnabled)
+    }
+
+    @Test
+    fun `M call platform configuration builder+useCustomEndpoint W useCustomEndpoint`(
+        @StringForgery(regex = "https://[a-z]+\\.com(/[a-z]+)+") fakeCustomEndpoint: String
+    ) {
+        // When
+        testedBuilder.useCustomEndpoint(fakeCustomEndpoint)
+
+        // Then
+        verify(mockNativeRumConfigurationBuilder).useCustomEndpoint(fakeCustomEndpoint)
     }
 
     @Test
