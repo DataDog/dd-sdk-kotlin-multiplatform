@@ -190,6 +190,9 @@ internal class AndroidModelsMappingFileGenerator(
         val receiver = ClassName.bestGuess("$androidModelsPackageName.$fullCommonEnumName")
         fileSpecBuilder.addFunction(
             FunSpec.builder(ENUM_CONVERSION_METHOD_NAME)
+                // needed, because the actual runtime dependency of Datadog Android SDK may be newer than used for
+                // build time, so new enum members may arise
+                .apply { addSuppressAnnotation("REDUNDANT_ELSE_IN_WHEN") }
                 .addModifiers(KModifier.INTERNAL, KModifier.INLINE)
                 .receiver(receiver)
                 .returns(returnClass)
