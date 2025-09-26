@@ -62,7 +62,8 @@ internal fun DDLogEvent.toCommonModel(): LogEvent = LogEvent(
 internal fun DDLogEventOperatingSystem.toCommonModel(): LogEvent.Os = LogEvent.Os(
     name = name(),
     version = version(),
-    build = build()
+    build = build(),
+    versionMajor = versionMajor()
 )
 
 internal fun logEventStatusToCommonEnum(enumValue: DDLogEventStatus): LogEvent.Status =

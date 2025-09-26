@@ -24,6 +24,11 @@
           "type": "string",
           "description": "Operating system build number, e.g. 15D21",
           "readOnly": true
+        },
+        "version_major": {
+          "type": "string",
+          "description": "Major operating system version, e.g. 8",
+          "readOnly": true
         }
       }
     },
