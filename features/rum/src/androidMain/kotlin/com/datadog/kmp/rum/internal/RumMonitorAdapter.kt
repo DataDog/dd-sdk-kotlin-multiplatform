@@ -8,16 +8,20 @@ package com.datadog.kmp.rum.internal
 
 import com.datadog.android.rum.internal.domain.event.ResourceTiming
 import com.datadog.android.rum.resource.ResourceId
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.featureoperations.FailureReason
+import com.datadog.android.rum.ExperimentalRumApi as NativeExperimentalRumApi
 import com.datadog.android.rum.RumActionType as NativeRumActionType
 import com.datadog.android.rum.RumErrorSource as NativeRumErrorSource
 import com.datadog.android.rum.RumMonitor as NativeRumMonitor
 import com.datadog.android.rum.RumResourceKind as NativeRumResourceKind
 import com.datadog.android.rum.RumResourceMethod as NativeRumResourceMethod
+import com.datadog.android.rum.featureoperations.FailureReason as NativeFailureReason
 
 internal class RumMonitorAdapter(private val nativeRumMonitor: NativeRumMonitor) :
     RumMonitor,
@@ -113,6 +117,26 @@ internal class RumMonitorAdapter(private val nativeRumMonitor: NativeRumMonitor)
 
     override fun removeAttribute(key: String) {
         nativeRumMonitor.removeAttribute(key)
+    }
+
+    @OptIn(NativeExperimentalRumApi::class, ExperimentalRumApi::class)
+    override fun startFeatureOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
+        nativeRumMonitor.startFeatureOperation(name, operationKey, attributes)
+    }
+
+    @OptIn(NativeExperimentalRumApi::class, ExperimentalRumApi::class)
+    override fun succeedFeatureOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
+        nativeRumMonitor.succeedFeatureOperation(name, operationKey, attributes)
+    }
+
+    @OptIn(NativeExperimentalRumApi::class, ExperimentalRumApi::class)
+    override fun failFeatureOperation(
+        name: String,
+        operationKey: String?,
+        failureReason: FailureReason,
+        attributes: Map<String, Any?>
+    ) {
+        nativeRumMonitor.failFeatureOperation(name, operationKey, failureReason.native, attributes)
     }
 
     override fun stopSession() {
@@ -257,5 +281,14 @@ private val RumErrorSource.native: NativeRumErrorSource
             RumErrorSource.LOGGER -> NativeRumErrorSource.LOGGER
             RumErrorSource.WEBVIEW -> NativeRumErrorSource.WEBVIEW
             RumErrorSource.NETWORK -> NativeRumErrorSource.NETWORK
+        }
+    }
+
+private val FailureReason.native: NativeFailureReason
+    get() {
+        return when (this) {
+            FailureReason.ERROR -> NativeFailureReason.ERROR
+            FailureReason.OTHER -> NativeFailureReason.OTHER
+            FailureReason.ABANDONED -> NativeFailureReason.ABANDONED
         }
     }

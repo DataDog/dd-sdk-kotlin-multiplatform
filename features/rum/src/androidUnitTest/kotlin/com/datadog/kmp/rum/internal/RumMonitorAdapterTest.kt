@@ -1,9 +1,11 @@
 package com.datadog.kmp.rum.internal
 
+import com.datadog.android.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.featureoperations.FailureReason
 import com.datadog.tools.unit.forge.BaseConfigurator
 import com.datadog.tools.unit.forge.aThrowable
 import com.datadog.tools.unit.forge.exhaustiveAttributes
@@ -32,6 +34,7 @@ import com.datadog.android.rum.RumErrorSource as NativeRumErrorSource
 import com.datadog.android.rum.RumMonitor as NativeRumMonitor
 import com.datadog.android.rum.RumResourceKind as NativeRumResourceKind
 import com.datadog.android.rum.RumResourceMethod as NativeRumResourceMethod
+import com.datadog.android.rum.featureoperations.FailureReason as NativeFailureReason
 
 @Extensions(
     ExtendWith(MockitoExtension::class),
@@ -341,6 +344,64 @@ class RumMonitorAdapterTest {
         verify(mockNativeRumMonitor).removeAttribute(fakeKey)
     }
 
+    @OptIn(ExperimentalRumApi::class)
+    @Test
+    fun `M call native startFeatureOperation W startFeatureOperation`(
+        @StringForgery fakeName: String,
+        forge: Forge
+
+    ) {
+        // Given
+        val fakeOperationKey = forge.aNullable { aString() }
+        val fakeAttributes = forge.exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.startFeatureOperation(fakeName, fakeOperationKey, fakeAttributes)
+
+        // Then
+        verify(mockNativeRumMonitor).startFeatureOperation(fakeName, fakeOperationKey, fakeAttributes)
+    }
+
+    @OptIn(ExperimentalRumApi::class)
+    @Test
+    fun `M call native succeedFeatureOperation W succeedFeatureOperation`(
+        @StringForgery fakeName: String,
+        forge: Forge
+    ) {
+        // Given
+        val fakeOperationKey = forge.aNullable { aString() }
+        val fakeAttributes = forge.exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.succeedFeatureOperation(fakeName, fakeOperationKey, fakeAttributes)
+
+        // Then
+        verify(mockNativeRumMonitor).succeedFeatureOperation(fakeName, fakeOperationKey, fakeAttributes)
+    }
+
+    @OptIn(ExperimentalRumApi::class)
+    @Test
+    fun `M call native failFeatureOperation W failFeatureOperation`(
+        @StringForgery fakeName: String,
+        @Forgery fakeFailureReason: FailureReason,
+        forge: Forge
+    ) {
+        // Given
+        val fakeOperationKey = forge.aNullable { aString() }
+        val fakeAttributes = forge.exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.failFeatureOperation(fakeName, fakeOperationKey, fakeFailureReason, fakeAttributes)
+
+        // Then
+        verify(mockNativeRumMonitor).failFeatureOperation(
+            fakeName,
+            fakeOperationKey,
+            fakeFailureReason.native,
+            fakeAttributes
+        )
+    }
+
     @Test
     fun `M call native stopSession W stopSession`() {
         // When
@@ -403,6 +464,15 @@ class RumMonitorAdapterTest {
                 RumErrorSource.LOGGER -> NativeRumErrorSource.LOGGER
                 RumErrorSource.WEBVIEW -> NativeRumErrorSource.WEBVIEW
                 RumErrorSource.NETWORK -> NativeRumErrorSource.NETWORK
+            }
+        }
+
+    private val FailureReason.native: NativeFailureReason
+        get() {
+            return when (this) {
+                FailureReason.ERROR -> NativeFailureReason.ERROR
+                FailureReason.OTHER -> NativeFailureReason.OTHER
+                FailureReason.ABANDONED -> NativeFailureReason.ABANDONED
             }
         }
 
