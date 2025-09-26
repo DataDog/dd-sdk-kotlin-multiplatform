@@ -6,6 +6,9 @@ variables:
   SLACK_NOTIFIER_IMAGE: registry.ddbuild.io/slack-notifier:latest
   GIT_DEPTH: 6
 
+  KUBERNETES_MEMORY_REQUEST: "8Gi"
+  KUBERNETES_MEMORY_LIMIT: "13Gi"
+
   DD_SERVICE: "dd-sdk-kotlin-multiplatform"
   DD_ENV_TESTS: "ci"
   DD_CIVISIBILITY_ENABLED: "true"
