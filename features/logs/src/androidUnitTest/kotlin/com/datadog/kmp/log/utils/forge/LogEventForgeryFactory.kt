@@ -110,7 +110,11 @@ internal class LogEventForgeryFactory : ForgeryFactory<LogEvent> {
                 threadName = forge.aNullable { forge.anAlphabeticalString() }
             ),
             device = LogEvent.LogEventDevice(
-                architecture = forge.anAlphaNumericalString()
+                architecture = forge.aNullable { anAlphaNumericalString() },
+                type = forge.aNullable { aValueFrom(LogEvent.Type::class.java) },
+                name = forge.aNullable { anAlphabeticalString() },
+                model = forge.aNullable { anAlphabeticalString() },
+                brand = forge.aNullable { anAlphabeticalString() }
             ),
             os = LogEvent.Os(
                 name = forge.aString(),

@@ -101,7 +101,7 @@ jsonSchemaGenerator {
         androidModelsMappingGeneration {
             enabled = true
             androidModelsPackageName = "com.datadog.android.log.model"
-            defaultCommonEnumValues = mapOf("LogEvent.Status" to "INFO")
+            defaultCommonEnumValues = mapOf("LogEvent.Status" to "INFO", "LogEvent.Type" to "MOBILE")
         }
     }
 }

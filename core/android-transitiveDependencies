@@ -1,6 +1,6 @@
 Dependencies List
 
-com.datadoghq:dd-sdk-android-core:3.0.0                         :  754 Kb
+com.datadoghq:dd-sdk-android-core:3.1.0                         :  755 Kb
 com.squareup.okhttp3:okhttp:4.12.0                              :  771 Kb
 com.squareup.okio:okio-jvm:3.6.0                                :  351 Kb
 org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10                  :  959 b 

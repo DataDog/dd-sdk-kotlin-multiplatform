@@ -43,7 +43,7 @@ data class com.datadog.kmp.log.model.LogEvent
   data class Os
     constructor(kotlin.String, kotlin.String, kotlin.String? = null)
   data class LogEventDevice
-    constructor(kotlin.String? = null)
+    constructor(Type? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
   data class Logger
     constructor(kotlin.String, kotlin.String)
   data class Dd
@@ -65,3 +65,12 @@ data class com.datadog.kmp.log.model.LogEvent
     - DEBUG
     - TRACE
     - EMERGENCY
+  enum Type
+    constructor(kotlin.String)
+    - MOBILE
+    - DESKTOP
+    - TABLET
+    - TV
+    - GAMING_CONSOLE
+    - BOT
+    - OTHER
