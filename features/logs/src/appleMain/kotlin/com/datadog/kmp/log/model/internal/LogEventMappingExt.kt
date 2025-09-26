@@ -8,8 +8,17 @@ package com.datadog.kmp.log.model.internal
 
 import cocoapods.DatadogLogs.DDLogEvent
 import cocoapods.DatadogLogs.DDLogEventAccountInfo
+import cocoapods.DatadogLogs.DDLogEventDDDevice
 import cocoapods.DatadogLogs.DDLogEventDd
 import cocoapods.DatadogLogs.DDLogEventDevice
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceType
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeBot
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeDesktop
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeGamingConsole
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeMobile
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeOther
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeTablet
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeTv
 import cocoapods.DatadogLogs.DDLogEventError
 import cocoapods.DatadogLogs.DDLogEventOperatingSystem
 import cocoapods.DatadogLogs.DDLogEventStatus
@@ -27,10 +36,7 @@ private val ISO_8601_DATE_FORMATTER = NSISO8601DateFormatter()
 
 internal fun DDLogEvent.toCommonModel(): LogEvent = LogEvent(
     os = os().toCommonModel(),
-    // TODO RUM-11650 Update model definition once it is fixed in iOS SDK
-    device = LogEvent.LogEventDevice(
-        architecture = device().architecture()
-    ),
+    device = device().toCommonModel(),
     status = logEventStatusToCommonEnum(status()),
     service = serviceName(),
     message = message(),
@@ -70,11 +76,31 @@ internal fun logEventStatusToCommonEnum(enumValue: DDLogEventStatus): LogEvent.S
         else -> LogEvent.Status.INFO
     }
 
+internal fun logEventDeviceTypeToCommonEnum(enumValue: DDLogEventDeviceDeviceType): LogEvent.Type =
+    when (enumValue) {
+        DDLogEventDeviceDeviceTypeMobile -> LogEvent.Type.MOBILE
+        DDLogEventDeviceDeviceTypeTablet -> LogEvent.Type.TABLET
+        DDLogEventDeviceDeviceTypeTv -> LogEvent.Type.TV
+        DDLogEventDeviceDeviceTypeGamingConsole -> LogEvent.Type.GAMING_CONSOLE
+        DDLogEventDeviceDeviceTypeBot -> LogEvent.Type.BOT
+        DDLogEventDeviceDeviceTypeDesktop -> LogEvent.Type.DESKTOP
+        DDLogEventDeviceDeviceTypeOther -> LogEvent.Type.OTHER
+        else -> LogEvent.Type.MOBILE
+    }
+
 internal fun DDLogEventDd.toCommonModel(): LogEvent.Dd = LogEvent.Dd(
     device = device().toCommonModel()
 )
 
-internal fun DDLogEventDevice.toCommonModel(): LogEvent.DdDevice = LogEvent.DdDevice(
+internal fun DDLogEventDevice.toCommonModel(): LogEvent.LogEventDevice = LogEvent.LogEventDevice(
+    architecture = architecture(),
+    type = logEventDeviceTypeToCommonEnum(type()),
+    name = name(),
+    model = model(),
+    brand = brand()
+)
+
+internal fun DDLogEventDDDevice.toCommonModel(): LogEvent.DdDevice = LogEvent.DdDevice(
     architecture = architecture()
 )
 
