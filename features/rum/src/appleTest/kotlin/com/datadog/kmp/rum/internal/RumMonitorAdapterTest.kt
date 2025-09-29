@@ -15,6 +15,10 @@ import cocoapods.DatadogRUM.DDRUMErrorSource
 import cocoapods.DatadogRUM.DDRUMErrorSourceNetwork
 import cocoapods.DatadogRUM.DDRUMErrorSourceSource
 import cocoapods.DatadogRUM.DDRUMErrorSourceWebview
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReason
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReasonAbandoned
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReasonError
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReasonOther
 import cocoapods.DatadogRUM.DDRUMMethod
 import cocoapods.DatadogRUM.DDRUMMethodConnect
 import cocoapods.DatadogRUM.DDRUMMethodDelete
@@ -41,6 +45,7 @@ import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.featureoperations.FailureReason
 import com.datadog.tools.random.exhaustiveAttributes
 import com.datadog.tools.random.nullable
 import com.datadog.tools.random.randomBoolean
@@ -493,6 +498,60 @@ class RumMonitorAdapterTest {
     }
 
     @Test
+    fun `M call native startFeatureOperation W startFeatureOperation`() {
+        // Given
+        val fakeName = "fakeOperationName"
+        val fakeOperationKey = nullable("fakeOperationKey")
+        val fakeAttributes = exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.startFeatureOperation(fakeName, fakeOperationKey, fakeAttributes)
+
+        // Then
+        verify {
+            mockNativeRumMonitor.startFeatureOperation(fakeName, fakeOperationKey, fakeAttributes.eraseKeyType())
+        }
+    }
+
+    @Test
+    fun `M call native succeedFeatureOperation W succeedFeatureOperation`() {
+        // Given
+        val fakeName = "fakeOperationName"
+        val fakeOperationKey = nullable("fakeOperationKey")
+        val fakeAttributes = exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.succeedFeatureOperation(fakeName, fakeOperationKey, fakeAttributes)
+
+        // Then
+        verify {
+            mockNativeRumMonitor.succeedFeatureOperation(fakeName, fakeOperationKey, fakeAttributes.eraseKeyType())
+        }
+    }
+
+    @Test
+    fun `M call native failFeatureOperation W failFeatureOperation`() {
+        // Given
+        val fakeName = "fakeOperationName"
+        val fakeOperationKey = nullable("fakeOperationKey")
+        val fakeFailureReason = randomEnumValue<FailureReason>()
+        val fakeAttributes = exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.failFeatureOperation(fakeName, fakeOperationKey, fakeFailureReason, fakeAttributes)
+
+        // Then
+        verify {
+            mockNativeRumMonitor.failFeatureOperation(
+                fakeName,
+                fakeOperationKey,
+                fakeFailureReason.native,
+                fakeAttributes.eraseKeyType()
+            )
+        }
+    }
+
+    @Test
     fun `M call native stopSession W stopSession`() {
         // When
         testedRumMonitorAdapter.stopSession()
@@ -673,6 +732,15 @@ class RumMonitorAdapterTest {
                 RumErrorSource.LOGGER -> DDRUMErrorSourceSource
                 RumErrorSource.WEBVIEW -> DDRUMErrorSourceWebview
                 RumErrorSource.NETWORK -> DDRUMErrorSourceNetwork
+            }
+        }
+
+    private val FailureReason.native: DDRUMFeatureOperationFailureReason
+        get() {
+            return when (this) {
+                FailureReason.ERROR -> DDRUMFeatureOperationFailureReasonError
+                FailureReason.OTHER -> DDRUMFeatureOperationFailureReasonOther
+                FailureReason.ABANDONED -> DDRUMFeatureOperationFailureReasonAbandoned
             }
         }
 

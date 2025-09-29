@@ -31,6 +31,9 @@ interface com.datadog.kmp.rum.RumMonitor
   fun addFeatureFlagEvaluations(Map<String, Any>)
   fun addAttribute(String, Any?)
   fun removeAttribute(String)
+  fun startFeatureOperation(String, String? = null, Map<String, Any?> = emptyMap())
+  fun succeedFeatureOperation(String, String? = null, Map<String, Any?> = emptyMap())
+  fun failFeatureOperation(String, String? = null, com.datadog.kmp.rum.featureoperations.FailureReason, Map<String, Any?> = emptyMap())
   fun stopSession()
   var debug: Boolean
   companion object 
@@ -88,6 +91,10 @@ enum com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
   - NEVER
 fun interface com.datadog.kmp.rum.event.ViewEventMapper : com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ViewEvent>
   override fun map(com.datadog.kmp.rum.model.ViewEvent): com.datadog.kmp.rum.model.ViewEvent
+enum com.datadog.kmp.rum.featureoperations.FailureReason
+  - ERROR
+  - ABANDONED
+  - OTHER
 data class com.datadog.kmp.rum.model.ActionEvent
   constructor(kotlin.Long, Application, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, ActionEventSession, ActionEventSource? = null, ActionEventView, Usr? = null, Account? = null, Connectivity? = null, Display? = null, Synthetics? = null, CiTest? = null, Os? = null, Device? = null, Dd, Context? = null, Container? = null, ActionEventAction)
   val type: kotlin.String

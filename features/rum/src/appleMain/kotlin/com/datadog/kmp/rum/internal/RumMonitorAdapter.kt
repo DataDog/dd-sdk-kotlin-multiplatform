@@ -15,6 +15,10 @@ import cocoapods.DatadogRUM.DDRUMErrorSource
 import cocoapods.DatadogRUM.DDRUMErrorSourceNetwork
 import cocoapods.DatadogRUM.DDRUMErrorSourceSource
 import cocoapods.DatadogRUM.DDRUMErrorSourceWebview
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReason
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReasonAbandoned
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReasonError
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReasonOther
 import cocoapods.DatadogRUM.DDRUMMethod
 import cocoapods.DatadogRUM.DDRUMMethodConnect
 import cocoapods.DatadogRUM.DDRUMMethodDelete
@@ -41,11 +45,13 @@ import com.datadog.kmp.internal.createNSErrorFromMessage
 import com.datadog.kmp.internal.createNSErrorFromThrowable
 import com.datadog.kmp.internal.eraseKeyType
 import com.datadog.kmp.internal.withIncludeBinaryImages
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.featureoperations.FailureReason
 import platform.Foundation.NSError
 import platform.Foundation.NSHTTPURLResponse
 import platform.Foundation.NSNumber
@@ -184,6 +190,26 @@ internal class RumMonitorAdapter(
         nativeRumMonitor.removeAttributeForKey(key)
     }
 
+    @OptIn(ExperimentalRumApi::class)
+    override fun startFeatureOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
+        nativeRumMonitor.startFeatureOperation(name, operationKey, eraseKeyType(attributes))
+    }
+
+    @OptIn(ExperimentalRumApi::class)
+    override fun succeedFeatureOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
+        nativeRumMonitor.succeedFeatureOperation(name, operationKey, eraseKeyType(attributes))
+    }
+
+    @OptIn(ExperimentalRumApi::class)
+    override fun failFeatureOperation(
+        name: String,
+        operationKey: String?,
+        failureReason: FailureReason,
+        attributes: Map<String, Any?>
+    ) {
+        nativeRumMonitor.failFeatureOperation(name, operationKey, failureReason.native, eraseKeyType(attributes))
+    }
+
     override fun stopSession() {
         nativeRumMonitor.stopSession()
     }
@@ -285,6 +311,15 @@ private val RumErrorSource.native: DDRUMErrorSource
             RumErrorSource.LOGGER -> DDRUMErrorSourceSource
             RumErrorSource.WEBVIEW -> DDRUMErrorSourceWebview
             RumErrorSource.NETWORK -> DDRUMErrorSourceNetwork
+        }
+    }
+
+private val FailureReason.native: DDRUMFeatureOperationFailureReason
+    get() {
+        return when (this) {
+            FailureReason.ERROR -> DDRUMFeatureOperationFailureReasonError
+            FailureReason.OTHER -> DDRUMFeatureOperationFailureReasonOther
+            FailureReason.ABANDONED -> DDRUMFeatureOperationFailureReasonAbandoned
         }
     }
 

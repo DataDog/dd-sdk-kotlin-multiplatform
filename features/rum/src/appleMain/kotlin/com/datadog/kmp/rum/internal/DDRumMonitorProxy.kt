@@ -8,6 +8,7 @@ package com.datadog.kmp.rum.internal
 
 import cocoapods.DatadogRUM.DDRUMActionType
 import cocoapods.DatadogRUM.DDRUMErrorSource
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReason
 import cocoapods.DatadogRUM.DDRUMMethod
 import cocoapods.DatadogRUM.DDRUMMonitor
 import cocoapods.DatadogRUM.DDRUMResourceType
@@ -142,6 +143,17 @@ internal interface DDRumMonitorProxy {
         attributes: Map<Any?, *>
     )
 
+    fun startFeatureOperation(name: String, operationKey: String?, attributes: Map<Any?, *>)
+
+    fun succeedFeatureOperation(name: String, operationKey: String?, attributes: Map<Any?, *>)
+
+    fun failFeatureOperation(
+        name: String,
+        operationKey: String?,
+        failureReason: DDRUMFeatureOperationFailureReason,
+        attributes: Map<Any?, *>
+    )
+
     companion object {
         fun create(nativeRumMonitor: DDRUMMonitor): DDRumMonitorProxy = object : DDRumMonitorProxy {
             override fun addActionWithType(
@@ -263,6 +275,19 @@ internal interface DDRumMonitorProxy {
                 viewController: UIViewController,
                 attributes: Map<Any?, *>
             ) = nativeRumMonitor.stopViewWithViewController(viewController, attributes)
+
+            override fun startFeatureOperation(name: String, operationKey: String?, attributes: Map<Any?, *>) =
+                nativeRumMonitor.startFeatureOperationWithName(name, operationKey, attributes)
+
+            override fun succeedFeatureOperation(name: String, operationKey: String?, attributes: Map<Any?, *>) =
+                nativeRumMonitor.succeedFeatureOperationWithName(name, operationKey, attributes)
+
+            override fun failFeatureOperation(
+                name: String,
+                operationKey: String?,
+                failureReason: DDRUMFeatureOperationFailureReason,
+                attributes: Map<Any?, *>
+            ) = nativeRumMonitor.failFeatureOperationWithName(name, operationKey, failureReason, attributes)
         }
     }
 }

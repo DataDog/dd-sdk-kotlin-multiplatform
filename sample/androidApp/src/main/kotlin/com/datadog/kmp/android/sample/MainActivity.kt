@@ -50,11 +50,14 @@ import com.datadog.kmp.sample.LOGS_SCREEN_NAME
 import com.datadog.kmp.sample.RUM_SCREEN_NAME
 import com.datadog.kmp.sample.WEBVIEW_SCREEN_NAME
 import com.datadog.kmp.sample.WEB_VIEW_TRACKING_LOAD_URL
+import com.datadog.kmp.sample.failFeatureOperation
 import com.datadog.kmp.sample.logErrorWithThrowable
 import com.datadog.kmp.sample.logInfo
 import com.datadog.kmp.sample.network.startGetRequest
 import com.datadog.kmp.sample.network.startPostRequest
+import com.datadog.kmp.sample.startFeatureOperation
 import com.datadog.kmp.sample.startWebViewTracking
+import com.datadog.kmp.sample.stopFeatureOperation
 import com.datadog.kmp.sample.trackAction
 import kotlin.random.Random
 import android.webkit.WebView as AndroidWebView
@@ -184,6 +187,7 @@ fun CrashView() {
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 fun RumView() {
     Box(
@@ -225,6 +229,29 @@ fun RumView() {
                 startGetRequest("https://some-domain.in-non-existing-zone")
             }, colors = ButtonDefaults.buttonColors(containerColor = Color.Orange)) {
                 Text(text = "Trigger network error request")
+            }
+
+            Text(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp), text = "Feature Operations")
+
+            Button(onClick = {
+                trackAction("Start Feature Operation")
+                startFeatureOperation()
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta)) {
+                Text(text = "Start")
+            }
+
+            Button(onClick = {
+                trackAction("Stop Feature Operation successfully")
+                stopFeatureOperation()
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color.Teal)) {
+                Text(text = "Stop successfully")
+            }
+
+            Button(onClick = {
+                trackAction("Stop Feature Operation unsuccessfully")
+                failFeatureOperation()
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
+                Text(text = "Stop unsuccessfully")
             }
         }
     }
@@ -303,3 +330,8 @@ private val Color.Companion.Brown
 @Stable
 private val Color.Companion.Orange
     get() = Color(0xffffA500)
+
+@Suppress("MagicNumber")
+@Stable
+private val Color.Companion.Teal
+    get() = Color(0xff03DAC5)
