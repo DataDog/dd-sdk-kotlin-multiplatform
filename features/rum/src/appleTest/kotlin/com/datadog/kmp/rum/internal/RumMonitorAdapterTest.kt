@@ -552,6 +552,20 @@ class RumMonitorAdapterTest {
     }
 
     @Test
+    fun `M call native addViewLoadingTime W addViewLoadingTime`() {
+        // Given
+        val fakeOverwrite = randomBoolean()
+
+        // When
+        testedRumMonitorAdapter.addViewLoadingTime(fakeOverwrite)
+
+        // Then
+        verify {
+            mockNativeRumMonitor.addViewLoadingTime(fakeOverwrite)
+        }
+    }
+
+    @Test
     fun `M call native stopSession W stopSession`() {
         // When
         testedRumMonitorAdapter.stopSession()
