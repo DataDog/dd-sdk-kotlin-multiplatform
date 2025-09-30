@@ -6,7 +6,6 @@
 
 package com.datadog.kmp.internal
 
-import platform.posix.usleep
 import kotlin.concurrent.AtomicReference
 import kotlin.experimental.ExperimentalNativeApi
 
@@ -37,12 +36,6 @@ internal fun addDatadogUnhandledExceptionHookWithTermination(
             // hook processing order: C -> B -> A
             val canCrash = getUnhandledExceptionHook() == this
             if (canCrash) {
-                // TODO RUM-5176 RumMonitor.addErrorWithError call is not blocking, so we may have no time to
-                //  write a specific error and we will end up with having a generic runtime crash error. Adding
-                //  a small sleep call here won't hurt: we get better chances that error is written
-                val sleepMicroseconds = 80_000U // 80 ms
-                usleep(sleepMicroseconds)
-
                 // our hook is the last one, we can terminate application, otherwise we shift this
                 // responsibility to other hooks upper in the chain
                 terminateAction(throwable)

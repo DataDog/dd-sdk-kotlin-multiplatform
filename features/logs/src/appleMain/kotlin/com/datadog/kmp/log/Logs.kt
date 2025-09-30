@@ -10,6 +10,7 @@ import cocoapods.DatadogLogs.DDLogger
 import cocoapods.DatadogLogs.DDLoggerConfiguration
 import cocoapods.DatadogLogs.DDLogs
 import cocoapods.DatadogLogs.DDLogsConfiguration
+import cocoapods.DatadogLogs._internal_sync_criticalWithMessage
 import com.datadog.kmp.internal.INCLUDE_BINARY_IMAGES
 import com.datadog.kmp.internal.InternalProxy
 import com.datadog.kmp.internal.LOG_ERROR_IS_CRASH
@@ -42,7 +43,7 @@ actual object Logs {
                 // TODO RUM-5178 No ObjC API to write crash log directly, without any logger
                 val crashLogger = DDLogger.createWith(loggerConfiguration)
 
-                crashLogger.critical(
+                crashLogger._internal_sync_criticalWithMessage(
                     "Caught unhandled Kotlin exception",
                     createNSErrorFromThrowable(it),
                     mutableMapOf<Any?, Any?>().apply {
