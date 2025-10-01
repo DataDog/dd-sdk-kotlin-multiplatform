@@ -10,6 +10,7 @@ import cocoapods.DatadogRUM.DDRUM
 import cocoapods.DatadogRUM.DDRUMConfiguration
 import cocoapods.DatadogRUM.DDRUMErrorSourceSource
 import cocoapods.DatadogRUM.DDRUMMonitor
+import cocoapods.DatadogRUM._internal_sync_addError
 import com.datadog.kmp.internal.INCLUDE_BINARY_IMAGES
 import com.datadog.kmp.internal.InternalProxy
 import com.datadog.kmp.internal.RUM_ERROR_IS_CRASH
@@ -33,7 +34,7 @@ actual object Rum {
         if (InternalProxy.isCrashReportingEnabled) {
             addDatadogUnhandledExceptionHook {
                 DDRUMMonitor.shared()
-                    .addErrorWithError(
+                    ._internal_sync_addError(
                         createNSErrorFromThrowable(it),
                         DDRUMErrorSourceSource,
                         mutableMapOf<Any?, Any?>().apply {
