@@ -154,6 +154,8 @@ internal interface DDRumMonitorProxy {
         attributes: Map<Any?, *>
     )
 
+    fun addViewLoadingTime(overwrite: Boolean)
+
     companion object {
         fun create(nativeRumMonitor: DDRUMMonitor): DDRumMonitorProxy = object : DDRumMonitorProxy {
             override fun addActionWithType(
@@ -288,6 +290,9 @@ internal interface DDRumMonitorProxy {
                 failureReason: DDRUMFeatureOperationFailureReason,
                 attributes: Map<Any?, *>
             ) = nativeRumMonitor.failFeatureOperationWithName(name, operationKey, failureReason, attributes)
+
+            override fun addViewLoadingTime(overwrite: Boolean) =
+                nativeRumMonitor.addViewLoadingTimeWithOverwrite(overwrite)
         }
     }
 }

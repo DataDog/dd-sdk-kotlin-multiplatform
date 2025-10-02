@@ -139,6 +139,11 @@ internal class RumMonitorAdapter(private val nativeRumMonitor: NativeRumMonitor)
         nativeRumMonitor.failFeatureOperation(name, operationKey, failureReason.native, attributes)
     }
 
+    @OptIn(NativeExperimentalRumApi::class, ExperimentalRumApi::class)
+    override fun addViewLoadingTime(overwrite: Boolean) {
+        nativeRumMonitor.addViewLoadingTime(overwrite)
+    }
+
     override fun stopSession() {
         nativeRumMonitor.stopSession()
     }

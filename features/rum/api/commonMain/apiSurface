@@ -34,6 +34,7 @@ interface com.datadog.kmp.rum.RumMonitor
   fun startFeatureOperation(String, String? = null, Map<String, Any?> = emptyMap())
   fun succeedFeatureOperation(String, String? = null, Map<String, Any?> = emptyMap())
   fun failFeatureOperation(String, String? = null, com.datadog.kmp.rum.featureoperations.FailureReason, Map<String, Any?> = emptyMap())
+  fun addViewLoadingTime(Boolean)
   fun stopSession()
   var debug: Boolean
   companion object 
