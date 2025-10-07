@@ -34,5 +34,9 @@ internal class AndroidLogsConfigurationBuilder(
         }
     }
 
+    override fun useCustomEndpoint(endpoint: String) {
+        nativeBuilder.useCustomEndpoint(endpoint)
+    }
+
     override fun build(): NativeLogsConfiguration = nativeBuilder.build()
 }

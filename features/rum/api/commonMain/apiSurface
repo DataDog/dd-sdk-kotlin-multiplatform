@@ -31,6 +31,10 @@ interface com.datadog.kmp.rum.RumMonitor
   fun addFeatureFlagEvaluations(Map<String, Any>)
   fun addAttribute(String, Any?)
   fun removeAttribute(String)
+  fun startFeatureOperation(String, String? = null, Map<String, Any?> = emptyMap())
+  fun succeedFeatureOperation(String, String? = null, Map<String, Any?> = emptyMap())
+  fun failFeatureOperation(String, String? = null, com.datadog.kmp.rum.featureoperations.FailureReason, Map<String, Any?> = emptyMap())
+  fun addViewLoadingTime(Boolean)
   fun stopSession()
   var debug: Boolean
   companion object 
@@ -73,6 +77,7 @@ class com.datadog.kmp.rum.configuration.RumConfiguration
     fun setErrorEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ErrorEvent>): Builder
     fun setLongTaskEventMapper(com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.LongTaskEvent>): Builder
     fun trackAnonymousUser(Boolean): Builder
+    fun useCustomEndpoint(String): Builder
     fun build(): RumConfiguration
 fun interface com.datadog.kmp.rum.configuration.RumSessionListener
   fun onSessionStarted(String, Boolean)
@@ -87,6 +92,10 @@ enum com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
   - NEVER
 fun interface com.datadog.kmp.rum.event.ViewEventMapper : com.datadog.kmp.event.EventMapper<com.datadog.kmp.rum.model.ViewEvent>
   override fun map(com.datadog.kmp.rum.model.ViewEvent): com.datadog.kmp.rum.model.ViewEvent
+enum com.datadog.kmp.rum.featureoperations.FailureReason
+  - ERROR
+  - ABANDONED
+  - OTHER
 data class com.datadog.kmp.rum.model.ActionEvent
   constructor(kotlin.Long, Application, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, ActionEventSession, ActionEventSource? = null, ActionEventView, Usr? = null, Account? = null, Connectivity? = null, Display? = null, Synthetics? = null, CiTest? = null, Os? = null, Device? = null, Dd, Context? = null, Container? = null, ActionEventAction)
   val type: kotlin.String

@@ -29,7 +29,8 @@ This project hosts the following modules:
     - `features/session-replay`: Library to capture the application window content;
     - `features/webview`: Library to forward logs and RUM events captured in a webview to be linked with the mobile session;
   - `integrations/***`: Set of libraries integrating Datadog products in third party libraries:
-    - `integrations/ktor`: Lightweight library providing a bridge integration between Datadog SDK and [Ktor client](https://ktor.io/);
+    - `integrations/ktor`: Lightweight library providing a bridge integration between Datadog SDK and [Ktor v2 client](https://ktor.io/);
+    - `integrations/ktor3`: Lightweight library providing a bridge integration between Datadog SDK and [Ktor v3 client](https://ktor.io/);
   - `tools/*`: Set of modules used to extend the tools we use in our workflow:
     - `tools/build-plugins`: Convention plugins to ease build configuration;
     - `tools/license`: Script to check the license header in all project source files;

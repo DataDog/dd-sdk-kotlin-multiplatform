@@ -6,24 +6,37 @@
 
 package com.datadog.kmp.log.model.internal
 
-import cocoapods.DatadogObjc.DDLogEvent
-import cocoapods.DatadogObjc.DDLogEventDd
-import cocoapods.DatadogObjc.DDLogEventDeviceInfo
-import cocoapods.DatadogObjc.DDLogEventError
-import cocoapods.DatadogObjc.DDLogEventStatus
-import cocoapods.DatadogObjc.DDLogEventStatusCritical
-import cocoapods.DatadogObjc.DDLogEventStatusDebug
-import cocoapods.DatadogObjc.DDLogEventStatusEmergency
-import cocoapods.DatadogObjc.DDLogEventStatusError
-import cocoapods.DatadogObjc.DDLogEventStatusInfo
-import cocoapods.DatadogObjc.DDLogEventStatusWarn
-import cocoapods.DatadogObjc.DDLogEventUserInfo
+import cocoapods.DatadogLogs.DDLogEvent
+import cocoapods.DatadogLogs.DDLogEventAccountInfo
+import cocoapods.DatadogLogs.DDLogEventDDDevice
+import cocoapods.DatadogLogs.DDLogEventDd
+import cocoapods.DatadogLogs.DDLogEventDevice
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceType
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeBot
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeDesktop
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeGamingConsole
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeMobile
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeOther
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeTablet
+import cocoapods.DatadogLogs.DDLogEventDeviceDeviceTypeTv
+import cocoapods.DatadogLogs.DDLogEventError
+import cocoapods.DatadogLogs.DDLogEventOperatingSystem
+import cocoapods.DatadogLogs.DDLogEventStatus
+import cocoapods.DatadogLogs.DDLogEventStatusCritical
+import cocoapods.DatadogLogs.DDLogEventStatusDebug
+import cocoapods.DatadogLogs.DDLogEventStatusEmergency
+import cocoapods.DatadogLogs.DDLogEventStatusError
+import cocoapods.DatadogLogs.DDLogEventStatusInfo
+import cocoapods.DatadogLogs.DDLogEventStatusWarn
+import cocoapods.DatadogLogs.DDLogEventUserInfo
 import com.datadog.kmp.log.model.LogEvent
 import platform.Foundation.NSISO8601DateFormatter
 
 private val ISO_8601_DATE_FORMATTER = NSISO8601DateFormatter()
 
 internal fun DDLogEvent.toCommonModel(): LogEvent = LogEvent(
+    os = os().toCommonModel(),
+    device = device().toCommonModel(),
     status = logEventStatusToCommonEnum(status()),
     service = serviceName(),
     message = message(),
@@ -34,7 +47,7 @@ internal fun DDLogEvent.toCommonModel(): LogEvent = LogEvent(
     ),
     dd = dd().toCommonModel(),
     usr = userInfo().toCommonModel(),
-    // TODO RUM-10485 LogEvent.account is missing in iOS SDK ObjC API
+    account = accountInfo()?.toCommonModel(),
     // TODO RUM-6098 The way network/carrier information is passed varies a lot between Android and iOS, removing it
     //  from the model for now
     error = error()?.toCommonModel(),
@@ -44,6 +57,13 @@ internal fun DDLogEvent.toCommonModel(): LogEvent = LogEvent(
         .userAttributes()
         .mapKeys { it.key as String }
         .toMutableMap()
+)
+
+internal fun DDLogEventOperatingSystem.toCommonModel(): LogEvent.Os = LogEvent.Os(
+    name = name(),
+    version = version(),
+    build = build(),
+    versionMajor = versionMajor()
 )
 
 internal fun logEventStatusToCommonEnum(enumValue: DDLogEventStatus): LogEvent.Status =
@@ -57,11 +77,31 @@ internal fun logEventStatusToCommonEnum(enumValue: DDLogEventStatus): LogEvent.S
         else -> LogEvent.Status.INFO
     }
 
+internal fun logEventDeviceTypeToCommonEnum(enumValue: DDLogEventDeviceDeviceType): LogEvent.Type =
+    when (enumValue) {
+        DDLogEventDeviceDeviceTypeMobile -> LogEvent.Type.MOBILE
+        DDLogEventDeviceDeviceTypeTablet -> LogEvent.Type.TABLET
+        DDLogEventDeviceDeviceTypeTv -> LogEvent.Type.TV
+        DDLogEventDeviceDeviceTypeGamingConsole -> LogEvent.Type.GAMING_CONSOLE
+        DDLogEventDeviceDeviceTypeBot -> LogEvent.Type.BOT
+        DDLogEventDeviceDeviceTypeDesktop -> LogEvent.Type.DESKTOP
+        DDLogEventDeviceDeviceTypeOther -> LogEvent.Type.OTHER
+        else -> LogEvent.Type.MOBILE
+    }
+
 internal fun DDLogEventDd.toCommonModel(): LogEvent.Dd = LogEvent.Dd(
     device = device().toCommonModel()
 )
 
-internal fun DDLogEventDeviceInfo.toCommonModel(): LogEvent.Device = LogEvent.Device(
+internal fun DDLogEventDevice.toCommonModel(): LogEvent.LogEventDevice = LogEvent.LogEventDevice(
+    architecture = architecture(),
+    type = logEventDeviceTypeToCommonEnum(type()),
+    name = name(),
+    model = model(),
+    brand = brand()
+)
+
+internal fun DDLogEventDDDevice.toCommonModel(): LogEvent.DdDevice = LogEvent.DdDevice(
     architecture = architecture()
 )
 
@@ -69,6 +109,12 @@ internal fun DDLogEventUserInfo.toCommonModel(): LogEvent.Usr = LogEvent.Usr(
     id = id(),
     name = name(),
     email = email(),
+    additionalProperties = extraInfo().mapKeys { it.key as String }.toMutableMap()
+)
+
+internal fun DDLogEventAccountInfo.toCommonModel(): LogEvent.Account = LogEvent.Account(
+    id = id(),
+    name = name(),
     additionalProperties = extraInfo().mapKeys { it.key as String }.toMutableMap()
 )
 

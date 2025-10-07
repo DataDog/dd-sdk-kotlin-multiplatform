@@ -6,7 +6,7 @@
 
 package com.datadog.kmp.rum.tracking
 
-import cocoapods.DatadogObjc.DDDefaultUIKitRUMActionsPredicate
+import cocoapods.DatadogRUM.DDDefaultUIKitRUMActionsPredicate
 import platform.UIKit.UIPressType
 import platform.UIKit.UIView
 

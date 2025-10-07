@@ -6,46 +6,52 @@
 
 package com.datadog.kmp.rum.internal
 
-import cocoapods.DatadogObjc.DDRUMActionType
-import cocoapods.DatadogObjc.DDRUMActionTypeCustom
-import cocoapods.DatadogObjc.DDRUMActionTypeScroll
-import cocoapods.DatadogObjc.DDRUMActionTypeSwipe
-import cocoapods.DatadogObjc.DDRUMActionTypeTap
-import cocoapods.DatadogObjc.DDRUMErrorSource
-import cocoapods.DatadogObjc.DDRUMErrorSourceNetwork
-import cocoapods.DatadogObjc.DDRUMErrorSourceSource
-import cocoapods.DatadogObjc.DDRUMErrorSourceWebview
-import cocoapods.DatadogObjc.DDRUMMethod
-import cocoapods.DatadogObjc.DDRUMMethodConnect
-import cocoapods.DatadogObjc.DDRUMMethodDelete
-import cocoapods.DatadogObjc.DDRUMMethodGet
-import cocoapods.DatadogObjc.DDRUMMethodHead
-import cocoapods.DatadogObjc.DDRUMMethodOptions
-import cocoapods.DatadogObjc.DDRUMMethodPatch
-import cocoapods.DatadogObjc.DDRUMMethodPost
-import cocoapods.DatadogObjc.DDRUMMethodPut
-import cocoapods.DatadogObjc.DDRUMMethodTrace
-import cocoapods.DatadogObjc.DDRUMResourceType
-import cocoapods.DatadogObjc.DDRUMResourceTypeBeacon
-import cocoapods.DatadogObjc.DDRUMResourceTypeCss
-import cocoapods.DatadogObjc.DDRUMResourceTypeDocument
-import cocoapods.DatadogObjc.DDRUMResourceTypeFetch
-import cocoapods.DatadogObjc.DDRUMResourceTypeFont
-import cocoapods.DatadogObjc.DDRUMResourceTypeImage
-import cocoapods.DatadogObjc.DDRUMResourceTypeJs
-import cocoapods.DatadogObjc.DDRUMResourceTypeMedia
-import cocoapods.DatadogObjc.DDRUMResourceTypeNative
-import cocoapods.DatadogObjc.DDRUMResourceTypeOther
-import cocoapods.DatadogObjc.DDRUMResourceTypeXhr
+import cocoapods.DatadogRUM.DDRUMActionType
+import cocoapods.DatadogRUM.DDRUMActionTypeCustom
+import cocoapods.DatadogRUM.DDRUMActionTypeScroll
+import cocoapods.DatadogRUM.DDRUMActionTypeSwipe
+import cocoapods.DatadogRUM.DDRUMActionTypeTap
+import cocoapods.DatadogRUM.DDRUMErrorSource
+import cocoapods.DatadogRUM.DDRUMErrorSourceNetwork
+import cocoapods.DatadogRUM.DDRUMErrorSourceSource
+import cocoapods.DatadogRUM.DDRUMErrorSourceWebview
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReason
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReasonAbandoned
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReasonError
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReasonOther
+import cocoapods.DatadogRUM.DDRUMMethod
+import cocoapods.DatadogRUM.DDRUMMethodConnect
+import cocoapods.DatadogRUM.DDRUMMethodDelete
+import cocoapods.DatadogRUM.DDRUMMethodGet
+import cocoapods.DatadogRUM.DDRUMMethodHead
+import cocoapods.DatadogRUM.DDRUMMethodOptions
+import cocoapods.DatadogRUM.DDRUMMethodPatch
+import cocoapods.DatadogRUM.DDRUMMethodPost
+import cocoapods.DatadogRUM.DDRUMMethodPut
+import cocoapods.DatadogRUM.DDRUMMethodTrace
+import cocoapods.DatadogRUM.DDRUMResourceType
+import cocoapods.DatadogRUM.DDRUMResourceTypeBeacon
+import cocoapods.DatadogRUM.DDRUMResourceTypeCss
+import cocoapods.DatadogRUM.DDRUMResourceTypeDocument
+import cocoapods.DatadogRUM.DDRUMResourceTypeFetch
+import cocoapods.DatadogRUM.DDRUMResourceTypeFont
+import cocoapods.DatadogRUM.DDRUMResourceTypeImage
+import cocoapods.DatadogRUM.DDRUMResourceTypeJs
+import cocoapods.DatadogRUM.DDRUMResourceTypeMedia
+import cocoapods.DatadogRUM.DDRUMResourceTypeNative
+import cocoapods.DatadogRUM.DDRUMResourceTypeOther
+import cocoapods.DatadogRUM.DDRUMResourceTypeXhr
 import com.datadog.kmp.internal.createNSErrorFromMessage
 import com.datadog.kmp.internal.createNSErrorFromThrowable
 import com.datadog.kmp.internal.eraseKeyType
 import com.datadog.kmp.internal.withIncludeBinaryImages
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.featureoperations.FailureReason
 import platform.Foundation.NSError
 import platform.Foundation.NSHTTPURLResponse
 import platform.Foundation.NSNumber
@@ -184,6 +190,31 @@ internal class RumMonitorAdapter(
         nativeRumMonitor.removeAttributeForKey(key)
     }
 
+    @OptIn(ExperimentalRumApi::class)
+    override fun startFeatureOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
+        nativeRumMonitor.startFeatureOperation(name, operationKey, eraseKeyType(attributes))
+    }
+
+    @OptIn(ExperimentalRumApi::class)
+    override fun succeedFeatureOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
+        nativeRumMonitor.succeedFeatureOperation(name, operationKey, eraseKeyType(attributes))
+    }
+
+    @OptIn(ExperimentalRumApi::class)
+    override fun failFeatureOperation(
+        name: String,
+        operationKey: String?,
+        failureReason: FailureReason,
+        attributes: Map<String, Any?>
+    ) {
+        nativeRumMonitor.failFeatureOperation(name, operationKey, failureReason.native, eraseKeyType(attributes))
+    }
+
+    @OptIn(ExperimentalRumApi::class)
+    override fun addViewLoadingTime(overwrite: Boolean) {
+        nativeRumMonitor.addViewLoadingTime(overwrite)
+    }
+
     override fun stopSession() {
         nativeRumMonitor.stopSession()
     }
@@ -285,6 +316,15 @@ private val RumErrorSource.native: DDRUMErrorSource
             RumErrorSource.LOGGER -> DDRUMErrorSourceSource
             RumErrorSource.WEBVIEW -> DDRUMErrorSourceWebview
             RumErrorSource.NETWORK -> DDRUMErrorSourceNetwork
+        }
+    }
+
+private val FailureReason.native: DDRUMFeatureOperationFailureReason
+    get() {
+        return when (this) {
+            FailureReason.ERROR -> DDRUMFeatureOperationFailureReasonError
+            FailureReason.OTHER -> DDRUMFeatureOperationFailureReasonOther
+            FailureReason.ABANDONED -> DDRUMFeatureOperationFailureReasonAbandoned
         }
     }
 

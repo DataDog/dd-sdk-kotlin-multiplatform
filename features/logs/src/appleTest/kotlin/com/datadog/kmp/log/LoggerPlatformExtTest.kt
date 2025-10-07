@@ -10,7 +10,6 @@ import com.datadog.kmp.log.internal.IOSPlatformLogger
 import dev.mokkery.mock
 import dev.mokkery.verify
 import platform.Foundation.NSError
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class LoggerPlatformExtTest {
@@ -19,7 +18,6 @@ class LoggerPlatformExtTest {
 
     private val testedLogger = Logger(mockPlatformLogger)
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call platform logger+debug W debug with NSError`() {
         // Given
@@ -36,7 +34,6 @@ class LoggerPlatformExtTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call platform logger+info W info with NSError`() {
         // Given
@@ -53,7 +50,6 @@ class LoggerPlatformExtTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call platform logger+warn W warn with NSError`() {
         // Given
@@ -70,7 +66,6 @@ class LoggerPlatformExtTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call platform logger+error W error with NSError`() {
         // Given
@@ -87,7 +82,6 @@ class LoggerPlatformExtTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call platform logger+critical W critical with NSError`() {
         // Given
@@ -104,7 +98,6 @@ class LoggerPlatformExtTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call platform logger+info W log+info with NSError`() {
         // Given

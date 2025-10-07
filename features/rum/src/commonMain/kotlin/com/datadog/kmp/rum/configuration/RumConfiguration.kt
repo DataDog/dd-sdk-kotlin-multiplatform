@@ -191,6 +191,20 @@ class RumConfiguration internal constructor(internal val nativeConfiguration: An
         }
 
         /**
+         * Let the RUM feature target a custom server.
+         * The provided url should be the full endpoint url, e.g.: https://example.com/rum/upload
+         *
+         * This is a configuration for the reverse proxy, unlike
+         * [com.datadog.kmp.core.configuration.Configuration.Builder.setProxy] which is a configuration for the
+         * forward proxy. Prefer to use [com.datadog.kmp.core.configuration.Configuration.Builder.setProxy] instead if
+         * possible.
+         */
+        fun useCustomEndpoint(endpoint: String): Builder {
+            platformBuilder.useCustomEndpoint(endpoint)
+            return this
+        }
+
+        /**
          * Builds a [RumConfiguration] based on the current state of this Builder.
          */
         fun build(): RumConfiguration {

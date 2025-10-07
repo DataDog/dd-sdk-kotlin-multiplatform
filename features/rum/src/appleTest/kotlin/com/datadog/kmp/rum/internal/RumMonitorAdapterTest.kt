@@ -6,41 +6,46 @@
 
 package com.datadog.kmp.rum.internal
 
-import cocoapods.DatadogObjc.DDRUMActionType
-import cocoapods.DatadogObjc.DDRUMActionTypeCustom
-import cocoapods.DatadogObjc.DDRUMActionTypeScroll
-import cocoapods.DatadogObjc.DDRUMActionTypeSwipe
-import cocoapods.DatadogObjc.DDRUMActionTypeTap
-import cocoapods.DatadogObjc.DDRUMErrorSource
-import cocoapods.DatadogObjc.DDRUMErrorSourceNetwork
-import cocoapods.DatadogObjc.DDRUMErrorSourceSource
-import cocoapods.DatadogObjc.DDRUMErrorSourceWebview
-import cocoapods.DatadogObjc.DDRUMMethod
-import cocoapods.DatadogObjc.DDRUMMethodConnect
-import cocoapods.DatadogObjc.DDRUMMethodDelete
-import cocoapods.DatadogObjc.DDRUMMethodGet
-import cocoapods.DatadogObjc.DDRUMMethodHead
-import cocoapods.DatadogObjc.DDRUMMethodOptions
-import cocoapods.DatadogObjc.DDRUMMethodPatch
-import cocoapods.DatadogObjc.DDRUMMethodPost
-import cocoapods.DatadogObjc.DDRUMMethodPut
-import cocoapods.DatadogObjc.DDRUMMethodTrace
-import cocoapods.DatadogObjc.DDRUMResourceType
-import cocoapods.DatadogObjc.DDRUMResourceTypeBeacon
-import cocoapods.DatadogObjc.DDRUMResourceTypeCss
-import cocoapods.DatadogObjc.DDRUMResourceTypeDocument
-import cocoapods.DatadogObjc.DDRUMResourceTypeFetch
-import cocoapods.DatadogObjc.DDRUMResourceTypeFont
-import cocoapods.DatadogObjc.DDRUMResourceTypeImage
-import cocoapods.DatadogObjc.DDRUMResourceTypeJs
-import cocoapods.DatadogObjc.DDRUMResourceTypeMedia
-import cocoapods.DatadogObjc.DDRUMResourceTypeNative
-import cocoapods.DatadogObjc.DDRUMResourceTypeOther
-import cocoapods.DatadogObjc.DDRUMResourceTypeXhr
+import cocoapods.DatadogRUM.DDRUMActionType
+import cocoapods.DatadogRUM.DDRUMActionTypeCustom
+import cocoapods.DatadogRUM.DDRUMActionTypeScroll
+import cocoapods.DatadogRUM.DDRUMActionTypeSwipe
+import cocoapods.DatadogRUM.DDRUMActionTypeTap
+import cocoapods.DatadogRUM.DDRUMErrorSource
+import cocoapods.DatadogRUM.DDRUMErrorSourceNetwork
+import cocoapods.DatadogRUM.DDRUMErrorSourceSource
+import cocoapods.DatadogRUM.DDRUMErrorSourceWebview
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReason
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReasonAbandoned
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReasonError
+import cocoapods.DatadogRUM.DDRUMFeatureOperationFailureReasonOther
+import cocoapods.DatadogRUM.DDRUMMethod
+import cocoapods.DatadogRUM.DDRUMMethodConnect
+import cocoapods.DatadogRUM.DDRUMMethodDelete
+import cocoapods.DatadogRUM.DDRUMMethodGet
+import cocoapods.DatadogRUM.DDRUMMethodHead
+import cocoapods.DatadogRUM.DDRUMMethodOptions
+import cocoapods.DatadogRUM.DDRUMMethodPatch
+import cocoapods.DatadogRUM.DDRUMMethodPost
+import cocoapods.DatadogRUM.DDRUMMethodPut
+import cocoapods.DatadogRUM.DDRUMMethodTrace
+import cocoapods.DatadogRUM.DDRUMResourceType
+import cocoapods.DatadogRUM.DDRUMResourceTypeBeacon
+import cocoapods.DatadogRUM.DDRUMResourceTypeCss
+import cocoapods.DatadogRUM.DDRUMResourceTypeDocument
+import cocoapods.DatadogRUM.DDRUMResourceTypeFetch
+import cocoapods.DatadogRUM.DDRUMResourceTypeFont
+import cocoapods.DatadogRUM.DDRUMResourceTypeImage
+import cocoapods.DatadogRUM.DDRUMResourceTypeJs
+import cocoapods.DatadogRUM.DDRUMResourceTypeMedia
+import cocoapods.DatadogRUM.DDRUMResourceTypeNative
+import cocoapods.DatadogRUM.DDRUMResourceTypeOther
+import cocoapods.DatadogRUM.DDRUMResourceTypeXhr
 import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.featureoperations.FailureReason
 import com.datadog.tools.random.exhaustiveAttributes
 import com.datadog.tools.random.nullable
 import com.datadog.tools.random.randomBoolean
@@ -141,7 +146,6 @@ class RumMonitorAdapterTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native startViewWithViewController W startView + ViewController key type `() {
         // Given
@@ -177,7 +181,6 @@ class RumMonitorAdapterTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native stopViewWithViewController W stopView + ViewController key type`() {
         // Given
@@ -275,7 +278,6 @@ class RumMonitorAdapterTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native stopResourceWithResourceKey W stopResource`() {
         // Given
@@ -300,7 +302,7 @@ class RumMonitorAdapterTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
+    @Ignore // TODO RUM-11751 Segfault due to null status code, although Objective-C API allow it
     @OptIn(DelicateMokkeryApi::class)
     @Test
     fun `M call native stopResourceWithErrorWithResourceKey W stopResourceWithError + no status code`() {
@@ -333,7 +335,6 @@ class RumMonitorAdapterTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @OptIn(DelicateMokkeryApi::class)
     @Test
     fun `M call native stopResourceWithErrorWithResourceKey W stopResourceWithError + with status code`() {
@@ -364,12 +365,11 @@ class RumMonitorAdapterTest {
                 matches {
                     it is NSHTTPURLResponse && it.statusCode == fakeStatusCode.toLong()
                 },
-                fakeAttributes.eraseKeyType()
+                (fakeAttributes + (INCLUDE_BINARY_IMAGES_KEY to true)).eraseKeyType()
             )
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @OptIn(DelicateMokkeryApi::class)
     @Test
     fun `M call native addErrorWithError W addError + null throwable`() {
@@ -399,7 +399,6 @@ class RumMonitorAdapterTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @OptIn(DelicateMokkeryApi::class)
     @Test
     fun `M call native addErrorWithError W addError + with throwable`() {
@@ -425,7 +424,7 @@ class RumMonitorAdapterTest {
                         it.localizedDescription == "$fakeMessage\n${fakeThrowable.message}"
                 },
                 fakeErrorSource.native,
-                fakeAttributes.eraseKeyType()
+                (fakeAttributes + (INCLUDE_BINARY_IMAGES_KEY to true)).eraseKeyType()
             )
         }
     }
@@ -499,6 +498,74 @@ class RumMonitorAdapterTest {
     }
 
     @Test
+    fun `M call native startFeatureOperation W startFeatureOperation`() {
+        // Given
+        val fakeName = "fakeOperationName"
+        val fakeOperationKey = nullable("fakeOperationKey")
+        val fakeAttributes = exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.startFeatureOperation(fakeName, fakeOperationKey, fakeAttributes)
+
+        // Then
+        verify {
+            mockNativeRumMonitor.startFeatureOperation(fakeName, fakeOperationKey, fakeAttributes.eraseKeyType())
+        }
+    }
+
+    @Test
+    fun `M call native succeedFeatureOperation W succeedFeatureOperation`() {
+        // Given
+        val fakeName = "fakeOperationName"
+        val fakeOperationKey = nullable("fakeOperationKey")
+        val fakeAttributes = exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.succeedFeatureOperation(fakeName, fakeOperationKey, fakeAttributes)
+
+        // Then
+        verify {
+            mockNativeRumMonitor.succeedFeatureOperation(fakeName, fakeOperationKey, fakeAttributes.eraseKeyType())
+        }
+    }
+
+    @Test
+    fun `M call native failFeatureOperation W failFeatureOperation`() {
+        // Given
+        val fakeName = "fakeOperationName"
+        val fakeOperationKey = nullable("fakeOperationKey")
+        val fakeFailureReason = randomEnumValue<FailureReason>()
+        val fakeAttributes = exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.failFeatureOperation(fakeName, fakeOperationKey, fakeFailureReason, fakeAttributes)
+
+        // Then
+        verify {
+            mockNativeRumMonitor.failFeatureOperation(
+                fakeName,
+                fakeOperationKey,
+                fakeFailureReason.native,
+                fakeAttributes.eraseKeyType()
+            )
+        }
+    }
+
+    @Test
+    fun `M call native addViewLoadingTime W addViewLoadingTime`() {
+        // Given
+        val fakeOverwrite = randomBoolean()
+
+        // When
+        testedRumMonitorAdapter.addViewLoadingTime(fakeOverwrite)
+
+        // Then
+        verify {
+            mockNativeRumMonitor.addViewLoadingTime(fakeOverwrite)
+        }
+    }
+
+    @Test
     fun `M call native stopSession W stopSession`() {
         // When
         testedRumMonitorAdapter.stopSession()
@@ -511,7 +578,6 @@ class RumMonitorAdapterTest {
 
     // region AdvanceRumNetworkMonitor
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native addResourceMetricsWithResourceKey W addResourceMetrics`() {
         // Given
@@ -534,7 +600,6 @@ class RumMonitorAdapterTest {
 
     // endregion
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native stopResourceWithResourceKey W stopResource + platform types`() {
         // Given
@@ -557,7 +622,6 @@ class RumMonitorAdapterTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native stopResourceWithErrorWithResourceKey W stopResourceWithError + platform types + NSError`() {
         // Given
@@ -575,12 +639,11 @@ class RumMonitorAdapterTest {
                 fakeKey,
                 fakeError,
                 fakeResponse,
-                fakeAttributes.eraseKeyType()
+                (fakeAttributes + (INCLUDE_BINARY_IMAGES_KEY to true)).eraseKeyType()
             )
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native stopResourceWithErrorWithResourceKey W stopResourceWithError + platform types + message`() {
         // Given
@@ -603,7 +666,6 @@ class RumMonitorAdapterTest {
         }
     }
 
-    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native addErrorWithError W addError + platform types`() {
         // Given
@@ -619,7 +681,7 @@ class RumMonitorAdapterTest {
             mockNativeRumMonitor.addErrorWithError(
                 fakeError,
                 fakeSource.native,
-                fakeAttributes.eraseKeyType()
+                (fakeAttributes + (INCLUDE_BINARY_IMAGES_KEY to true)).eraseKeyType()
             )
         }
     }
@@ -686,6 +748,19 @@ class RumMonitorAdapterTest {
                 RumErrorSource.NETWORK -> DDRUMErrorSourceNetwork
             }
         }
+
+    private val FailureReason.native: DDRUMFeatureOperationFailureReason
+        get() {
+            return when (this) {
+                FailureReason.ERROR -> DDRUMFeatureOperationFailureReasonError
+                FailureReason.OTHER -> DDRUMFeatureOperationFailureReasonOther
+                FailureReason.ABANDONED -> DDRUMFeatureOperationFailureReasonAbandoned
+            }
+        }
+
+    private companion object {
+        const val INCLUDE_BINARY_IMAGES_KEY = "_dd.error.include_binary_images"
+    }
 
     // endregion
 }

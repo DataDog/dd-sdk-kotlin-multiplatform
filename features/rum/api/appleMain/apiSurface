@@ -10,6 +10,7 @@ fun RumConfiguration.Builder.trackSwiftUIActions(Boolean): RumConfiguration.Buil
 fun RumConfiguration.Builder.trackSwiftUIActions(com.datadog.kmp.rum.tracking.SwiftUIRUMActionsPredicate): RumConfiguration.Builder
 fun RumConfiguration.Builder.setAppHangThreshold(Long?): RumConfiguration.Builder
 fun RumConfiguration.Builder.trackWatchdogTerminations(Boolean): RumConfiguration.Builder
+fun RumConfiguration.Builder.trackMemoryWarnings(Boolean): RumConfiguration.Builder
 interface com.datadog.kmp.rum.internal.AdvancedRumNetworkMonitor
   fun addResourceMetrics(String, platform.Foundation.NSURLSessionTaskMetrics, Map<String, Any?>)
 class com.datadog.kmp.rum.tracking.DefaultSwiftUIRUMActionsPredicate : SwiftUIRUMActionsPredicate

@@ -18,17 +18,24 @@ import com.datadog.kmp.log.Logger
 import com.datadog.kmp.log.Logs
 import com.datadog.kmp.log.configuration.LogsConfiguration
 import com.datadog.kmp.privacy.TrackingConsent
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.Rum
 import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
+import com.datadog.kmp.rum.featureoperations.FailureReason
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 const val HOME_SCREEN_NAME = "Home"
 const val LOGS_SCREEN_NAME = "Logs"
 const val CRASH_SCREEN_NAME = "Crash"
 const val RUM_SCREEN_NAME = "RUM"
 const val WEBVIEW_SCREEN_NAME = "WebView"
+
+private const val FEATURE_OPERATION_NAME = "Checkout"
+private val activeFeatureOperationKeys = ArrayDeque<String>()
 
 internal val WEB_VIEW_TRACKING_ALLOWED_HOSTS = setOf("datadoghq.dev")
 const val WEB_VIEW_TRACKING_LOAD_URL = "https://datadoghq.dev/browser-sdk-test-playground/" +
@@ -156,6 +163,32 @@ fun triggerCheckedException() {
 fun triggerUncheckedException() {
     val cause = IllegalStateException("sample crash")
     throw RuntimeException(cause)
+}
+
+@OptIn(ExperimentalTime::class, ExperimentalRumApi::class)
+fun startFeatureOperation() {
+    val operationKey = "$FEATURE_OPERATION_NAME/${Clock.System.now().toEpochMilliseconds()}"
+    RumMonitor.get().startFeatureOperation(FEATURE_OPERATION_NAME, operationKey, extensiveAdditionalProperties)
+    activeFeatureOperationKeys += operationKey
+}
+
+@OptIn(ExperimentalRumApi::class)
+fun stopFeatureOperation() {
+    activeFeatureOperationKeys.removeLastOrNull()?.let {
+        RumMonitor.get().succeedFeatureOperation(FEATURE_OPERATION_NAME, it, mapOf("result" to "buy"))
+    }
+}
+
+@OptIn(ExperimentalRumApi::class)
+fun failFeatureOperation() {
+    activeFeatureOperationKeys.removeLastOrNull()?.let {
+        RumMonitor.get().failFeatureOperation(
+            FEATURE_OPERATION_NAME,
+            it,
+            FailureReason.ABANDONED,
+            mapOf("result" to "abandoned_checkout")
+        )
+    }
 }
 
 private fun RumConfiguration.Builder.setupRumMappers() {

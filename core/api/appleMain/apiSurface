@@ -3,7 +3,6 @@ actual object com.datadog.kmp.Datadog
   actual fun initialize(Any?, com.datadog.kmp.core.configuration.Configuration, com.datadog.kmp.privacy.TrackingConsent)
   actual fun isInitialized(): Boolean
   actual fun setTrackingConsent(com.datadog.kmp.privacy.TrackingConsent)
-  DEPRECATED actual fun setUserInfo(String?, String?, String?, Map<String, Any?>)
   actual fun setUserInfo(String, String?, String?, Map<String, Any?>)
   actual fun addUserExtraInfo(Map<String, Any?>)
   actual fun clearUserInfo()

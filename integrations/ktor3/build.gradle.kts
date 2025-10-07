@@ -5,8 +5,6 @@
  */
 
 import dev.mokkery.MockMode
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithSimulatorTests
 import java.nio.file.Paths
 
 plugins {
@@ -38,7 +36,11 @@ kotlin {
 
         // need to link it only for the tests so far (maybe this will change
         // later with SDK setup changes)
-        pod("DatadogObjc") {
+        pod("DatadogRUM") {
+            linkOnly = true
+            version = libs.versions.datadog.ios.get()
+        }
+        pod("DatadogCore") {
             linkOnly = true
             version = libs.versions.datadog.ios.get()
         }
@@ -83,13 +85,6 @@ kotlin {
                 srcDirs(Paths.get("..", "ktor", "src", "androidMain").toFile())
             }
         }
-    }
-
-    // fix for w: KLIB resolver: The same 'unique_name=org.jetbrains.kotlinx:atomicfu' found in more than one library
-    // see https://youtrack.jetbrains.com/issue/KT-71206, should be fixed in Kotlin 2.1.0
-    targets.withType<KotlinNativeTargetWithSimulatorTests> {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions.allWarningsAsErrors = false
     }
 }
 

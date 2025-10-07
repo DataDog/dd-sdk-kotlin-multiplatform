@@ -51,6 +51,22 @@ class IOSLogsConfigurationBuilderTest {
         )
     }
 
+    @Test
+    fun `M call platform Logs configuration builder+setCustomEndpoint W useCustomEndpoint+build`() {
+        // Given
+        val testedBuilder = IOSLogsConfigurationBuilder()
+        val fakeCustomEndpoint = "https://example.com/api/logs"
+
+        // When
+        val config = testedBuilder.apply { useCustomEndpoint(fakeCustomEndpoint) }.build()
+
+        // Then
+        assertEquals(
+            expected = fakeCustomEndpoint,
+            actual = config.customEndpoint()?.absoluteString
+        )
+    }
+
     private fun initializeSdkWithPendingConsent() {
         val fakeConfiguration = Configuration.Builder(
             clientToken = "fakeToken",

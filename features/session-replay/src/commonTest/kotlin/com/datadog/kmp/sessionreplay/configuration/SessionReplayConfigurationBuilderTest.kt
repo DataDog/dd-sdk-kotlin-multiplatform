@@ -37,21 +37,6 @@ class SessionReplayConfigurationBuilderTest {
     }
 
     @Test
-    fun `M call platform configuration builder+setPrivacy W setPrivacy`() {
-        // Given
-        val fakePrivacy = randomEnumValue<SessionReplayPrivacy>()
-
-        // When
-        @Suppress("DEPRECATION")
-        testedSessionReplayConfigurationBuilder.setPrivacy(fakePrivacy)
-
-        // Then
-        verify {
-            mockPlatformSessionReplayConfigurationBuilder.setPrivacy(fakePrivacy)
-        }
-    }
-
-    @Test
     fun `M call platform configuration builder+setImagePrivacy W setImagePrivacy`() {
         // Given
         val fakeImagePrivacy = randomEnumValue<ImagePrivacy>()
@@ -104,6 +89,20 @@ class SessionReplayConfigurationBuilderTest {
         // Then
         verify {
             mockPlatformSessionReplayConfigurationBuilder.startRecordingImmediately(fakeEnabled)
+        }
+    }
+
+    @Test
+    fun `M call platform configuration builder+useCustomEndpoint W useCustomEndpoint`() {
+        // Given
+        val fakeCustomEndpoint = "https://example.com/api/session-replay"
+
+        // When
+        testedSessionReplayConfigurationBuilder.useCustomEndpoint(fakeCustomEndpoint)
+
+        // Then
+        verify {
+            mockPlatformSessionReplayConfigurationBuilder.useCustomEndpoint(fakeCustomEndpoint)
         }
     }
 }

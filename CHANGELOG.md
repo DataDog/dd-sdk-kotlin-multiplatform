@@ -1,3 +1,21 @@
+# 1.4.0 / 2025-10-07
+
+**Note**: This version updates major versions of the native Datadog iOS and Datadog Android SDKs used. As part of this change `minSdk` on Android is bumped from 21 to 23.
+
+* [FEATURE] Add custom endpoint API. See [#207](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/207)
+* [FEATURE] Add memory warnings tracking support for iOS. See [#208](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/208)
+* [FEATURE] Support Feature Operations API. See [#213](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/213)
+* [FEATURE] Add API to measure view loading time. See [#214](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/214)
+* [IMPROVEMENT] Add `LogEvent.accountInfo` property mapping for iOS models. See [#204](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/204)
+* [IMPROVEMENT] Add `Os.versionMajor` property to `LogEvent`. See [#212](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/212)
+* [IMPROVEMENT] Use sync methods to write error to RUM/Logs during the crash on Apple platforms. See [#215](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/215)
+* [MAINTENANCE] Update iOS SDK version to 3.0.0. See [#203](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/203)
+* [MAINTENANCE] Update Android SDK version to 3.0.0, `minSdk` is bumped to 23. See [#205](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/205)
+* [MAINTENANCE] Bump language version to 2.0, align `copy()` method visibility for public classes with internal constructor. See [#206](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/206)
+* [MAINTENANCE] Update Kotlin to version 2.1.21. See [#209](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/209)
+* [MAINTENANCE] Update iOS and Android SDKs to version 3.1.0. See [#211](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/211)
+* [DOCS] Update `CONTRIBUTING` doc and `local_ci` script. See [#210](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/210)
+
 # 1.3.0 / 2025-09-01
 
 * [FEATURE] Core: Add `Datadog.clearUserInfo` API. See [#192](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/192)

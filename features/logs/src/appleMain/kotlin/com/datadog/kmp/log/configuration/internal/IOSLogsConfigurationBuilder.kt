@@ -6,11 +6,12 @@
 
 package com.datadog.kmp.log.configuration.internal
 
-import cocoapods.DatadogObjc.DDLogsConfiguration
+import cocoapods.DatadogLogs.DDLogsConfiguration
 import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.internal.eraseKeyType
 import com.datadog.kmp.log.model.LogEvent
 import com.datadog.kmp.log.model.internal.toCommonModel
+import platform.Foundation.NSURL
 
 internal class IOSLogsConfigurationBuilder : PlatformLogsConfigurationBuilder<DDLogsConfiguration> {
     private val nativeLogsConfiguration = DDLogsConfiguration(customEndpoint = null)
@@ -40,10 +41,16 @@ internal class IOSLogsConfigurationBuilder : PlatformLogsConfigurationBuilder<DD
                 logEvent.userInfo().setExtraInfo(eraseKeyType(it))
             }
 
-            // TODO RUM-10485 LogEvent.account is missing in iOS SDK ObjC API
+            mapped.account?.additionalProperties?.let {
+                logEvent.accountInfo()?.setExtraInfo(eraseKeyType(it))
+            }
 
             logEvent
         }
+    }
+
+    override fun useCustomEndpoint(endpoint: String) {
+        nativeLogsConfiguration.setCustomEndpoint(NSURL.URLWithString(endpoint))
     }
 
     override fun build(): DDLogsConfiguration = nativeLogsConfiguration

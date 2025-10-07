@@ -57,28 +57,31 @@ kotlin {
         }
 
         val compilerOptionFlag = "-compiler-option"
-        pod("DatadogObjc") {
+        val modulesFlag = "-fmodules"
+        pod("DatadogCore") {
             extraOpts += listOf(
                 // proposed by KMP because of the @import usage in the binary
                 compilerOptionFlag,
-                "-fmodules",
-                // see https://youtrack.jetbrains.com/issue/KT-61799
-                // TL;DR: Kotlin interop adds "<ClassName>Meta" class for every "<ClassName>" class,
-                // so since there is DDRUMErrorEventError, it generates DDRUMErrorEventErrorMeta, but such
-                // class is already declared, leading to error: 'DDRUMErrorEventErrorMeta' is going
-                // to be declared twice
-                compilerOptionFlag,
-                "-DDDRUMErrorEventErrorMeta=DDRUMErrorEventErrorMetaInfo"
+                modulesFlag
             )
             version = libs.versions.datadog.ios.get()
         }
+        // TODO RUM-11618 DatadogInternal cannot be used
+//        pod("DatadogInternal") {
+//            extraOpts += listOf(
+//                // proposed by KMP because of the @import usage in the binary
+//                compilerOptionFlag,
+//                modulesFlag
+//            )
+//            version = libs.versions.datadog.ios.get()
+//        }
         pod("DatadogCrashReporting") {
-            version = libs.versions.datadog.ios.get()
             extraOpts += listOf(
                 // proposed by KMP because of the @import usage in the binary
                 compilerOptionFlag,
-                "-fmodules"
+                modulesFlag
             )
+            version = libs.versions.datadog.ios.get()
         }
     }
 

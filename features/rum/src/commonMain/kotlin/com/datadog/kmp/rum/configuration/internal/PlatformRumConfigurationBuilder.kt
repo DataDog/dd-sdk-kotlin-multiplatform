@@ -44,5 +44,7 @@ internal interface PlatformRumConfigurationBuilder<out T : Any> {
 
     fun trackAnonymousUser(enabled: Boolean)
 
+    fun useCustomEndpoint(endpoint: String)
+
     fun build(): T
 }
