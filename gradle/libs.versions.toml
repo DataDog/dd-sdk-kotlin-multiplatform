@@ -1,14 +1,14 @@
 [versions]
 agp = "8.10.1"
-kotlin = "2.0.21"
+kotlin = "2.1.21"
 compose = "1.6.6"
 compose-material3 = "1.1.2"
 androidx-fragment = "1.5.1"
 androidx-navigation-forSdk = "2.3.0"
 androidx-navigation-forApp = "2.7.7"
 androidx-activityCompose = "1.8.0"
-datadog-android = "2.26.0"
-datadog-ios = "2.30.0"
+datadog-android = "3.1.0"
+datadog-ios = "3.1.0"
 dependencyLicense = "0.4.0"
 nexusPublish = "2.0.0"
 kotlinGrammarParser = "0.1.0"
@@ -36,7 +36,7 @@ jUnitMockitoExt = "5.12.0"
 assertJ = "3.18.1"
 elmyr = "1.4.0"
 mockitoKotlin = "5.3.1"
-mokkery = "2.3.0"
+mokkery = "2.7.3"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

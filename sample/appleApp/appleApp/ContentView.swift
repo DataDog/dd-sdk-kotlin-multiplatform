@@ -217,6 +217,43 @@ internal struct RumView: View {
                     .foregroundColor(Color.black)
                     .cornerRadius(8)
             }
+
+            Text("Feature Operations")
+                .padding()
+
+
+            Button(action: {
+                UtilsKt.trackAction(actionName: "Start Feature Operation")
+                UtilsKt.startFeatureOperation()
+            }) {
+                Text("Start")
+                    .padding()
+                    .background(Color.magenta)
+                    .foregroundColor(Color.white)
+                    .cornerRadius(8)
+            }
+
+            Button(action: {
+                UtilsKt.trackAction(actionName: "Stop Feature Operation successfully")
+                UtilsKt.stopFeatureOperation()
+            }) {
+                Text("Stop successfully")
+                    .padding()
+                    .background(Color.teal)
+                    .foregroundColor(Color.white)
+                    .cornerRadius(8)
+            }
+
+            Button(action: {
+                UtilsKt.trackAction(actionName: "Stop Feature Operation unsuccessfully")
+                UtilsKt.failFeatureOperation()
+            }) {
+                Text("Stop unsuccessfully")
+                    .padding()
+                    .background(Color.red)
+                    .foregroundColor(Color.white)
+                    .cornerRadius(8)
+            }
         }
         .padding()
     }
@@ -269,4 +306,18 @@ internal struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
+}
+
+extension Color {
+    init(hex: Int) {
+        let hex = UInt32(hex)
+        let a = Double((hex >> 24) & 0xFF) / 255.0
+        let r = Double((hex >> 16) & 0xFF) / 255.0
+        let g = Double((hex >> 8) & 0xFF) / 255.0
+        let b = Double(hex & 0xFF) / 255.0
+        self.init(.sRGB, red: r, green: g, blue: b, opacity: a)
+    }
+
+    static let magenta: Color = .init(hex: 0xFFFF00FF)
+    static let teal: Color = .init(hex: 0xFF03DAC5)
 }

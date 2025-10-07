@@ -45,6 +45,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.ViewEventSession.toC
   sampledForReplay = sampledForReplay,
 )
 
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal inline fun com.datadog.android.rum.model.ViewEvent.ViewEventSessionType.toCommonEnum():
     ViewEvent.ViewEventSessionType = when(this) {
   com.datadog.android.rum.model.ViewEvent.ViewEventSessionType.USER ->
@@ -56,6 +57,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.ViewEventSessionType
   else -> ViewEvent.ViewEventSessionType.USER
 }
 
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal inline fun com.datadog.android.rum.model.ViewEvent.ViewEventSource.toCommonEnum():
     ViewEvent.ViewEventSource = when(this) {
   com.datadog.android.rum.model.ViewEvent.ViewEventSource.ANDROID ->
@@ -120,6 +122,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.ViewEventView.toComm
   jsRefreshRate = jsRefreshRate?.toCommonModel(),
 )
 
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal inline fun com.datadog.android.rum.model.ViewEvent.LoadingType.toCommonEnum():
     ViewEvent.LoadingType = when(this) {
   com.datadog.android.rum.model.ViewEvent.LoadingType.INITIAL_LOAD ->
@@ -210,6 +213,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.Connectivity.toCommo
   cellular = cellular?.toCommonModel(),
 )
 
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal inline fun com.datadog.android.rum.model.ViewEvent.Status.toCommonEnum(): ViewEvent.Status
     = when(this) {
   com.datadog.android.rum.model.ViewEvent.Status.CONNECTED -> ViewEvent.Status.CONNECTED
@@ -218,6 +222,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.Status.toCommonEnum(
   else -> ViewEvent.Status.CONNECTED
 }
 
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal inline fun com.datadog.android.rum.model.ViewEvent.EffectiveType.toCommonEnum():
     ViewEvent.EffectiveType = when(this) {
   com.datadog.android.rum.model.ViewEvent.EffectiveType.SLOW_2G -> ViewEvent.EffectiveType.SLOW_2G
@@ -282,6 +287,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.Device.toCommonModel
   architecture = architecture,
 )
 
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal inline fun com.datadog.android.rum.model.ViewEvent.DeviceType.toCommonEnum():
     ViewEvent.DeviceType = when(this) {
   com.datadog.android.rum.model.ViewEvent.DeviceType.MOBILE -> ViewEvent.DeviceType.MOBILE
@@ -311,6 +317,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.DdSession.toCommonMo
   sessionPrecondition = sessionPrecondition?.toCommonEnum(),
 )
 
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal inline fun com.datadog.android.rum.model.ViewEvent.Plan.toCommonEnum(): ViewEvent.Plan =
     when(this) {
   com.datadog.android.rum.model.ViewEvent.Plan.PLAN_1 -> ViewEvent.Plan.PLAN_1
@@ -318,6 +325,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.Plan.toCommonEnum():
   else -> ViewEvent.Plan.PLAN_1
 }
 
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal inline fun com.datadog.android.rum.model.ViewEvent.SessionPrecondition.toCommonEnum():
     ViewEvent.SessionPrecondition = when(this) {
   com.datadog.android.rum.model.ViewEvent.SessionPrecondition.USER_APP_LAUNCH ->
@@ -350,6 +358,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.PageState.toCommonMo
   start = start,
 )
 
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal inline fun com.datadog.android.rum.model.ViewEvent.State.toCommonEnum(): ViewEvent.State =
     when(this) {
   com.datadog.android.rum.model.ViewEvent.State.ACTIVE -> ViewEvent.State.ACTIVE
@@ -388,6 +397,7 @@ internal inline fun com.datadog.android.rum.model.ViewEvent.Privacy.toCommonMode
   replayLevel = replayLevel.toCommonEnum(),
 )
 
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal inline fun com.datadog.android.rum.model.ViewEvent.ReplayLevel.toCommonEnum():
     ViewEvent.ReplayLevel = when(this) {
   com.datadog.android.rum.model.ViewEvent.ReplayLevel.ALLOW -> ViewEvent.ReplayLevel.ALLOW

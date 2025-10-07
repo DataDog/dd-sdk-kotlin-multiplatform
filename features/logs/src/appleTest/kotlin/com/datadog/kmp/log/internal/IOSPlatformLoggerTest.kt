@@ -6,7 +6,7 @@
 
 package com.datadog.kmp.log.internal
 
-import cocoapods.DatadogObjc.DDLogger
+import cocoapods.DatadogLogs.DDLogger
 import com.datadog.kmp.log.LogLevel
 import dev.mokkery.verify
 import kotlin.test.Ignore

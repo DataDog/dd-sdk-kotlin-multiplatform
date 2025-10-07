@@ -6,9 +6,9 @@
 
 package com.datadog.kmp.rum.configuration.internal
 
-import cocoapods.DatadogObjc.DDDefaultUIKitRUMActionsPredicate
-import cocoapods.DatadogObjc.DDRUMAction
-import cocoapods.DatadogObjc.DDRUMConfiguration
+import cocoapods.DatadogRUM.DDDefaultUIKitRUMActionsPredicate
+import cocoapods.DatadogRUM.DDRUMAction
+import cocoapods.DatadogRUM.DDRUMConfiguration
 import com.datadog.kmp.rum.tracking.DefaultUIKitRUMActionsPredicate
 import com.datadog.kmp.rum.tracking.UIKitRUMActionsPredicate
 import platform.UIKit.UIPressType

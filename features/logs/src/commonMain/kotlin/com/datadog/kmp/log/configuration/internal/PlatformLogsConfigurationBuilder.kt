@@ -12,5 +12,7 @@ import com.datadog.kmp.log.model.LogEvent
 internal interface PlatformLogsConfigurationBuilder<out T : Any> {
     fun setEventMapper(eventMapper: EventMapper<LogEvent>)
 
+    fun useCustomEndpoint(endpoint: String)
+
     fun build(): T
 }

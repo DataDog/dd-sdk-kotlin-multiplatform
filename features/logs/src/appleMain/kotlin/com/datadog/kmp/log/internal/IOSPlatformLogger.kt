@@ -6,14 +6,14 @@
 
 package com.datadog.kmp.log.internal
 
-import cocoapods.DatadogObjc.DDLogLevel
-import cocoapods.DatadogObjc.DDLogLevelCritical
-import cocoapods.DatadogObjc.DDLogLevelDebug
-import cocoapods.DatadogObjc.DDLogLevelError
-import cocoapods.DatadogObjc.DDLogLevelInfo
-import cocoapods.DatadogObjc.DDLogLevelWarn
-import cocoapods.DatadogObjc.DDLogger
-import cocoapods.DatadogObjc.DDLoggerConfiguration
+import cocoapods.DatadogLogs.DDLogLevel
+import cocoapods.DatadogLogs.DDLogLevelCritical
+import cocoapods.DatadogLogs.DDLogLevelDebug
+import cocoapods.DatadogLogs.DDLogLevelError
+import cocoapods.DatadogLogs.DDLogLevelInfo
+import cocoapods.DatadogLogs.DDLogLevelWarn
+import cocoapods.DatadogLogs.DDLogger
+import cocoapods.DatadogLogs.DDLoggerConfiguration
 import com.datadog.kmp.internal.createNSErrorFromThrowable
 import com.datadog.kmp.internal.eraseKeyType
 import com.datadog.kmp.internal.withIncludeBinaryImages
@@ -212,7 +212,7 @@ internal actual fun platformLoggerBuilder(): PlatformLogger.Builder =
 
 internal fun DDLoggerConfiguration.Companion.default(): DDLoggerConfiguration {
     // even though ObjC API has default values defined, KMP binding is not picking them;
-    // keep it aligned with the signature in DatadogObjc
+    // keep it aligned with the signature in DatadogLogs
     return DDLoggerConfiguration(
         service = null,
         name = null,

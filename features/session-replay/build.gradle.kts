@@ -32,23 +32,21 @@ kotlin {
             baseName = "DatadogKMPSessionReplay"
         }
 
-        // need to link it only for the tests so far (maybe this will change
-        // later with SDK setup changes)
-        pod("DatadogObjc") {
+        pod("DatadogSessionReplay") {
+            extraOpts += listOf(
+                // proposed by KMP because of the @import usage in the binary
+                "-compiler-option",
+                "-fmodules"
+            )
+            version = libs.versions.datadog.ios.get()
+        }
+        pod("DatadogCore") {
             linkOnly = true
             version = libs.versions.datadog.ios.get()
         }
         pod("DatadogCrashReporting") {
             linkOnly = true
             version = libs.versions.datadog.ios.get()
-        }
-        pod("DatadogSessionReplay") {
-            version = libs.versions.datadog.ios.get()
-            extraOpts += listOf(
-                // proposed by KMP because of the @import usage in the binary
-                "-compiler-option",
-                "-fmodules"
-            )
         }
     }
 

@@ -17,19 +17,20 @@ OUTPUT_FILE="./NATIVE_SDK_VERSIONS.md"
 
 ios_version=$(grep 'datadog-ios =.*".*"' "$LIBS_VERSION_FILE" | sed 's/.*"\(.*\)".*/\1/')
 android_version=$(grep 'datadog-android =.*".*"' "$LIBS_VERSION_FILE" | sed 's/.*"\(.*\)".*/\1/')
+kotlin_version=$(grep 'kotlin =.*".*"' "$LIBS_VERSION_FILE" | sed 's/.*"\(.*\)".*/\1/')
 
 # Check if NATIVE_SDK_VERSIONS.md exists, create it otherwise
 if [ ! -f $OUTPUT_FILE ]; then
-    echo "| Kotlin Multiplatform | iOS SDK | Android SDK |" > $OUTPUT_FILE
-    echo "|-------------|---------------------|----------------------------|" >> $OUTPUT_FILE
+    echo "| SDK version | Kotlin | iOS SDK | Android SDK |" > $OUTPUT_FILE
+    echo "|-------------|----------|---------------|----------------------------|" >> $OUTPUT_FILE
     echo "Creating new $OUTPUT_FILE file with header"
 fi
 
 # Add the new version triad to NATIVE_SDK_VERSIONS.md
 if [ ! -z "$SDK_VERSION" ] && [ ! -z "$ios_version" ] && [ ! -z "$android_version" ]; then
-    new_row="| $SDK_VERSION | $ios_version | $android_version |"
+    new_row="| $SDK_VERSION | $kotlin_version | $ios_version | $android_version |"
     
-    first_version_row=$(sed -n '3p' $OUTPUT_FILE)
+    first_version_row=$(sed -n '4p' $OUTPUT_FILE)
     existing_sdk_version=$(echo "$first_version_row" | sed 's/| *\([^ |]*\) .*/\1/')
     
     if [ "$existing_sdk_version" = "$SDK_VERSION" ]; then

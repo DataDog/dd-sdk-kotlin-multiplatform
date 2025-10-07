@@ -79,6 +79,7 @@ if [[ $CLEANUP == 1 ]]; then
   rm -rf features/session-replay/build/
   rm -rf features/webview/build/
   rm -rf integrations/ktor/build/
+  rm -rf integrations/ktor3/build/
 
   ./gradlew --stop
 fi
@@ -135,6 +136,9 @@ if [[ $TEST == 1 ]]; then
 
   echo "---- Unit tests (iOS)"
   ./gradlew iosUnitTestAll
+
+  echo "---- Unit tests (tvOS)"
+  ./gradlew tvosUnitTestAll
 fi
 
 unset CI

@@ -109,8 +109,21 @@ internal class LogEventForgeryFactory : ForgeryFactory<LogEvent> {
                 version = forge.aStringMatching("[0-9]\\.[0-9]\\.[0-9]"),
                 threadName = forge.aNullable { forge.anAlphabeticalString() }
             ),
+            device = LogEvent.LogEventDevice(
+                architecture = forge.aNullable { anAlphaNumericalString() },
+                type = forge.aNullable { aValueFrom(LogEvent.Type::class.java) },
+                name = forge.aNullable { anAlphabeticalString() },
+                model = forge.aNullable { anAlphabeticalString() },
+                brand = forge.aNullable { anAlphabeticalString() }
+            ),
+            os = LogEvent.Os(
+                name = forge.aString(),
+                version = "${forge.aSmallInt()}.${forge.aSmallInt()}.${forge.aSmallInt()}",
+                versionMajor = forge.aSmallInt().toString(),
+                build = forge.aNullable { anAlphaNumericalString() }
+            ),
             dd = LogEvent.Dd(
-                device = LogEvent.Device(
+                device = LogEvent.DdDevice(
                     architecture = forge.anAlphaNumericalString()
                 )
             )

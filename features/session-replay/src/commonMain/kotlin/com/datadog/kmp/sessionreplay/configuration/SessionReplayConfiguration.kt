@@ -11,6 +11,7 @@ import com.datadog.kmp.sessionreplay.configuration.internal.PlatformSessionRepla
 /**
  * Describes configuration to be used for the Session Replay feature.
  */
+@ConsistentCopyVisibility
 data class SessionReplayConfiguration internal constructor(
     internal val nativeConfiguration: Any
 ) {
@@ -31,23 +32,6 @@ data class SessionReplayConfiguration internal constructor(
 
         internal constructor(platformBuilder: PlatformSessionReplayConfigurationBuilder<*>) {
             this.platformBuilder = platformBuilder
-        }
-
-        /**
-         * Sets the privacy rule for the Session Replay feature.
-         * If not specified all the elements will be masked by default (MASK).
-         * @see SessionReplayPrivacy.ALLOW
-         * @see SessionReplayPrivacy.MASK
-         * @see SessionReplayPrivacy.MASK_USER_INPUT
-         */
-        @Deprecated(
-            message = "This method is deprecated and will be removed in future versions. " +
-                "Use the new Fine Grained Masking APIs instead: " +
-                "[setImagePrivacy], [setTouchPrivacy], [setTextAndInputPrivacy]."
-        )
-        fun setPrivacy(privacy: SessionReplayPrivacy): Builder {
-            platformBuilder.setPrivacy(privacy)
-            return this
         }
 
         /**
@@ -92,6 +76,20 @@ data class SessionReplayConfiguration internal constructor(
          */
         fun startRecordingImmediately(enabled: Boolean): Builder {
             platformBuilder.startRecordingImmediately(enabled)
+            return this
+        }
+
+        /**
+         * Let the Session Replay feature target a custom server.
+         * The provided url should be the full endpoint url, e.g.: https://example.com/replay/upload
+         *
+         * This is a configuration for the reverse proxy, unlike
+         * [com.datadog.kmp.core.configuration.Configuration.Builder.setProxy] which is a configuration for the
+         * forward proxy. Prefer to use [com.datadog.kmp.core.configuration.Configuration.Builder.setProxy] instead if
+         * possible.
+         */
+        fun useCustomEndpoint(endpoint: String): Builder {
+            platformBuilder.useCustomEndpoint(endpoint)
             return this
         }
 

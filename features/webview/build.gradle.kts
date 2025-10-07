@@ -33,20 +33,17 @@ kotlin {
         framework {
             baseName = "DatadogKMPWebView"
         }
-
-        // need to link it only for the tests so far (maybe this will change
-        // later with SDK setup changes)
-        pod("DatadogObjc") {
+        pod("DatadogWebViewTracking") {
+            // TODO RUM-5208 by some reason ootb bindings for DatadogWebViewTracking are not generated correctly, so
+            //  we go with a custom header (see custom cinterop below)
+            linkOnly = true
+            version = libs.versions.datadog.ios.get()
+        }
+        pod("DatadogCore") {
             linkOnly = true
             version = libs.versions.datadog.ios.get()
         }
         pod("DatadogCrashReporting") {
-            linkOnly = true
-            version = libs.versions.datadog.ios.get()
-        }
-        pod("DatadogWebViewTracking") {
-            // TODO RUM-5208 by some reason ootb bindings for DatadogWebViewTracking are not generated correctly, so
-            //  we go with a custom header (see custom cinterop below)
             linkOnly = true
             version = libs.versions.datadog.ios.get()
         }
