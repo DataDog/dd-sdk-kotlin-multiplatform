@@ -51,6 +51,7 @@ import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.configuration.AdvancedRumSessionListener
 import com.datadog.kmp.rum.featureoperations.FailureReason
 import platform.Foundation.NSError
 import platform.Foundation.NSHTTPURLResponse
@@ -63,7 +64,8 @@ import platform.Foundation.numberWithLong
 import platform.UIKit.UIViewController
 
 internal class RumMonitorAdapter(
-    private val nativeRumMonitor: DDRumMonitorProxy
+    private val nativeRumMonitor: DDRumMonitorProxy,
+    private val rumSessionListener: AdvancedRumSessionListener
 ) : RumMonitor, AdvancedRumNetworkMonitor {
 
     // region RumMonitor
@@ -217,6 +219,7 @@ internal class RumMonitorAdapter(
 
     override fun stopSession() {
         nativeRumMonitor.stopSession()
+        rumSessionListener.onSessionStopped()
     }
 
     // endregion

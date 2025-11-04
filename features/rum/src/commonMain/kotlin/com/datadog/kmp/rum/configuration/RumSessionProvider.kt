@@ -8,7 +8,11 @@ package com.datadog.kmp.rum.configuration
 
 import kotlin.concurrent.Volatile
 
-internal object InternalRumSessionProvider : RumSessionProvider, RumSessionListener {
+internal interface AdvancedRumSessionListener : RumSessionListener {
+    fun onSessionStopped()
+}
+
+internal object InternalRumSessionProviderListener : RumSessionProvider, AdvancedRumSessionListener {
 
     @Volatile
     override var sessionId: String? = null
@@ -21,6 +25,10 @@ internal object InternalRumSessionProvider : RumSessionProvider, RumSessionListe
             sessionId
         }
     }
+
+    override fun onSessionStopped() {
+        sessionId = null
+    }
 }
 
 interface RumSessionProvider {
@@ -31,6 +39,6 @@ interface RumSessionProvider {
         /**
          * This is internal API and shouldn't be used by the clients.
          */
-        fun get(): RumSessionProvider = InternalRumSessionProvider
+        fun get(): RumSessionProvider = InternalRumSessionProviderListener
     }
 }
