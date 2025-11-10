@@ -5,6 +5,7 @@ import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.configuration.AdvancedRumSessionListener
 import com.datadog.kmp.rum.featureoperations.FailureReason
 import com.datadog.tools.unit.forge.BaseConfigurator
 import com.datadog.tools.unit.forge.aThrowable
@@ -47,11 +48,14 @@ class RumMonitorAdapterTest {
     @Mock
     lateinit var mockNativeRumMonitor: NativeRumMonitor
 
+    @Mock
+    internal lateinit var mockRumSessionListener: AdvancedRumSessionListener
+
     private lateinit var testedRumMonitorAdapter: RumMonitorAdapter
 
     @BeforeEach
     fun `set up`() {
-        testedRumMonitorAdapter = RumMonitorAdapter(mockNativeRumMonitor)
+        testedRumMonitorAdapter = RumMonitorAdapter(mockNativeRumMonitor, mockRumSessionListener)
     }
 
     @Test
@@ -421,6 +425,15 @@ class RumMonitorAdapterTest {
 
         // Then
         verify(mockNativeRumMonitor).stopSession()
+    }
+
+    @Test
+    fun `M call onSessionStopped W stopSession`() {
+        // When
+        testedRumMonitorAdapter.stopSession()
+
+        // Then
+        verify(mockRumSessionListener).onSessionStopped()
     }
 
     // region private

@@ -208,7 +208,7 @@ class RumConfiguration internal constructor(internal val nativeConfiguration: An
          * Builds a [RumConfiguration] based on the current state of this Builder.
          */
         fun build(): RumConfiguration {
-            val internalSessionListener = InternalRumSessionProvider
+            val internalSessionListener = InternalRumSessionProviderListener
             val combinedListener = CombinedRumSessionListener(internalSessionListener, userSessionListener)
 
             platformBuilder.setSessionListener(combinedListener)
