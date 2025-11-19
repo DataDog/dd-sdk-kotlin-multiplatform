@@ -25,8 +25,7 @@ import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.featureoperations.FailureReason
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
+import kotlin.random.Random
 
 const val HOME_SCREEN_NAME = "Home"
 const val LOGS_SCREEN_NAME = "Logs"
@@ -165,9 +164,9 @@ fun triggerUncheckedException() {
     throw RuntimeException(cause)
 }
 
-@OptIn(ExperimentalTime::class, ExperimentalRumApi::class)
+@OptIn(ExperimentalRumApi::class)
 fun startFeatureOperation() {
-    val operationKey = "$FEATURE_OPERATION_NAME/${Clock.System.now().toEpochMilliseconds()}"
+    val operationKey = "$FEATURE_OPERATION_NAME/${Random.nextInt()}"
     RumMonitor.get().startFeatureOperation(FEATURE_OPERATION_NAME, operationKey, extensiveAdditionalProperties)
     activeFeatureOperationKeys += operationKey
 }
