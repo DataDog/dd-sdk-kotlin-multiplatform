@@ -17,5 +17,5 @@ object ProjectConfig {
 
     const val GROUP_ID = "com.datadoghq"
 
-    val VERSION = Version(1, 4, 0, Version.Type.Release)
+    val VERSION = Version(1, 4, 1, Version.Type.Release)
 }
