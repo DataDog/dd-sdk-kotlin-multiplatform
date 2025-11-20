@@ -1,3 +1,7 @@
+# 1.4.1 / 2025-11-19
+
+* [MAINTENANCE] Revert update to Kotlin 2.1.21. See [#225](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/225)
+
 # 1.4.0 / 2025-10-07
 
 **Note**: This version updates major versions of the native Datadog iOS and Datadog Android SDKs used. As part of this change `minSdk` on Android is bumped from 21 to 23.

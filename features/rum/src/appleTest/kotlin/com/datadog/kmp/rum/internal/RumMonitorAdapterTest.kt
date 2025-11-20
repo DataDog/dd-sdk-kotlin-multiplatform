@@ -149,6 +149,7 @@ class RumMonitorAdapterTest {
         }
     }
 
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native startViewWithViewController W startView + ViewController key type `() {
         // Given
@@ -184,6 +185,7 @@ class RumMonitorAdapterTest {
         }
     }
 
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native stopViewWithViewController W stopView + ViewController key type`() {
         // Given
@@ -281,6 +283,7 @@ class RumMonitorAdapterTest {
         }
     }
 
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native stopResourceWithResourceKey W stopResource`() {
         // Given
@@ -305,7 +308,7 @@ class RumMonitorAdapterTest {
         }
     }
 
-    @Ignore // TODO RUM-11751 Segfault due to null status code, although Objective-C API allow it
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @OptIn(DelicateMokkeryApi::class)
     @Test
     fun `M call native stopResourceWithErrorWithResourceKey W stopResourceWithError + no status code`() {
@@ -338,6 +341,7 @@ class RumMonitorAdapterTest {
         }
     }
 
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @OptIn(DelicateMokkeryApi::class)
     @Test
     fun `M call native stopResourceWithErrorWithResourceKey W stopResourceWithError + with status code`() {
@@ -368,11 +372,12 @@ class RumMonitorAdapterTest {
                 matches {
                     it is NSHTTPURLResponse && it.statusCode == fakeStatusCode.toLong()
                 },
-                (fakeAttributes + (INCLUDE_BINARY_IMAGES_KEY to true)).eraseKeyType()
+                fakeAttributes.eraseKeyType()
             )
         }
     }
 
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @OptIn(DelicateMokkeryApi::class)
     @Test
     fun `M call native addErrorWithError W addError + null throwable`() {
@@ -402,6 +407,7 @@ class RumMonitorAdapterTest {
         }
     }
 
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @OptIn(DelicateMokkeryApi::class)
     @Test
     fun `M call native addErrorWithError W addError + with throwable`() {
@@ -427,7 +433,7 @@ class RumMonitorAdapterTest {
                         it.localizedDescription == "$fakeMessage\n${fakeThrowable.message}"
                 },
                 fakeErrorSource.native,
-                (fakeAttributes + (INCLUDE_BINARY_IMAGES_KEY to true)).eraseKeyType()
+                fakeAttributes.eraseKeyType()
             )
         }
     }
@@ -590,6 +596,7 @@ class RumMonitorAdapterTest {
 
     // region AdvanceRumNetworkMonitor
 
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native addResourceMetricsWithResourceKey W addResourceMetrics`() {
         // Given
@@ -612,6 +619,7 @@ class RumMonitorAdapterTest {
 
     // endregion
 
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native stopResourceWithResourceKey W stopResource + platform types`() {
         // Given
@@ -634,6 +642,7 @@ class RumMonitorAdapterTest {
         }
     }
 
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native stopResourceWithErrorWithResourceKey W stopResourceWithError + platform types + NSError`() {
         // Given
@@ -651,11 +660,12 @@ class RumMonitorAdapterTest {
                 fakeKey,
                 fakeError,
                 fakeResponse,
-                (fakeAttributes + (INCLUDE_BINARY_IMAGES_KEY to true)).eraseKeyType()
+                fakeAttributes.eraseKeyType()
             )
         }
     }
 
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native stopResourceWithErrorWithResourceKey W stopResourceWithError + platform types + message`() {
         // Given
@@ -678,6 +688,7 @@ class RumMonitorAdapterTest {
         }
     }
 
+    @Ignore // TODO RUM-4961 Update to Kotlin 2.0.20 which supports KClass for Objective-C classes
     @Test
     fun `M call native addErrorWithError W addError + platform types`() {
         // Given
@@ -693,7 +704,7 @@ class RumMonitorAdapterTest {
             mockNativeRumMonitor.addErrorWithError(
                 fakeError,
                 fakeSource.native,
-                (fakeAttributes + (INCLUDE_BINARY_IMAGES_KEY to true)).eraseKeyType()
+                fakeAttributes.eraseKeyType()
             )
         }
     }
@@ -769,10 +780,6 @@ class RumMonitorAdapterTest {
                 FailureReason.ABANDONED -> DDRUMFeatureOperationFailureReasonAbandoned
             }
         }
-
-    private companion object {
-        const val INCLUDE_BINARY_IMAGES_KEY = "_dd.error.include_binary_images"
-    }
 
     // endregion
 }
