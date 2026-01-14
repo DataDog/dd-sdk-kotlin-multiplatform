@@ -178,13 +178,13 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
                     }
                 }
 
-                applyCrashReporterLinkingWorkaround(this@apply)
+                applySwiftCompatibilityLinkingWorkaround(this@apply)
             }
         }
 }
 
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
-private fun applyCrashReporterLinkingWorkaround(kmpExtension: KotlinMultiplatformExtension) {
+private fun applySwiftCompatibilityLinkingWorkaround(kmpExtension: KotlinMultiplatformExtension) {
     (kmpExtension as ExtensionAware).extensions
         .findByType<CocoapodsExtension>()
         ?.pods
@@ -210,13 +210,9 @@ private fun applyCrashReporterLinkingWorkaround(kmpExtension: KotlinMultiplatfor
                         freeCompilerArgs.addAll(
                             listOf(
                                 "-linker-options",
-                                // TODO RUM-6046 Name of CrashReporter framework is not passed, so have
-                                //  to pass it explicitly, otherwise konanc invocation with linking (ld) fails
-                                //  to locate framework for PLCrashReporter pod. Kotlin Compiler bug?
-                                "-framework CrashReporter " +
-                                    // TODO RUM-6047 Kotlin Compiler cannot locate these during the linking
-                                    //  done via pods integration
-                                    swiftCompatibilityArgs
+                                // TODO RUM-6047 Kotlin Compiler cannot locate these during the linking
+                                //  done via pods integration
+                                swiftCompatibilityArgs
                             )
                         )
                     }

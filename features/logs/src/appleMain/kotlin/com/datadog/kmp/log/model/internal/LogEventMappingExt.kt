@@ -52,6 +52,7 @@ internal fun DDLogEvent.toCommonModel(): LogEvent = LogEvent(
     //  from the model for now
     error = error()?.toCommonModel(),
     buildId = buildId(),
+    buildVersion = applicationBuildNumber(),
     ddtags = tags()?.joinToString(",") { it as String }.orEmpty(),
     additionalProperties = attributes()
         .userAttributes()
@@ -106,6 +107,7 @@ internal fun DDLogEventDDDevice.toCommonModel(): LogEvent.DdDevice = LogEvent.Dd
 )
 
 internal fun DDLogEventUserInfo.toCommonModel(): LogEvent.Usr = LogEvent.Usr(
+    // TODO RUM-0000: Support anonymousId once it is available in iOS SDK API
     id = id(),
     name = name(),
     email = email(),
