@@ -569,6 +569,39 @@ class RumMonitorAdapterTest {
     }
 
     @Test
+    fun `M call native reportAppFullyDisplayed W reportAppFullyDisplayed`() {
+        // When
+        testedRumMonitorAdapter.reportAppFullyDisplayed()
+
+        // Then
+        verify { mockNativeRumMonitor.reportAppFullyDisplayed() }
+    }
+
+    @Test
+    fun `M call native addViewAttributes W addViewAttributes`() {
+        // Given
+        val fakeAttributes = exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.addViewAttributes(fakeAttributes)
+
+        // Then
+        verify { mockNativeRumMonitor.addViewAttributes(fakeAttributes.eraseKeyType()) }
+    }
+
+    @Test
+    fun `M call native removeViewAttributes W removeViewAttributes`() {
+        // Given
+        val fakeAttributes = listOf("one", "two", "three")
+
+        // When
+        testedRumMonitorAdapter.removeViewAttributes(fakeAttributes)
+
+        // Then
+        verify { mockNativeRumMonitor.removeViewAttributes(fakeAttributes) }
+    }
+
+    @Test
     fun `M call native stopSession W stopSession`() {
         // When
         testedRumMonitorAdapter.stopSession()

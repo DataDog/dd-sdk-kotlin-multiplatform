@@ -191,6 +191,18 @@ fun failFeatureOperation() {
     }
 }
 
+@OptIn(ExperimentalRumApi::class)
+fun reportAppFullyDisplayed() {
+    RumMonitor.get().reportAppFullyDisplayed()
+}
+
+@OptIn(ExperimentalTime::class)
+fun addViewOpenedAtAttribute() {
+    RumMonitor.get().addViewAttributes(
+        mapOf("view-opened-at" to Clock.System.now().toEpochMilliseconds())
+    )
+}
+
 private fun RumConfiguration.Builder.setupRumMappers() {
     setViewEventMapper {
         it.context?.additionalProperties?.putAll(extensiveAdditionalProperties)

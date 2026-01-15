@@ -418,6 +418,41 @@ class RumMonitorAdapterTest {
         verify(mockNativeRumMonitor).addViewLoadingTime(fakeOverwrite)
     }
 
+    @OptIn(ExperimentalRumApi::class)
+    @Test
+    fun `M call native reportAppFullyDisplayed W reportAppFullyDisplayed`() {
+        // When
+        testedRumMonitorAdapter.reportAppFullyDisplayed()
+
+        // Then
+        verify(mockNativeRumMonitor).reportAppFullyDisplayed()
+    }
+
+    @Test
+    fun `M call native addViewAttributes W addViewAttributes`(
+        forge: Forge
+    ) {
+        // Given
+        val fakeAttributes = forge.exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.addViewAttributes(fakeAttributes)
+
+        // Then
+        verify(mockNativeRumMonitor).addViewAttributes(fakeAttributes)
+    }
+
+    @Test
+    fun `M call native removeViewAttributes W removeViewAttributes`(
+        @StringForgery fakeAttributes: List<String>
+    ) {
+        // When
+        testedRumMonitorAdapter.removeViewAttributes(fakeAttributes)
+
+        // Then
+        verify(mockNativeRumMonitor).removeViewAttributes(fakeAttributes)
+    }
+
     @Test
     fun `M call native stopSession W stopSession`() {
         // When

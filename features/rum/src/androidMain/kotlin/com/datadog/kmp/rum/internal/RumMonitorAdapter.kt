@@ -147,6 +147,19 @@ internal class RumMonitorAdapter(
         nativeRumMonitor.addViewLoadingTime(overwrite)
     }
 
+    @OptIn(NativeExperimentalRumApi::class, ExperimentalRumApi::class)
+    override fun reportAppFullyDisplayed() {
+        nativeRumMonitor.reportAppFullyDisplayed()
+    }
+
+    override fun addViewAttributes(attributes: Map<String, Any?>) {
+        nativeRumMonitor.addViewAttributes(attributes)
+    }
+
+    override fun removeViewAttributes(attributes: Collection<String>) {
+        nativeRumMonitor.removeViewAttributes(attributes)
+    }
+
     override fun stopSession() {
         nativeRumMonitor.stopSession()
         rumSessionListener.onSessionStopped()
