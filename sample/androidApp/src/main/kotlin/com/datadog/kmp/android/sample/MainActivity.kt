@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,11 +51,13 @@ import com.datadog.kmp.sample.LOGS_SCREEN_NAME
 import com.datadog.kmp.sample.RUM_SCREEN_NAME
 import com.datadog.kmp.sample.WEBVIEW_SCREEN_NAME
 import com.datadog.kmp.sample.WEB_VIEW_TRACKING_LOAD_URL
+import com.datadog.kmp.sample.addViewOpenedAtAttribute
 import com.datadog.kmp.sample.failFeatureOperation
 import com.datadog.kmp.sample.logErrorWithThrowable
 import com.datadog.kmp.sample.logInfo
 import com.datadog.kmp.sample.network.startGetRequest
 import com.datadog.kmp.sample.network.startPostRequest
+import com.datadog.kmp.sample.reportAppFullyDisplayed
 import com.datadog.kmp.sample.startFeatureOperation
 import com.datadog.kmp.sample.startWebViewTracking
 import com.datadog.kmp.sample.stopFeatureOperation
@@ -74,6 +77,11 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController().apply {
                         NavigationViewTrackingEffect(navController = this)
+                        LaunchedEffect(this) {
+                            currentBackStackEntryFlow.collect {
+                                addViewOpenedAtAttribute()
+                            }
+                        }
                     }
                     NavHost(navController = navController, startDestination = HOME_SCREEN_NAME) {
                         animatedComposable(HOME_SCREEN_NAME) { HomeView(navController) }
@@ -94,6 +102,9 @@ fun HomeView(navController: NavController) {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        LaunchedEffect(true) {
+            reportAppFullyDisplayed()
+        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(top = 32.dp)

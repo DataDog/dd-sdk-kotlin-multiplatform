@@ -63,6 +63,10 @@ internal struct ContentView: View {
                 #endif
             }
             .padding()
+            .onAppear {
+                UtilsKt.reportAppFullyDisplayed()
+                UtilsKt.addViewOpenedAtAttribute()
+            }
         }
     }
 }
@@ -119,6 +123,9 @@ internal struct LoggingView: View {
             }
         }
         .padding()
+        .onAppear {
+            UtilsKt.addViewOpenedAtAttribute()
+        }
     }
 }
 
@@ -148,6 +155,9 @@ internal struct CrashView: View {
             }
         }
         .padding()
+        .onAppear {
+            UtilsKt.addViewOpenedAtAttribute()
+        }
     }
 }
 
@@ -256,6 +266,9 @@ internal struct RumView: View {
             }
         }
         .padding()
+        .onAppear {
+            UtilsKt.addViewOpenedAtAttribute()
+        }
     }
 }
 
@@ -271,6 +284,9 @@ internal struct WebTrackingView: View {
             Utils_iosKt.stopWebViewTracking(webView: view.webView)
         }
         .padding()
+        .onAppear {
+            UtilsKt.addViewOpenedAtAttribute()
+        }
     }
 }
 

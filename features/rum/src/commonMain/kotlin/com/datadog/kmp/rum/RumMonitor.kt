@@ -283,6 +283,28 @@ interface RumMonitor {
     fun addViewLoadingTime(overwrite: Boolean)
 
     /**
+     * This method can be used to mark the moment in time when the UI of the app is considered fully displayed.
+     * The duration between the application launch and this moment of time will be shown as TTFD (time to full display)
+     * in the RUM session explorer. Only the first call to this method will have any effect for a given RUM session.
+     */
+    @ExperimentalRumApi
+    fun reportAppFullyDisplayed()
+
+    /**
+     * Adds attributes to the current active View. They will be propagated to all future RUM events within this View
+     * until it stops being active.
+     * @param attributes the attributes to add to the view
+     */
+    fun addViewAttributes(attributes: Map<String, Any?>)
+
+    /**
+     * Removes attributes from the current active View. Future RUM events within this view won't be having these
+     * attributes anymore.
+     * @param attributes the attribute keys to remove from the view
+     */
+    fun removeViewAttributes(attributes: Collection<String>)
+
+    /**
      * Stops the current session.
      * A new session will start in response to a call to [startView], [addAction], or
      * [startAction]. If the session is started because of a call to [addAction],
