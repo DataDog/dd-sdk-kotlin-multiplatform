@@ -76,9 +76,6 @@ kotlin {
             kotlin {
                 srcDirs(Paths.get("..", "ktor", "src", "appleMain").toFile())
             }
-            dependencies {
-                implementation(libs.kotlinx.datetime)
-            }
         }
         androidMain {
             kotlin {

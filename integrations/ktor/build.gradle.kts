@@ -61,9 +61,6 @@ kotlin {
             implementation(libs.ktor2.client.mock)
             implementation(projects.tools.unit)
         }
-        appleMain.dependencies {
-            implementation(libs.kotlinx.datetime)
-        }
     }
 }
 
