@@ -131,4 +131,22 @@ class HeadersExtTest {
             baggageHeaders.last()
         )
     }
+
+    @Test
+    fun `M encode only value added W addToW3cBaggage`() {
+        // Given
+        val headers = HeadersBuilder().apply {
+            // this one should be originally encoded, but let's assume that we have this header coming from
+            // elsewhere and encoding wasn't done
+            append("baggage", "user=Amélie")
+        }
+
+        // When
+        headers.addToW3cBaggage("user.id", "example user id")
+        headers.addToW3cBaggage("session.id", "abc-def")
+
+        // Then
+        val expected = "user=Amélie,user.id=example%20user%20id,session.id=abc-def"
+        assertEquals(expected, headers["baggage"])
+    }
 }

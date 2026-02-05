@@ -17,6 +17,8 @@ internal const val DATADOG_ORIGIN_KEY = "x-datadog-origin"
 internal const val DATADOG_ORIGIN_RUM = "rum"
 internal const val DATADOG_MOST_SIGNIFICANT_TRACE_ID_TAG = "_dd.p.tid"
 internal const val DATADOG_RUM_SESSION_ID_TAG = "session.id"
+internal const val DATADOG_USER_ID_TAG = "user.id"
+internal const val DATADOG_ACCOUNT_ID_TAG = "account.id"
 
 // taken from B3HttpCodec
 internal const val B3_HEADER_KEY = "b3"
