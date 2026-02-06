@@ -227,6 +227,8 @@ actual object Datadog {
      */
     actual fun stopInstance() {
         DDCrossPlatformExtension.unsubscribeFromSharedContext()
+        currentUserId = null
+        currentAccountId = null
         DatadogIOS.stopInstance()
     }
 }
