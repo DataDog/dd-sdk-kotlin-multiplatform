@@ -107,8 +107,8 @@ internal fun DDLogEventDDDevice.toCommonModel(): LogEvent.DdDevice = LogEvent.Dd
 )
 
 internal fun DDLogEventUserInfo.toCommonModel(): LogEvent.Usr = LogEvent.Usr(
-    // TODO RUM-0000: Support anonymousId once it is available in iOS SDK API
     id = id(),
+    anonymousId = anonymousId(),
     name = name(),
     email = email(),
     additionalProperties = extraInfo().mapKeys { it.key as String }.toMutableMap()

@@ -49,7 +49,7 @@ data class com.datadog.kmp.log.model.LogEvent
   data class Dd
     constructor(DdDevice)
   data class Usr
-    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
+    constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
   data class Account
     constructor(kotlin.String? = null, kotlin.String? = null, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
   data class Error

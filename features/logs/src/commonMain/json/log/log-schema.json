@@ -148,6 +148,11 @@
           "description": "Identifier of the user",
           "readOnly": true
         },
+        "anonymous_id": {
+          "type": "string",
+          "description": "An anonymous identifier of the user across sessions",
+          "readOnly": true
+        },
         "name": {
           "type": "string",
           "description": "Name of the user",

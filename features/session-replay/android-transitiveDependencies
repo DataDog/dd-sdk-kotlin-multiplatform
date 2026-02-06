@@ -1,7 +1,7 @@
 Dependencies List
 
-com.datadoghq:dd-sdk-android-core:3.5.0                         :  774 Kb
-com.datadoghq:dd-sdk-android-session-replay:3.5.0               :  810 Kb
+com.datadoghq:dd-sdk-android-core:3.6.0                         :  774 Kb
+com.datadoghq:dd-sdk-android-session-replay:3.6.0               :  810 Kb
 org.jetbrains.kotlin:kotlin-stdlib:2.1.21                       : 1683 Kb
 org.jetbrains:annotations:13.0                                  :   17 Kb
 
