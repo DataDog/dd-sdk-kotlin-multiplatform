@@ -18,6 +18,7 @@ import cocoapods.DatadogCore.DDCoreLoggerLevelDebug
 import cocoapods.DatadogCore.DDCoreLoggerLevelError
 import cocoapods.DatadogCore.DDCoreLoggerLevelNone
 import cocoapods.DatadogCore.DDCoreLoggerLevelWarn
+import cocoapods.DatadogCore.DDCrossPlatformExtension
 import cocoapods.DatadogCore.DDSite
 import cocoapods.DatadogCore.DDTrackingConsent
 import cocoapods.DatadogCore.DDUploadFrequency
@@ -56,6 +57,12 @@ actual object Datadog {
     @Volatile
     internal actual var isCrashReportingEnabled: Boolean = false
 
+    @Volatile
+    internal actual var currentUserId: String? = null
+
+    @Volatile
+    internal actual var currentAccountId: String? = null
+
     /**
      * Initializes an instance of the Datadog SDK.
      * @param context your application context (applicable only for Android)
@@ -75,6 +82,11 @@ actual object Datadog {
         if (configuration.coreConfig.trackCrashes) {
             DDCrashReporter.enable()
             isCrashReportingEnabled = true
+        }
+
+        DDCrossPlatformExtension.subscribeToSharedContext {
+            currentUserId = it?.userId()
+            currentAccountId = it?.accountId()
         }
     }
 
@@ -214,6 +226,7 @@ actual object Datadog {
      * Stop the initialized SDK instance.
      */
     actual fun stopInstance() {
+        DDCrossPlatformExtension.unsubscribeFromSharedContext()
         DatadogIOS.stopInstance()
     }
 }

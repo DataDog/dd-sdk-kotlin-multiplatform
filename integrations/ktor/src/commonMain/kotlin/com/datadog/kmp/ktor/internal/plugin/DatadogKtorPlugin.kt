@@ -7,6 +7,7 @@
 package com.datadog.kmp.ktor.internal.plugin
 
 import com.benasher44.uuid.uuid4
+import com.datadog.kmp.internal.DatadogContextProvider
 import com.datadog.kmp.ktor.HttpRequestSnapshot
 import com.datadog.kmp.ktor.RUM_RULE_PSR
 import com.datadog.kmp.ktor.RUM_SPAN_ID
@@ -36,6 +37,7 @@ import io.ktor.util.AttributeKey
 internal class DatadogKtorPlugin(
     private val rumMonitor: RumMonitor,
     private val rumSessionProvider: RumSessionProvider,
+    private val datadogContextProvider: DatadogContextProvider,
     private val tracedHosts: Map<String, Set<TracingHeaderType>>,
     private val traceSampler: Sampler<TraceId>,
     private val traceContextInjection: TraceContextInjection,
@@ -59,7 +61,15 @@ internal class DatadogKtorPlugin(
 
         if (isSampledIn && traceHeaderTypes.isNotEmpty()) {
             traceHeaderTypes.forEach { headerType ->
-                headerType.injectHeaders(request, true, traceId, spanId, rumSessionProvider.sessionId)
+                headerType.injectHeaders(
+                    request,
+                    true,
+                    traceId,
+                    spanId,
+                    rumSessionProvider.sessionId,
+                    datadogContextProvider.userId,
+                    datadogContextProvider.accountId
+                )
             }
             request.attributes.put(DD_TRACE_ID_ATTR, traceId)
             request.attributes.put(DD_SPAN_ID_ATTR, spanId)
@@ -67,7 +77,15 @@ internal class DatadogKtorPlugin(
         } else {
             if (traceContextInjection == TraceContextInjection.All) {
                 traceHeaderTypes.forEach { headerType ->
-                    headerType.injectHeaders(request, false, traceId, spanId, rumSessionProvider.sessionId)
+                    headerType.injectHeaders(
+                        request,
+                        false,
+                        traceId,
+                        spanId,
+                        rumSessionProvider.sessionId,
+                        datadogContextProvider.userId,
+                        datadogContextProvider.accountId
+                    )
                 }
             }
         }

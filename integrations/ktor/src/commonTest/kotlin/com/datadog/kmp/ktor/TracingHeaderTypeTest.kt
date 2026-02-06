@@ -17,43 +17,68 @@ import kotlin.test.assertEquals
 class TracingHeaderTypeTest {
 
     private var fakeRumSessionId = nullable(uuid4().toString())
+    private var fakeUserId = nullable(uuid4().toString())
+    private var fakeAccountId = nullable(uuid4().toString())
 
     @Test
     fun `M inject Datadog headers W injectHeaders`() {
         // Given
         val expectedHeaders = mapOf(
-            Fixture(TraceId(0u, 1337u), SpanId(42u), true, fakeRumSessionId) to buildMap {
+            Fixture(
+                TraceId(0u, 1337u),
+                SpanId(42u),
+                true,
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
+            ) to buildMap {
                 put("x-datadog-parent-id", "42")
                 put("x-datadog-trace-id", "1337")
                 put("x-datadog-tags", "_dd.p.tid=0")
                 put("x-datadog-sampling-priority", "1")
                 put("x-datadog-origin", "rum")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
+                putBaggage()
             },
-            Fixture(TraceId(1234567890u, 1337u), SpanId(42u), true, fakeRumSessionId) to buildMap {
+            Fixture(
+                TraceId(1234567890u, 1337u),
+                SpanId(42u),
+                true,
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
+            ) to buildMap {
                 put("x-datadog-parent-id", "42")
                 put("x-datadog-trace-id", "1337")
                 put("x-datadog-tags", "_dd.p.tid=499602d2")
                 put("x-datadog-sampling-priority", "1")
                 put("x-datadog-origin", "rum")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
+                putBaggage()
             },
             Fixture(
                 TraceId(ULong.MAX_VALUE, ULong.MAX_VALUE),
                 SpanId(ULong.MAX_VALUE),
                 true,
-                fakeRumSessionId
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
             ) to buildMap {
                 put("x-datadog-parent-id", "18446744073709551615")
                 put("x-datadog-trace-id", "18446744073709551615")
                 put("x-datadog-tags", "_dd.p.tid=ffffffffffffffff")
                 put("x-datadog-sampling-priority", "1")
                 put("x-datadog-origin", "rum")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
+                putBaggage()
             },
-            Fixture(TraceId(1234567890u, 1337u), SpanId(42u), false, fakeRumSessionId) to buildMap {
+            Fixture(
+                TraceId(1234567890u, 1337u),
+                SpanId(42u),
+                false,
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
+            ) to buildMap {
                 put("x-datadog-sampling-priority", "0")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
+                putBaggage()
             }
         )
 
@@ -65,7 +90,9 @@ class TracingHeaderTypeTest {
                 it.key.sampledIn,
                 it.key.traceId,
                 it.key.spanId,
-                it.key.rumSessionId
+                it.key.rumSessionId,
+                it.key.userId,
+                it.key.accountId
             )
             val headers = fakeRequestBuilder.headers.entries()
                 .associate {
@@ -80,26 +107,49 @@ class TracingHeaderTypeTest {
     fun `M inject TraceContext headers W injectHeaders`() {
         // Given
         val expectedHeaders = mapOf(
-            Fixture(TraceId(0u, 1337u), SpanId(42u), true, fakeRumSessionId) to buildMap {
+            Fixture(
+                TraceId(0u, 1337u),
+                SpanId(42u),
+                true,
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
+            ) to buildMap {
                 put("traceparent", "00-00000000000000000000000000000539-000000000000002a-01")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
+                putBaggage()
             },
-            Fixture(TraceId(1234567890u, 1337u), SpanId(42u), true, fakeRumSessionId) to buildMap {
+            Fixture(
+                TraceId(1234567890u, 1337u),
+                SpanId(42u),
+                true,
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
+            ) to buildMap {
                 put("traceparent", "00-00000000499602d20000000000000539-000000000000002a-01")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
+                putBaggage()
             },
             Fixture(
                 TraceId(ULong.MAX_VALUE, ULong.MAX_VALUE),
                 SpanId(ULong.MAX_VALUE),
                 true,
-                fakeRumSessionId
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
             ) to buildMap {
                 put("traceparent", "00-ffffffffffffffffffffffffffffffff-ffffffffffffffff-01")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
+                putBaggage()
             },
-            Fixture(TraceId(1234567890u, 1337u), SpanId(42u), false, fakeRumSessionId) to buildMap {
+            Fixture(
+                TraceId(1234567890u, 1337u),
+                SpanId(42u),
+                false,
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
+            ) to buildMap {
                 put("traceparent", "00-00000000499602d20000000000000539-000000000000002a-00")
-                if (fakeRumSessionId != null) put("baggage", "session.id=$fakeRumSessionId")
+                putBaggage()
             }
         )
 
@@ -111,7 +161,9 @@ class TracingHeaderTypeTest {
                 it.key.sampledIn,
                 it.key.traceId,
                 it.key.spanId,
-                it.key.rumSessionId
+                it.key.rumSessionId,
+                it.key.userId,
+                it.key.accountId
             )
             val headers = fakeRequestBuilder.headers.entries()
                 .associate {
@@ -126,21 +178,44 @@ class TracingHeaderTypeTest {
     fun `M inject B3 headers W injectHeaders`() {
         // Given
         val expectedHeaders = mapOf(
-            Fixture(TraceId(0u, 1337u), SpanId(42u), true, fakeRumSessionId) to buildMap {
+            Fixture(
+                TraceId(0u, 1337u),
+                SpanId(42u),
+                true,
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
+            ) to buildMap {
                 put("b3", "539-2a-1")
             },
-            Fixture(TraceId(1234567890u, 1337u), SpanId(42u), true, fakeRumSessionId) to buildMap {
+            Fixture(
+                TraceId(1234567890u, 1337u),
+                SpanId(42u),
+                true,
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
+            ) to buildMap {
                 put("b3", "499602d20000000000000539-2a-1")
             },
             Fixture(
                 TraceId(ULong.MAX_VALUE, ULong.MAX_VALUE),
                 SpanId(ULong.MAX_VALUE),
                 true,
-                fakeRumSessionId
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
             ) to buildMap {
                 put("b3", "ffffffffffffffffffffffffffffffff-ffffffffffffffff-1")
             },
-            Fixture(TraceId(1234567890u, 1337u), SpanId(42u), false, fakeRumSessionId) to buildMap {
+            Fixture(
+                TraceId(1234567890u, 1337u),
+                SpanId(42u),
+                false,
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
+            ) to buildMap {
                 put("b3", "0")
             }
         )
@@ -153,7 +228,9 @@ class TracingHeaderTypeTest {
                 it.key.sampledIn,
                 it.key.traceId,
                 it.key.spanId,
-                it.key.rumSessionId
+                it.key.rumSessionId,
+                it.key.userId,
+                it.key.accountId
             )
             val headers = fakeRequestBuilder.headers.entries()
                 .associate {
@@ -168,12 +245,26 @@ class TracingHeaderTypeTest {
     fun `M inject B3Multi headers W injectHeaders`() {
         // Given
         val expectedHeaders = mapOf(
-            Fixture(TraceId(0u, 1337u), SpanId(42u), true, fakeRumSessionId) to buildMap {
+            Fixture(
+                TraceId(0u, 1337u),
+                SpanId(42u),
+                true,
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
+            ) to buildMap {
                 put("X-B3-TraceId", "539")
                 put("X-B3-SpanId", "2a")
                 put("X-B3-Sampled", "1")
             },
-            Fixture(TraceId(1234567890u, 1337u), SpanId(42u), true, fakeRumSessionId) to buildMap {
+            Fixture(
+                TraceId(1234567890u, 1337u),
+                SpanId(42u),
+                true,
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
+            ) to buildMap {
                 put("X-B3-TraceId", "499602d20000000000000539")
                 put("X-B3-SpanId", "2a")
                 put("X-B3-Sampled", "1")
@@ -182,13 +273,22 @@ class TracingHeaderTypeTest {
                 TraceId(ULong.MAX_VALUE, ULong.MAX_VALUE),
                 SpanId(ULong.MAX_VALUE),
                 true,
-                fakeRumSessionId
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
             ) to buildMap {
                 put("X-B3-TraceId", "ffffffffffffffffffffffffffffffff")
                 put("X-B3-SpanId", "ffffffffffffffff")
                 put("X-B3-Sampled", "1")
             },
-            Fixture(TraceId(1234567890u, 1337u), SpanId(42u), false, fakeRumSessionId) to buildMap {
+            Fixture(
+                TraceId(1234567890u, 1337u),
+                SpanId(42u),
+                false,
+                fakeRumSessionId,
+                fakeUserId,
+                fakeAccountId
+            ) to buildMap {
                 put("X-B3-Sampled", "0")
             }
         )
@@ -201,7 +301,9 @@ class TracingHeaderTypeTest {
                 it.key.sampledIn,
                 it.key.traceId,
                 it.key.spanId,
-                it.key.rumSessionId
+                it.key.rumSessionId,
+                it.key.userId,
+                it.key.accountId
             )
             val headers = fakeRequestBuilder.headers.entries()
                 .associate {
@@ -218,8 +320,24 @@ class TracingHeaderTypeTest {
         val traceId: TraceId,
         val spanId: SpanId,
         val sampledIn: Boolean,
-        val rumSessionId: String? = null
+        val rumSessionId: String? = null,
+        val userId: String? = null,
+        val accountId: String? = null
     )
+
+    private fun MutableMap<String, String>.putBaggage() {
+        val baggage = listOf(fakeRumSessionId, fakeUserId, fakeAccountId)
+        if (baggage.any { it != null }) {
+            put(
+                "baggage",
+                buildList {
+                    if (fakeRumSessionId != null) add("session.id=$fakeRumSessionId")
+                    if (fakeUserId != null) add("user.id=$fakeUserId")
+                    if (fakeAccountId != null) add("account.id=$fakeAccountId")
+                }.joinToString(",")
+            )
+        }
+    }
 
     // endregion
 }
