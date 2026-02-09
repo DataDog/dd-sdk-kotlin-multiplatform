@@ -7,8 +7,12 @@
 package com.datadog.kmp.rum
 
 import com.datadog.android.rum.GlobalRumMonitor
+import com.datadog.kmp.rum.configuration.InternalRumSessionProviderListener
 import com.datadog.kmp.rum.internal.RumMonitorAdapter
 
 internal actual fun platformRumMonitor(): RumMonitor {
-    return RumMonitorAdapter(GlobalRumMonitor.get())
+    return RumMonitorAdapter(
+        GlobalRumMonitor.get(),
+        InternalRumSessionProviderListener
+    )
 }

@@ -6,6 +6,7 @@
 
 package com.datadog.kmp.ktor
 
+import com.datadog.kmp.internal.DatadogContextProvider
 import com.datadog.kmp.ktor.internal.plugin.DatadogKtorPlugin
 import com.datadog.kmp.ktor.internal.plugin.buildClientPlugin
 import com.datadog.kmp.ktor.internal.sampling.DeterministicTraceSampler
@@ -40,6 +41,7 @@ fun datadogKtorPlugin(
     return DatadogKtorPlugin(
         RumMonitor.get(),
         RumSessionProvider.get(),
+        DatadogContextProvider.get(),
         tracedHosts,
         DeterministicTraceSampler(traceSampleRate),
         traceContextInjection,

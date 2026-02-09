@@ -27,6 +27,9 @@ expect object Datadog {
 
     internal var isCrashReportingEnabled: Boolean
 
+    internal var currentUserId: String?
+    internal var currentAccountId: String?
+
     /**
      * Initializes an instance of the Datadog SDK.
      * @param context your application context (applicable only for Android)

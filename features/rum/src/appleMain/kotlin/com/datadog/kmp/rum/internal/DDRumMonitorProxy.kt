@@ -156,6 +156,12 @@ internal interface DDRumMonitorProxy {
 
     fun addViewLoadingTime(overwrite: Boolean)
 
+    fun reportAppFullyDisplayed()
+
+    fun addViewAttributes(attributes: Map<Any?, *>)
+
+    fun removeViewAttributes(attributes: Collection<String>)
+
     companion object {
         fun create(nativeRumMonitor: DDRUMMonitor): DDRumMonitorProxy = object : DDRumMonitorProxy {
             override fun addActionWithType(
@@ -293,6 +299,18 @@ internal interface DDRumMonitorProxy {
 
             override fun addViewLoadingTime(overwrite: Boolean) =
                 nativeRumMonitor.addViewLoadingTimeWithOverwrite(overwrite)
+
+            override fun reportAppFullyDisplayed() {
+                nativeRumMonitor.reportAppFullyDisplayed()
+            }
+
+            override fun addViewAttributes(attributes: Map<Any?, *>) {
+                nativeRumMonitor.addViewAttributes(attributes)
+            }
+
+            override fun removeViewAttributes(attributes: Collection<String>) {
+                nativeRumMonitor.removeAttributesForKeys(attributes.toList())
+            }
         }
     }
 }

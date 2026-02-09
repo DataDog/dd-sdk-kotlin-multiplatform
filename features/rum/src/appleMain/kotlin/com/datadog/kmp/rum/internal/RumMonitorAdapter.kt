@@ -51,6 +51,7 @@ import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.configuration.AdvancedRumSessionListener
 import com.datadog.kmp.rum.featureoperations.FailureReason
 import platform.Foundation.NSError
 import platform.Foundation.NSHTTPURLResponse
@@ -63,7 +64,8 @@ import platform.Foundation.numberWithLong
 import platform.UIKit.UIViewController
 
 internal class RumMonitorAdapter(
-    private val nativeRumMonitor: DDRumMonitorProxy
+    private val nativeRumMonitor: DDRumMonitorProxy,
+    private val rumSessionListener: AdvancedRumSessionListener
 ) : RumMonitor, AdvancedRumNetworkMonitor {
 
     // region RumMonitor
@@ -215,8 +217,22 @@ internal class RumMonitorAdapter(
         nativeRumMonitor.addViewLoadingTime(overwrite)
     }
 
+    @OptIn(ExperimentalRumApi::class)
+    override fun reportAppFullyDisplayed() {
+        nativeRumMonitor.reportAppFullyDisplayed()
+    }
+
+    override fun addViewAttributes(attributes: Map<String, Any?>) {
+        nativeRumMonitor.addViewAttributes(eraseKeyType(attributes))
+    }
+
+    override fun removeViewAttributes(attributes: Collection<String>) {
+        nativeRumMonitor.removeViewAttributes(attributes)
+    }
+
     override fun stopSession() {
         nativeRumMonitor.stopSession()
+        rumSessionListener.onSessionStopped()
     }
 
     // endregion

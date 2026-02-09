@@ -36,9 +36,7 @@ class HeadersAssert private constructor(private val actual: Headers) {
     fun hasRumSessionId(rumSessionId: String): HeadersAssert {
         val baggage = actual["baggage"]
         assertNotNull(baggage, "Baggage header is missing")
-        val rumSessionIdPair = baggage.split(",")
-            .map { it.substringBefore("=") to it.substringAfter("=") }
-            .firstOrNull { it.first == "session.id" }
+        val rumSessionIdPair = getW3CBaggagePair(baggage, "session.id")
         assertNotNull(rumSessionIdPair, "RUM session ID is missing, value of baggage header is $baggage")
         assertEquals(
             rumSessionId,
@@ -51,12 +49,60 @@ class HeadersAssert private constructor(private val actual: Headers) {
     fun hasNoRumSessionId(): HeadersAssert {
         val baggage = actual["baggage"]
         if (baggage != null) {
-            val rumSessionIdPair = baggage.split(",")
-                .map { it.substringBefore("=") to it.substringAfter("=") }
-                .firstOrNull { it.first == "session.id" }
+            val rumSessionIdPair = getW3CBaggagePair(baggage, "session.id")
             assertNull(rumSessionIdPair, "Expected headers to not have RUM session ID, but was $rumSessionIdPair")
         }
         return this
+    }
+
+    fun hasUserId(userId: String): HeadersAssert {
+        val baggage = actual["baggage"]
+        assertNotNull(baggage, "Baggage header is missing")
+        val userIdPair = getW3CBaggagePair(baggage, "user.id")
+        assertNotNull(userIdPair, "User ID is missing, value of baggage header is $baggage")
+        assertEquals(
+            userId,
+            userIdPair.second,
+            "Expected user ID to be $userId, but was ${userIdPair.second}"
+        )
+        return this
+    }
+
+    fun hasNoUserId(): HeadersAssert {
+        val baggage = actual["baggage"]
+        if (baggage != null) {
+            val userIdPair = getW3CBaggagePair(baggage, "user.id")
+            assertNull(userIdPair, "Expected headers to not have user ID, but was $userIdPair")
+        }
+        return this
+    }
+
+    fun hasAccountId(accountId: String): HeadersAssert {
+        val baggage = actual["baggage"]
+        assertNotNull(baggage, "Baggage header is missing")
+        val accountIdPair = getW3CBaggagePair(baggage, "account.id")
+        assertNotNull(accountIdPair, "Account ID is missing, value of baggage header is $baggage")
+        assertEquals(
+            accountId,
+            accountIdPair.second,
+            "Expected account ID to be $accountId, but was ${accountIdPair.second}"
+        )
+        return this
+    }
+
+    fun hasNoAccountId(): HeadersAssert {
+        val baggage = actual["baggage"]
+        if (baggage != null) {
+            val accountIdPair = getW3CBaggagePair(baggage, "account.id")
+            assertNull(accountIdPair, "Expected headers to not have account ID, but was $accountIdPair")
+        }
+        return this
+    }
+
+    private fun getW3CBaggagePair(baggage: String, name: String): Pair<String, String>? {
+        return baggage.split(",")
+            .map { it.substringBefore("=") to it.substringAfter("=") }
+            .firstOrNull { it.first == name }
     }
 
     private fun traceContextAssert(format: TracingHeaderType): TraceContextAssert<Headers> = when (format) {

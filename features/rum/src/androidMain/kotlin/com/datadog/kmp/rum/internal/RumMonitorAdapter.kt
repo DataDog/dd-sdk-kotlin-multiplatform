@@ -14,6 +14,7 @@ import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.configuration.AdvancedRumSessionListener
 import com.datadog.kmp.rum.featureoperations.FailureReason
 import com.datadog.android.rum.ExperimentalRumApi as NativeExperimentalRumApi
 import com.datadog.android.rum.RumActionType as NativeRumActionType
@@ -23,8 +24,10 @@ import com.datadog.android.rum.RumResourceKind as NativeRumResourceKind
 import com.datadog.android.rum.RumResourceMethod as NativeRumResourceMethod
 import com.datadog.android.rum.featureoperations.FailureReason as NativeFailureReason
 
-internal class RumMonitorAdapter(private val nativeRumMonitor: NativeRumMonitor) :
-    RumMonitor,
+internal class RumMonitorAdapter(
+    private val nativeRumMonitor: NativeRumMonitor,
+    private val rumSessionListener: AdvancedRumSessionListener
+) : RumMonitor,
     AdvancedNetworkRumMonitor {
 
     // region RumMonitor
@@ -144,8 +147,22 @@ internal class RumMonitorAdapter(private val nativeRumMonitor: NativeRumMonitor)
         nativeRumMonitor.addViewLoadingTime(overwrite)
     }
 
+    @OptIn(NativeExperimentalRumApi::class, ExperimentalRumApi::class)
+    override fun reportAppFullyDisplayed() {
+        nativeRumMonitor.reportAppFullyDisplayed()
+    }
+
+    override fun addViewAttributes(attributes: Map<String, Any?>) {
+        nativeRumMonitor.addViewAttributes(attributes)
+    }
+
+    override fun removeViewAttributes(attributes: Collection<String>) {
+        nativeRumMonitor.removeViewAttributes(attributes)
+    }
+
     override fun stopSession() {
         nativeRumMonitor.stopSession()
+        rumSessionListener.onSessionStopped()
     }
 
     // endregion

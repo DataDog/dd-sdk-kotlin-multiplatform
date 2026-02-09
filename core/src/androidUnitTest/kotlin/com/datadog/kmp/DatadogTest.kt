@@ -55,6 +55,8 @@ internal class DatadogTest {
     @AfterEach
     fun tearDown() {
         datadogAndroidStatic.close()
+        Datadog.currentUserId = null
+        Datadog.currentAccountId = null
     }
 
     @Test
@@ -141,6 +143,7 @@ internal class DatadogTest {
                 extraInfo = extraInfo
             )
         }
+        assertThat(Datadog.currentUserId).isEqualTo(id)
     }
 
     @Test
@@ -192,6 +195,7 @@ internal class DatadogTest {
                 extraInfo = extraInfo
             )
         }
+        assertThat(Datadog.currentAccountId).isEqualTo(id)
     }
 
     @Test
@@ -245,6 +249,64 @@ internal class DatadogTest {
 
         // Then
         datadogAndroidStatic.verify { DatadogAndroid.stopInstance() }
+    }
+
+    @Test
+    fun `M clear user ID and account ID W stopInstance`() {
+        // Given
+        val fakeUserId = "user.id"
+        val fakeAccountId = "account.id"
+        Datadog.currentUserId = fakeUserId
+        Datadog.currentAccountId = fakeAccountId
+
+        // When
+        Datadog.stopInstance()
+
+        // Then
+        assertThat(Datadog.currentUserId).isNull()
+        assertThat(Datadog.currentAccountId).isNull()
+    }
+
+    @Test
+    fun `M clear user ID and account ID W clearAllData`() {
+        // Given
+        val fakeUserId = "user.id"
+        val fakeAccountId = "account.id"
+        Datadog.currentUserId = fakeUserId
+        Datadog.currentAccountId = fakeAccountId
+
+        // When
+        Datadog.clearAllData()
+
+        // Then
+        assertThat(Datadog.currentUserId).isNull()
+        assertThat(Datadog.currentAccountId).isNull()
+    }
+
+    @Test
+    fun `M clear user ID W clearUserInfo`() {
+        // Given
+        val fakeUserId = "user.id"
+        Datadog.currentUserId = fakeUserId
+
+        // When
+        Datadog.clearUserInfo()
+
+        // Then
+        assertThat(Datadog.currentUserId).isNull()
+    }
+
+    @Test
+    fun `M clear account ID W clearAccountInfo`() {
+        // Given
+        val fakeAccountId = "account.id"
+        Datadog.currentAccountId = fakeAccountId
+
+        // When
+        Datadog.clearAccountInfo()
+
+        // Then
+        assertThat(Datadog.currentAccountId).isNull()
     }
 
     companion object {
