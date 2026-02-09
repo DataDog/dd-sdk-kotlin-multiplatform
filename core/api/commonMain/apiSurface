@@ -55,6 +55,11 @@ enum com.datadog.kmp.core.configuration.UploadFrequency
   - RARE
 fun interface com.datadog.kmp.event.EventMapper<T: Any>
   fun map(T): T?
+interface com.datadog.kmp.internal.DatadogContextProvider
+  val userId: String?
+  val accountId: String?
+  companion object 
+    fun get(): DatadogContextProvider
 object com.datadog.kmp.internal.InternalProxy
   val isCrashReportingEnabled: Boolean
 enum com.datadog.kmp.privacy.TrackingConsent

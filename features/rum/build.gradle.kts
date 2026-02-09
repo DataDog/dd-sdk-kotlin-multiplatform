@@ -136,8 +136,7 @@ jsonSchemaGenerator {
             "_perf-metric-schema.json",
             "_action-child-schema.json",
             "_view-container-schema.json",
-            "_profiling-internal-context-schema.json",
-            "vital-schema.json"
+            "_profiling-internal-context-schema.json"
         )
         inputNameMapping = mapOf(
             "action-schema.json" to ACTION_EVENT_MODEL_NAME,

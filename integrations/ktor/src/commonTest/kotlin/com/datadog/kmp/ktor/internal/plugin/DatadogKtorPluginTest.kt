@@ -7,6 +7,7 @@
 package com.datadog.kmp.ktor.internal.plugin
 
 import com.benasher44.uuid.uuid4
+import com.datadog.kmp.internal.DatadogContextProvider
 import com.datadog.kmp.ktor.HEX_RADIX
 import com.datadog.kmp.ktor.RUM_RULE_PSR
 import com.datadog.kmp.ktor.RUM_SPAN_ID
@@ -84,12 +85,15 @@ class DatadogKtorPluginTest {
     private val mockSpanIdGenerator = mock<SpanIdGenerator>()
     private val mockRumResourceAttributesProvider = mock<RumResourceAttributesProvider>()
     private val mockRumSessionProvider = mock<RumSessionProvider>()
+    private val mockDatadogContextProvider = mock<DatadogContextProvider>()
 
     private val fakeRumRequestAttributes = exhaustiveAttributes()
     private val fakeRumResponseAttributes = exhaustiveAttributes()
     private val fakeRumErrorAttributes = exhaustiveAttributes()
 
     private var fakeRumSessionId = nullable(uuid4().toString())
+    private var fakeUserId = nullable(uuid4().toString())
+    private var fakeAccountId = nullable(uuid4().toString())
 
     private var testedPlugin = DatadogKtorPlugin(
         rumMonitor = mockRumMonitor,
@@ -99,7 +103,8 @@ class DatadogKtorPluginTest {
         traceIdGenerator = mockTraceIdGenerator,
         spanIdGenerator = mockSpanIdGenerator,
         rumSessionProvider = mockRumSessionProvider,
-        rumResourceAttributesProvider = mockRumResourceAttributesProvider
+        rumResourceAttributesProvider = mockRumResourceAttributesProvider,
+        datadogContextProvider = mockDatadogContextProvider
     )
 
     private val mockRequestHandler = mock<MockRequestHandler>()
@@ -127,6 +132,8 @@ class DatadogKtorPluginTest {
         }
         every { mockSpanIdGenerator.generateSpanId() } returnsBy { SpanId(randomULong()) }
         every { mockRumSessionProvider.sessionId } returnsBy { fakeRumSessionId }
+        every { mockDatadogContextProvider.userId } returnsBy { fakeUserId }
+        every { mockDatadogContextProvider.accountId } returnsBy { fakeAccountId }
         with(mockRumResourceAttributesProvider) {
             every { onRequest(any()) } returns fakeRumRequestAttributes
             every { onResponse(any()) } returns fakeRumResponseAttributes
@@ -393,13 +400,19 @@ class DatadogKtorPluginTest {
         assertThat(capturedRequestHeaders.first())
             .run {
                 val rumSessionId = fakeRumSessionId
-                val shouldInjectRumSessionId = with(fakeTracingHeaderTypes) {
+                val userId = fakeUserId
+                val accountId = fakeAccountId
+                val shouldInjectExtraBaggage = with(fakeTracingHeaderTypes) {
                     contains(TracingHeaderType.DATADOG) || contains(TracingHeaderType.TRACECONTEXT)
                 }
-                if (shouldInjectRumSessionId) {
+                if (shouldInjectExtraBaggage) {
                     if (rumSessionId == null) hasNoRumSessionId() else hasRumSessionId(rumSessionId)
+                    if (userId == null) hasNoUserId() else hasUserId(userId)
+                    if (accountId == null) hasNoAccountId() else hasAccountId(accountId)
                 } else {
                     hasNoRumSessionId()
+                    hasNoUserId()
+                    hasNoAccountId()
                 }
             }
 
@@ -470,13 +483,19 @@ class DatadogKtorPluginTest {
                     hasSamplingDecision(0, it)
                 }
                 val rumSessionId = fakeRumSessionId
-                val shouldInjectRumSessionId = with(fakeTracingHeaderTypes) {
+                val userId = fakeUserId
+                val accountId = fakeAccountId
+                val shouldInjectExtraBaggage = with(fakeTracingHeaderTypes) {
                     contains(TracingHeaderType.DATADOG) || contains(TracingHeaderType.TRACECONTEXT)
                 }
-                if (shouldInjectRumSessionId) {
+                if (shouldInjectExtraBaggage) {
                     if (rumSessionId == null) hasNoRumSessionId() else hasRumSessionId(rumSessionId)
+                    if (userId == null) hasNoUserId() else hasUserId(userId)
+                    if (accountId == null) hasNoAccountId() else hasAccountId(accountId)
                 } else {
                     hasNoRumSessionId()
+                    hasNoUserId()
+                    hasNoAccountId()
                 }
             }
     }
@@ -582,13 +601,19 @@ class DatadogKtorPluginTest {
                         hasSamplingDecision(0, it)
                     }
                     val rumSessionId = fakeRumSessionId
-                    val shouldInjectRumSessionId = with(fakeTracingHeaderTypes) {
+                    val userId = fakeUserId
+                    val accountId = fakeAccountId
+                    val shouldInjectExtraBaggage = with(fakeTracingHeaderTypes) {
                         contains(TracingHeaderType.DATADOG) || contains(TracingHeaderType.TRACECONTEXT)
                     }
-                    if (shouldInjectRumSessionId) {
+                    if (shouldInjectExtraBaggage) {
                         if (rumSessionId == null) hasNoRumSessionId() else hasRumSessionId(rumSessionId)
+                        if (userId == null) hasNoUserId() else hasUserId(userId)
+                        if (accountId == null) hasNoAccountId() else hasAccountId(accountId)
                     } else {
                         hasNoRumSessionId()
+                        hasNoUserId()
+                        hasNoAccountId()
                     }
                 }
         }
@@ -757,7 +782,7 @@ class DatadogKtorPluginTest {
             )
 
             mockRumMonitor.stopResourceWithError(
-                key = checkNotNull(capturedRequestId),
+                key = capturedRequestId,
                 statusCode = null,
                 message = "Ktor request error $fakeMethod $fakeUrl",
                 throwable = fakeThrowable,
@@ -838,7 +863,7 @@ class DatadogKtorPluginTest {
             )
 
             mockRumMonitor.stopResourceWithError(
-                key = checkNotNull(capturedRedirectRequestId),
+                key = capturedRedirectRequestId,
                 statusCode = null,
                 message = "Ktor request error $fakeMethod $fakeUrl/redirected",
                 throwable = fakeThrowable,
@@ -860,7 +885,8 @@ class DatadogKtorPluginTest {
             traceIdGenerator = mockTraceIdGenerator,
             spanIdGenerator = mockSpanIdGenerator,
             rumSessionProvider = mockRumSessionProvider,
-            rumResourceAttributesProvider = mockRumResourceAttributesProvider
+            rumResourceAttributesProvider = mockRumResourceAttributesProvider,
+            datadogContextProvider = mockDatadogContextProvider
         )
         val fakeClient = HttpClient(mockEngine) {
             install(testedPlugin.buildClientPlugin())
@@ -917,7 +943,8 @@ class DatadogKtorPluginTest {
             traceIdGenerator = mockTraceIdGenerator,
             spanIdGenerator = mockSpanIdGenerator,
             rumSessionProvider = mockRumSessionProvider,
-            rumResourceAttributesProvider = mockRumResourceAttributesProvider
+            rumResourceAttributesProvider = mockRumResourceAttributesProvider,
+            datadogContextProvider = mockDatadogContextProvider
         )
         val fakeClient = HttpClient(mockEngine) {
             install(testedPlugin.buildClientPlugin())
@@ -999,13 +1026,19 @@ class DatadogKtorPluginTest {
         assertThat(mockEngine.requestHistory.first().headers)
             .run {
                 val rumSessionId = fakeRumSessionId
-                val shouldInjectRumSessionId = with(fakeTracingHeaderTypes) {
+                val userId = fakeUserId
+                val accountId = fakeAccountId
+                val shouldInjectExtraBaggage = with(fakeTracingHeaderTypes) {
                     contains(TracingHeaderType.DATADOG) || contains(TracingHeaderType.TRACECONTEXT)
                 }
-                if (shouldInjectRumSessionId) {
+                if (shouldInjectExtraBaggage) {
                     if (rumSessionId == null) hasNoRumSessionId() else hasRumSessionId(rumSessionId)
+                    if (userId == null) hasNoUserId() else hasUserId(userId)
+                    if (accountId == null) hasNoAccountId() else hasAccountId(accountId)
                 } else {
                     hasNoRumSessionId()
+                    hasNoUserId()
+                    hasNoAccountId()
                 }
             }
     }
@@ -1044,7 +1077,8 @@ class DatadogKtorPluginTest {
             traceIdGenerator = mockTraceIdGenerator,
             spanIdGenerator = mockSpanIdGenerator,
             rumSessionProvider = mockRumSessionProvider,
-            rumResourceAttributesProvider = mockRumResourceAttributesProvider
+            rumResourceAttributesProvider = mockRumResourceAttributesProvider,
+            datadogContextProvider = mockDatadogContextProvider
         )
 
         // When

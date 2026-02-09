@@ -6,6 +6,7 @@
 
 package com.datadog.kmp.ktor.internal.trace
 
-import kotlinx.datetime.Clock
+import platform.Foundation.NSDate
+import platform.Foundation.timeIntervalSince1970
 
-internal actual fun epochSeconds(): Long = Clock.System.now().epochSeconds
+internal actual fun epochSeconds(): Long = NSDate().timeIntervalSince1970.toLong()

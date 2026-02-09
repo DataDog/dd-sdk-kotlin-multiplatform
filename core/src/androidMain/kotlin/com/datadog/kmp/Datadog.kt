@@ -44,6 +44,14 @@ actual object Datadog {
     @Volatile
     internal actual var isCrashReportingEnabled: Boolean = false
 
+    // TODO RUM-0000 We should have a subscription for Datadog Context on Android, it will be
+    //  less error-prone due to concurrency
+    @Volatile
+    internal actual var currentUserId: String? = null
+
+    @Volatile
+    internal actual var currentAccountId: String? = null
+
     /**
      * Initializes an instance of the Datadog SDK.
      * @param context your application context (applicable only for Android)
@@ -98,6 +106,7 @@ actual object Datadog {
         extraInfo: Map<String, Any?>
     ) {
         DatadogAndroid.setUserInfo(id, name, email, extraInfo)
+        currentUserId = id
     }
 
     /**
@@ -128,6 +137,7 @@ actual object Datadog {
      * you need to stop the view first by using `RumMonitor.get().stopView()`
      */
     actual fun clearUserInfo() {
+        currentUserId = null
         DatadogAndroid.clearUserInfo()
     }
 
@@ -151,6 +161,7 @@ actual object Datadog {
         extraInfo: Map<String, Any?>
     ) {
         DatadogAndroid.setAccountInfo(id, name, extraInfo)
+        currentAccountId = id
     }
 
     /**
@@ -181,6 +192,7 @@ actual object Datadog {
      *
      */
     actual fun clearAccountInfo() {
+        currentAccountId = null
         DatadogAndroid.clearAccountInfo()
     }
 
@@ -188,6 +200,8 @@ actual object Datadog {
      * Clears all unsent data in all registered features.
      */
     actual fun clearAllData() {
+        currentUserId = null
+        currentAccountId = null
         DatadogAndroid.clearAllData()
     }
 
@@ -195,6 +209,8 @@ actual object Datadog {
      * Stop the initialized SDK instance.
      */
     actual fun stopInstance() {
+        currentUserId = null
+        currentAccountId = null
         DatadogAndroid.stopInstance()
     }
 }

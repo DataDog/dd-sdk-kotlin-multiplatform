@@ -6,7 +6,14 @@
 
 package com.datadog.kmp.ktor
 
-import kotlinx.datetime.Clock
+import platform.Foundation.NSCalendar
+import platform.Foundation.NSCalendarUnitNanosecond
+import platform.Foundation.NSDate
 import kotlin.random.Random
 
-internal actual val RNG: Random = Random(Clock.System.now().nanosecondsOfSecond.toLong())
+internal actual val RNG: Random = Random(
+    NSCalendar.currentCalendar.component(
+        unit = NSCalendarUnitNanosecond,
+        fromDate = NSDate()
+    )
+)

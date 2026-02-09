@@ -1,3 +1,17 @@
+# 1.5.0 / 2026-02-09
+
+* [FEATURE] Add `RumMonitor` `reportAppFullyDisplayed`, `addViewAttributes`, `removeViewAttributes` methods. See [#230](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/230)
+* [FEATURE] Add `user.id` and `account.id` to the baggage header. See [#234](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/234)
+* [BUGFIX] Reset `userId` and `accountId` on stop SDK instance for iOS. See [#236](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/236)
+* [IMPROVEMENT] Report RUM session stop. See [#221](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/221)
+* [IMPROVEMENT] Remove `kotlinx.datetime` usage. See [#232](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/232)
+* [MAINTENANCE] Next dev iteration. See [#217](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/217)
+* [MAINTENANCE] Merge `release/1.4.0` branch into `develop` branch. See [#219](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/219)
+* [MAINTENANCE] Update native iOS and Android SDKs to version 3.5.0. See [#229](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/229)
+* [MAINTENANCE] Update iOS SDK to version 3.6.1, Android SDK to version 3.6.0. See [#235](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/235)
+* [DOCS] Update the list of native SDK versions used for 1.4.0 release. See [#220](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/220)
+* [DOCS] Update Android API version in README. See [#224](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/224)
+
 # 1.4.0 / 2025-10-07
 
 **Note**: This version updates major versions of the native Datadog iOS and Datadog Android SDKs used. As part of this change `minSdk` on Android is bumped from 21 to 23.

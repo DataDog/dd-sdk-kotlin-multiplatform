@@ -45,6 +45,7 @@ import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
+import com.datadog.kmp.rum.configuration.AdvancedRumSessionListener
 import com.datadog.kmp.rum.featureoperations.FailureReason
 import com.datadog.tools.random.exhaustiveAttributes
 import com.datadog.tools.random.nullable
@@ -76,11 +77,13 @@ class RumMonitorAdapterTest {
 
     private val mockNativeRumMonitor = mock<DDRumMonitorProxy>()
 
+    private val mockRumSessionListener = mock<AdvancedRumSessionListener>()
+
     private lateinit var testedRumMonitorAdapter: RumMonitorAdapter
 
     @BeforeTest
     fun `set up`() {
-        testedRumMonitorAdapter = RumMonitorAdapter(mockNativeRumMonitor)
+        testedRumMonitorAdapter = RumMonitorAdapter(mockNativeRumMonitor, mockRumSessionListener)
     }
 
     // region RumMonitor
@@ -566,12 +569,54 @@ class RumMonitorAdapterTest {
     }
 
     @Test
+    fun `M call native reportAppFullyDisplayed W reportAppFullyDisplayed`() {
+        // When
+        testedRumMonitorAdapter.reportAppFullyDisplayed()
+
+        // Then
+        verify { mockNativeRumMonitor.reportAppFullyDisplayed() }
+    }
+
+    @Test
+    fun `M call native addViewAttributes W addViewAttributes`() {
+        // Given
+        val fakeAttributes = exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.addViewAttributes(fakeAttributes)
+
+        // Then
+        verify { mockNativeRumMonitor.addViewAttributes(fakeAttributes.eraseKeyType()) }
+    }
+
+    @Test
+    fun `M call native removeViewAttributes W removeViewAttributes`() {
+        // Given
+        val fakeAttributes = listOf("one", "two", "three")
+
+        // When
+        testedRumMonitorAdapter.removeViewAttributes(fakeAttributes)
+
+        // Then
+        verify { mockNativeRumMonitor.removeViewAttributes(fakeAttributes) }
+    }
+
+    @Test
     fun `M call native stopSession W stopSession`() {
         // When
         testedRumMonitorAdapter.stopSession()
 
         // Then
         verify { mockNativeRumMonitor.stopSession() }
+    }
+
+    @Test
+    fun `M call onSessionStopped W stopSession`() {
+        // When
+        testedRumMonitorAdapter.stopSession()
+
+        // Then
+        verify { mockRumSessionListener.onSessionStopped() }
     }
 
     // endregion
