@@ -8,9 +8,9 @@ import dev.mokkery.MockMode
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.androidLibrary)
     id("datadog-build-config")
+    id("datadog-ios-frameworks")
     alias(libs.plugins.dependencyLicense)
     id("api-surface")
     id("transitive-dependencies")
@@ -21,34 +21,19 @@ plugins {
     signing
 }
 
-kotlin {
-
-    cocoapods {
-        // need to build with XCode 15
-        ios.deploymentTarget = "12.0"
-        tvos.deploymentTarget = "12.0"
-        noPodspec()
-
-        framework {
-            baseName = "DatadogKMPKtor"
-        }
-
-        // need to link it only for the tests so far (maybe this will change
-        // later with SDK setup changes)
-        pod("DatadogRUM") {
-            linkOnly = true
-            version = libs.versions.datadog.ios.get()
-        }
-        pod("DatadogCore") {
-            linkOnly = true
-            version = libs.versions.datadog.ios.get()
-        }
-        pod("DatadogCrashReporting") {
-            linkOnly = true
-            version = libs.versions.datadog.ios.get()
-        }
+datadogFrameworks {
+    framework("DatadogRUM") {
+        linkOnly = true
     }
+    framework("DatadogCore") {
+        linkOnly = true
+    }
+    framework("DatadogCrashReporting") {
+        linkOnly = true
+    }
+}
 
+kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.core)
