@@ -11,9 +11,9 @@ import kotlin.io.path.pathString
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.androidLibrary)
     id("datadog-build-config")
+    id("datadog-ios-frameworks")
     alias(libs.plugins.dependencyLicense)
     id("api-surface")
     id("transitive-dependencies")
@@ -44,47 +44,16 @@ val generateLibConfigTask = tasks.register("generateLibConfig", Sync::class) {
     into(generatedDirectory)
 }
 
-kotlin {
-
-    cocoapods {
-        // need to build with XCode 15
-        ios.deploymentTarget = "12.0"
-        tvos.deploymentTarget = "12.0"
-        noPodspec()
-
-        framework {
-            baseName = "DatadogKMPCore"
-        }
-
-        val compilerOptionFlag = "-compiler-option"
-        val modulesFlag = "-fmodules"
-        pod("DatadogCore") {
-            extraOpts += listOf(
-                // proposed by KMP because of the @import usage in the binary
-                compilerOptionFlag,
-                modulesFlag
-            )
-            version = libs.versions.datadog.ios.get()
-        }
-        // TODO RUM-11618 DatadogInternal cannot be used
-//        pod("DatadogInternal") {
-//            extraOpts += listOf(
-//                // proposed by KMP because of the @import usage in the binary
-//                compilerOptionFlag,
-//                modulesFlag
-//            )
-//            version = libs.versions.datadog.ios.get()
-//        }
-        pod("DatadogCrashReporting") {
-            extraOpts += listOf(
-                // proposed by KMP because of the @import usage in the binary
-                compilerOptionFlag,
-                modulesFlag
-            )
-            version = libs.versions.datadog.ios.get()
-        }
+datadogFrameworks {
+    framework("DatadogCore") {
+        linkOnly = false
     }
+    framework("DatadogCrashReporting") {
+        linkOnly = false
+    }
+}
 
+kotlin {
     targets.all {
         if (this is KotlinNativeTarget && konanTarget.family.isAppleFamily) {
             compilations.getByName("main") {
