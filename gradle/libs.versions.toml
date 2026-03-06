@@ -16,7 +16,7 @@ kotlinGrammarParser = "0.1.0"
 # referenced by com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm cannot be found
 # so explicitly overriding with the version which can be found
 kotlinAntlrRuntime = "v0.1.0"
-kotlinPoet = "1.18.1"
+kotlinPoet = "2.2.0"
 gson = "2.11.0"
 
 ktor2 = "2.3.13"
