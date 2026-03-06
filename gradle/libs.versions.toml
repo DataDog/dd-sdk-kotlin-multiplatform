@@ -1,41 +1,41 @@
 [versions]
-agp = "8.10.1"
-kotlin = "2.1.21"
-compose = "1.6.6"
-compose-material3 = "1.1.2"
-androidx-fragment = "1.5.1"
-androidx-navigation-forSdk = "2.3.0"
-androidx-navigation-forApp = "2.7.7"
-androidx-activityCompose = "1.8.0"
-datadog-android = "3.6.0"
+agp = "8.13.2"
+kotlin = "2.3.10"
+compose = "1.10.4"
+compose-material3 = "1.4.0"
+androidx-fragment = "1.8.9"
+androidx-navigation-forSdk = "2.9.7"
+androidx-navigation-forApp = "2.9.7"
+androidx-activityCompose = "1.12.4"
+datadog-android = "3.7.0"
 datadog-ios = "3.6.1"
-dependencyLicense = "0.4.0"
+dependencyLicense = "0.5.0"
 nexusPublish = "2.0.0"
 kotlinGrammarParser = "0.1.0"
 # version d4384e4d90 of com.github.drieks.antlr-kotlin:antlr-kotlin-runtime
 # referenced by com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm cannot be found
 # so explicitly overriding with the version which can be found
-kotlinAntlrRuntime = "v0.1.0"
+kotlinAntlrRuntime = "0.1.0"
 kotlinPoet = "1.18.1"
-gson = "2.11.0"
+gson = "2.13.2"
 
 ktor2 = "2.3.13"
-ktor3 = "3.0.3"
-kotlinxCoroutines = "1.8.1"
+ktor3 = "3.4.1"
+kotlinxCoroutines = "1.10.2"
 uuid = "0.8.4"
 
 okHttp = "4.12.0"
 
 # JUnit 5
-jUnitJupiter = "5.10.2"
-jUnitPlatform = "1.10.2"
-jUnitMockitoExt = "5.12.0"
+jUnitJupiter = "5.14.3"
+jUnitPlatform = "1.14.3"
+jUnitMockitoExt = "5.22.0"
 
 # Test tools
 assertJ = "3.18.1"
-elmyr = "1.4.0"
-mockitoKotlin = "5.3.1"
-mokkery = "2.7.3"
+elmyr = "1.4.1"
+mockitoKotlin = "5.4.0"
+mokkery = "2.10.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
