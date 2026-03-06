@@ -32,7 +32,7 @@ jUnitPlatform = "1.10.2"
 jUnitMockitoExt = "5.12.0"
 
 # Test tools
-assertJ = "3.18.1"
+assertJ = "3.27.7"
 elmyr = "1.4.0"
 mockitoKotlin = "5.3.1"
 mokkery = "2.7.3"
