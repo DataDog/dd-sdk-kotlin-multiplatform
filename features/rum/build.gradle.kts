@@ -26,12 +26,6 @@ plugins {
 datadogFrameworks {
     framework("DatadogRUM") {
         linkOnly = false
-        compilerOpts.addAll(
-            listOf(
-                "-fmodules",
-                "-DDDRUMErrorEventErrorMeta=DDRUMErrorEventErrorMetaInfo"
-            )
-        )
     }
     framework("DatadogCore") {
         linkOnly = true
