@@ -3,6 +3,9 @@ actual object com.datadog.kmp.rum.Rum
 fun RumConfiguration.Builder.trackNonFatalAnrs(Boolean): RumConfiguration.Builder
 fun RumConfiguration.Builder.useViewTrackingStrategy(com.datadog.kmp.rum.tracking.ViewTrackingStrategy?): RumConfiguration.Builder
 fun RumConfiguration.Builder.trackUserInteractions(Array<com.datadog.kmp.rum.tracking.ViewAttributesProvider> = emptyArray(), com.datadog.kmp.rum.tracking.InteractionPredicate = NoOpInteractionPredicate()): RumConfiguration.Builder
+fun RumConfiguration.Builder.setAppStartupActivityPredicate(com.datadog.kmp.rum.startup.AppStartupActivityPredicate): RumConfiguration.Builder
+fun interface com.datadog.kmp.rum.startup.AppStartupActivityPredicate
+  fun shouldTrackStartup(android.app.Activity): Boolean
 class com.datadog.kmp.rum.tracking.AcceptAllActivities : ComponentPredicate<android.app.Activity>
   override fun accept(android.app.Activity): Boolean
   override fun getViewName(android.app.Activity): String?

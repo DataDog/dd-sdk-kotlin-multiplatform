@@ -7,8 +7,10 @@
 package com.datadog.kmp.rum.configuration
 
 import com.datadog.android.rum.RumMonitor
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.configuration.internal.AndroidRumConfigurationBuilder
 import com.datadog.kmp.rum.configuration.internal.PlatformRumConfigurationBuilder
+import com.datadog.kmp.rum.startup.AppStartupActivityPredicate
 import com.datadog.kmp.rum.tracking.InteractionPredicate
 import com.datadog.kmp.rum.tracking.ViewAttributesProvider
 import com.datadog.kmp.rum.tracking.ViewTrackingStrategy
@@ -63,6 +65,41 @@ fun RumConfiguration.Builder.trackUserInteractions(
 ): RumConfiguration.Builder {
     nativePlatformBuilder
         .trackUserInteractions(touchTargetExtraAttributesProviders, interactionPredicate)
+    return this
+}
+
+/**
+ * Sets a predicate to filter which Activities are considered for app startup
+ * Time To Initial Display (TTID) measurement.
+ *
+ * Use this to exclude "interstitial Activities" - Activities that are launched during
+ * app startup but immediately launch another Activity in their onCreate() method and
+ * call finish() on themselves (e.g., splash screens, authentication screens).
+ * These Activities may never draw a frame, which can prevent TTID from being reported.
+ *
+ * By default, all Activities are included in TTID measurement.
+ *
+ * **Performance Note:** The predicate is called on the main thread for every Activity
+ * during app startup. Ensure the implementation is fast and doesn't perform expensive
+ * operations.
+ *
+ * Example:
+ * ```
+ * .setAppStartupActivityPredicate { activity ->
+ *     // Exclude AuthenticationActivity from TTID measurement
+ *     activity !is AuthenticationActivity
+ * }
+ * ```
+ *
+ * @param predicate The [AppStartupActivityPredicate] to determine which Activities
+ * should be measured for app startup TTID.
+ * @see [AppStartupActivityPredicate]
+ */
+@ExperimentalRumApi
+fun RumConfiguration.Builder.setAppStartupActivityPredicate(
+    predicate: AppStartupActivityPredicate
+): RumConfiguration.Builder {
+    nativePlatformBuilder.setAppStartupActivityPredicate(predicate)
     return this
 }
 
