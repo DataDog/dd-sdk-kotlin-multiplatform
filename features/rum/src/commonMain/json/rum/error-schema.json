@@ -340,6 +340,18 @@
           "description": "Feature flags properties",
           "additionalProperties": true,
           "readOnly": true
+        },
+        "_dd": {
+          "type": "object",
+          "description": "Internal properties",
+          "properties": {
+            "profiling": {
+              "type": "object",
+              "description": "Profiling context",
+              "allOf": [{ "$ref": "./_profiling-internal-context-schema.json" }]
+            }
+          },
+          "readOnly": true
         }
       }
     }

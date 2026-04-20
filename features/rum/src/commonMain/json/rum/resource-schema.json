@@ -230,7 +230,6 @@
             "graphql": {
               "type": "object",
               "description": "GraphQL requests parameters",
-              "required": ["operationType"],
               "properties": {
                 "operationType": {
                   "type": "string",
