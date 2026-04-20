@@ -9,6 +9,7 @@ package com.datadog.kmp.rum.configuration.internal
 import android.content.Context
 import android.view.View
 import com.datadog.android.api.SdkCore
+import com.datadog.android.rum.ExperimentalRumApi
 import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.rum.configuration.RumSessionListener
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
@@ -18,6 +19,7 @@ import com.datadog.kmp.rum.model.ErrorEvent
 import com.datadog.kmp.rum.model.LongTaskEvent
 import com.datadog.kmp.rum.model.ResourceEvent
 import com.datadog.kmp.rum.model.toCommonModel
+import com.datadog.kmp.rum.startup.AppStartupActivityPredicate
 import com.datadog.kmp.rum.tracking.InteractionPredicate
 import com.datadog.kmp.rum.tracking.ViewAttributesProvider
 import com.datadog.kmp.rum.tracking.ViewTrackingStrategy
@@ -197,6 +199,13 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
             touchTargetExtraAttributesProviders.map { it.native }.toTypedArray(),
             interactionPredicate.native
         )
+    }
+
+    @OptIn(ExperimentalRumApi::class)
+    fun setAppStartupActivityPredicate(predicate: AppStartupActivityPredicate) {
+        nativeConfigurationBuilder.setAppStartupActivityPredicate {
+            predicate.shouldTrackStartup(it)
+        }
     }
 
     override fun build(): NativeAndroidConfiguration {
