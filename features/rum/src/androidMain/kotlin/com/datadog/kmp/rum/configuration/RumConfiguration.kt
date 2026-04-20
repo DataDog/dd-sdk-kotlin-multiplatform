@@ -103,6 +103,23 @@ fun RumConfiguration.Builder.setAppStartupActivityPredicate(
     return this
 }
 
+/**
+ * Sets the slow frames configuration for RUM monitoring.
+ *
+ * This allows customizing the thresholds used to detect and classify slow and frozen frames.
+ * Pass `null` to disable slow frames monitoring entirely.
+ *
+ * @param slowFramesConfiguration The [SlowFramesConfiguration] to apply, or `null` to disable
+ * slow frames monitoring.
+ * @see [SlowFramesConfiguration]
+ */
+fun RumConfiguration.Builder.setSlowFramesConfiguration(
+    slowFramesConfiguration: SlowFramesConfiguration?
+): RumConfiguration.Builder {
+    nativePlatformBuilder.setSlowFramesConfiguration(slowFramesConfiguration)
+    return this
+}
+
 internal actual fun platformConfigurationBuilder(applicationId: String): PlatformRumConfigurationBuilder<Any> =
     AndroidRumConfigurationBuilder(applicationId)
 

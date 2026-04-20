@@ -4,6 +4,11 @@ fun RumConfiguration.Builder.trackNonFatalAnrs(Boolean): RumConfiguration.Builde
 fun RumConfiguration.Builder.useViewTrackingStrategy(com.datadog.kmp.rum.tracking.ViewTrackingStrategy?): RumConfiguration.Builder
 fun RumConfiguration.Builder.trackUserInteractions(Array<com.datadog.kmp.rum.tracking.ViewAttributesProvider> = emptyArray(), com.datadog.kmp.rum.tracking.InteractionPredicate = NoOpInteractionPredicate()): RumConfiguration.Builder
 fun RumConfiguration.Builder.setAppStartupActivityPredicate(com.datadog.kmp.rum.startup.AppStartupActivityPredicate): RumConfiguration.Builder
+fun RumConfiguration.Builder.setSlowFramesConfiguration(SlowFramesConfiguration?): RumConfiguration.Builder
+data class com.datadog.kmp.rum.configuration.SlowFramesConfiguration
+  constructor(Int = DEFAULT_SLOW_FRAME_RECORDS_MAX_AMOUNT, Long = DEFAULT_FROZEN_FRAME_THRESHOLD_NS, Long = DEFAULT_CONTINUOUS_SLOW_FRAME_THRESHOLD_NS, Long = DEFAULT_FREEZE_DURATION_NS, Long = DEFAULT_VIEW_LIFETIME_THRESHOLD_NS)
+  companion object 
+    val DEFAULT: SlowFramesConfiguration
 fun interface com.datadog.kmp.rum.startup.AppStartupActivityPredicate
   fun shouldTrackStartup(android.app.Activity): Boolean
 class com.datadog.kmp.rum.tracking.AcceptAllActivities : ComponentPredicate<android.app.Activity>

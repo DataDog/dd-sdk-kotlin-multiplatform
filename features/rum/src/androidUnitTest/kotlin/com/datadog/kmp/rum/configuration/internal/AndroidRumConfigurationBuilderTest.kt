@@ -12,6 +12,7 @@ import android.view.View
 import com.datadog.android.rum.ExperimentalRumApi
 import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.rum.configuration.RumSessionListener
+import com.datadog.kmp.rum.configuration.SlowFramesConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.event.ViewEventMapper
 import com.datadog.kmp.rum.model.ActionEvent
@@ -51,6 +52,7 @@ import com.datadog.android.event.EventMapper as NativeEventMapper
 import com.datadog.android.rum.RumConfiguration as NativeAndroidConfiguration
 import com.datadog.android.rum.RumConfiguration as NativeRumConfiguration
 import com.datadog.android.rum.RumSessionListener as NativeRumSessionListener
+import com.datadog.android.rum.configuration.SlowFramesConfiguration as NativeSlowFramesConfiguration
 import com.datadog.android.rum.configuration.VitalsUpdateFrequency as NativeVitalsUpdateFrequency
 import com.datadog.android.rum.event.ViewEventMapper as NativeViewEventMapper
 import com.datadog.android.rum.model.ActionEvent as NativeActionEvent
@@ -459,6 +461,36 @@ internal class AndroidRumConfigurationBuilderTest {
 
         predicateCaptor.firstValue.shouldTrackStartup(mockActivity)
         verify(mockPredicate).shouldTrackStartup(mockActivity)
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setSlowFramesConfiguration W setSlowFramesConfiguration`(
+        @Forgery fakeSlowFramesConfiguration: SlowFramesConfiguration
+    ) {
+        // When
+        testedBuilder.setSlowFramesConfiguration(fakeSlowFramesConfiguration)
+
+        // Then
+        val captor = argumentCaptor<NativeSlowFramesConfiguration>()
+        verify(mockNativeRumConfigurationBuilder).setSlowFramesConfiguration(captor.capture())
+        assertThat(captor.firstValue).isEqualTo(
+            NativeSlowFramesConfiguration(
+                maxSlowFramesAmount = fakeSlowFramesConfiguration.maxSlowFramesAmount,
+                maxSlowFrameThresholdNs = fakeSlowFramesConfiguration.maxSlowFrameThresholdNs,
+                continuousSlowFrameThresholdNs = fakeSlowFramesConfiguration.continuousSlowFrameThresholdNs,
+                freezeDurationThresholdNs = fakeSlowFramesConfiguration.freezeDurationThresholdNs,
+                minViewLifetimeThresholdNs = fakeSlowFramesConfiguration.minViewLifetimeThresholdNs
+            )
+        )
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setSlowFramesConfiguration W setSlowFramesConfiguration(null)`() {
+        // When
+        testedBuilder.setSlowFramesConfiguration(null)
+
+        // Then
+        verify(mockNativeRumConfigurationBuilder).setSlowFramesConfiguration(null)
     }
 
     @Test
