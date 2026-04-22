@@ -35,7 +35,7 @@ import io.ktor.http.contentLength
 import io.ktor.util.AttributeKey
 
 internal class DatadogKtorPlugin(
-    private val rumMonitor: RumMonitor,
+    private val rumMonitorProvider: () -> RumMonitor,
     private val rumSessionProvider: RumSessionProvider,
     private val datadogContextProvider: DatadogContextProvider,
     private val tracedHosts: Map<String, Set<TracingHeaderType>>,
@@ -93,7 +93,7 @@ internal class DatadogKtorPlugin(
         val requestId = uuid4().toString()
         request.attributes.put(DD_REQUEST_ID_ATTR, requestId)
         request.attributes.put(DD_IS_SAMPLED_ATTR, isSampledIn)
-        rumMonitor.startResource(
+        rumMonitorProvider.invoke().startResource(
             key = requestId,
             method = request.method.asRumMethod(),
             url = request.url.buildString(),
@@ -115,7 +115,7 @@ internal class DatadogKtorPlugin(
                     put(RUM_RULE_PSR, rulePsr)
                 }
             }
-            rumMonitor.stopResource(
+            rumMonitorProvider.invoke().stopResource(
                 key = requestId,
                 statusCode = response.status.value,
                 size = response.contentLength(), // TODO RUM-6382 Report content size if header is missing
@@ -132,7 +132,7 @@ internal class DatadogKtorPlugin(
         if (requestId != null) {
             val method = request.method
             val url = request.url.toString()
-            rumMonitor.stopResourceWithError(
+            rumMonitorProvider.invoke().stopResourceWithError(
                 key = requestId,
                 statusCode = null,
                 message = "Ktor request error $method $url",

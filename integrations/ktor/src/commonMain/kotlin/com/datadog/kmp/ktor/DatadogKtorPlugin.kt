@@ -39,7 +39,7 @@ fun datadogKtorPlugin(
     rumResourceAttributesProvider: RumResourceAttributesProvider = DefaultRumResourceAttributesProvider
 ): ClientPlugin<Unit> {
     return DatadogKtorPlugin(
-        RumMonitor.get(),
+        { RumMonitor.get() },
         RumSessionProvider.get(),
         DatadogContextProvider.get(),
         tracedHosts,
