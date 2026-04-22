@@ -19,8 +19,13 @@ plugins {
     alias(libs.plugins.mokkery) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.nexusPublish)
+    id("datadog-ios-build-pods")
     // false - just to load classes into a classpath
     id("datadog-build-config") apply false
+}
+
+datadogPodsBuild {
+    podVersion.set(libs.versions.datadog.ios.get())
 }
 
 nexusPublishing {

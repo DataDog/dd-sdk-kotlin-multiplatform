@@ -6,16 +6,20 @@
 
 package com.datadog.kmp.rum.configuration.internal
 
+import android.app.Activity
 import android.content.Context
 import android.view.View
+import com.datadog.android.rum.ExperimentalRumApi
 import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.rum.configuration.RumSessionListener
+import com.datadog.kmp.rum.configuration.SlowFramesConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.event.ViewEventMapper
 import com.datadog.kmp.rum.model.ActionEvent
 import com.datadog.kmp.rum.model.ErrorEvent
 import com.datadog.kmp.rum.model.LongTaskEvent
 import com.datadog.kmp.rum.model.ResourceEvent
+import com.datadog.kmp.rum.startup.AppStartupActivityPredicate
 import com.datadog.kmp.rum.tracking.InteractionPredicate
 import com.datadog.kmp.rum.tracking.ViewAttributesProvider
 import com.datadog.kmp.rum.tracking.ViewTrackingStrategy
@@ -48,6 +52,7 @@ import com.datadog.android.event.EventMapper as NativeEventMapper
 import com.datadog.android.rum.RumConfiguration as NativeAndroidConfiguration
 import com.datadog.android.rum.RumConfiguration as NativeRumConfiguration
 import com.datadog.android.rum.RumSessionListener as NativeRumSessionListener
+import com.datadog.android.rum.configuration.SlowFramesConfiguration as NativeSlowFramesConfiguration
 import com.datadog.android.rum.configuration.VitalsUpdateFrequency as NativeVitalsUpdateFrequency
 import com.datadog.android.rum.event.ViewEventMapper as NativeViewEventMapper
 import com.datadog.android.rum.model.ActionEvent as NativeActionEvent
@@ -55,6 +60,7 @@ import com.datadog.android.rum.model.ErrorEvent as NativeErrorEvent
 import com.datadog.android.rum.model.LongTaskEvent as NativeLongTaskEvent
 import com.datadog.android.rum.model.ResourceEvent as NativeResourceEvent
 import com.datadog.android.rum.model.ViewEvent as NativeViewEvent
+import com.datadog.android.rum.startup.AppStartupActivityPredicate as NativeAppStartupActivityPredicate
 import com.datadog.android.rum.tracking.InteractionPredicate as NativeInteractionPredicate
 import com.datadog.android.rum.tracking.ViewAttributesProvider as NativeViewAttributesProvider
 import com.datadog.android.rum.tracking.ViewTrackingStrategy as NativeViewTrackingStrategy
@@ -436,6 +442,55 @@ internal class AndroidRumConfigurationBuilderTest {
 
         // Then
         verify(mockNativeRumConfigurationBuilder).useCustomEndpoint(fakeCustomEndpoint)
+    }
+
+    @OptIn(ExperimentalRumApi::class)
+    @Test
+    fun `M call platform RUM configuration builder+setAppStartupActivityPredicate W setAppStartupActivityPredicate`() {
+        // Given
+        val mockPredicate = mock<AppStartupActivityPredicate>()
+        val mockActivity = mock<Activity>()
+
+        // When
+        testedBuilder.setAppStartupActivityPredicate(mockPredicate)
+
+        // Then
+        val predicateCaptor = argumentCaptor<NativeAppStartupActivityPredicate>()
+        verify(mockNativeRumConfigurationBuilder)
+            .setAppStartupActivityPredicate(predicateCaptor.capture())
+
+        predicateCaptor.firstValue.shouldTrackStartup(mockActivity)
+        verify(mockPredicate).shouldTrackStartup(mockActivity)
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setSlowFramesConfiguration W setSlowFramesConfiguration`(
+        @Forgery fakeSlowFramesConfiguration: SlowFramesConfiguration
+    ) {
+        // When
+        testedBuilder.setSlowFramesConfiguration(fakeSlowFramesConfiguration)
+
+        // Then
+        val captor = argumentCaptor<NativeSlowFramesConfiguration>()
+        verify(mockNativeRumConfigurationBuilder).setSlowFramesConfiguration(captor.capture())
+        assertThat(captor.firstValue).isEqualTo(
+            NativeSlowFramesConfiguration(
+                maxSlowFramesAmount = fakeSlowFramesConfiguration.maxSlowFramesAmount,
+                maxSlowFrameThresholdNs = fakeSlowFramesConfiguration.maxSlowFrameThresholdNs,
+                continuousSlowFrameThresholdNs = fakeSlowFramesConfiguration.continuousSlowFrameThresholdNs,
+                freezeDurationThresholdNs = fakeSlowFramesConfiguration.freezeDurationThresholdNs,
+                minViewLifetimeThresholdNs = fakeSlowFramesConfiguration.minViewLifetimeThresholdNs
+            )
+        )
+    }
+
+    @Test
+    fun `M call platform RUM configuration builder+setSlowFramesConfiguration W setSlowFramesConfiguration(null)`() {
+        // When
+        testedBuilder.setSlowFramesConfiguration(null)
+
+        // Then
+        verify(mockNativeRumConfigurationBuilder).setSlowFramesConfiguration(null)
     }
 
     @Test

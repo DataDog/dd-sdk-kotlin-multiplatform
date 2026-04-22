@@ -230,7 +230,7 @@ data class com.datadog.kmp.rum.model.ErrorEvent
   data class Account
     constructor(kotlin.String, kotlin.String? = null, kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
   data class Connectivity
-    constructor(Status, EffectiveType? = null, Cellular? = null)
+    constructor(ConnectivityStatus, EffectiveType? = null, Cellular? = null)
   data class Display
     constructor(Viewport? = null)
   data class Synthetics
@@ -242,7 +242,7 @@ data class com.datadog.kmp.rum.model.ErrorEvent
   data class Device
     constructor(DeviceType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
   data class Dd
-    constructor(DdSession? = null, Configuration? = null, kotlin.String? = null)
+    constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, Profiling? = null)
     val formatVersion: kotlin.Long
   data class Context
     constructor(kotlin.collections.MutableMap<kotlin.String, kotlin.Any?> = mutableMapOf())
@@ -260,6 +260,8 @@ data class com.datadog.kmp.rum.model.ErrorEvent
     constructor(Plan? = null, SessionPrecondition? = null)
   data class Configuration
     constructor(kotlin.Number, kotlin.Number? = null)
+  data class Profiling
+    constructor(ProfilingStatus? = null, ErrorReason? = null)
   data class ContainerView
     constructor(kotlin.String)
   data class Cause
@@ -289,7 +291,7 @@ data class com.datadog.kmp.rum.model.ErrorEvent
     - USER
     - SYNTHETICS
     - CI_TEST
-  enum Status
+  enum ConnectivityStatus
     constructor(kotlin.String)
     - CONNECTED
     - NOT_CONNECTED
@@ -352,6 +354,18 @@ data class com.datadog.kmp.rum.model.ErrorEvent
     - PREWARM
     - FROM_NON_INTERACTIVE_SESSION
     - EXPLICIT_STOP
+  enum ProfilingStatus
+    constructor(kotlin.String)
+    - STARTING
+    - RUNNING
+    - STOPPED
+    - ERROR
+  enum ErrorReason
+    constructor(kotlin.String)
+    - NOT_SUPPORTED_BY_BROWSER
+    - FAILED_TO_LAZY_LOAD
+    - MISSING_DOCUMENT_POLICY_HEADER
+    - UNEXPECTED_EXCEPTION
   enum Method
     constructor(kotlin.String)
     - POST
@@ -548,7 +562,7 @@ data class com.datadog.kmp.rum.model.ResourceEvent
   data class Provider
     constructor(kotlin.String? = null, kotlin.String? = null, ProviderType? = null)
   data class Graphql
-    constructor(OperationType, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+    constructor(OperationType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
   enum ResourceEventSource
     constructor(kotlin.String)
     - ANDROID

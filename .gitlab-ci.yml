@@ -52,7 +52,7 @@ ci-image:
 env-info:
   stage: info
   when: manual
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   allow_failure: true # do not block GH PRs
   script:
     - system_profiler SPSoftwareDataType # system info
@@ -74,7 +74,7 @@ env-info:
 
 static-analysis-ios:
   stage: analysis
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   timeout: 1h
   script:
 #    - ./tools/lint/run-linter.sh
@@ -124,7 +124,7 @@ jvm-unit-test:
 
 ios-unit-test:
   stage: test
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   timeout: 1h
   script:
     - pod repo update
@@ -139,7 +139,7 @@ ios-unit-test:
 
 tvos-unit-test:
   stage: test
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   timeout: 1h
   script:
     - pod repo update
@@ -154,38 +154,26 @@ tvos-unit-test:
 
 sample-app-build-ios:
   stage: test
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   timeout: 1h
   variables:
     BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5"
   script:
     - pod repo update
-    - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
-    # by some reason without this line xcodebuild below fails
-    - ./gradlew :core:podBuildDatadogCoreIosSimulator
-      :core:podBuildDatadogCrashReportingIosSimulator
-      :features:rum:podBuildDatadogRUMIosSimulator
-      :features:logs:podBuildDatadogLogsIosSimulator
-      :features:session-replay:podBuildDatadogSessionReplayIosSimulator
-      --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
+    # by some reason if we build Datadog pods from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
+    - ./gradlew :buildDatadogPods
     - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample iOS" build | xcbeautify --preserve-unbeautified
 
 sample-app-build-tvos:
   stage: test
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   timeout: 1h
   variables:
     BUILD_DESTINATION: "platform=tvOS Simulator,name=Apple TV,OS=17.5"
   script:
     - pod repo update
-    - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
-    # temporary workaround for RUM-4282
-    # by some reason without this line xcodebuild below fails
-    - ./gradlew :core:podBuildDatadogCoreTvosSimulator
-      :core:podBuildDatadogCrashReportingTvosSimulator
-      :features:rum:podBuildDatadogRUMTvosSimulator
-      :features:logs:podBuildDatadogLogsTvosSimulator
-      --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
+    # by some reason if we build Datadog pods from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
+    - ./gradlew :buildDatadogPods
     - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample tvOS" build | xcbeautify --preserve-unbeautified
 
 sample-app-build-android:
@@ -202,7 +190,7 @@ sample-app-build-android:
 # PUBLISH ARTIFACTS ON MAVEN
 
 publish:release-core:
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -212,7 +200,7 @@ publish:release-core:
     - ./gradlew :core:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-logs:
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -222,7 +210,7 @@ publish:release-logs:
     - ./gradlew :features:logs:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-rum:
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -232,7 +220,7 @@ publish:release-rum:
     - ./gradlew :features:rum:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-webview:
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -242,7 +230,7 @@ publish:release-webview:
     - ./gradlew :features:webview:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-session-replay:
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -252,7 +240,7 @@ publish:release-session-replay:
     - ./gradlew :features:session-replay:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-ktor:
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -262,7 +250,7 @@ publish:release-ktor:
     - ./gradlew :integrations:ktor:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-ktor3:
-  tags: [ "macos:sonoma-arm64, specific:true" ]
+  tags: [ "macos:sequoia-arm64, specific:true" ]
   only:
     - tags
   stage: publish
