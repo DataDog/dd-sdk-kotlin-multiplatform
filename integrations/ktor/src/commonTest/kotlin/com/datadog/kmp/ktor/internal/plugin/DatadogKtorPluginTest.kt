@@ -96,7 +96,7 @@ class DatadogKtorPluginTest {
     private var fakeAccountId = nullable(uuid4().toString())
 
     private var testedPlugin = DatadogKtorPlugin(
-        rumMonitor = mockRumMonitor,
+        rumMonitorProvider = { mockRumMonitor },
         tracedHosts = fakeTracedHosts,
         traceSampler = mockTraceSampler,
         traceContextInjection = TraceContextInjection.All,
@@ -878,7 +878,7 @@ class DatadogKtorPluginTest {
     fun `M not inject any tracing headers W request is made + sampled out + sampled injection control`() {
         // Given
         val testedPlugin = DatadogKtorPlugin(
-            rumMonitor = mockRumMonitor,
+            rumMonitorProvider = { mockRumMonitor },
             tracedHosts = fakeTracedHosts,
             traceSampler = mockTraceSampler,
             traceContextInjection = TraceContextInjection.Sampled,
@@ -936,7 +936,7 @@ class DatadogKtorPluginTest {
     fun `M inject tracing headers W request is made + sampled in + sampled injection control`() {
         // Given
         val testedPlugin = DatadogKtorPlugin(
-            rumMonitor = mockRumMonitor,
+            rumMonitorProvider = { mockRumMonitor },
             tracedHosts = fakeTracedHosts,
             traceSampler = mockTraceSampler,
             traceContextInjection = TraceContextInjection.Sampled,
@@ -1070,7 +1070,7 @@ class DatadogKtorPluginTest {
         // Given
         val fakeWildcardTracHeaderTypes = randomEnumValues<TracingHeaderType>()
         val plugin = DatadogKtorPlugin(
-            rumMonitor = mockRumMonitor,
+            rumMonitorProvider = { mockRumMonitor },
             tracedHosts = fakeTracedHosts + mapOf("*" to fakeWildcardTracHeaderTypes),
             traceSampler = mockTraceSampler,
             traceContextInjection = TraceContextInjection.All,
