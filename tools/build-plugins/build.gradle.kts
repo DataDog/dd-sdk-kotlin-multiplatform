@@ -71,5 +71,13 @@ gradlePlugin {
             id = "json-schema-generator"
             implementationClass = "com.datadog.build.plugin.jsonschema.GenerateJsonSchemaPlugin"
         }
+        register("DatadogPodsBuildPlugin") {
+            id = "datadog-ios-build-pods"
+            implementationClass = "com.datadog.build.plugin.iosnative.DatadogPodsBuildPlugin"
+        }
+        register("DatadogFrameworksPlugin") {
+            id = "datadog-ios-frameworks"
+            implementationClass = "com.datadog.build.plugin.iosnative.DatadogFrameworksPlugin"
+        }
     }
 }

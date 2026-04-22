@@ -9,8 +9,10 @@ package com.datadog.kmp.rum.configuration.internal
 import android.content.Context
 import android.view.View
 import com.datadog.android.api.SdkCore
+import com.datadog.android.rum.ExperimentalRumApi
 import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.rum.configuration.RumSessionListener
+import com.datadog.kmp.rum.configuration.SlowFramesConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.event.ViewEventMapper
 import com.datadog.kmp.rum.model.ActionEvent
@@ -18,11 +20,13 @@ import com.datadog.kmp.rum.model.ErrorEvent
 import com.datadog.kmp.rum.model.LongTaskEvent
 import com.datadog.kmp.rum.model.ResourceEvent
 import com.datadog.kmp.rum.model.toCommonModel
+import com.datadog.kmp.rum.startup.AppStartupActivityPredicate
 import com.datadog.kmp.rum.tracking.InteractionPredicate
 import com.datadog.kmp.rum.tracking.ViewAttributesProvider
 import com.datadog.kmp.rum.tracking.ViewTrackingStrategy
 import com.datadog.android.rum.RumConfiguration as NativeAndroidConfiguration
 import com.datadog.android.rum.RumSessionListener as NativeRumSessionListener
+import com.datadog.android.rum.configuration.SlowFramesConfiguration as NativeSlowFramesConfiguration
 import com.datadog.android.rum.configuration.VitalsUpdateFrequency as NativeVitalsUpdateFrequency
 import com.datadog.android.rum.model.ErrorEvent as NativeErrorEvent
 import com.datadog.android.rum.tracking.InteractionPredicate as NativeInteractionPredicate
@@ -199,6 +203,17 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
         )
     }
 
+    @OptIn(ExperimentalRumApi::class)
+    fun setAppStartupActivityPredicate(predicate: AppStartupActivityPredicate) {
+        nativeConfigurationBuilder.setAppStartupActivityPredicate {
+            predicate.shouldTrackStartup(it)
+        }
+    }
+
+    fun setSlowFramesConfiguration(slowFramesConfiguration: SlowFramesConfiguration?) {
+        nativeConfigurationBuilder.setSlowFramesConfiguration(slowFramesConfiguration?.native)
+    }
+
     override fun build(): NativeAndroidConfiguration {
         return nativeConfigurationBuilder.build()
     }
@@ -243,3 +258,12 @@ private val InteractionPredicate.native: NativeInteractionPredicate
             override fun getTargetName(target: Any): String? = kmpPredicate.getTargetName(target)
         }
     }
+
+private val SlowFramesConfiguration.native: NativeSlowFramesConfiguration
+    get() = NativeSlowFramesConfiguration(
+        maxSlowFramesAmount = maxSlowFramesAmount,
+        maxSlowFrameThresholdNs = maxSlowFrameThresholdNs,
+        continuousSlowFrameThresholdNs = continuousSlowFrameThresholdNs,
+        freezeDurationThresholdNs = freezeDurationThresholdNs,
+        minViewLifetimeThresholdNs = minViewLifetimeThresholdNs
+    )

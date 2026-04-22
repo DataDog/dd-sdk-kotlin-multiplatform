@@ -21,6 +21,7 @@ internal class Configurator : BaseConfigurator() {
         forge.addFactory(ErrorEventForgeryFactory())
         forge.addFactory(LongTaskEventForgeryFactory())
         forge.addFactory(ResourceEventForgeryFactory())
+        forge.addFactory(SlowFramesConfigurationForgeryFactory())
         forge.addFactory(ViewEventForgeryFactory())
     }
 }
