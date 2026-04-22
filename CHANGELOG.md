@@ -1,3 +1,14 @@
+# 1.6.0 / 2026-04-22
+
+* [IMPROVEMENT] Support app startup activity predicate on Android. See [#257](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/257)
+* [IMPROVEMENT] Support `setSlowFramesConfiguration` API for Android. See [#258](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/258)
+* [IMPROVEMENT] Lazy capture of RUM monitor in Ktor instrumentation. See [#262](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/262)
+* [MAINTENANCE] Build iOS native modules only once. See [#242](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/242)
+* [MAINTENANCE] Migrate from Sonoma CI runner to Sequoia. See [#253](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/253)
+* [MAINTENANCE] Update iOS SDK to version 3.9.0. See [#254](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/254)
+* [MAINTENANCE] Update iOS SDK to version 3.9.1. See [#255](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/255)
+* [MAINTENANCE] Update Datadog Android SDK to 3.9.0. See [#256](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/256)
+
 # 1.5.0 / 2026-02-09
 
 * [FEATURE] Add `RumMonitor` `reportAppFullyDisplayed`, `addViewAttributes`, `removeViewAttributes` methods. See [#230](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/230)
