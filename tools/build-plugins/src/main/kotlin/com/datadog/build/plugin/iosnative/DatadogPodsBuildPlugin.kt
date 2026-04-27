@@ -60,7 +60,10 @@ class DatadogPodsBuildPlugin : Plugin<Project> {
                 "ONLY_ACTIVE_ARCH=NO",
                 "SKIP_INSTALL=NO",
                 "BUILD_LIBRARY_FOR_DISTRIBUTION=YES",
-                "CONFIGURATION_BUILD_DIR=${outputDir.get().asFile.absolutePath}"
+                "CONFIGURATION_BUILD_DIR=${outputDir.get().asFile.absolutePath}",
+                "|",
+                "xcbeautify",
+                "--preserve-unbeautified"
             )
             inputs.file(syntheticPodsRootDir.map { it.file("Podfile.lock") })
             outputs.dir(outputDir)
