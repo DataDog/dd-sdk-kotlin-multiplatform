@@ -52,6 +52,7 @@ class DatadogPodsBuildPlugin : Plugin<Project> {
             workingDir(syntheticPodsRootDir)
             commandLine(
                 "xcodebuild",
+                "-quiet",
                 "-project", "Pods/Pods.xcodeproj",
                 "-scheme", scheme,
                 "-configuration", "Release",
