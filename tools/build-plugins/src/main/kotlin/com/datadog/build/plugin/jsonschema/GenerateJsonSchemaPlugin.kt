@@ -60,7 +60,7 @@ class GenerateJsonSchemaPlugin : Plugin<Project> {
                 target.tasks.withType<Jar> {
                     dependsOn(modelsGenerationTask)
                 }
-                target.tasks.withType<KotlinCompileCommon>() {
+                target.tasks.withType<KotlinCompileCommon> {
                     dependsOn(modelsGenerationTask)
                 }
             }

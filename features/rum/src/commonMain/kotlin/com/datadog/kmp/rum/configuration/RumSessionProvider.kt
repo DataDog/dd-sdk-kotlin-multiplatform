@@ -31,8 +31,14 @@ internal object InternalRumSessionProviderListener : RumSessionProvider, Advance
     }
 }
 
+/**
+ * For the internal usage only.
+ */
 interface RumSessionProvider {
 
+    /**
+     * Current RUM session ID.
+     */
     val sessionId: String?
 
     companion object {
