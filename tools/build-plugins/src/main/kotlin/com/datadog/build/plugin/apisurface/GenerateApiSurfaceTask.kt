@@ -18,7 +18,7 @@ open class GenerateApiSurfaceTask : DefaultTask() {
     @get:InputFiles
     lateinit var sourceFiles: FileCollection
 
-    @get: OutputFile
+    @get:OutputFile
     lateinit var surfaceFile: File
 
     private lateinit var visitor: KotlinFileVisitor

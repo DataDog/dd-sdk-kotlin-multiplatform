@@ -102,6 +102,7 @@ internal fun HeadersBuilder.addToW3cBaggage(key: String, value: String) {
  * ; whitespace, DQUOTE, comma, semicolon,
  * ; and backslash
  */
+@Suppress("EndOfSentenceFormat")
 private val ALLOWED_BAGGAGE_VALUE_CHARS =
     setOf('!') + ('#'..'+') + ('-'..':') + ('<'..'[') + (']'..'~')
 

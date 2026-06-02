@@ -44,6 +44,8 @@ enum class TracingHeaderType {
      * @param traceId the trace id
      * @param spanId the span id
      * @param rumSessionId the RUM session id
+     * @param userId the current user ID
+     * @param accountId the current account ID
      */
     internal fun injectHeaders(
         request: HttpRequestBuilder,

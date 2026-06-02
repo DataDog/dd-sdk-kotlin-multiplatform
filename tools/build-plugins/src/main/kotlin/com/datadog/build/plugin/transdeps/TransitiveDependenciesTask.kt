@@ -24,7 +24,7 @@ open class TransitiveDependenciesTask : DefaultTask() {
     @get:Input
     var sortByName: Boolean = true
 
-    @get: OutputFiles
+    @get:OutputFiles
     var outputFiles: List<File> = mutableListOf()
 
     init {
