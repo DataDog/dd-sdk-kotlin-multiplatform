@@ -185,6 +185,10 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
         nativeConfigurationBuilder.useCustomEndpoint(endpoint)
     }
 
+    override fun collectAccessibility(enabled: Boolean) {
+        nativeConfigurationBuilder.collectAccessibility(enabled)
+    }
+
     fun trackNonFatalAnrs(enabled: Boolean) {
         nativeConfigurationBuilder.trackNonFatalAnrs(enabled)
     }

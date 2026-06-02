@@ -255,6 +255,10 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
         nativeConfiguration.setCustomEndpoint(NSURL.URLWithString(endpoint))
     }
 
+    override fun collectAccessibility(enabled: Boolean) {
+        nativeConfiguration.setCollectAccessibility(enabled)
+    }
+
     fun setUiKitViewsPredicate(uiKitViewsPredicate: UIKitRUMViewsPredicate) {
         val nativePredicate = if (uiKitViewsPredicate is DefaultUIKitRUMViewsPredicate) {
             // just a short path to avoid creating unnecessary layers. NB: if DefaultUIKitRUMViewsPredicate becomes

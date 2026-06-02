@@ -425,6 +425,18 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
     }
 
     @Test
+    fun `M set collect accessibility W collectAccessibility`() {
+        // Given
+        val fakeEnabled = randomBoolean()
+
+        // When
+        testedBuilder.collectAccessibility(fakeEnabled)
+
+        // Then
+        assertEquals(fakeEnabled, fakeNativeRumConfiguration.collectAccessibility())
+    }
+
+    @Test
     fun `M set memory warnings tracking W trackMemoryWarnings`() {
         // Given
         val fakeTrackMemoryWarnings = randomBoolean()

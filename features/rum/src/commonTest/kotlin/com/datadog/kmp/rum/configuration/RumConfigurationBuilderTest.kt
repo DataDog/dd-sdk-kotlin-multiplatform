@@ -246,4 +246,18 @@ class RumConfigurationBuilderTest {
             mockPlatformRumConfigurationBuilder.useCustomEndpoint(fakeCustomEndpoint)
         }
     }
+
+    @Test
+    fun `M call platform RUM configuration builder+collectAccessibility W collectAccessibility`() {
+        // Given
+        val fakeEnabled = true
+
+        // When
+        testedRumConfigurationBuilder.collectAccessibility(fakeEnabled)
+
+        // Then
+        verify {
+            mockPlatformRumConfigurationBuilder.collectAccessibility(fakeEnabled)
+        }
+    }
 }
