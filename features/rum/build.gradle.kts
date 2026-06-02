@@ -190,7 +190,8 @@ jsonSchemaGenerator {
                 "Synthetics" to "RUMSyntheticsTest",
                 "Device" to "Device",
                 "OS" to "OperatingSystem",
-                "SessionPrecondition" to "RUMSessionPrecondition"
+                "SessionPrecondition" to "RUMSessionPrecondition",
+                "Graphql" to "RUMGraphql"
             )
             defaultCommonEnumValues = commonizeDefaultEnumValues(
                 defaultEnumValues + mapOf(

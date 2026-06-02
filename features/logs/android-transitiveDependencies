@@ -1,7 +1,7 @@
 Dependencies List
 
-com.datadoghq:dd-sdk-android-core:3.9.0                         :  779 Kb
-com.datadoghq:dd-sdk-android-logs:3.9.0                         :  154 Kb
+com.datadoghq:dd-sdk-android-core:3.10.0                        :  780 Kb
+com.datadoghq:dd-sdk-android-logs:3.10.0                        :  154 Kb
 org.jetbrains.kotlin:kotlin-stdlib:2.1.21                       : 1683 Kb
 org.jetbrains:annotations:13.0                                  :   17 Kb
 
