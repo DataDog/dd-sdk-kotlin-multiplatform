@@ -4,9 +4,12 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
+@file:Suppress("DEPRECATION")
+
 package com.datadog.kmp.rum
 
-import com.datadog.kmp.rum.featureoperations.FailureReason
+import com.datadog.kmp.rum.operations.FailureReason
+import com.datadog.kmp.rum.featureoperations.FailureReason as DeprecatedFailureReason
 
 /**
  *  A class enabling Datadog RUM features.
@@ -75,7 +78,7 @@ interface RumMonitor {
 
     /**
      * Notifies that an action started.
-     * This is used to track long running actions (e.g.: scroll). Such an action must
+     * This is used to track long-running actions (e.g.: scroll). Such an action must
      * be stopped with [stopAction], and will be stopped automatically if it lasts more than
      * 10 seconds.
      * @param type the action type
@@ -93,7 +96,7 @@ interface RumMonitor {
 
     /**
      * Notifies that an action stopped, and update the action's type and name.
-     * This is used to stop tracking long running actions (e.g.: scroll), started
+     * This is used to stop tracking long-running actions (e.g.: scroll), started
      * with [startAction].
      * @param type the action type (overriding the last started action)
      * @param name the action identifier (overriding the last started action)
@@ -217,14 +220,14 @@ interface RumMonitor {
 
     /**
      * Adds a global attribute to all future RUM events.
-     * @param key the attribute key (non null)
+     * @param key the attribute key (non-null)
      * @param value the attribute value (or null)
      */
     fun addAttribute(key: String, value: Any?)
 
     /**
      * Removes a global attribute from all future RUM events.
-     * @param key the attribute key (non null)
+     * @param key the attribute key (non-null)
      */
     fun removeAttribute(key: String)
 
@@ -236,8 +239,22 @@ interface RumMonitor {
      * For example, multiple network requests (photo or file uploads) for the same URL.
      * @param attributes additional custom attributes to attach to the feature operation.
      */
-    @ExperimentalRumApi
+    @Deprecated(
+        message = "Use startOperation instead.",
+        replaceWith = ReplaceWith("startOperation(name, operationKey, attributes)")
+    )
     fun startFeatureOperation(name: String, operationKey: String? = null, attributes: Map<String, Any?> = emptyMap())
+
+    /**
+     * Starts the [name] operation.
+     *
+     * @param name the name of the operation.
+     * @param operationKey optional operation key. Allows to track multiple operations of the same [name].
+     * For example, multiple network requests (photo or file uploads) for the same URL.
+     * @param attributes additional custom attributes to attach to the operation.
+     */
+    @ExperimentalRumApi
+    fun startOperation(name: String, operationKey: String? = null, attributes: Map<String, Any?> = emptyMap())
 
     /**
      * Finishes the [name] feature operation with successful status.
@@ -249,8 +266,24 @@ interface RumMonitor {
      * @param attributes additional custom attributes to attach to the feature operation. Can be
      * used to add some result data produced as the result of the operation.
      */
-    @ExperimentalRumApi
+    @Deprecated(
+        message = "Use succeedOperation instead.",
+        replaceWith = ReplaceWith("succeedOperation(name, operationKey, attributes)")
+    )
     fun succeedFeatureOperation(name: String, operationKey: String? = null, attributes: Map<String, Any?> = emptyMap())
+
+    /**
+     * Finishes the [name] operation with successful status.
+     *
+     * @param name the name of the operation.
+     * @param operationKey optional operation key identifying a specific operation
+     * instance from the list of operations of the same [name]. Should be provided if [operationKey] was
+     * provided during [startOperation] invocation.
+     * @param attributes additional custom attributes to attach to the operation. Can be
+     * used to add some result data produced as the result of the operation.
+     */
+    @ExperimentalRumApi
+    fun succeedOperation(name: String, operationKey: String? = null, attributes: Map<String, Any?> = emptyMap())
 
     /**
      * Finishes the [name] feature operation with failure status.
@@ -263,8 +296,30 @@ interface RumMonitor {
      * @param attributes additional custom attributes to attach to the feature operation. Can be
      * used to add some result data produced as the result of the operation.
      */
-    @ExperimentalRumApi
+    @Deprecated(
+        message = "Use failOperation instead.",
+        replaceWith = ReplaceWith("failOperation(name, operationKey, failureReason, attributes)")
+    )
     fun failFeatureOperation(
+        name: String,
+        operationKey: String? = null,
+        failureReason: DeprecatedFailureReason,
+        attributes: Map<String, Any?> = emptyMap()
+    )
+
+    /**
+     * Finishes the [name] operation with failure status.
+     *
+     * @param name the name of the operation.
+     * @param operationKey optional operation key identifying a specific operation
+     * instance from the list of operations of the same [name]. Should be provided if [operationKey] was
+     * provided during [startOperation] invocation.
+     * @param failureReason the reason for the operation failure.
+     * @param attributes additional custom attributes to attach to the operation. Can be
+     * used to add some result data produced as the result of the operation.
+     */
+    @ExperimentalRumApi
+    fun failOperation(
         name: String,
         operationKey: String? = null,
         failureReason: FailureReason,

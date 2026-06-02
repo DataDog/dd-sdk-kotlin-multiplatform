@@ -4,6 +4,8 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
+@file:Suppress("DEPRECATION")
+
 package com.datadog.kmp.rum.internal
 
 import cocoapods.DatadogRUM.DDRUMActionType
@@ -52,7 +54,7 @@ import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
 import com.datadog.kmp.rum.configuration.AdvancedRumSessionListener
-import com.datadog.kmp.rum.featureoperations.FailureReason
+import com.datadog.kmp.rum.operations.FailureReason
 import platform.Foundation.NSError
 import platform.Foundation.NSHTTPURLResponse
 import platform.Foundation.NSNumber
@@ -62,6 +64,7 @@ import platform.Foundation.NSURLSessionTaskMetrics
 import platform.Foundation.numberWithInt
 import platform.Foundation.numberWithLong
 import platform.UIKit.UIViewController
+import com.datadog.kmp.rum.featureoperations.FailureReason as DeprecatedFeatureFailureReason
 
 internal class RumMonitorAdapter(
     private val nativeRumMonitor: DDRumMonitorProxy,
@@ -185,31 +188,64 @@ internal class RumMonitorAdapter(
     }
 
     override fun addAttribute(key: String, value: Any?) {
-        nativeRumMonitor.addAttributeForKey(key, value)
+        if (value == null) {
+            nativeRumMonitor.removeAttributeForKey(key)
+        } else {
+            nativeRumMonitor.addAttributeForKey(key, value)
+        }
     }
 
     override fun removeAttribute(key: String) {
         nativeRumMonitor.removeAttributeForKey(key)
     }
 
-    @OptIn(ExperimentalRumApi::class)
+    @Deprecated(
+        "Use startOperation instead.",
+        replaceWith = ReplaceWith("startOperation(name, operationKey, attributes)")
+    )
     override fun startFeatureOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
-        nativeRumMonitor.startFeatureOperation(name, operationKey, eraseKeyType(attributes))
+        nativeRumMonitor.startOperation(name, operationKey, eraseKeyType(attributes))
     }
 
     @OptIn(ExperimentalRumApi::class)
+    override fun startOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
+        nativeRumMonitor.startOperation(name, operationKey, eraseKeyType(attributes))
+    }
+
+    @Deprecated(
+        "Use succeedOperation instead.",
+        replaceWith = ReplaceWith("succeedOperation(name, operationKey, attributes)")
+    )
     override fun succeedFeatureOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
-        nativeRumMonitor.succeedFeatureOperation(name, operationKey, eraseKeyType(attributes))
+        nativeRumMonitor.succeedOperation(name, operationKey, eraseKeyType(attributes))
     }
 
     @OptIn(ExperimentalRumApi::class)
+    override fun succeedOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
+        nativeRumMonitor.succeedOperation(name, operationKey, eraseKeyType(attributes))
+    }
+
+    @Deprecated(
+        "Use failOperation instead.",
+        replaceWith = ReplaceWith("failOperation(name, operationKey, failureReason, attributes)")
+    )
     override fun failFeatureOperation(
+        name: String,
+        operationKey: String?,
+        failureReason: DeprecatedFeatureFailureReason,
+        attributes: Map<String, Any?>
+    ) {
+        nativeRumMonitor.failOperation(name, operationKey, failureReason.native, eraseKeyType(attributes))
+    }
+
+    @OptIn(ExperimentalRumApi::class)
+    override fun failOperation(
         name: String,
         operationKey: String?,
         failureReason: FailureReason,
         attributes: Map<String, Any?>
     ) {
-        nativeRumMonitor.failFeatureOperation(name, operationKey, failureReason.native, eraseKeyType(attributes))
+        nativeRumMonitor.failOperation(name, operationKey, failureReason.native, eraseKeyType(attributes))
     }
 
     @OptIn(ExperimentalRumApi::class)
@@ -341,6 +377,15 @@ private val FailureReason.native: DDRUMFeatureOperationFailureReason
             FailureReason.ERROR -> DDRUMFeatureOperationFailureReasonError
             FailureReason.OTHER -> DDRUMFeatureOperationFailureReasonOther
             FailureReason.ABANDONED -> DDRUMFeatureOperationFailureReasonAbandoned
+        }
+    }
+
+private val DeprecatedFeatureFailureReason.native: DDRUMFeatureOperationFailureReason
+    get() {
+        return when (this) {
+            DeprecatedFeatureFailureReason.ERROR -> DDRUMFeatureOperationFailureReasonError
+            DeprecatedFeatureFailureReason.OTHER -> DDRUMFeatureOperationFailureReasonOther
+            DeprecatedFeatureFailureReason.ABANDONED -> DDRUMFeatureOperationFailureReasonAbandoned
         }
     }
 

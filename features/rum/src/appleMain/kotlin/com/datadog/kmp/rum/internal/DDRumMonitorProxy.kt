@@ -33,7 +33,7 @@ internal interface DDRumMonitorProxy {
         attributes: Map<Any?, *>
     )
 
-    fun addAttributeForKey(key: String, value: Any?)
+    fun addAttributeForKey(key: String, value: Any)
 
     fun addErrorWithError(
         error: NSError,
@@ -48,7 +48,7 @@ internal interface DDRumMonitorProxy {
         attributes: Map<Any?, *>
     )
 
-    fun addFeatureFlagEvaluationWithName(name: String, value: Any?)
+    fun addFeatureFlagEvaluationWithName(name: String, value: Any)
 
     fun addResourceMetricsWithResourceKey(
         resourceKey: String,
@@ -143,11 +143,11 @@ internal interface DDRumMonitorProxy {
         attributes: Map<Any?, *>
     )
 
-    fun startFeatureOperation(name: String, operationKey: String?, attributes: Map<Any?, *>)
+    fun startOperation(name: String, operationKey: String?, attributes: Map<Any?, *>)
 
-    fun succeedFeatureOperation(name: String, operationKey: String?, attributes: Map<Any?, *>)
+    fun succeedOperation(name: String, operationKey: String?, attributes: Map<Any?, *>)
 
-    fun failFeatureOperation(
+    fun failOperation(
         name: String,
         operationKey: String?,
         failureReason: DDRUMFeatureOperationFailureReason,
@@ -170,7 +170,7 @@ internal interface DDRumMonitorProxy {
                 attributes: Map<Any?, *>
             ) = nativeRumMonitor.addActionWithType(type, name, attributes)
 
-            override fun addAttributeForKey(key: String, value: Any?) = nativeRumMonitor.addAttributeForKey(key, value)
+            override fun addAttributeForKey(key: String, value: Any) = nativeRumMonitor.addAttributeForKey(key, value)
 
             override fun addErrorWithError(
                 error: NSError,
@@ -185,7 +185,7 @@ internal interface DDRumMonitorProxy {
                 attributes: Map<Any?, *>
             ) = nativeRumMonitor.addErrorWithMessage(message, stack, source, attributes)
 
-            override fun addFeatureFlagEvaluationWithName(name: String, value: Any?) =
+            override fun addFeatureFlagEvaluationWithName(name: String, value: Any) =
                 nativeRumMonitor.addFeatureFlagEvaluationWithName(name, value)
 
             override fun addResourceMetricsWithResourceKey(
@@ -284,18 +284,18 @@ internal interface DDRumMonitorProxy {
                 attributes: Map<Any?, *>
             ) = nativeRumMonitor.stopViewWithViewController(viewController, attributes)
 
-            override fun startFeatureOperation(name: String, operationKey: String?, attributes: Map<Any?, *>) =
-                nativeRumMonitor.startFeatureOperationWithName(name, operationKey, attributes)
+            override fun startOperation(name: String, operationKey: String?, attributes: Map<Any?, *>) =
+                nativeRumMonitor.startOperationWithName(name, operationKey, attributes, null)
 
-            override fun succeedFeatureOperation(name: String, operationKey: String?, attributes: Map<Any?, *>) =
-                nativeRumMonitor.succeedFeatureOperationWithName(name, operationKey, attributes)
+            override fun succeedOperation(name: String, operationKey: String?, attributes: Map<Any?, *>) =
+                nativeRumMonitor.succeedOperationWithName(name, operationKey, attributes)
 
-            override fun failFeatureOperation(
+            override fun failOperation(
                 name: String,
                 operationKey: String?,
                 failureReason: DDRUMFeatureOperationFailureReason,
                 attributes: Map<Any?, *>
-            ) = nativeRumMonitor.failFeatureOperationWithName(name, operationKey, failureReason, attributes)
+            ) = nativeRumMonitor.failOperationWithName(name, operationKey, failureReason, attributes)
 
             override fun addViewLoadingTime(overwrite: Boolean) =
                 nativeRumMonitor.addViewLoadingTimeWithOverwrite(overwrite)

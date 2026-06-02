@@ -4,9 +4,12 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
+@file:Suppress("DEPRECATION")
+
 package com.datadog.kmp.rum.internal
 
 import com.datadog.android.rum.internal.domain.event.ResourceTiming
+import com.datadog.android.rum.operations.OperationOptions
 import com.datadog.android.rum.resource.ResourceId
 import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.RumActionType
@@ -15,14 +18,15 @@ import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
 import com.datadog.kmp.rum.configuration.AdvancedRumSessionListener
-import com.datadog.kmp.rum.featureoperations.FailureReason
+import com.datadog.kmp.rum.operations.FailureReason
 import com.datadog.android.rum.ExperimentalRumApi as NativeExperimentalRumApi
 import com.datadog.android.rum.RumActionType as NativeRumActionType
 import com.datadog.android.rum.RumErrorSource as NativeRumErrorSource
 import com.datadog.android.rum.RumMonitor as NativeRumMonitor
 import com.datadog.android.rum.RumResourceKind as NativeRumResourceKind
 import com.datadog.android.rum.RumResourceMethod as NativeRumResourceMethod
-import com.datadog.android.rum.featureoperations.FailureReason as NativeFailureReason
+import com.datadog.android.rum.operations.FailureReason as NativeFailureReason
+import com.datadog.kmp.rum.featureoperations.FailureReason as DeprecatedFeatureFailureReason
 
 internal class RumMonitorAdapter(
     private val nativeRumMonitor: NativeRumMonitor,
@@ -122,24 +126,56 @@ internal class RumMonitorAdapter(
         nativeRumMonitor.removeAttribute(key)
     }
 
-    @OptIn(NativeExperimentalRumApi::class, ExperimentalRumApi::class)
+    @Deprecated(
+        "Use startOperation instead.",
+        replaceWith = ReplaceWith("startOperation(name, operationKey, attributes)")
+    )
+    @OptIn(NativeExperimentalRumApi::class)
     override fun startFeatureOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
-        nativeRumMonitor.startFeatureOperation(name, operationKey, attributes)
+        nativeRumMonitor.startOperation(name, operationKey, OperationOptions.Empty, attributes)
     }
 
     @OptIn(NativeExperimentalRumApi::class, ExperimentalRumApi::class)
+    override fun startOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
+        nativeRumMonitor.startOperation(name, operationKey, OperationOptions.Empty, attributes)
+    }
+
+    @Deprecated(
+        "Use succeedOperation instead.",
+        replaceWith = ReplaceWith("succeedOperation(name, operationKey, attributes)")
+    )
+    @OptIn(NativeExperimentalRumApi::class)
     override fun succeedFeatureOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
-        nativeRumMonitor.succeedFeatureOperation(name, operationKey, attributes)
+        nativeRumMonitor.succeedOperation(name, operationKey, attributes)
     }
 
     @OptIn(NativeExperimentalRumApi::class, ExperimentalRumApi::class)
+    override fun succeedOperation(name: String, operationKey: String?, attributes: Map<String, Any?>) {
+        nativeRumMonitor.succeedOperation(name, operationKey, attributes)
+    }
+
+    @Deprecated(
+        "Use failOperation instead.",
+        replaceWith = ReplaceWith("failOperation(name, operationKey, failureReason, attributes)")
+    )
+    @OptIn(NativeExperimentalRumApi::class)
     override fun failFeatureOperation(
+        name: String,
+        operationKey: String?,
+        failureReason: DeprecatedFeatureFailureReason,
+        attributes: Map<String, Any?>
+    ) {
+        nativeRumMonitor.failOperation(name, operationKey, failureReason.native, attributes)
+    }
+
+    @OptIn(NativeExperimentalRumApi::class, ExperimentalRumApi::class)
+    override fun failOperation(
         name: String,
         operationKey: String?,
         failureReason: FailureReason,
         attributes: Map<String, Any?>
     ) {
-        nativeRumMonitor.failFeatureOperation(name, operationKey, failureReason.native, attributes)
+        nativeRumMonitor.failOperation(name, operationKey, failureReason.native, attributes)
     }
 
     @OptIn(NativeExperimentalRumApi::class, ExperimentalRumApi::class)
@@ -312,5 +348,14 @@ private val FailureReason.native: NativeFailureReason
             FailureReason.ERROR -> NativeFailureReason.ERROR
             FailureReason.OTHER -> NativeFailureReason.OTHER
             FailureReason.ABANDONED -> NativeFailureReason.ABANDONED
+        }
+    }
+
+private val DeprecatedFeatureFailureReason.native: NativeFailureReason
+    get() {
+        return when (this) {
+            DeprecatedFeatureFailureReason.ERROR -> NativeFailureReason.ERROR
+            DeprecatedFeatureFailureReason.OTHER -> NativeFailureReason.OTHER
+            DeprecatedFeatureFailureReason.ABANDONED -> NativeFailureReason.ABANDONED
         }
     }
