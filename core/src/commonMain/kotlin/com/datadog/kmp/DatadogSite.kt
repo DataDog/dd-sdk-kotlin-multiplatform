@@ -44,5 +44,10 @@ enum class DatadogSite {
     /**
      *  The US1_FED site (FedRAMP compatible): [app.ddog-gov.com](https://app.ddog-gov.com).
      */
-    US1_FED
+    US1_FED,
+
+    /**
+     *  The US2_FED site (FedRAMP compatible): [us2.ddog-gov.com](https://us2.ddog-gov.com).
+     */
+    US2_FED
 }

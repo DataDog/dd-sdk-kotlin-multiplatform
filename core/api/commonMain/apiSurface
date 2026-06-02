@@ -19,6 +19,7 @@ enum com.datadog.kmp.DatadogSite
   - AP1
   - AP2
   - US1_FED
+  - US2_FED
 enum com.datadog.kmp.SdkLogVerbosity
   - DEBUG
   - WARN

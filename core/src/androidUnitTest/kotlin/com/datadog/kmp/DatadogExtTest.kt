@@ -95,6 +95,7 @@ internal class DatadogExtTest {
         mapOf(
             DatadogSite.US1 to DatadogSiteAndroid.US1,
             DatadogSite.US1_FED to DatadogSiteAndroid.US1_FED,
+            DatadogSite.US2_FED to DatadogSiteAndroid.US2_FED,
             DatadogSite.US3 to DatadogSiteAndroid.US3,
             DatadogSite.US5 to DatadogSiteAndroid.US5,
             DatadogSite.EU1 to DatadogSiteAndroid.EU1,
