@@ -40,6 +40,9 @@ class DatadogFrameworksPlugin : Plugin<Project> {
                 "generateDatadogCInteropDefs"
             ) {
                 frameworkNames.set(cinteropFrameworks.map { it.name })
+                frameworkPreImportModules.set(
+                    cinteropFrameworks.associate { it.name to it.preImportModules.get() }
+                )
                 outputDirectory.set(project.layout.buildDirectory.dir("generated/datadog-cinterop-defs"))
             }
 
