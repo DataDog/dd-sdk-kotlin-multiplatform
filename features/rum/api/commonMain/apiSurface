@@ -131,7 +131,7 @@ data class com.datadog.kmp.rum.model.ActionEvent
   data class Os
     constructor(kotlin.String, kotlin.String, kotlin.String? = null, kotlin.String)
   data class Device
-    constructor(DeviceType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+    constructor(DeviceType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Boolean? = null)
   data class Dd
     constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, DdAction? = null)
     val formatVersion: kotlin.Long
@@ -248,7 +248,7 @@ data class com.datadog.kmp.rum.model.ErrorEvent
   data class Os
     constructor(kotlin.String, kotlin.String, kotlin.String? = null, kotlin.String)
   data class Device
-    constructor(DeviceType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+    constructor(DeviceType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Boolean? = null)
   data class Dd
     constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, Profiling? = null)
     val formatVersion: kotlin.Long
@@ -425,7 +425,7 @@ data class com.datadog.kmp.rum.model.LongTaskEvent
   data class Os
     constructor(kotlin.String, kotlin.String, kotlin.String? = null, kotlin.String)
   data class Device
-    constructor(DeviceType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+    constructor(DeviceType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Boolean? = null)
   data class Dd
     constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, kotlin.Boolean? = null, Profiling? = null)
     val formatVersion: kotlin.Long
@@ -533,7 +533,7 @@ data class com.datadog.kmp.rum.model.ResourceEvent
   data class Os
     constructor(kotlin.String, kotlin.String, kotlin.String? = null, kotlin.String)
   data class Device
-    constructor(DeviceType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+    constructor(DeviceType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Boolean? = null)
   data class Dd
     constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.Boolean? = null)
     val formatVersion: kotlin.Long
@@ -688,7 +688,7 @@ data class com.datadog.kmp.rum.model.ViewEvent
   data class Os
     constructor(kotlin.String, kotlin.String, kotlin.String? = null, kotlin.String)
   data class Device
-    constructor(DeviceType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+    constructor(DeviceType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Boolean? = null)
   data class Dd
     constructor(DdSession? = null, Configuration? = null, kotlin.String? = null, kotlin.Long, kotlin.collections.List<PageState>? = null, ReplayStats? = null, Profiling? = null)
     val formatVersion: kotlin.Long

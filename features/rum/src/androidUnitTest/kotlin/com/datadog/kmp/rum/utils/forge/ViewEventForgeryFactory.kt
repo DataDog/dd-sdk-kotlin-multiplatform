@@ -122,7 +122,13 @@ internal class ViewEventForgeryFactory : ForgeryFactory<ViewEvent> {
                     model = forge.aString(),
                     brand = forge.aString(),
                     type = forge.aValueFrom(ViewEvent.DeviceType::class.java),
-                    architecture = forge.aString()
+                    architecture = forge.aString(),
+                    isLowRam = forge.aNullable { aBool() },
+                    logicalCpuCount = forge.aNullable { anInt(min = 1, max = 9) },
+                    totalRam = forge.aNullable {
+                        // 1GB to 16GB
+                        aLong(min = 1_073_741_824, max = 17_179_869_185)
+                    }
                 )
             },
             context = forge.aNullable {
