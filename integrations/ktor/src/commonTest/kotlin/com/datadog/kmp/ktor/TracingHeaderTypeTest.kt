@@ -186,7 +186,7 @@ class TracingHeaderTypeTest {
                 fakeUserId,
                 fakeAccountId
             ) to buildMap {
-                put("b3", "539-2a-1")
+                put("b3", "00000000000000000000000000000539-000000000000002a-1")
             },
             Fixture(
                 TraceId(1234567890u, 1337u),
@@ -196,7 +196,7 @@ class TracingHeaderTypeTest {
                 fakeUserId,
                 fakeAccountId
             ) to buildMap {
-                put("b3", "499602d20000000000000539-2a-1")
+                put("b3", "00000000499602d20000000000000539-000000000000002a-1")
             },
             Fixture(
                 TraceId(ULong.MAX_VALUE, ULong.MAX_VALUE),
@@ -253,8 +253,8 @@ class TracingHeaderTypeTest {
                 fakeUserId,
                 fakeAccountId
             ) to buildMap {
-                put("X-B3-TraceId", "539")
-                put("X-B3-SpanId", "2a")
+                put("X-B3-TraceId", "00000000000000000000000000000539")
+                put("X-B3-SpanId", "000000000000002a")
                 put("X-B3-Sampled", "1")
             },
             Fixture(
@@ -265,8 +265,8 @@ class TracingHeaderTypeTest {
                 fakeUserId,
                 fakeAccountId
             ) to buildMap {
-                put("X-B3-TraceId", "499602d20000000000000539")
-                put("X-B3-SpanId", "2a")
+                put("X-B3-TraceId", "00000000499602d20000000000000539")
+                put("X-B3-SpanId", "000000000000002a")
                 put("X-B3-Sampled", "1")
             },
             Fixture(
