@@ -13,6 +13,7 @@ import com.datadog.kmp.log.Logs
 import com.datadog.kmp.log.configuration.LogsConfiguration
 import com.datadog.kmp.privacy.TrackingConsent
 import com.datadog.tools.concurrent.CountDownLatch
+import com.datadog.tools.concurrent.runOnBackgroundQueueAndWait
 import com.datadog.tools.random.nullable
 import com.datadog.tools.random.randomEnumValue
 import com.datadog.tools.random.randomThrowable
@@ -24,24 +25,26 @@ class IOSLogsConfigurationBuilderTest {
     @Test
     fun `M call platform Logs configuration builder+setEventMapper W setEventMapper`() {
         // Given
-        initializeSdkWithPendingConsent()
-
         val latch = CountDownLatch(1)
 
-        val logsConfiguration = LogsConfiguration.Builder()
-            .setEventMapper {
-                latch.countDown()
-                it
-            }
-            .build()
-        Logs.enable(logsConfiguration)
-        val logger = Logger.Builder()
-            .build()
+        runOnBackgroundQueueAndWait {
+            initializeSdkWithPendingConsent()
 
-        // When
-        logger.log(randomEnumValue(), "fake message", nullable(randomThrowable()))
-        latch.await(EVENTS_WAIT_TIMEOUT_MS)
-        Datadog.stopInstance()
+            val logsConfiguration = LogsConfiguration.Builder()
+                .setEventMapper {
+                    latch.countDown()
+                    it
+                }
+                .build()
+            Logs.enable(logsConfiguration)
+            val logger = Logger.Builder()
+                .build()
+
+            // When
+            logger.log(randomEnumValue(), "fake message", nullable(randomThrowable()))
+            latch.await(EVENTS_WAIT_TIMEOUT_MS)
+            Datadog.stopInstance()
+        }
 
         // Then
         assertEquals(

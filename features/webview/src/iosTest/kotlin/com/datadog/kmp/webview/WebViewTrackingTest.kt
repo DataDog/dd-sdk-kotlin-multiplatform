@@ -6,6 +6,7 @@
 
 package com.datadog.kmp.webview
 
+import com.datadog.tools.concurrent.runOnBackgroundQueueAndWait
 import platform.WebKit.WKWebView
 import kotlin.test.Test
 
@@ -16,13 +17,21 @@ class WebViewTrackingTest {
 
     @Test
     fun `M dispatch enable call to linked iOS SDK W enable`() {
+        val webView = WKWebView()
+
         // When
-        WebViewTracking.enable(WKWebView(), allowedHosts = emptySet(), logsSampleRate = 100f)
+        runOnBackgroundQueueAndWait {
+            WebViewTracking.enable(webView, allowedHosts = emptySet(), logsSampleRate = 100f)
+        }
     }
 
     @Test
     fun `M dispatch disable call to linked iOS SDK W disable`() {
+        val webView = WKWebView()
+
         // When
-        WebViewTracking.disable(WKWebView())
+        runOnBackgroundQueueAndWait {
+            WebViewTracking.disable(webView)
+        }
     }
 }
