@@ -1,5 +1,5 @@
 [versions]
-agp = "8.10.1"
+agp = "8.13.2"
 # Keep in mind that Kotlin version used restricts which Xcode toolchain can be used: Xcode toolchain
 # version may be too recent for the Kotlin version used, so Kotlin Native tooling may fail to at
 # various steps. You can switch Xcode toolchain used on the system with xcodes CLI app,
