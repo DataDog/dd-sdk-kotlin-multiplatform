@@ -6,7 +6,7 @@
 
 package com.datadog.kmp.webview
 
-import com.datadog.kmp.ios.cinterop.webview.DDWebViewTracking
+import cocoapods.DatadogWebViewTracking.DDWebViewTracking
 import platform.WebKit.WKWebView
 
 /**

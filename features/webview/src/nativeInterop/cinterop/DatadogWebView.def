@@ -1,3 +1,0 @@
-language = Objective-C
-headers = DatadogWebViewTracking.h
-package = com.datadog.kmp.ios.cinterop.webview
