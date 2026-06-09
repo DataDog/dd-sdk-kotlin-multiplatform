@@ -14,6 +14,7 @@ import cocoapods.DatadogRUM.DDRUMActionTypeScroll
 import cocoapods.DatadogRUM.DDRUMActionTypeSwipe
 import cocoapods.DatadogRUM.DDRUMActionTypeTap
 import cocoapods.DatadogRUM.DDRUMErrorSource
+import cocoapods.DatadogRUM.DDRUMErrorSourceLogger
 import cocoapods.DatadogRUM.DDRUMErrorSourceNetwork
 import cocoapods.DatadogRUM.DDRUMErrorSourceSource
 import cocoapods.DatadogRUM.DDRUMErrorSourceWebview
@@ -364,8 +365,7 @@ private val RumErrorSource.native: DDRUMErrorSource
     get() {
         return when (this) {
             RumErrorSource.SOURCE -> DDRUMErrorSourceSource
-            // TODO RUM-4844 iOS has no value for logger
-            RumErrorSource.LOGGER -> DDRUMErrorSourceSource
+            RumErrorSource.LOGGER -> DDRUMErrorSourceLogger
             RumErrorSource.WEBVIEW -> DDRUMErrorSourceWebview
             RumErrorSource.NETWORK -> DDRUMErrorSourceNetwork
         }
