@@ -69,6 +69,7 @@ fun registerPluginSpecificAggregationTask(
     pluginName: String
 ) {
     tasks.register(aggregationTaskName) {
+        description = "Umbrella task to run $projectTaskName in all applicable projects."
         val aggregationTask = this
         allprojects.forEach {
             it.pluginManager.withPlugin(pluginName) {
@@ -107,21 +108,24 @@ val publishableProjects = listOf(
 )
 
 val jvmUnitTestDebugAllTask = tasks.register("jvmUnitTestDebugAll") {
+    description = "Runs Android unit tests for Debug build type accross all projects where applicable."
     val subProjectsTestTasks = publishableProjects.map {
-        "${it.targetProjectIdentity.buildTreePath.path}:testDebugUnitTest"
+        "${it.targetProjectIdentity.buildTreePath.asString()}:testDebugUnitTest"
     }
     dependsOn(subProjectsTestTasks)
 }
 
 val jvmUnitTestReleaseAllTask = tasks.register("jvmUnitTestReleaseAll") {
+    description = "Runs Android unit tests for Debug release type accross all projects where applicable."
     val subProjectsTestTasks = publishableProjects.map {
-        "${it.targetProjectIdentity.buildTreePath.path}:testReleaseUnitTest"
+        "${it.targetProjectIdentity.buildTreePath.asString()}:testReleaseUnitTest"
     }
     dependsOn(subProjectsTestTasks)
 }
 
 // will cover Android-specific tests + tests from common source set
 val jvmUnitTestAllTask = tasks.register("jvmUnitTestAll") {
+    description = "Runs Android unit tests for Debug+Release build types accross all projects where applicable."
     dependsOn(
         jvmUnitTestDebugAllTask,
         jvmUnitTestReleaseAllTask,
@@ -130,33 +134,38 @@ val jvmUnitTestAllTask = tasks.register("jvmUnitTestAll") {
 }
 
 val iosUnitTestAllTask = tasks.register("iosUnitTestAll") {
+    description = "Runs iOS unit tests accross all projects where applicable."
     val subProjectsTestTasks = publishableProjects.map {
-        "${it.targetProjectIdentity.buildTreePath.path}:iosSimulatorArm64Test"
+        "${it.targetProjectIdentity.buildTreePath.asString()}:iosSimulatorArm64Test"
     }
     dependsOn(subProjectsTestTasks)
 }
 
 val tvosUnitTestAllTask = tasks.register("tvosUnitTestAll") {
+    description = "Runs tvOS unit tests accross all projects where applicable."
     val subProjectsTestTasks = publishableProjects
         // by some reason something like `projects.features.webview == projects.features.webview` evaluates to false
         .filter {
-            it.targetProjectIdentity.buildTreePath.path !in setOf(":features:session-replay", ":features:webview")
+            it.targetProjectIdentity.buildTreePath.asString() !in setOf(":features:session-replay", ":features:webview")
         }
-        .map { "${it.targetProjectIdentity.buildTreePath.path}:tvosSimulatorArm64Test" }
+        .map { "${it.targetProjectIdentity.buildTreePath.asString()}:tvosSimulatorArm64Test" }
     dependsOn(subProjectsTestTasks)
 }
 
 val appleUnitTestAllTask = tasks.register("appleUnitTestAll") {
+    description = "Runs iOS+tvOS unit tests accross all projects where applicable."
     dependsOn(iosUnitTestAllTask, tvosUnitTestAllTask)
 }
 
 tasks.register("unitTestAll") {
+    description = "Runs unit tests accross all projects."
     dependsOn(jvmUnitTestAllTask, appleUnitTestAllTask)
 }
 
 tasks.register("lintCheckAll") {
+    description = "Runs lint check accross all projects for the Release build type."
     val subProjectsLintTasks = publishableProjects.map {
-        "${it.targetProjectIdentity.buildTreePath.path}:lintRelease"
+        "${it.targetProjectIdentity.buildTreePath.asString()}:lintRelease"
     }
     dependsOn(subProjectsLintTasks)
 }
