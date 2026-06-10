@@ -1,3 +1,9 @@
+/*
+ * Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
+ * This product includes software developed at Datadog (https://www.datadoghq.com/).
+ * Copyright 2016-Present Datadog, Inc.
+ */
+
 package com.datadog.build.plugin.iosnative
 
 import org.gradle.api.NamedDomainObjectContainer
@@ -21,6 +27,8 @@ abstract class DatadogNativeFrameworkSpec @Inject constructor(
         .convention(false)
     val packageName: Property<String> = objects.property<String>()
         .convention("cocoapods.$name")
+    val preImportModules: ListProperty<String> = objects.listProperty<String>()
+        .convention(emptyList())
     val compilerOpts: ListProperty<String> = objects.listProperty<String>()
         .convention(listOf("-fmodules"))
     val targetFamilies: SetProperty<Family> = objects.setProperty<Family>()

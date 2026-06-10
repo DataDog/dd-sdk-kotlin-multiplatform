@@ -4,6 +4,8 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
+@file:Suppress("DEPRECATION")
+
 package com.datadog.kmp.rum.internal
 
 import cocoapods.DatadogRUM.DDRUMActionType
@@ -12,6 +14,7 @@ import cocoapods.DatadogRUM.DDRUMActionTypeScroll
 import cocoapods.DatadogRUM.DDRUMActionTypeSwipe
 import cocoapods.DatadogRUM.DDRUMActionTypeTap
 import cocoapods.DatadogRUM.DDRUMErrorSource
+import cocoapods.DatadogRUM.DDRUMErrorSourceLogger
 import cocoapods.DatadogRUM.DDRUMErrorSourceNetwork
 import cocoapods.DatadogRUM.DDRUMErrorSourceSource
 import cocoapods.DatadogRUM.DDRUMErrorSourceWebview
@@ -46,7 +49,7 @@ import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
 import com.datadog.kmp.rum.configuration.AdvancedRumSessionListener
-import com.datadog.kmp.rum.featureoperations.FailureReason
+import com.datadog.kmp.rum.operations.FailureReason
 import com.datadog.tools.random.exhaustiveAttributes
 import com.datadog.tools.random.nullable
 import com.datadog.tools.random.randomBoolean
@@ -72,6 +75,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import com.datadog.kmp.rum.featureoperations.FailureReason as DeprecatedFeatureFailureReason
 
 class RumMonitorAdapterTest {
 
@@ -479,13 +483,25 @@ class RumMonitorAdapterTest {
     fun `M call native addAttributeForKey W addAttribute`() {
         // Given
         val fakeKey = "fakeKey"
-        val fakeValue = nullable(Any())
+        val fakeValue = Any()
 
         // When
         testedRumMonitorAdapter.addAttribute(fakeKey, fakeValue)
 
         // Then
         verify { mockNativeRumMonitor.addAttributeForKey(fakeKey, fakeValue) }
+    }
+
+    @Test
+    fun `M call native removeAttributeForKey W addAttribute + null value`() {
+        // Given
+        val fakeKey = "fakeKey"
+
+        // When
+        testedRumMonitorAdapter.addAttribute(fakeKey, null)
+
+        // Then
+        verify { mockNativeRumMonitor.removeAttributeForKey(fakeKey) }
     }
 
     @Test
@@ -501,7 +517,7 @@ class RumMonitorAdapterTest {
     }
 
     @Test
-    fun `M call native startFeatureOperation W startFeatureOperation`() {
+    fun `M call native startOperation W startFeatureOperation`() {
         // Given
         val fakeName = "fakeOperationName"
         val fakeOperationKey = nullable("fakeOperationKey")
@@ -512,12 +528,28 @@ class RumMonitorAdapterTest {
 
         // Then
         verify {
-            mockNativeRumMonitor.startFeatureOperation(fakeName, fakeOperationKey, fakeAttributes.eraseKeyType())
+            mockNativeRumMonitor.startOperation(fakeName, fakeOperationKey, fakeAttributes.eraseKeyType())
         }
     }
 
     @Test
-    fun `M call native succeedFeatureOperation W succeedFeatureOperation`() {
+    fun `M call native startOperation W startOperation`() {
+        // Given
+        val fakeName = "fakeOperationName"
+        val fakeOperationKey = nullable("fakeOperationKey")
+        val fakeAttributes = exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.startOperation(fakeName, fakeOperationKey, fakeAttributes)
+
+        // Then
+        verify {
+            mockNativeRumMonitor.startOperation(fakeName, fakeOperationKey, fakeAttributes.eraseKeyType())
+        }
+    }
+
+    @Test
+    fun `M call native succeedOperation W succeedFeatureOperation`() {
         // Given
         val fakeName = "fakeOperationName"
         val fakeOperationKey = nullable("fakeOperationKey")
@@ -528,16 +560,32 @@ class RumMonitorAdapterTest {
 
         // Then
         verify {
-            mockNativeRumMonitor.succeedFeatureOperation(fakeName, fakeOperationKey, fakeAttributes.eraseKeyType())
+            mockNativeRumMonitor.succeedOperation(fakeName, fakeOperationKey, fakeAttributes.eraseKeyType())
         }
     }
 
     @Test
-    fun `M call native failFeatureOperation W failFeatureOperation`() {
+    fun `M call native succeedOperation W succeedOperation`() {
         // Given
         val fakeName = "fakeOperationName"
         val fakeOperationKey = nullable("fakeOperationKey")
-        val fakeFailureReason = randomEnumValue<FailureReason>()
+        val fakeAttributes = exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.succeedOperation(fakeName, fakeOperationKey, fakeAttributes)
+
+        // Then
+        verify {
+            mockNativeRumMonitor.succeedOperation(fakeName, fakeOperationKey, fakeAttributes.eraseKeyType())
+        }
+    }
+
+    @Test
+    fun `M call native failOperation W failFeatureOperation`() {
+        // Given
+        val fakeName = "fakeOperationName"
+        val fakeOperationKey = nullable("fakeOperationKey")
+        val fakeFailureReason = randomEnumValue<DeprecatedFeatureFailureReason>()
         val fakeAttributes = exhaustiveAttributes()
 
         // When
@@ -545,7 +593,29 @@ class RumMonitorAdapterTest {
 
         // Then
         verify {
-            mockNativeRumMonitor.failFeatureOperation(
+            mockNativeRumMonitor.failOperation(
+                fakeName,
+                fakeOperationKey,
+                fakeFailureReason.native,
+                fakeAttributes.eraseKeyType()
+            )
+        }
+    }
+
+    @Test
+    fun `M call native failOperation W failOperation`() {
+        // Given
+        val fakeName = "fakeOperationName"
+        val fakeOperationKey = nullable("fakeOperationKey")
+        val fakeFailureReason = randomEnumValue<FailureReason>()
+        val fakeAttributes = exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.failOperation(fakeName, fakeOperationKey, fakeFailureReason, fakeAttributes)
+
+        // Then
+        verify {
+            mockNativeRumMonitor.failOperation(
                 fakeName,
                 fakeOperationKey,
                 fakeFailureReason.native,
@@ -787,8 +857,7 @@ class RumMonitorAdapterTest {
         get() {
             return when (this) {
                 RumErrorSource.SOURCE -> DDRUMErrorSourceSource
-                // TODO RUM-4844 iOS has no value for logger
-                RumErrorSource.LOGGER -> DDRUMErrorSourceSource
+                RumErrorSource.LOGGER -> DDRUMErrorSourceLogger
                 RumErrorSource.WEBVIEW -> DDRUMErrorSourceWebview
                 RumErrorSource.NETWORK -> DDRUMErrorSourceNetwork
             }
@@ -800,6 +869,15 @@ class RumMonitorAdapterTest {
                 FailureReason.ERROR -> DDRUMFeatureOperationFailureReasonError
                 FailureReason.OTHER -> DDRUMFeatureOperationFailureReasonOther
                 FailureReason.ABANDONED -> DDRUMFeatureOperationFailureReasonAbandoned
+            }
+        }
+
+    private val DeprecatedFeatureFailureReason.native: DDRUMFeatureOperationFailureReason
+        get() {
+            return when (this) {
+                DeprecatedFeatureFailureReason.ERROR -> DDRUMFeatureOperationFailureReasonError
+                DeprecatedFeatureFailureReason.OTHER -> DDRUMFeatureOperationFailureReasonOther
+                DeprecatedFeatureFailureReason.ABANDONED -> DDRUMFeatureOperationFailureReasonAbandoned
             }
         }
 

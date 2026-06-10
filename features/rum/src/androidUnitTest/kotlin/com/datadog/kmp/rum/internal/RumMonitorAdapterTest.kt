@@ -1,12 +1,14 @@
+@file:Suppress("DEPRECATION")
+
 package com.datadog.kmp.rum.internal
 
-import com.datadog.android.rum.ExperimentalRumApi
+import com.datadog.android.rum.operations.OperationOptions
 import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumErrorSource
 import com.datadog.kmp.rum.RumResourceKind
 import com.datadog.kmp.rum.RumResourceMethod
 import com.datadog.kmp.rum.configuration.AdvancedRumSessionListener
-import com.datadog.kmp.rum.featureoperations.FailureReason
+import com.datadog.kmp.rum.operations.FailureReason
 import com.datadog.tools.unit.forge.BaseConfigurator
 import com.datadog.tools.unit.forge.aThrowable
 import com.datadog.tools.unit.forge.exhaustiveAttributes
@@ -30,12 +32,14 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.mockito.quality.Strictness
+import com.datadog.android.rum.ExperimentalRumApi as NativeExperimentalRumApi
 import com.datadog.android.rum.RumActionType as NativeRumActionType
 import com.datadog.android.rum.RumErrorSource as NativeRumErrorSource
 import com.datadog.android.rum.RumMonitor as NativeRumMonitor
 import com.datadog.android.rum.RumResourceKind as NativeRumResourceKind
 import com.datadog.android.rum.RumResourceMethod as NativeRumResourceMethod
-import com.datadog.android.rum.featureoperations.FailureReason as NativeFailureReason
+import com.datadog.android.rum.operations.FailureReason as NativeFailureReason
+import com.datadog.kmp.rum.featureoperations.FailureReason as DeprecatedFeatureFailureReason
 
 @Extensions(
     ExtendWith(MockitoExtension::class),
@@ -348,7 +352,7 @@ class RumMonitorAdapterTest {
         verify(mockNativeRumMonitor).removeAttribute(fakeKey)
     }
 
-    @OptIn(ExperimentalRumApi::class)
+    @OptIn(NativeExperimentalRumApi::class)
     @Test
     fun `M call native startFeatureOperation W startFeatureOperation`(
         @StringForgery fakeName: String,
@@ -363,10 +367,28 @@ class RumMonitorAdapterTest {
         testedRumMonitorAdapter.startFeatureOperation(fakeName, fakeOperationKey, fakeAttributes)
 
         // Then
-        verify(mockNativeRumMonitor).startFeatureOperation(fakeName, fakeOperationKey, fakeAttributes)
+        verify(mockNativeRumMonitor).startOperation(fakeName, fakeOperationKey, OperationOptions.Empty, fakeAttributes)
     }
 
-    @OptIn(ExperimentalRumApi::class)
+    @OptIn(NativeExperimentalRumApi::class)
+    @Test
+    fun `M call native startOperation W startOperation`(
+        @StringForgery fakeName: String,
+        forge: Forge
+
+    ) {
+        // Given
+        val fakeOperationKey = forge.aNullable { aString() }
+        val fakeAttributes = forge.exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.startOperation(fakeName, fakeOperationKey, fakeAttributes)
+
+        // Then
+        verify(mockNativeRumMonitor).startOperation(fakeName, fakeOperationKey, OperationOptions.Empty, fakeAttributes)
+    }
+
+    @OptIn(NativeExperimentalRumApi::class)
     @Test
     fun `M call native succeedFeatureOperation W succeedFeatureOperation`(
         @StringForgery fakeName: String,
@@ -380,14 +402,31 @@ class RumMonitorAdapterTest {
         testedRumMonitorAdapter.succeedFeatureOperation(fakeName, fakeOperationKey, fakeAttributes)
 
         // Then
-        verify(mockNativeRumMonitor).succeedFeatureOperation(fakeName, fakeOperationKey, fakeAttributes)
+        verify(mockNativeRumMonitor).succeedOperation(fakeName, fakeOperationKey, fakeAttributes)
     }
 
-    @OptIn(ExperimentalRumApi::class)
+    @OptIn(NativeExperimentalRumApi::class)
+    @Test
+    fun `M call native succeedOperation W succeedOperation`(
+        @StringForgery fakeName: String,
+        forge: Forge
+    ) {
+        // Given
+        val fakeOperationKey = forge.aNullable { aString() }
+        val fakeAttributes = forge.exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.succeedOperation(fakeName, fakeOperationKey, fakeAttributes)
+
+        // Then
+        verify(mockNativeRumMonitor).succeedOperation(fakeName, fakeOperationKey, fakeAttributes)
+    }
+
+    @OptIn(NativeExperimentalRumApi::class)
     @Test
     fun `M call native failFeatureOperation W failFeatureOperation`(
         @StringForgery fakeName: String,
-        @Forgery fakeFailureReason: FailureReason,
+        @Forgery fakeFailureReason: DeprecatedFeatureFailureReason,
         forge: Forge
     ) {
         // Given
@@ -398,7 +437,7 @@ class RumMonitorAdapterTest {
         testedRumMonitorAdapter.failFeatureOperation(fakeName, fakeOperationKey, fakeFailureReason, fakeAttributes)
 
         // Then
-        verify(mockNativeRumMonitor).failFeatureOperation(
+        verify(mockNativeRumMonitor).failOperation(
             fakeName,
             fakeOperationKey,
             fakeFailureReason.native,
@@ -406,7 +445,30 @@ class RumMonitorAdapterTest {
         )
     }
 
-    @OptIn(ExperimentalRumApi::class)
+    @OptIn(NativeExperimentalRumApi::class)
+    @Test
+    fun `M call native failOperation W failOperation`(
+        @StringForgery fakeName: String,
+        @Forgery fakeFailureReason: FailureReason,
+        forge: Forge
+    ) {
+        // Given
+        val fakeOperationKey = forge.aNullable { aString() }
+        val fakeAttributes = forge.exhaustiveAttributes()
+
+        // When
+        testedRumMonitorAdapter.failOperation(fakeName, fakeOperationKey, fakeFailureReason, fakeAttributes)
+
+        // Then
+        verify(mockNativeRumMonitor).failOperation(
+            fakeName,
+            fakeOperationKey,
+            fakeFailureReason.native,
+            fakeAttributes
+        )
+    }
+
+    @OptIn(NativeExperimentalRumApi::class)
     @Test
     fun `M call native addViewLoadingTime W addViewLoadingTime`(
         @BoolForgery fakeOverwrite: Boolean
@@ -418,7 +480,7 @@ class RumMonitorAdapterTest {
         verify(mockNativeRumMonitor).addViewLoadingTime(fakeOverwrite)
     }
 
-    @OptIn(ExperimentalRumApi::class)
+    @OptIn(NativeExperimentalRumApi::class)
     @Test
     fun `M call native reportAppFullyDisplayed W reportAppFullyDisplayed`() {
         // When
@@ -533,6 +595,15 @@ class RumMonitorAdapterTest {
                 FailureReason.ERROR -> NativeFailureReason.ERROR
                 FailureReason.OTHER -> NativeFailureReason.OTHER
                 FailureReason.ABANDONED -> NativeFailureReason.ABANDONED
+            }
+        }
+
+    private val DeprecatedFeatureFailureReason.native: NativeFailureReason
+        get() {
+            return when (this) {
+                DeprecatedFeatureFailureReason.ERROR -> NativeFailureReason.ERROR
+                DeprecatedFeatureFailureReason.OTHER -> NativeFailureReason.OTHER
+                DeprecatedFeatureFailureReason.ABANDONED -> NativeFailureReason.ABANDONED
             }
         }
 

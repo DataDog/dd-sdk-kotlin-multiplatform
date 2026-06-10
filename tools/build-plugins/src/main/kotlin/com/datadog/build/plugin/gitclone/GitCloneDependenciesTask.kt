@@ -19,7 +19,7 @@ open class GitCloneDependenciesTask @Inject constructor(
     private val execOperations: ExecOperations
 ) : DefaultTask() {
 
-    @get: Input
+    @get:Input
     var extension: GitCloneDependenciesExtension =
         GitCloneDependenciesExtension()
 

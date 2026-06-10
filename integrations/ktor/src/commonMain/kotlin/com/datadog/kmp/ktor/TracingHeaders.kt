@@ -31,6 +31,10 @@ internal const val B3M_SAMPLING_PRIORITY_KEY = "X-B3-Sampled"
 internal const val B3M_DROP_SAMPLING_DECISION = "0"
 internal const val B3M_KEEP_SAMPLING_DECISION = "1"
 
+// B3 (single and multiple) require fixed-width lower-hex ids.
+internal const val B3_TRACE_ID_LENGTH = 32
+internal const val B3_SPAN_ID_LENGTH = 16
+
 // taken from W3CHttpCodec
 internal const val W3C_TRACEPARENT_KEY = "traceparent"
 internal const val W3C_TRACESTATE_KEY = "tracestate"

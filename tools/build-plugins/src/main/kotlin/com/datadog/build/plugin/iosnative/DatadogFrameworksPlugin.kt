@@ -1,3 +1,9 @@
+/*
+ * Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
+ * This product includes software developed at Datadog (https://www.datadoghq.com/).
+ * Copyright 2016-Present Datadog, Inc.
+ */
+
 package com.datadog.build.plugin.iosnative
 
 import com.datadog.build.plugin.iosnative.tasks.GenerateDatadogCInteropDefsTask
@@ -12,6 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 
 class DatadogFrameworksPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -33,6 +40,9 @@ class DatadogFrameworksPlugin : Plugin<Project> {
                 "generateDatadogCInteropDefs"
             ) {
                 frameworkNames.set(cinteropFrameworks.map { it.name })
+                frameworkPreImportModules.set(
+                    cinteropFrameworks.associate { it.name to it.preImportModules.get() }
+                )
                 outputDirectory.set(project.layout.buildDirectory.dir("generated/datadog-cinterop-defs"))
             }
 
@@ -47,6 +57,7 @@ class DatadogFrameworksPlugin : Plugin<Project> {
                             KonanTarget.TVOS_ARM64 -> "datadog-pods-build/tvos-device"
                             KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64 ->
                                 "datadog-pods-build/tvos-simulator"
+
                             else -> error("Unsupported Apple target for Datadog root pods linkage: $konanTarget")
                         }
                     )
@@ -80,16 +91,20 @@ class DatadogFrameworksPlugin : Plugin<Project> {
                     extension.frameworks.forEach { framework ->
                         append(" -framework ${framework.name}")
                     }
-                    extension.extraFrameworks.get().forEach { framework ->
+                    val extraFrameworks = extension.extraFrameworks.get().toMutableList()
+                    extraFrameworks.distinct().forEach { framework ->
                         append(" -framework $framework")
                     }
                     if (extension.includeObjcCategoryLinkerFlag.get()) {
                         append(" -ObjC")
                     }
                     if (extension.includeSwiftCompatibilityWorkaround.get()) {
-                        append(" ")
+                        swiftCompatibilityLibrarySearchPath(konanTarget)?.let { searchPath ->
+                            append(" -L$searchPath")
+                        }
+                        append(" -lswiftCompatibilityConcurrency")
                         append(
-                            "-U __swift_FORCE_LOAD_\$_swiftCompatibility50 " +
+                            " -U __swift_FORCE_LOAD_\$_swiftCompatibility50 " +
                                 "-U __swift_FORCE_LOAD_\$_swiftCompatibility51 " +
                                 "-U __swift_FORCE_LOAD_\$_swiftCompatibility56 " +
                                 "-U __swift_FORCE_LOAD_\$_swiftCompatibilityConcurrency " +
@@ -120,6 +135,39 @@ class DatadogFrameworksPlugin : Plugin<Project> {
                     dependsOn(rootBuildTask, generateDefsTask)
                 }
             }
+        }
+    }
+
+    private fun swiftCompatibilityLibrarySearchPath(konanTarget: KonanTarget): String? {
+        val platformDirectory = when (konanTarget) {
+            KonanTarget.IOS_ARM64 -> "iphoneos"
+            KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> "iphonesimulator"
+            KonanTarget.TVOS_ARM64 -> "appletvos"
+            KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64 -> "appletvsimulator"
+            else -> return null
+        }
+
+        return swiftToolchainUsrDirectory
+            ?.resolve("lib/swift/$platformDirectory")
+            ?.takeIf { it.isDirectory }
+            ?.absolutePath
+    }
+
+    companion object {
+        private val swiftToolchainUsrDirectory: File? by lazy { findSwiftToolchainUsrDirectory() }
+
+        private fun findSwiftToolchainUsrDirectory(): File? {
+            return runCatching {
+                val process = ProcessBuilder("/usr/bin/xcrun", "--toolchain", "XcodeDefault", "--find", "swiftc")
+                    .redirectErrorStream(true)
+                    .start()
+                val output = process.inputStream.bufferedReader().readText().trim()
+                if (process.waitFor() == 0 && output.isNotBlank()) {
+                    File(output).parentFile?.parentFile
+                } else {
+                    null
+                }
+            }.getOrNull()
         }
     }
 }

@@ -4,18 +4,11 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp.rum.featureoperations
+package com.datadog.kmp.rum.operations
 
 /**
- * Represents the possible reasons for a failed feature operation.
+ * Represents the possible reasons for a failed operation.
  */
-@Deprecated(
-    "Use com.datadog.kmp.rum.operations.FailureReason instead",
-    replaceWith = ReplaceWith(
-        expression = "FailureReason",
-        imports = ["com.datadog.kmp.rum.operations.FailureReason"]
-    )
-)
 enum class FailureReason {
     /**
      * Represents a failure caused by an error during execution.

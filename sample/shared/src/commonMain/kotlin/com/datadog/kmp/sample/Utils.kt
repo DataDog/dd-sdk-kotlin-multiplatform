@@ -24,7 +24,7 @@ import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
-import com.datadog.kmp.rum.featureoperations.FailureReason
+import com.datadog.kmp.rum.operations.FailureReason
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -82,6 +82,7 @@ fun initDatadog(context: Any? = null) {
         .trackLongTasks()
         .trackFrustrations(true)
         .trackAnonymousUser(true)
+        .collectAccessibility(true)
         .apply {
             setupRumMappers()
         }
@@ -168,21 +169,21 @@ fun triggerUncheckedException() {
 @OptIn(ExperimentalTime::class, ExperimentalRumApi::class)
 fun startFeatureOperation() {
     val operationKey = "$FEATURE_OPERATION_NAME/${Clock.System.now().toEpochMilliseconds()}"
-    RumMonitor.get().startFeatureOperation(FEATURE_OPERATION_NAME, operationKey, extensiveAdditionalProperties)
+    RumMonitor.get().startOperation(FEATURE_OPERATION_NAME, operationKey, extensiveAdditionalProperties)
     activeFeatureOperationKeys += operationKey
 }
 
 @OptIn(ExperimentalRumApi::class)
 fun stopFeatureOperation() {
     activeFeatureOperationKeys.removeLastOrNull()?.let {
-        RumMonitor.get().succeedFeatureOperation(FEATURE_OPERATION_NAME, it, mapOf("result" to "buy"))
+        RumMonitor.get().succeedOperation(FEATURE_OPERATION_NAME, it, mapOf("result" to "buy"))
     }
 }
 
 @OptIn(ExperimentalRumApi::class)
 fun failFeatureOperation() {
     activeFeatureOperationKeys.removeLastOrNull()?.let {
-        RumMonitor.get().failFeatureOperation(
+        RumMonitor.get().failOperation(
             FEATURE_OPERATION_NAME,
             it,
             FailureReason.ABANDONED,

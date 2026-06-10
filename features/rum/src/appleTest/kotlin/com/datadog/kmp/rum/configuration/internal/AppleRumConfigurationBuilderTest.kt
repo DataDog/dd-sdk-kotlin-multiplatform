@@ -26,6 +26,7 @@ import com.datadog.kmp.rum.tracking.SwiftUIRUMActionsPredicate
 import com.datadog.kmp.rum.tracking.SwiftUIRUMViewsPredicate
 import com.datadog.kmp.rum.tracking.UIKitRUMViewsPredicate
 import com.datadog.tools.concurrent.CountDownLatch
+import com.datadog.tools.concurrent.runOnBackgroundQueueAndWait
 import com.datadog.tools.random.exhaustiveAttributes
 import com.datadog.tools.random.nullable
 import com.datadog.tools.random.randomBoolean
@@ -251,22 +252,24 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
     @Test
     fun `M call platform RUM configuration builder+setViewEventMapper W setViewEventMapper`() {
         // Given
-        initializeSdkWithPendingConsent()
-
         val latch = CountDownLatch(1)
 
-        initializeRum {
-            setViewEventMapper {
-                // beware: we have ApplicationLaunch view as well, so it can be called multiple times
-                latch.countDown()
-                it
-            }
-        }
+        runOnBackgroundQueueAndWait {
+            initializeSdkWithPendingConsent()
 
-        // When
-        runRUMActions(imitateLongTask = true)
-        latch.await(EVENTS_WAIT_TIMEOUT_MS)
-        Datadog.stopInstance()
+            initializeRum {
+                setViewEventMapper {
+                    // beware: we have ApplicationLaunch view as well, so it can be called multiple times
+                    latch.countDown()
+                    it
+                }
+            }
+
+            // When
+            runRUMActions(imitateLongTask = true)
+            latch.await(EVENTS_WAIT_TIMEOUT_MS)
+            Datadog.stopInstance()
+        }
 
         // Then
         assertEquals(
@@ -279,21 +282,23 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
     @Test
     fun `M call platform RUM configuration builder+setResourceEventMapper W setResourceEventMapper`() {
         // Given
-        initializeSdkWithPendingConsent()
-
         val latch = CountDownLatch(1)
 
-        initializeRum {
-            setResourceEventMapper {
-                latch.countDown()
-                it
-            }
-        }
+        runOnBackgroundQueueAndWait {
+            initializeSdkWithPendingConsent()
 
-        // When
-        runRUMActions()
-        latch.await(EVENTS_WAIT_TIMEOUT_MS)
-        Datadog.stopInstance()
+            initializeRum {
+                setResourceEventMapper {
+                    latch.countDown()
+                    it
+                }
+            }
+
+            // When
+            runRUMActions()
+            latch.await(EVENTS_WAIT_TIMEOUT_MS)
+            Datadog.stopInstance()
+        }
 
         // Then
         assertEquals(
@@ -306,21 +311,23 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
     @Test
     fun `M call platform RUM configuration builder+setActionEventMapper W setActionEventMapper`() {
         // Given
-        initializeSdkWithPendingConsent()
-
         val latch = CountDownLatch(1)
 
-        initializeRum {
-            setActionEventMapper {
-                latch.countDown()
-                it
-            }
-        }
+        runOnBackgroundQueueAndWait {
+            initializeSdkWithPendingConsent()
 
-        // When
-        runRUMActions()
-        latch.await(EVENTS_WAIT_TIMEOUT_MS)
-        Datadog.stopInstance()
+            initializeRum {
+                setActionEventMapper {
+                    latch.countDown()
+                    it
+                }
+            }
+
+            // When
+            runRUMActions()
+            latch.await(EVENTS_WAIT_TIMEOUT_MS)
+            Datadog.stopInstance()
+        }
 
         // Then
         assertEquals(
@@ -333,21 +340,23 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
     @Test
     fun `M call platform RUM configuration builder+setErrorEventMapper W setErrorEventMapper`() {
         // Given
-        initializeSdkWithPendingConsent()
-
         val latch = CountDownLatch(1)
 
-        initializeRum {
-            setErrorEventMapper {
-                latch.countDown()
-                it
-            }
-        }
+        runOnBackgroundQueueAndWait {
+            initializeSdkWithPendingConsent()
 
-        // When
-        runRUMActions()
-        latch.await(EVENTS_WAIT_TIMEOUT_MS)
-        Datadog.stopInstance()
+            initializeRum {
+                setErrorEventMapper {
+                    latch.countDown()
+                    it
+                }
+            }
+
+            // When
+            runRUMActions()
+            latch.await(EVENTS_WAIT_TIMEOUT_MS)
+            Datadog.stopInstance()
+        }
 
         // Then
         assertEquals(
@@ -362,21 +371,23 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
     @Test
     fun `M call platform RUM configuration builder+setLongTaskEventMapper W setLongTaskEventMapper`() {
         // Given
-        initializeSdkWithPendingConsent()
-
         val latch = CountDownLatch(1)
 
-        initializeRum {
-            setLongTaskEventMapper {
-                latch.countDown()
-                it
-            }
-        }
+        runOnBackgroundQueueAndWait {
+            initializeSdkWithPendingConsent()
 
-        // When
-        runRUMActions(imitateLongTask = true)
-        latch.await(EVENTS_WAIT_TIMEOUT_MS)
-        Datadog.stopInstance()
+            initializeRum {
+                setLongTaskEventMapper {
+                    latch.countDown()
+                    it
+                }
+            }
+
+            // When
+            runRUMActions(imitateLongTask = true)
+            latch.await(EVENTS_WAIT_TIMEOUT_MS)
+            Datadog.stopInstance()
+        }
 
         // Then
         assertEquals(
@@ -422,6 +433,18 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
 
         // Then
         assertEquals(fakeCustomEndpoint, fakeNativeRumConfiguration.customEndpoint()?.absoluteString)
+    }
+
+    @Test
+    fun `M set collect accessibility W collectAccessibility`() {
+        // Given
+        val fakeEnabled = randomBoolean()
+
+        // When
+        testedBuilder.collectAccessibility(fakeEnabled)
+
+        // Then
+        assertEquals(fakeEnabled, fakeNativeRumConfiguration.collectAccessibility())
     }
 
     @Test

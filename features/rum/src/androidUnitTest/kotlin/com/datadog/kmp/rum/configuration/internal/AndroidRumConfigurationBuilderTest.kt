@@ -444,6 +444,17 @@ internal class AndroidRumConfigurationBuilderTest {
         verify(mockNativeRumConfigurationBuilder).useCustomEndpoint(fakeCustomEndpoint)
     }
 
+    @Test
+    fun `M call platform RUM configuration builder+collectAccessibility W collectAccessibility`(
+        @BoolForgery fakeEnabled: Boolean
+    ) {
+        // When
+        testedBuilder.collectAccessibility(fakeEnabled)
+
+        // Then
+        verify(mockNativeRumConfigurationBuilder).collectAccessibility(fakeEnabled)
+    }
+
     @OptIn(ExperimentalRumApi::class)
     @Test
     fun `M call platform RUM configuration builder+setAppStartupActivityPredicate W setAppStartupActivityPredicate`() {

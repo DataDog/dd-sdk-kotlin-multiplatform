@@ -95,12 +95,14 @@ internal fun DDLogEventDd.toCommonModel(): LogEvent.Dd = LogEvent.Dd(
 )
 
 internal fun DDLogEventDevice.toCommonModel(): LogEvent.LogEventDevice = LogEvent.LogEventDevice(
-    // TODO RUM-15734 add isLowRam, logicalCpuCount, totalRam once available in iOS SDK
     architecture = architecture(),
     type = logEventDeviceTypeToCommonEnum(type()),
     name = name(),
     model = model(),
-    brand = brand()
+    brand = brand(),
+    logicalCpuCount = logicalCpuCount()?.doubleValue,
+    totalRam = totalRam()?.doubleValue,
+    isLowRam = isLowRam()?.boolValue
 )
 
 internal fun DDLogEventDDDevice.toCommonModel(): LogEvent.DdDevice = LogEvent.DdDevice(

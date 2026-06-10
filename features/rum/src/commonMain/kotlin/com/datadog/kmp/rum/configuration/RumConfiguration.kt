@@ -205,6 +205,16 @@ class RumConfiguration internal constructor(internal val nativeConfiguration: An
         }
 
         /**
+         * Whether to collect accessibility attributes - this is disabled by default.
+         *
+         * @param enabled whether collecting accessibility attributes is enabled or not.
+         */
+        fun collectAccessibility(enabled: Boolean): Builder {
+            platformBuilder.collectAccessibility(enabled)
+            return this
+        }
+
+        /**
          * Builds a [RumConfiguration] based on the current state of this Builder.
          */
         fun build(): RumConfiguration {
