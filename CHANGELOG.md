@@ -1,3 +1,25 @@
+# 1.7.0 / 2026-06-10
+
+* [IMPROVEMENT] Add `US2_FED` support. See [#275](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/275)
+* [IMPROVEMENT] Add configuration option to collect accessibility properties in RUM. See [#276](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/276)
+* [IMPROVEMENT] Zero-pad B3 trace and span IDs to fixed hex width. See [#279](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/279)
+* [IMPROVEMENT] Add `isLowRam`, `logicalCpuCount`, `totalRam` device properties for Logs and RUM. See [#278](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/278)
+* [IMPROVEMENT] Fix WebView bindings generation. See [#281](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/281)
+* [IMPROVEMENT] Add `logger` error source for iOS. See [#282](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/282)
+* [IMPROVEMENT] Ktor instrumentation: Use `arc4random` for the seed generation on iOS. See [#285](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/285)
+* [DOCS] Update wrong `textAndInputPrivacy` API doc in Session Replay and enable accessibility collection in the sample app. See [#283](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/283)
+* [MAINTENANCE] Update GitHub actions non-major dependencies. See [#267](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/267)
+* [MAINTENANCE] Update dependency `org.assertj:assertj-core` to v3.27.7 [security]. See [#265](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/265)
+* [MAINTENANCE] Reduce `xcodebuild` output in the pod build task. See [#271](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/271)
+* [MAINTENANCE] Downgrade `setup-gradle` GitHub action version. See [#272](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/272)
+* [MAINTENANCE] Update `actions/checkout` action to v6. See [#268](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/268)
+* [MAINTENANCE] Update `actions/setup-java` action to v5. See [#269](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/269)
+* [MAINTENANCE] Update iOS SDK to 3.11.1, Android SDK to 3.10.0. See [#273](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/273)
+* [MAINTENANCE] Update `detekt` and `ktlint` tooling, static analysis template version. See [#274](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/274)
+* [MAINTENANCE] Add missing copyright. See [#277](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/277)
+* [MAINTENANCE] Update iOS SDK to version 3.12.0. See [#280](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/280)
+* [MAINTENANCE] Add repo-wide Claude permissions. See [#284](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/284)
+
 # 1.6.0 / 2026-04-22
 
 * [IMPROVEMENT] Support app startup activity predicate on Android. See [#257](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/257)
