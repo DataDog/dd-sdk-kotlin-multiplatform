@@ -9,7 +9,6 @@ package com.datadog.build.plugin.iosnative.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
@@ -18,9 +17,6 @@ abstract class GenerateDatadogCInteropDefsTask : DefaultTask() {
 
     @get:Input
     abstract val frameworkNames: ListProperty<String>
-
-    @get:Input
-    abstract val frameworkPreImportModules: MapProperty<String, List<String>>
 
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
@@ -32,11 +28,10 @@ abstract class GenerateDatadogCInteropDefsTask : DefaultTask() {
 
         frameworkNames.get().forEach { frameworkName ->
             val defFile = outputDir.resolve("$frameworkName.def")
-            val modules = frameworkPreImportModules.get()[frameworkName].orEmpty() + frameworkName
             defFile.writeText(
                 """
                 |language = Objective-C
-                |modules = ${modules.joinToString(" ")}
+                |modules = $frameworkName
                 |linkerOpts = -framework $frameworkName
                 |
                 """.trimMargin()
