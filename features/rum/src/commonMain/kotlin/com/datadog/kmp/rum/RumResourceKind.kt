@@ -12,17 +12,59 @@ package com.datadog.kmp.rum
  */
 enum class RumResourceKind {
     // Specific kind of JS resources loading
+    /**
+     * Beacon type resource.
+     */
     BEACON,
+
+    /**
+     * Fetch type resource.
+     */
     FETCH,
+
+    /**
+     * XHR type resource.
+     */
     XHR,
+
+    /**
+     * Document type resource.
+     */
     DOCUMENT,
 
     // Common kinds
+    /**
+     * Native type resource.
+     */
     NATIVE,
+
+    /**
+     * Image type resource.
+     */
     IMAGE,
+
+    /**
+     * JS type resource.
+     */
     JS,
+
+    /**
+     * Font type resource.
+     */
     FONT,
+
+    /**
+     * CSS type resource.
+     */
     CSS,
+
+    /**
+     * Media type resource.
+     */
     MEDIA,
+
+    /**
+     * Other type resource.
+     */
     OTHER
 }

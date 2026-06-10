@@ -61,6 +61,21 @@
           "type": "string",
           "description": "The CPU architecture of the device that is reporting the error",
           "readOnly": true
+        },
+        "logical_cpu_count": {
+          "type": "number",
+          "description": "Number of logical CPU cores available for scheduling on the device at runtime, as reported by the operating system.",
+          "readOnly": true
+        },
+        "total_ram": {
+          "type": "number",
+          "description": "Total RAM in megabytes",
+          "readOnly": true
+        },
+        "is_low_ram": {
+          "type": "boolean",
+          "description": "Whether the device is considered a low RAM device (Android)",
+          "readOnly": true
         }
       }
     },

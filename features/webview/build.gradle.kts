@@ -5,9 +5,6 @@
  */
 
 import dev.mokkery.MockMode
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.konan.target.Family
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
@@ -25,7 +22,8 @@ plugins {
 
 datadogFrameworks {
     framework("DatadogWebViewTracking") {
-        linkOnly = true
+        linkOnly = false
+        preImportModules.add("WebKit")
     }
     framework("DatadogCore") {
         linkOnly = true
@@ -36,16 +34,6 @@ datadogFrameworks {
 }
 
 kotlin {
-    targets.all {
-        if (this is KotlinNativeTarget && konanTarget.family == Family.IOS) {
-            compilations.getByName("main") {
-                cinterops.create("DatadogWebView") {
-                    includeDirs("$projectDir/src/nativeInterop/cinterop/DatadogWebViewTracking")
-                }
-            }
-        }
-    }
-
     sourceSets {
         androidMain.dependencies {
             implementation(libs.datadog.android.webview)

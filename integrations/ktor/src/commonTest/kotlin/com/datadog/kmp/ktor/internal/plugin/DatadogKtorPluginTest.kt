@@ -1129,20 +1129,14 @@ class DatadogKtorPluginTest {
     private fun expectedSpanId(spanIdDec: String, headerType: TracingHeaderType): String {
         return when (headerType) {
             TracingHeaderType.DATADOG -> spanIdDec
-            else -> spanIdDec.toULong().toString(HEX_RADIX).lowercase().let {
-                if (headerType == TracingHeaderType.TRACECONTEXT) {
-                    it.padStart(16, '0')
-                } else {
-                    it
-                }
-            }
+            else -> spanIdDec.toULong().toString(HEX_RADIX).lowercase().padStart(16, '0')
         }
     }
 
     private fun expectedTraceId(traceIdHex: String, headerType: TracingHeaderType): String {
         return when (headerType) {
-            TracingHeaderType.TRACECONTEXT -> traceIdHex.padStart(32, '0')
-            else -> traceIdHex
+            TracingHeaderType.DATADOG -> traceIdHex
+            else -> traceIdHex.padStart(32, '0')
         }
     }
 

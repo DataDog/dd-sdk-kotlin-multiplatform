@@ -114,7 +114,13 @@ internal class LogEventForgeryFactory : ForgeryFactory<LogEvent> {
                 type = forge.aNullable { aValueFrom(LogEvent.Type::class.java) },
                 name = forge.aNullable { anAlphabeticalString() },
                 model = forge.aNullable { anAlphabeticalString() },
-                brand = forge.aNullable { anAlphabeticalString() }
+                brand = forge.aNullable { anAlphabeticalString() },
+                isLowRam = forge.aNullable { aBool() },
+                logicalCpuCount = forge.aNullable { anInt(min = 1, max = 9) },
+                totalRam = forge.aNullable {
+                    // 1GB to 16GB
+                    aLong(min = 1_073_741_824, max = 17_179_869_185)
+                }
             ),
             os = LogEvent.Os(
                 name = forge.aString(),

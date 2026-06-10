@@ -305,6 +305,7 @@ private val DatadogSite.native: DDSite
     get() = when (this) {
         DatadogSite.US1 -> DDSite.us1()
         DatadogSite.US1_FED -> DDSite.us1_fed()
+        DatadogSite.US2_FED -> DDSite.us2_fed()
         DatadogSite.US3 -> DDSite.us3()
         DatadogSite.US5 -> DDSite.us5()
         DatadogSite.EU1 -> DDSite.eu1()

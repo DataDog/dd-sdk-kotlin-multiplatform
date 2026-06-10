@@ -46,5 +46,7 @@ internal interface PlatformRumConfigurationBuilder<out T : Any> {
 
     fun useCustomEndpoint(endpoint: String)
 
+    fun collectAccessibility(enabled: Boolean)
+
     fun build(): T
 }

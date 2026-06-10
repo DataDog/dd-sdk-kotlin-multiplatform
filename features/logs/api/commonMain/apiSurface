@@ -43,7 +43,7 @@ data class com.datadog.kmp.log.model.LogEvent
   data class Os
     constructor(kotlin.String, kotlin.String, kotlin.String? = null, kotlin.String)
   data class LogEventDevice
-    constructor(Type? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
+    constructor(Type? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Boolean? = null)
   data class Logger
     constructor(kotlin.String, kotlin.String)
   data class Dd

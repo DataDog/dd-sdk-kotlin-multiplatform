@@ -94,7 +94,8 @@ class BasicProxyAuthenticatorTest {
     ) {
         // Given
         whenever(mockResponse.code) doReturn forge.anElementFrom(
-            forge.anInt(min = 100, max = 407), forge.anInt(min = 408, max = 600)
+            forge.anInt(min = 100, max = 407),
+            forge.anInt(min = 408, max = 600)
         )
 
         // When

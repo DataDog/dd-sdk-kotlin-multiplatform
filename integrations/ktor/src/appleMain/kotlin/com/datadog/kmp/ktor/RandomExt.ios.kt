@@ -6,14 +6,32 @@
 
 package com.datadog.kmp.ktor
 
-import platform.Foundation.NSCalendar
-import platform.Foundation.NSCalendarUnitNanosecond
-import platform.Foundation.NSDate
+import kotlinx.cinterop.UByteVar
+import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.convert
+import kotlinx.cinterop.get
+import kotlinx.cinterop.memScoped
+import platform.posix.arc4random_buf
 import kotlin.random.Random
 
-internal actual val RNG: Random = Random(
-    NSCalendar.currentCalendar.component(
-        unit = NSCalendarUnitNanosecond,
-        fromDate = NSDate()
-    )
-)
+internal actual val RNG: Random = AppleSystemRandom
+
+private object AppleSystemRandom : Random() {
+
+    override fun nextBits(bitCount: Int): Int {
+        if (bitCount == 0) return 0
+
+        val value = memScoped {
+            val bytes = allocArray<UByteVar>(Int.SIZE_BYTES)
+            arc4random_buf(bytes, Int.SIZE_BYTES.convert())
+
+            var result = 0
+            repeat(Int.SIZE_BYTES) { index ->
+                result = result or (bytes[index].toInt() shl (index * Byte.SIZE_BITS))
+            }
+            result
+        }
+
+        return value ushr (Int.SIZE_BITS - bitCount)
+    }
+}

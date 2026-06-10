@@ -12,10 +12,20 @@ import com.datadog.kmp.Datadog
  * This is internal API and shouldn't be used by the clients.
  */
 interface DatadogContextProvider {
+    /**
+     * Current User ID.
+     */
     val userId: String?
+
+    /**
+     * Current Account ID.
+     */
     val accountId: String?
 
     companion object {
+        /**
+         * Creates a default instance of [DatadogContextProvider].
+         */
         fun get(): DatadogContextProvider = object : DatadogContextProvider {
             override val userId: String?
                 get() = Datadog.currentUserId

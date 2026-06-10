@@ -44,6 +44,8 @@ enum class TracingHeaderType {
      * @param traceId the trace id
      * @param spanId the span id
      * @param rumSessionId the RUM session id
+     * @param userId the current user ID
+     * @param accountId the current account ID
      */
     internal fun injectHeaders(
         request: HttpRequestBuilder,
@@ -138,7 +140,11 @@ enum class TracingHeaderType {
         // remove pre-existing if any
         remove(B3_HEADER_KEY)
         if (sampledIn) {
-            append(B3_HEADER_KEY, "${traceId.toHexString()}-${spanId.toHexString()}-1")
+            append(
+                B3_HEADER_KEY,
+                "${traceId.toHexString().padStart(B3_TRACE_ID_LENGTH, '0')}-" +
+                    "${spanId.toHexString().padStart(B3_SPAN_ID_LENGTH, '0')}-1"
+            )
         } else {
             append(B3_HEADER_KEY, B3_DROP_SAMPLING_DECISION)
         }
@@ -154,8 +160,8 @@ enum class TracingHeaderType {
         remove(B3M_SPAN_ID_KEY)
         remove(B3M_SAMPLING_PRIORITY_KEY)
         if (sampledIn) {
-            append(B3M_TRACE_ID_KEY, traceId.toHexString())
-            append(B3M_SPAN_ID_KEY, spanId.toHexString())
+            append(B3M_TRACE_ID_KEY, traceId.toHexString().padStart(B3_TRACE_ID_LENGTH, '0'))
+            append(B3M_SPAN_ID_KEY, spanId.toHexString().padStart(B3_SPAN_ID_LENGTH, '0'))
             append(B3M_SAMPLING_PRIORITY_KEY, B3M_KEEP_SAMPLING_DECISION)
         } else {
             append(B3M_SAMPLING_PRIORITY_KEY, B3M_DROP_SAMPLING_DECISION)
