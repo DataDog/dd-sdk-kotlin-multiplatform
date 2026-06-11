@@ -4,7 +4,7 @@ agp = "8.13.2"
 # version may be too recent for the Kotlin version used, so Kotlin Native tooling may fail to at
 # various steps. You can switch Xcode toolchain used on the system with xcodes CLI app,
 # this doesn't limit Xcode app version that can be used, e.g. Xcode 26 app can be used when
-# backend by the Xcode 16.4 toolchain.
+# backed by the Xcode 16.4 toolchain.
 kotlin = "2.2.21"
 compose = "1.6.6"
 compose-material3 = "1.1.2"
