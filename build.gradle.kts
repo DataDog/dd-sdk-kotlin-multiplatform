@@ -116,7 +116,7 @@ val jvmUnitTestDebugAllTask = tasks.register("jvmUnitTestDebugAll") {
 }
 
 val jvmUnitTestReleaseAllTask = tasks.register("jvmUnitTestReleaseAll") {
-    description = "Runs Android unit tests for Debug release type accross all projects where applicable."
+    description = "Runs Android unit tests for Release release type accross all projects where applicable."
     val subProjectsTestTasks = publishableProjects.map {
         "${it.targetProjectIdentity.buildTreePath.asString()}:testReleaseUnitTest"
     }
