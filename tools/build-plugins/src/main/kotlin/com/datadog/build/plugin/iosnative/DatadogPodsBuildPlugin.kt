@@ -71,6 +71,7 @@ class DatadogPodsBuildPlugin : Plugin<Project> {
             )
             inputs.file(syntheticPodsRootDir.map { it.file("Podfile.lock") })
             outputs.dir(outputDir)
+            doLast { patchCrossDDCoreLoggerLevelModuleEnumForwardDeclaration(outputDir.get().asFile) }
         }
 
         val buildDatadogIosDevicePods = registerPodBuildTask(
@@ -145,5 +146,28 @@ class DatadogPodsBuildPlugin : Plugin<Project> {
     companion object {
         const val SYNTHETIC_IOS_TARGET_NAME = "DatadogSyntheticIOS"
         const val SYNTHETIC_TVOS_TARGET_NAME = "DatadogSyntheticTVOS"
+
+        // TODO RUM-16671 DatadogCore Obj-C API declares DDCoreLoggerLevel from DatadogInternal
+        //
+        // Xcode 26 changed the Swift compiler's ObjC header generation to forward-declare
+        // cross-module enum types (SWIFT_ENUM_FWD_DECL) rather than emit their full definition.
+        // Kotlin/Native cinterop only processes a single framework's headers, so enum constants
+        // defined in a dependency framework become unresolved. This patches each affected
+        // framework header by replacing the forward declaration with the full definition sourced
+        // from the framework that actually defines the type.
+        private fun patchCrossDDCoreLoggerLevelModuleEnumForwardDeclaration(frameworksDir: File) {
+            val consumerHeader = frameworksDir.resolve("DatadogCore.framework/Headers/DatadogCore-Swift.h")
+            val definingHeader = frameworksDir.resolve("DatadogInternal.framework/Headers/DatadogInternal-Swift.h")
+            if (!consumerHeader.exists() || !definingHeader.exists()) return
+            val consumerContent = consumerHeader.readText()
+            val forwardDecl = "SWIFT_ENUM_FWD_DECL(NSInteger, DDCoreLoggerLevel)"
+            if (!consumerContent.contains(forwardDecl)) return
+
+            val enumDef = Regex(
+                """typedef SWIFT_ENUM_NAMED\(NSInteger, DDCoreLoggerLevel[^;]*\};"""
+            ).find(definingHeader.readText())?.value ?: return
+
+            consumerHeader.writeText(consumerContent.replace(forwardDecl, enumDef))
+        }
     }
 }

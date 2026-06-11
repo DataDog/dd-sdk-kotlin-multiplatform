@@ -23,7 +23,6 @@ plugins {
 datadogFrameworks {
     framework("DatadogWebViewTracking") {
         linkOnly = false
-        preImportModules.add("WebKit")
     }
     framework("DatadogCore") {
         linkOnly = true

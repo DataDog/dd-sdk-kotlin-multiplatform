@@ -41,7 +41,9 @@ object WebViewTracking {
      * send 30% of the logs. If value is `0`, no logs will be sent to Datadog. Default is 100.0 (ie: all logs are sent).
      */
     fun enable(webView: WKWebView, allowedHosts: Set<String>, logsSampleRate: Float = 100f) {
-        DDWebViewTracking.enableWithWebView(webView, allowedHosts, logsSampleRate)
+        // see https://kotlinlang.org/docs/native-objc-interop.html#forward-declarations
+        // we need to transfer forward declaration
+        DDWebViewTracking.enableWithWebView(webView as objcnames.classes.WKWebView, allowedHosts, logsSampleRate)
     }
 
     /**
@@ -52,5 +54,9 @@ object WebViewTracking {
      *
      * @param webView: The web-view to stop tracking.
      */
-    fun disable(webView: WKWebView) = DDWebViewTracking.disableWithWebView(webView)
+    fun disable(webView: WKWebView) {
+        // see https://kotlinlang.org/docs/native-objc-interop.html#forward-declarations
+        // we need to transfer forward declaration
+        DDWebViewTracking.disableWithWebView(webView as objcnames.classes.WKWebView)
+    }
 }
