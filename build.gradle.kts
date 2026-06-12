@@ -55,7 +55,11 @@ project.taskConfig<AbstractNexusStagingRepositoryTask> {
 /**
  * Task necessary to be compliant with the shared Android static analysis pipeline
  */
-tasks.register("checkGeneratedFiles") { }
+tasks.register("checkGeneratedFiles") {
+    description = "Check generated files"
+    dependsOn("checkApiSurfaceChangesAll")
+    dependsOn("checkCompilerMetadataChangesAll")
+}
 
 /**
  * Creates a task aggregating a task on all projects.
@@ -80,15 +84,28 @@ fun registerPluginSpecificAggregationTask(
     }
 }
 
+@Suppress("PropertyName", "VariableNaming")
+val API_SURFACE_PLUGIN_NAME = "api-surface"
+
 registerPluginSpecificAggregationTask(
     "checkApiSurfaceChangesAll",
     "checkApiSurfaceChanges",
-    "api-surface"
+    API_SURFACE_PLUGIN_NAME
 )
 registerPluginSpecificAggregationTask(
     "generateApiSurfaceAll",
     "generateApiSurface",
-    "api-surface"
+    API_SURFACE_PLUGIN_NAME
+)
+registerPluginSpecificAggregationTask(
+    "checkCompilerMetadataChangesAll",
+    "checkCompilerMetadataChanges",
+    API_SURFACE_PLUGIN_NAME
+)
+registerPluginSpecificAggregationTask(
+    "generateCompilerMetadataAll",
+    "generateCompilerMetadata",
+    API_SURFACE_PLUGIN_NAME
 )
 
 registerPluginSpecificAggregationTask(
