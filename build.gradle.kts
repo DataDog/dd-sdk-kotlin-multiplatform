@@ -57,6 +57,7 @@ tasks.register("checkGeneratedFiles") {
     description = "Check generated files"
     dependsOn("checkApiSurfaceChangesAll")
     dependsOn("checkCompilerMetadataChangesAll")
+    dependsOn("checkTransitiveDependenciesListAll")
 }
 
 /**
@@ -109,6 +110,12 @@ registerPluginSpecificAggregationTask(
 registerPluginSpecificAggregationTask(
     "listTransitiveDependenciesAll",
     "listTransitiveDependencies",
+    "transitive-dependencies"
+)
+
+registerPluginSpecificAggregationTask(
+    "checkTransitiveDependenciesListAll",
+    "checkTransitiveDependenciesList",
     "transitive-dependencies"
 )
 

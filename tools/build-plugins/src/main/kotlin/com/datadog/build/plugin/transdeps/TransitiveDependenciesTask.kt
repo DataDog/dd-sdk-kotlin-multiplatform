@@ -7,16 +7,20 @@
 package com.datadog.build.plugin.transdeps
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.OutputFiles
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import java.io.File
 
 @DisableCachingByDefault
-open class TransitiveDependenciesTask : DefaultTask() {
+abstract class TransitiveDependenciesTask : DefaultTask() {
 
     @get:Input
     var humanReadableSize: Boolean = true
@@ -24,8 +28,12 @@ open class TransitiveDependenciesTask : DefaultTask() {
     @get:Input
     var sortByName: Boolean = true
 
-    @get:OutputFiles
-    var outputFiles: List<File> = mutableListOf()
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val resolvedArtifacts: ConfigurableFileCollection
+
+    @get:OutputFile
+    abstract val transitiveDependenciesFile: RegularFileProperty
 
     init {
         group = "datadog"
@@ -37,12 +45,9 @@ open class TransitiveDependenciesTask : DefaultTask() {
 
     @TaskAction
     fun applyTask() {
-        SUPPORTED_CONFIGURATIONS.forEach { (configurationName, target) ->
-            val configuration = project.configurations.getByName(configurationName)
-            val outputFile = File(project.projectDir, "$target-transitiveDependencies")
-            outputFile.writeText("Dependencies List\n\n")
-            listConfigurationDependencies(outputFile, configuration)
-            outputFiles += outputFile
+        transitiveDependenciesFile.get().asFile.let {
+            it.writeText("Dependencies List\n\n")
+            listConfigurationDependencies(it, resolvedArtifacts)
         }
     }
 
@@ -50,27 +55,25 @@ open class TransitiveDependenciesTask : DefaultTask() {
 
     // region Internal
 
-    private fun listConfigurationDependencies(file: File, configuration: Configuration) {
-        check(configuration.isCanBeResolved) { "$configuration cannot be resolved" }
-
+    private fun listConfigurationDependencies(outputFile: File, artifacts: FileCollection) {
         val sortedArtifacts = if (sortByName) {
-            configuration.incoming.artifactView {
-                componentFilter {
-                    // ProjectComponentIdentifier (i.e. local modules) don't have a file associated
-                    it !is ProjectComponentIdentifier
-                }
-            }.files.sortedBy { it.absolutePath }
+            artifacts.sortedBy { it.absolutePath }
         } else {
-            configuration.sortedBy { -it.length() }
+            artifacts.sortedBy { -it.length() }
         }
 
         var sum = 0L
         sortedArtifacts.forEach {
             sum += it.length()
-            file.appendText(getDependencyFileDescription(it))
+            outputFile.appendText(getDependencyFileDescription(it))
         }
 
-        file.appendText("\n${TOTAL.padEnd(PADDING)}:${size(sum)}\n\n")
+        outputFile.appendText(
+            "\n${
+                TOTAL.padEnd(
+                    PADDING
+                )}:${size(sum)}\n\n"
+        )
     }
 
     private fun getDependencyFileDescription(it: File): String {
@@ -104,9 +107,6 @@ open class TransitiveDependenciesTask : DefaultTask() {
         private const val KB = 1024
         private const val MB = 1024 * 1024
 
-        private val SUPPORTED_CONFIGURATIONS = mapOf(
-            "androidCompileClasspath" to "android"
-        )
         private const val TOTAL = "Total transitive dependencies size"
     }
 }
