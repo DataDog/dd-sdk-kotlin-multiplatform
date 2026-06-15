@@ -168,9 +168,11 @@ tasks.register("unitTestAll") {
 }
 
 tasks.register("lintCheckAll") {
-    description = "Runs lint check accross all projects for the Release build type."
+    description = "Runs lint check accross all projects."
+    // TODO RUM-16772 Right now it will fail, because KMP Android Library plugin doesn't create lint tasks it seems,
+    //  despite having lint configuration in the target
     val subProjectsLintTasks = publishableProjects.map {
-        "${it.targetProjectIdentity.buildTreePath.asString()}:lintRelease"
+        "${it.targetProjectIdentity.buildTreePath.asString()}:lint"
     }
     dependsOn(subProjectsLintTasks)
 }
