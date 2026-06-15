@@ -101,7 +101,7 @@ class ApiSurfacePlugin : Plugin<Project> {
         val androidTarget = extensions.getByType<KotlinMultiplatformExtension>().targets
             .first { it.platformType == KotlinPlatformType.androidJvm }
         registerJvmCompilerMetadataTask(
-            compilation = checkNotNull(androidTarget.compilations.findByName(COMPILATION_DEBUG)),
+            compilation = checkNotNull(androidTarget.compilations.findByName(COMPILATION_MAIN)),
             commonGenerateCompilerMetadataTask = commonGenerateCompilerMetadataTask,
             commonCheckCompilerMetadataChangesTask = commonCheckCompilerMetadataChangesTask
         )
@@ -191,7 +191,7 @@ class ApiSurfacePlugin : Plugin<Project> {
     }
 
     private fun KotlinCompilation<*>.jvmCompilerMetadataOrNull(project: Project): CompilerMetadataRegistration? {
-        if (compilationName != COMPILATION_DEBUG) return null
+        if (compilationName != COMPILATION_MAIN) return null
 
         return compilerMetadata(
             sourceSetName = SOURCE_SET_ANDROID_MAIN,
@@ -275,7 +275,6 @@ class ApiSurfacePlugin : Plugin<Project> {
         private const val SOURCE_SET_ANDROID_MAIN = "androidMain"
         private const val SOURCE_SET_IOS_MAIN = "iosMain"
         private const val SOURCE_SET_APPLE_MAIN = "appleMain"
-        private const val COMPILATION_DEBUG = "debug"
         private const val COMPILATION_MAIN = "main"
 
         private fun String.capitalize() =

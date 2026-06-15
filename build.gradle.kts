@@ -12,9 +12,7 @@ plugins {
     // trick: for the same plugin versions in all sub-modules
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
-    alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
-    alias(libs.plugins.kotlinCocoapods) apply false
     alias(libs.plugins.dependencyLicense) apply false
     alias(libs.plugins.mokkery) apply false
     alias(libs.plugins.compose.compiler) apply false
@@ -124,30 +122,13 @@ val publishableProjects = listOf(
     projects.integrations.ktor3
 )
 
-val jvmUnitTestDebugAllTask = tasks.register("jvmUnitTestDebugAll") {
-    description = "Runs Android unit tests for Debug build type accross all projects where applicable."
-    val subProjectsTestTasks = publishableProjects.map {
-        "${it.targetProjectIdentity.buildTreePath.asString()}:testDebugUnitTest"
-    }
-    dependsOn(subProjectsTestTasks)
-}
-
-val jvmUnitTestReleaseAllTask = tasks.register("jvmUnitTestReleaseAll") {
-    description = "Runs Android unit tests for Release release type accross all projects where applicable."
-    val subProjectsTestTasks = publishableProjects.map {
-        "${it.targetProjectIdentity.buildTreePath.asString()}:testReleaseUnitTest"
-    }
-    dependsOn(subProjectsTestTasks)
-}
-
 // will cover Android-specific tests + tests from common source set
 val jvmUnitTestAllTask = tasks.register("jvmUnitTestAll") {
-    description = "Runs Android unit tests for Debug+Release build types accross all projects where applicable."
-    dependsOn(
-        jvmUnitTestDebugAllTask,
-        jvmUnitTestReleaseAllTask,
-        gradle.includedBuild("build-plugins").task(":test")
-    )
+    description = "Runs all JVM-targeted unit tests accross all projects where applicable."
+    val subProjectsTestTasks = publishableProjects.map {
+        "${it.targetProjectIdentity.buildTreePath.asString()}:testAndroidHostTest"
+    }
+    dependsOn(subProjectsTestTasks, gradle.includedBuild("build-plugins").task(":test"))
 }
 
 val iosUnitTestAllTask = tasks.register("iosUnitTestAll") {

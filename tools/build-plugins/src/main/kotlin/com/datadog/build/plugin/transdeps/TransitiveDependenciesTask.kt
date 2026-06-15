@@ -105,7 +105,7 @@ open class TransitiveDependenciesTask : DefaultTask() {
         private const val MB = 1024 * 1024
 
         private val SUPPORTED_CONFIGURATIONS = mapOf(
-            "androidReleaseCompileClasspath" to "android"
+            "androidCompileClasspath" to "android"
         )
         private const val TOTAL = "Total transitive dependencies size"
     }

@@ -45,10 +45,10 @@ kotlin {
             implementation(projects.tools.unit)
         }
     }
-}
 
-android {
-    namespace = "com.datadog.kmp.webview"
+    android {
+        namespace = "com.datadog.kmp.webview"
+    }
 }
 
 mokkery {

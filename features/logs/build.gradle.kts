@@ -40,7 +40,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.datadog.android.logs)
         }
-        androidUnitTest.dependencies {
+        androidHostTest.dependencies {
             implementation(libs.bundles.jUnit5)
             implementation(libs.bundles.jvmTestTools)
         }
@@ -52,10 +52,10 @@ kotlin {
             implementation(projects.tools.unit)
         }
     }
-}
 
-android {
-    namespace = "com.datadog.kmp.log"
+    android {
+        namespace = "com.datadog.kmp.log"
+    }
 }
 
 mokkery {

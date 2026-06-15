@@ -47,10 +47,10 @@ kotlin {
             implementation(projects.tools.unit)
         }
     }
-}
 
-android {
-    namespace = "com.datadog.kmp.ktor"
+    android {
+        namespace = "com.datadog.kmp.ktor"
+    }
 }
 
 mokkery {
