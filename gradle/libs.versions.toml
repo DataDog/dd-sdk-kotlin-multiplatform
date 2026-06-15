@@ -1,17 +1,17 @@
 [versions]
-agp = "8.13.2"
+agp = "9.2.1"
 # Keep in mind that Kotlin version used restricts which Xcode toolchain can be used: Xcode toolchain
 # version may be too recent for the Kotlin version used, so Kotlin Native tooling may fail to at
 # various steps. You can switch Xcode toolchain used on the system with xcodes CLI app,
 # this doesn't limit Xcode app version that can be used, e.g. Xcode 26 app can be used when
 # backed by the Xcode 16.4 toolchain.
 kotlin = "2.2.21"
-compose = "1.6.6"
-compose-material3 = "1.1.2"
+compose = "1.11.2"
+compose-material3 = "1.4.0"
 androidx-fragment = "1.5.1"
 androidx-navigation-forSdk = "2.3.0"
 androidx-navigation-forApp = "2.7.7"
-androidx-activityCompose = "1.8.0"
+androidx-activityCompose = "1.13.0"
 datadog-android = "3.10.0"
 datadog-ios = "3.12.0"
 dependencyLicense = "0.4.0"
@@ -100,10 +100,13 @@ mockitoKotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "m
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
-kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+androidLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+# We don't want Built-In Kotlin for lib modules, so it is disabled globally.
+# But we are okay with having it in the application module.
+# Applying good old Kotlin Android doesn't really work anymore, given there is KMP plugin in the
+# build classpath.
+builtInKotlin = { id = "com.android.built-in-kotlin", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 dependencyLicense = { id = "com.datadoghq.dependency-license", version.ref = "dependencyLicense" }
 mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
