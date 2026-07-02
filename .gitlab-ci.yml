@@ -1,285 +1,36 @@
-# SETUP
+# ⚠️ TEMPORARY validation branch — DO NOT MERGE. Delete after use.
+#
+# One-off check for the dd-sdk-android Sequoia migration (RUM-16470):
+# does the Android API 37 16 KB-page (google_apis_ps16k) emulator boot under HVF
+# on the Sequoia runner? On the Sonoma runners it can't (falls back to TCG and
+# aborts). Run here because KMP already has a live Sequoia runner with the
+# Android toolchain. The whole KMP pipeline is intentionally replaced so only
+# this single job runs.
 
-variables:
-  CURRENT_CI_IMAGE: "8"
-  CI_IMAGE_DOCKER: registry.ddbuild.io/ci/dd-sdk-kotlin-multiplatform:$CURRENT_CI_IMAGE
-  SLACK_NOTIFIER_IMAGE: registry.ddbuild.io/slack-notifier:latest
-  GIT_DEPTH: 6
-
-  KUBERNETES_MEMORY_REQUEST: "8Gi"
-  KUBERNETES_MEMORY_LIMIT: "13Gi"
-
-  DD_SERVICE: "dd-sdk-kotlin-multiplatform"
-  DD_ENV_TESTS: "ci"
-  DD_CIVISIBILITY_ENABLED: "true"
-  DD_INSIDE_CI: "true"
-  DD_COMMON_AGENT_CONFIG: "dd.env=ci,dd.trace.enabled=false,dd.jmx.fetch.enabled=false"
-  DD_JAVA_AGENT_FILE: "dd-java-agent-1.50.0.jar"
-
-stages:
-  - ci-image
-  - info
-  - analysis
-  - test
-  - publish
-  - notify
-
-.snippets:
-  set-publishing-credentials:
-    - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
-    - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
-    - export CENTRAL_PUBLISHER_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.publishing.central_username --with-decryption --query "Parameter.Value" --out text)
-    - export CENTRAL_PUBLISHER_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.publishing.central_password --with-decryption --query "Parameter.Value" --out text)
-
-# Security
-
-# TODO RUM-5306 Signing keys were generated using the image
-#  486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/agent-key-management-tools/gpg:1.
-# But this image is not compatible with k8s runner, so we need to regenerate keys using compatible
-# approach by the time existing keys expire (Aug 2025).
-
-# CI IMAGE
-
-ci-image:
-  stage: ci-image
-  when: manual
-  except: [ tags, schedules ]
-  tags: [ "arch:amd64" ]
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/docker:24.0.4-jammy
-  script:
-    - docker buildx build --tag $CI_IMAGE_DOCKER --label target=build -f Dockerfile.gitlab --push .
-
-env-info:
-  stage: info
-  when: manual
+ps16k-hvf-check:
   tags: [ "macos:sequoia-arm64, specific:true" ]
-  allow_failure: true # do not block GH PRs
   script:
-    - system_profiler SPSoftwareDataType # system info
-    - xcodebuild -version
-    - xcode-select -p # default Xcode
-    - ls /Applications/ | grep Xcode # other Xcodes
-    - xcodebuild -project sample/appleApp/appleApp.xcodeproj -scheme "Sample iOS" -showdestinations -quiet # installed iOS destinations
-    - xcodebuild -project sample/appleApp/appleApp.xcodeproj -scheme "Sample tvOS" -showdestinations -quiet # installed tvOS destinations
-    - xcbeautify --version
-    - swiftlint --version
-    - carthage version
-    - gh --version
-    - brew -v
-    - bundler --version
-    - python3 -V
-    - java --version
-
-# Analysis
-
-static-analysis-ios:
-  stage: analysis
-  tags: [ "macos:sequoia-arm64, specific:true" ]
-  timeout: 1h
-  script:
-#    - ./tools/lint/run-linter.sh
-    - ./tools/license/check-license.sh
-
-static-analysis-android:
-  stage: analysis
-  variables:
-    DETEKT_PUBLIC_API: "true"
-    DETEKT_CUSTOM_RULES_BUILD_TASK: ""
-    DETEKT_CUSTOM_RULES_JAR_PATH: ""
-    DETEKT_CUSTOM_RULES_YML_PATH: ""
-    DETEKT_GENERATE_CLASSPATH_BUILD_TASK: "printSdkDebugRuntimeClasspath"
-    DETEKT_CLASSPATH_FILE_PATH: ""
-    FLAVORED_ANDROID_LINT: ""
-  trigger:
-    include: "https://gitlab-templates.ddbuild.io/mobile/v116514400-1bd68e6b/static-analysis.yml"
-    strategy: depend
-
-analysis:licenses:
-  tags: [ "arch:amd64" ]
-  image: $CI_IMAGE_DOCKER
-  stage: analysis
-  timeout: 30m
-  script:
-    - ./gradlew checkDependencyLicenses --stacktrace --no-daemon
-
-# Test
-
-jvm-unit-test:
-  stage: test
-  tags: [ "arch:amd64" ]
-  image: $CI_IMAGE_DOCKER
-  timeout: 1h
-  script:
-    - rm -rf ~/.gradle/daemon/
-    - export DD_AGENT_HOST="$BUILDENV_HOST_IP"
-    - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
-    - ./gradlew jvmUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
-  artifacts:
-    when: always
-    expire_in: 1 week
-    reports:
-      junit:
-        - "**/build/test-results/testAndroidHostTest/*.xml"
-
-ios-unit-test:
-  stage: test
-  tags: [ "macos:sequoia-arm64, specific:true" ]
-  timeout: 1h
-  script:
-    - pod repo update
-    - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
-    - ./gradlew iosUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
-  artifacts:
-    when: always
-    expire_in: 1 week
-    reports:
-      junit:
-        - "**/build/test-results/iosSimulatorArm64Test/*.xml"
-
-tvos-unit-test:
-  stage: test
-  tags: [ "macos:sequoia-arm64, specific:true" ]
-  timeout: 1h
-  script:
-    - pod repo update
-    - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
-    - ./gradlew tvosUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
-  artifacts:
-    when: always
-    expire_in: 1 week
-    reports:
-      junit:
-        - "**/build/test-results/tvosSimulatorArm64Test/*.xml"
-
-sample-app-build-ios:
-  stage: test
-  tags: [ "macos:sequoia-arm64, specific:true" ]
-  timeout: 1h
-  variables:
-    BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5"
-  script:
-    - pod repo update
-    # by some reason if we build Datadog pods from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
-    - ./gradlew :buildDatadogPods
-    - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample iOS" build | xcbeautify --preserve-unbeautified
-
-sample-app-build-tvos:
-  stage: test
-  tags: [ "macos:sequoia-arm64, specific:true" ]
-  timeout: 1h
-  variables:
-    BUILD_DESTINATION: "platform=tvOS Simulator,name=Apple TV,OS=17.5"
-  script:
-    - pod repo update
-    # by some reason if we build Datadog pods from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
-    - ./gradlew :buildDatadogPods
-    - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample tvOS" build | xcbeautify --preserve-unbeautified
-
-sample-app-build-android:
-  stage: test
-  tags: [ "arch:amd64" ]
-  image: $CI_IMAGE_DOCKER
-  timeout: 1h
-  script:
-    - rm -rf ~/.gradle/daemon/
-    - export DD_AGENT_HOST="$BUILDENV_HOST_IP"
-    - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
-    - ./gradlew :sample:androidApp:assembleDebug --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
-
-# PUBLISH ARTIFACTS ON MAVEN
-
-publish:release-core:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
-  only:
-    - tags
-  stage: publish
-  timeout: 30m
-  script:
-    - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :core:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
-
-publish:release-logs:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
-  only:
-    - tags
-  stage: publish
-  timeout: 30m
-  script:
-    - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :features:logs:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
-
-publish:release-rum:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
-  only:
-    - tags
-  stage: publish
-  timeout: 30m
-  script:
-    - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :features:rum:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
-
-publish:release-webview:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
-  only:
-    - tags
-  stage: publish
-  timeout: 30m
-  script:
-    - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :features:webview:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
-
-publish:release-session-replay:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
-  only:
-    - tags
-  stage: publish
-  timeout: 30m
-  script:
-    - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :features:session-replay:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
-
-publish:release-ktor:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
-  only:
-    - tags
-  stage: publish
-  timeout: 30m
-  script:
-    - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :integrations:ktor:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
-
-publish:release-ktor3:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
-  only:
-    - tags
-  stage: publish
-  timeout: 30m
-  script:
-    - !reference [.snippets, set-publishing-credentials]
-    - ./gradlew :integrations:ktor3:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
-
-# SLACK NOTIFICATIONS
-
-notify:publish-release-success:
-  image: $SLACK_NOTIFIER_IMAGE
-  tags: [ "arch:amd64" ]
-  stage: notify
-  when: on_success
-  only:
-    - tags
-  script:
-    - MAVEN_URL="https://search.maven.org/artifact/com.datadoghq/dd-sdk-kotlin-multiplatform-core/$CI_COMMIT_TAG/jar"
-    - 'MESSAGE_TEXT=":rocket: $CI_PROJECT_NAME $CI_COMMIT_TAG published on :maven: $MAVEN_URL"'
-    - postmessage "#mobile-sdk-ops" "$MESSAGE_TEXT"
-
-notify:publish-release-failure:
-  image: $SLACK_NOTIFIER_IMAGE
-  tags: [ "arch:amd64" ]
-  stage: notify
-  when: on_failure
-  only:
-    - tags
-  script:
-    - BUILD_URL="$CI_PROJECT_URL/pipelines/$CI_PIPELINE_ID"
-    - 'MESSAGE_TEXT=":status_alert: $CI_PROJECT_NAME $CI_COMMIT_TAG publish pipeline <$BUILD_URL|$COMMIT_MESSAGE> failed."'
-    - postmessage "#mobile-sdk-ops" "$MESSAGE_TEXT"
+    - sw_vers
+    - uname -m
+    - IMG="system-images;android-37.0;google_apis_ps16k;arm64-v8a"
+    - echo y | ~/android_sdk/cmdline-tools/latest/bin/sdkmanager --install "$IMG"
+    - echo "no" | ~/android_sdk/cmdline-tools/latest/bin/avdmanager --verbose create avd --force --name ps16k_check --package "$IMG"
+    - $ANDROID_HOME/emulator/emulator -avd ps16k_check -no-window -no-audio -no-boot-anim -no-snapshot -verbose > /tmp/emu.log 2>&1 &
+    - EMU_PID=$!
+    - |
+      BOOTED=0
+      for i in $(seq 1 60); do
+        b=$($ANDROID_HOME/platform-tools/adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+        [ "$b" = "1" ] && { BOOTED=1; break; }
+        kill -0 "$EMU_PID" 2>/dev/null || { echo "emulator process exited early"; break; }
+        sleep 5
+      done
+      echo "===== HVF / mprotect / abort / cpu signals from emulator log ====="
+      grep -iE "hvf is not enabled|mprotect failed|Abort trap|Hypervisor|-cpu " /tmp/emu.log | sort -u | head -20 || true
+      $ANDROID_HOME/platform-tools/adb emu kill >/dev/null 2>&1 || true
+      if [ "$BOOTED" = "1" ]; then
+        echo "RESULT: PASS — ps16k (16 KB) emulator booted under HVF on macOS $(sw_vers -productVersion)"
+      else
+        echo "RESULT: FAIL — ps16k emulator did NOT boot (see signals above)"
+        exit 1
+      fi
