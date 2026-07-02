@@ -2,35 +2,44 @@
 #
 # One-off check for the dd-sdk-android Sequoia migration (RUM-16470):
 # does the Android API 37 16 KB-page (google_apis_ps16k) emulator boot under HVF
-# on the Sequoia runner? On the Sonoma runners it can't (falls back to TCG and
-# aborts). Run here because KMP already has a live Sequoia runner with the
-# Android toolchain. The whole KMP pipeline is intentionally replaced so only
-# this single job runs.
+# on the Sequoia runner? Run here because KMP already has a live Sequoia runner
+# with the Android toolchain. The whole KMP pipeline is intentionally replaced
+# so only this single job runs.
 
 ps16k-hvf-check:
   tags: [ "macos:sequoia-arm64, specific:true" ]
   script:
-    - sw_vers
-    - uname -m
-    - IMG="system-images;android-37.0;google_apis_ps16k;arm64-v8a"
-    - echo y | ~/android_sdk/cmdline-tools/latest/bin/sdkmanager --install "$IMG"
-    - echo "no" | ~/android_sdk/cmdline-tools/latest/bin/avdmanager --verbose create avd --force --name ps16k_check --package "$IMG"
-    - $ANDROID_HOME/emulator/emulator -avd ps16k_check -no-window -no-audio -no-boot-anim -no-snapshot -verbose > /tmp/emu.log 2>&1 &
-    - EMU_PID=$!
+    # Everything in ONE block so the emulator PID ($!) is captured reliably in
+    # the same shell (separate GitLab script lines clobber $!).
     - |
+      sw_vers; uname -m
+      SDK=~/android_sdk
+      IMG="system-images;android-37.0;google_apis_ps16k;arm64-v8a"
+      echo y | "$SDK/cmdline-tools/latest/bin/sdkmanager" --install "$IMG"
+      echo "no" | "$SDK/cmdline-tools/latest/bin/avdmanager" --verbose create avd --force --name ps16k_check --package "$IMG"
+
+      "$ANDROID_HOME/emulator/emulator" -avd ps16k_check -no-window -no-audio -no-boot-anim -no-snapshot -verbose > /tmp/emu.log 2>&1 &
+      EMU_PID=$!
+      echo "emulator pid=$EMU_PID"
+
       BOOTED=0
       for i in $(seq 1 60); do
-        b=$($ANDROID_HOME/platform-tools/adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+        b=$("$ANDROID_HOME/platform-tools/adb" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
+        echo "poll $i/60: sys.boot_completed='$b'"
         [ "$b" = "1" ] && { BOOTED=1; break; }
-        kill -0 "$EMU_PID" 2>/dev/null || { echo "emulator process exited early"; break; }
+        if ! kill -0 "$EMU_PID" 2>/dev/null; then echo "emulator process exited early"; break; fi
         sleep 5
       done
-      echo "===== HVF / mprotect / abort / cpu signals from emulator log ====="
-      grep -iE "hvf is not enabled|mprotect failed|Abort trap|Hypervisor|-cpu " /tmp/emu.log | sort -u | head -20 || true
-      $ANDROID_HOME/platform-tools/adb emu kill >/dev/null 2>&1 || true
+
+      echo "===== tail of emulator log (/tmp/emu.log) ====="
+      tail -n 80 /tmp/emu.log || true
+      echo "===== HVF / mprotect / abort / cpu signals ====="
+      grep -iE "hvf is not enabled|mprotect failed|Abort trap|Hypervisor|CPU Acceleration|-cpu |cortex" /tmp/emu.log | sort -u | head -30 || true
+
+      "$ANDROID_HOME/platform-tools/adb" emu kill >/dev/null 2>&1 || true
       if [ "$BOOTED" = "1" ]; then
-        echo "RESULT: PASS — ps16k (16 KB) emulator booted under HVF on macOS $(sw_vers -productVersion)"
+        echo "RESULT: PASS — ps16k (16 KB) booted under HVF on macOS $(sw_vers -productVersion)"
       else
-        echo "RESULT: FAIL — ps16k emulator did NOT boot (see signals above)"
+        echo "RESULT: FAIL — ps16k did NOT boot on macOS $(sw_vers -productVersion)"
         exit 1
       fi
