@@ -107,3 +107,6 @@ RUN npm install -g @datadog/datadog-ci
 ENV DD_TRACER_FOLDER $PWD/dd-java-agent
 RUN mkdir -p $DD_TRACER_FOLDER
 RUN wget -O $DD_TRACER_FOLDER/dd-java-agent.jar https://repo1.maven.org/maven2/com/datadoghq/dd-java-agent/$DD_TRACER_VERSION/dd-java-agent-$DD_TRACER_VERSION.jar
+
+# Install ddsign for image signing
+COPY --from=registry.ddbuild.io/ddsign:v1.11.10@sha256:55784668a612ab22129bb15a665a847819bfa64b9a595c59a03a3a725534ce22 /usr/local/bin/ddsign /usr/local/bin/ddsign
