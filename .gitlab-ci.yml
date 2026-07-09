@@ -1,7 +1,7 @@
 # SETUP
 
 variables:
-  CURRENT_CI_IMAGE: "8"
+  CURRENT_CI_IMAGE: "9"
   CI_IMAGE_DOCKER: registry.ddbuild.io/ci/dd-sdk-kotlin-multiplatform:$CURRENT_CI_IMAGE
   SLACK_NOTIFIER_IMAGE: registry.ddbuild.io/slack-notifier:latest
   GIT_DEPTH: 6
@@ -45,9 +45,14 @@ ci-image:
   when: manual
   except: [ tags, schedules ]
   tags: [ "arch:amd64" ]
+  id_tokens:
+    DDSIGN_ID_TOKEN:
+      aud: image-integrity
   image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/docker:24.0.4-jammy
   script:
-    - docker buildx build --tag $CI_IMAGE_DOCKER --label target=build -f Dockerfile.gitlab --push .
+    - METADATA_FILE=$(mktemp)
+    - docker buildx build --tag $CI_IMAGE_DOCKER --label target=build -f Dockerfile.gitlab --push --metadata-file ${METADATA_FILE} .
+    - ddsign sign $CI_IMAGE_DOCKER --docker-metadata-file ${METADATA_FILE}
 
 env-info:
   stage: info
@@ -91,7 +96,7 @@ static-analysis-android:
     DETEKT_CLASSPATH_FILE_PATH: ""
     FLAVORED_ANDROID_LINT: ""
   trigger:
-    include: "https://gitlab-templates.ddbuild.io/mobile/v116514400-1bd68e6b/static-analysis.yml"
+    include: "https://gitlab-templates.ddbuild.io/mobile/v123745390-227cb48b/static-analysis.yml"
     strategy: depend
 
 analysis:licenses:
