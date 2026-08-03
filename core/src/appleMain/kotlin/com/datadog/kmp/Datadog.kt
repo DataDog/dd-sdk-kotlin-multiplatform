@@ -312,6 +312,7 @@ private val DatadogSite.native: DDSite
         DatadogSite.EU1 -> DDSite.eu1()
         DatadogSite.AP1 -> DDSite.ap1()
         DatadogSite.AP2 -> DDSite.ap2()
+        DatadogSite.UK1 -> DDSite.uk1()
     }
 
 private fun Map<String, Any?>.eraseKeyType(): Map<Any?, *> {
