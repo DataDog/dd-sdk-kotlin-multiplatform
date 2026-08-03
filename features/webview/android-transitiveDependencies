@@ -1,7 +1,7 @@
 Dependencies List
 
-com.datadoghq:dd-sdk-android-core:3.10.0                        :  780 Kb
-com.datadoghq:dd-sdk-android-webview:3.10.0                     :   93 Kb
+com.datadoghq:dd-sdk-android-core:3.12.1                        :  791 Kb
+com.datadoghq:dd-sdk-android-webview:3.12.1                     :   97 Kb
 org.jetbrains.kotlin:kotlin-stdlib:2.2.21                       : 1720 Kb
 org.jetbrains:annotations:13.0                                  :   17 Kb
 
