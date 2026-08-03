@@ -15,6 +15,7 @@ import com.datadog.kmp.internal.InternalAttributes
 import com.datadog.kmp.privacy.TrackingConsent
 import com.datadog.kmp.tools.forge.Configurator
 import fr.xgouchet.elmyr.annotation.Forgery
+import fr.xgouchet.elmyr.annotation.StringForgery
 import fr.xgouchet.elmyr.junit5.ForgeConfiguration
 import fr.xgouchet.elmyr.junit5.ForgeExtension
 import org.assertj.core.api.Assertions.assertThat
@@ -127,11 +128,86 @@ internal class DatadogExtTest {
                     InternalAttributes.SDK_VERSION_ATTRIBUTE
                 )
             )
+            .apply {
+                coreConfig.version?.let { setVersion(it) }
+            }
             .setProxy(coreConfig.proxyConfiguration)
             .build()
 
         // When
         val actualConfiguration = sdkConfiguration.native
+
+        // Then
+        assertThat(actualConfiguration).isEqualTo(expectedConfiguration)
+    }
+
+    @Test
+    fun `M set version on native configuration W Configuration_native { version provided }`(
+        @Forgery sdkConfiguration: Configuration,
+        @StringForgery fakeVersion: String
+    ) {
+        // Given
+        val configuration = sdkConfiguration.copy(
+            coreConfig = sdkConfiguration.coreConfig.copy(version = fakeVersion)
+        )
+        val expectedConfiguration = ConfigurationAndroid.Builder(
+            clientToken = configuration.clientToken,
+            env = configuration.env,
+            variant = configuration.variant,
+            service = configuration.service
+        )
+            .useSite(configuration.coreConfig.site.native)
+            .setBatchSize(configuration.coreConfig.batchSize.native)
+            .setUploadFrequency(configuration.coreConfig.uploadFrequency.native)
+            .setBatchProcessingLevel(configuration.coreConfig.batchProcessingLevel.native)
+            .setCrashReportsEnabled(configuration.coreConfig.trackCrashes)
+            .setAdditionalConfiguration(
+                mapOf(
+                    InternalAttributes.SOURCE_ATTRIBUTE,
+                    InternalAttributes.SDK_VERSION_ATTRIBUTE
+                )
+            )
+            .setVersion(fakeVersion)
+            .setProxy(configuration.coreConfig.proxyConfiguration)
+            .build()
+
+        // When
+        val actualConfiguration = configuration.native
+
+        // Then
+        assertThat(actualConfiguration).isEqualTo(expectedConfiguration)
+    }
+
+    @Test
+    fun `M not set version on native configuration W Configuration_native { version not provided }`(
+        @Forgery sdkConfiguration: Configuration
+    ) {
+        // Given
+        val configuration = sdkConfiguration.copy(
+            coreConfig = sdkConfiguration.coreConfig.copy(version = null)
+        )
+        val expectedConfiguration = ConfigurationAndroid.Builder(
+            clientToken = configuration.clientToken,
+            env = configuration.env,
+            variant = configuration.variant,
+            service = configuration.service
+        )
+            .useSite(configuration.coreConfig.site.native)
+            .setBatchSize(configuration.coreConfig.batchSize.native)
+            .setUploadFrequency(configuration.coreConfig.uploadFrequency.native)
+            .setBatchProcessingLevel(configuration.coreConfig.batchProcessingLevel.native)
+            .setCrashReportsEnabled(configuration.coreConfig.trackCrashes)
+            .setAdditionalConfiguration(
+                mapOf(
+                    InternalAttributes.SOURCE_ATTRIBUTE,
+                    InternalAttributes.SDK_VERSION_ATTRIBUTE
+                )
+            )
+            .setProxy(configuration.coreConfig.proxyConfiguration)
+            .build()
+
+        // When
+        val actualConfiguration = configuration.native
 
         // Then
         assertThat(actualConfiguration).isEqualTo(expectedConfiguration)

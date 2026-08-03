@@ -31,6 +31,7 @@ internal constructor(
         val batchProcessingLevel: BatchProcessingLevel,
         val trackCrashes: Boolean,
         val proxyConfiguration: ProxyConfiguration?,
+        val version: String?,
         // iOS only
         val backgroundTasksEnabled: Boolean
     )
@@ -100,7 +101,7 @@ internal constructor(
         /**
          * Defines the Batch processing level, defining the maximum number of batches processed
          * sequentially without a delay within one reading/uploading cycle.
-         * @param batchProcessingLevel the desired batch processing level. By default it's set to
+         * @param batchProcessingLevel the desired batch processing level. By default, it's set to
          * [BatchProcessingLevel.MEDIUM].
          * @see BatchProcessingLevel
          */
@@ -128,6 +129,17 @@ internal constructor(
             coreConfig = coreConfig.copy(proxyConfiguration = proxyConfiguration)
             return this
         }
+
+        /**
+         * Sets the version name that will be used for all events sent to Datadog.
+         * If not provided, the SDK will use the version from the application's package info.
+         *
+         * @param version the version name to use
+         */
+        fun setVersion(version: String): Builder {
+            coreConfig = coreConfig.copy(version = version)
+            return this
+        }
     }
 
     // endregion
@@ -146,6 +158,7 @@ internal constructor(
             batchProcessingLevel = BatchProcessingLevel.MEDIUM,
             trackCrashes = true,
             proxyConfiguration = null,
+            version = null,
             backgroundTasksEnabled = false
         )
     }
