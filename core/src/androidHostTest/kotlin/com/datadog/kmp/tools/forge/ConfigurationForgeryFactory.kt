@@ -23,6 +23,7 @@ internal class ConfigurationForgeryFactory : ForgeryFactory<Configuration> {
             site = forge.aValueFrom(DatadogSite::class.java),
             batchProcessingLevel = forge.aValueFrom(BatchProcessingLevel::class.java),
             trackCrashes = forge.aBool(),
+            version = forge.aNullable { forge.aString() },
             proxyConfiguration = forge.aNullable {
                 ProxyConfiguration(
                     type = forge.aValueFrom(ProxyType::class.java),

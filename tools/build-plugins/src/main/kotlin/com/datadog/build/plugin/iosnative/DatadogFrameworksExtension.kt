@@ -27,8 +27,6 @@ abstract class DatadogNativeFrameworkSpec @Inject constructor(
         .convention(false)
     val packageName: Property<String> = objects.property<String>()
         .convention("cocoapods.$name")
-    val preImportModules: ListProperty<String> = objects.listProperty<String>()
-        .convention(emptyList())
     val compilerOpts: ListProperty<String> = objects.listProperty<String>()
         .convention(listOf("-fmodules"))
     val targetFamilies: SetProperty<Family> = objects.setProperty<Family>()

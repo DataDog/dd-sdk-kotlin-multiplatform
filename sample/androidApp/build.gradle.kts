@@ -6,7 +6,7 @@
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.builtInKotlin)
     id("datadog-build-config")
     alias(libs.plugins.dependencyLicense)
     alias(libs.plugins.compose.compiler)

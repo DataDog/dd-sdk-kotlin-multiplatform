@@ -23,7 +23,6 @@ plugins {
 datadogFrameworks {
     framework("DatadogWebViewTracking") {
         linkOnly = false
-        preImportModules.add("WebKit")
     }
     framework("DatadogCore") {
         linkOnly = true
@@ -46,10 +45,10 @@ kotlin {
             implementation(projects.tools.unit)
         }
     }
-}
 
-android {
-    namespace = "com.datadog.kmp.webview"
+    android {
+        namespace = "com.datadog.kmp.webview"
+    }
 }
 
 mokkery {

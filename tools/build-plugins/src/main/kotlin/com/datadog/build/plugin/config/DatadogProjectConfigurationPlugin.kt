@@ -6,9 +6,10 @@
 
 package com.datadog.build.plugin.config
 
-import com.android.build.api.dsl.CommonExtension
-import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
+import com.android.build.api.dsl.Lint
+import com.android.build.api.dsl.Packaging
 import com.datadog.build.ProjectConfig
 import com.datadog.build.utils.taskConfig
 import org.gradle.api.JavaVersion
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -42,14 +43,9 @@ class DatadogProjectConfigurationPlugin : Plugin<Project> {
             target.applyApplicationAndroidConfig(extension)
         }
 
-        target.pluginManager.withPlugin("com.android.library") {
-            target.logger.info("Found Android Library Plugin in project ${target.path}, applying configuration")
-            target.applyKotlinConfig(extension)
-            target.applyLibraryAndroidConfig(extension)
-        }
-
         target.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
             target.logger.info("Found Kotlin Multiplatform Plugin in project ${target.path}, applying configuration")
+            target.applyKotlinConfig(extension)
             target.applyKotlinMultiplatformConfig(extension)
         }
 
@@ -99,15 +95,10 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
     val projectToApply = this
     extensions.getByType<KotlinMultiplatformExtension>()
         .apply {
-            if (!projectToApply.displayName.contains("tools")) {
-                androidTarget {
-                    compilerOptions {
-                        jvmTarget.set(configExtension.jvmTargetOrDefault)
-                    }
-                }
-            } else {
+            if (projectToApply.displayName.contains("tools")) {
                 jvm()
             }
+            // Android target is created automatically by applying plugin
             // TODO RUM-4231 Add watchOS target
             iosX64()
             iosArm64()
@@ -122,33 +113,49 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
             }
 
             sourceSets.all {
-                if (name.startsWith("apple") || name.startsWith("ios") || name.startsWith("tvos")) {
+                if (name.startsWith("apple") ||
+                    name.startsWith("ios") ||
+                    name.startsWith("tvos")
+                ) {
                     languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
                 }
             }
 
-            targets.all {
-                if (this is KotlinNativeTargetWithTests<*>) {
-                    testRuns.all {
-                        if (this is KotlinNativeSimulatorTestRun) {
-                            // Need to find a way to be more precise, to specify OS runtime version. Should be
-                            // aligned with what is in CI file.
-                            deviceId = when (konanTarget.family) {
-                                Family.IOS -> {
-                                    "iPhone 15 Pro Max"
-                                }
+            targets.configureEach {
+                when (platformType) {
+                    KotlinPlatformType.androidJvm -> {
+                        (this as KotlinMultiplatformAndroidLibraryTarget).applyLibraryAndroidConfig(configExtension)
+                    }
 
-                                Family.TVOS -> {
-                                    "Apple TV"
-                                }
+                    KotlinPlatformType.native -> {
+                        if (this is KotlinNativeTargetWithTests<*>) {
+                            testRuns.all {
+                                if (this is KotlinNativeSimulatorTestRun) {
+                                    // Need to find a way to be more precise, to specify OS runtime version. Should be
+                                    // aligned with what is in CI file.
+                                    deviceId = when (konanTarget.family) {
+                                        Family.IOS -> {
+                                            "iPhone 15 Pro Max"
+                                        }
 
-                                else -> throw IllegalArgumentException(
-                                    "Unknown family for the device ID selection: ${konanTarget.family}"
-                                )
+                                        Family.TVOS -> {
+                                            "Apple TV"
+                                        }
+
+                                        else -> throw IllegalArgumentException(
+                                            "Unknown family for the device ID selection: ${konanTarget.family}"
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
+
+                    else -> {
+                        // do nothing
+                    }
                 }
+
                 if (this is HasConfigurableKotlinCompilerOptions<*>) {
                     compilerOptions {
                         if (this is KotlinJvmCompilerOptions) {
@@ -182,7 +189,7 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
 // region Android
 
 private fun Project.applyApplicationAndroidConfig(configExtension: DatadogBuildConfigExtension) {
-    extensions.getByType<BaseAppModuleExtension>()
+    extensions.getByType<ApplicationExtension>()
         .apply {
             val javaVersion = configExtension.jvmTargetOrDefault.toJavaVersion()
             compileOptions {
@@ -199,71 +206,53 @@ private fun Project.applyApplicationAndroidConfig(configExtension: DatadogBuildC
                 versionName = ProjectConfig.VERSION.name
             }
 
-            sourceSets.all {
-                java.srcDir("src/$name/kotlin")
-            }
-
             testOptions {
                 unitTests.isReturnDefaultValues = true
             }
 
-            lintConfigure()
-            packagingConfigure()
+            lint.datadogConfigure()
+            packaging.datadogConfigure()
         }
 }
 
-private fun Project.applyLibraryAndroidConfig(configExtension: DatadogBuildConfigExtension) {
-    extensions.getByType<LibraryExtension>()
-        .apply {
-            val javaVersion = configExtension.jvmTargetOrDefault.toJavaVersion()
-            compileOptions {
-                sourceCompatibility = javaVersion
-                targetCompatibility = javaVersion
-            }
-            compileSdk = ProjectConfig.Android.COMPILE_SDK
-            buildToolsVersion = ProjectConfig.Android.BUILD_TOOLS_VERSION
-
-            defaultConfig {
-                minSdk = ProjectConfig.Android.MIN_SDK
-            }
-
-            sourceSets.all {
-                java.srcDir("src/$name/kotlin")
-            }
-
-            testOptions {
-                unitTests.isReturnDefaultValues = true
-            }
-
-            lintConfigure()
-            packagingConfigure()
-        }
-}
-
-private fun CommonExtension<*, *, *, *, *, *>.lintConfigure() {
-    lint {
-        warningsAsErrors = true
-        abortOnError = true
-        checkReleaseBuilds = false
-        checkGeneratedSources = true
-        ignoreTestSources = true
-        // GradleDependency check: A newer version of com.foo.bar than x.x.x is available: y.y.y
-        disable += "GradleDependency"
-        // AndroidGradlePluginVersion: A newer version of com.android.tools.build:gradle than x.x.x is available: y.y.y
-        disable += "AndroidGradlePluginVersion"
+private fun KotlinMultiplatformAndroidLibraryTarget.applyLibraryAndroidConfig(
+    configExtension: DatadogBuildConfigExtension
+) {
+    compilerOptions {
+        jvmTarget.set(configExtension.jvmTargetOrDefault)
     }
+    minSdk = ProjectConfig.Android.MIN_SDK
+    compileSdk = ProjectConfig.Android.COMPILE_SDK
+    buildToolsVersion = ProjectConfig.Android.BUILD_TOOLS_VERSION
+
+    withHostTest {
+        isReturnDefaultValues = true
+    }
+
+    lint.datadogConfigure()
+    packaging.datadogConfigure()
 }
 
-private fun CommonExtension<*, *, *, *, *, *>.packagingConfigure() {
-    packaging {
-        resources {
-            excludes += listOf(
-                "META-INF/jvm.kotlin_module",
-                "META-INF/LICENSE.md",
-                "META-INF/LICENSE-notice.md",
-                "META-INF/{AL2.0,LGPL2.1}"
-            )
-        }
+private fun Lint.datadogConfigure() {
+    warningsAsErrors = true
+    abortOnError = true
+    checkReleaseBuilds = false
+    checkGeneratedSources = true
+    ignoreTestSources = true
+    // GradleDependency check: A newer version of com.foo.bar than x.x.x is available: y.y.y
+    disable += "GradleDependency"
+    // AndroidGradlePluginVersion: A newer version of com.android.tools.build:gradle than x.x.x is available: y.y.y
+    disable += "AndroidGradlePluginVersion"
+}
+
+private fun Packaging.datadogConfigure() {
+    resources {
+        excludes += listOf(
+            "META-INF/jvm.kotlin_module",
+            "META-INF/LICENSE.md",
+            "META-INF/LICENSE-notice.md",
+            "META-INF/{AL2.0,LGPL2.1}"
+        )
     }
 }
 
@@ -272,12 +261,6 @@ private fun CommonExtension<*, *, *, *, *, *>.packagingConfigure() {
 // region Publishing
 
 private fun Project.applyPublishingConfig(buildConfigExtension: DatadogBuildConfigExtension) {
-    extensions.getByType<KotlinMultiplatformExtension>()
-        .targets
-        .withType<KotlinAndroidTarget> {
-            publishLibraryVariants("release")
-        }
-
     val publishingExtension = extensions.getByType<PublishingExtension>()
         .apply {
             publications.withType<MavenPublication> {

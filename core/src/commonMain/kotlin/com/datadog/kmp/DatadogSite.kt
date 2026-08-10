@@ -42,6 +42,11 @@ enum class DatadogSite {
     AP2,
 
     /**
+     *  The UK1 site: [uk1.datadoghq.com](https://uk1.datadoghq.com).
+     */
+    UK1,
+
+    /**
      *  The US1_FED site (FedRAMP compatible): [app.ddog-gov.com](https://app.ddog-gov.com).
      */
     US1_FED,

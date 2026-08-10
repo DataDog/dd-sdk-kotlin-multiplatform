@@ -252,6 +252,11 @@ internal val Configuration.native: ConfigurationAndroid
                     InternalAttributes.SDK_VERSION_ATTRIBUTE
                 )
             )
+            .apply {
+                coreConfig.version?.let {
+                    setVersion(it)
+                }
+            }
             .setProxy(coreConfig.proxyConfiguration)
             .build()
     }
@@ -294,4 +299,5 @@ internal val DatadogSite.native: DatadogSiteAndroid
         DatadogSite.EU1 -> DatadogSiteAndroid.EU1
         DatadogSite.AP1 -> DatadogSiteAndroid.AP1
         DatadogSite.AP2 -> DatadogSiteAndroid.AP2
+        DatadogSite.UK1 -> DatadogSiteAndroid.UK1
     }

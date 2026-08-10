@@ -74,7 +74,7 @@ kotlin {
             // Android SDK will bring it
             compileOnly(libs.okHttp)
         }
-        androidUnitTest.dependencies {
+        androidHostTest.dependencies {
             implementation(libs.bundles.jUnit5)
             implementation(libs.bundles.jvmTestTools)
             compileOnly(libs.okHttp)
@@ -92,10 +92,10 @@ kotlin {
             kotlin.srcDir(generateLibConfigTask.map { it.destinationDir })
         }
     }
-}
 
-android {
-    namespace = "com.datadog.kmp"
+    android {
+        namespace = "com.datadog.kmp"
+    }
 }
 
 datadogBuildConfig {
