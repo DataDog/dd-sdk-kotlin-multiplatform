@@ -268,6 +268,7 @@ internal val Configuration.native: DDConfiguration
                 InternalAttributes.SDK_VERSION_ATTRIBUTE
             )
         )
+        nativeConfig.setVersion(coreConfig.version)
         nativeConfig.setProxy(coreConfig.proxyConfiguration)
         nativeConfig.setBackgroundTasksEnabled(coreConfig.backgroundTasksEnabled)
         return nativeConfig

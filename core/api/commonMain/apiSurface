@@ -43,6 +43,7 @@ data class com.datadog.kmp.core.configuration.Configuration
     fun setBatchProcessingLevel(BatchProcessingLevel): Builder
     fun trackCrashes(Boolean): Builder
     fun setProxy(ProxyConfiguration): Builder
+    fun setVersion(String): Builder
 class com.datadog.kmp.core.configuration.ProxyConfiguration
   constructor(ProxyType, String, UInt)
   fun withBasicAuthentication(String, String): ProxyConfiguration

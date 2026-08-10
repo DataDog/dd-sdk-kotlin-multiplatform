@@ -252,6 +252,11 @@ internal val Configuration.native: ConfigurationAndroid
                     InternalAttributes.SDK_VERSION_ATTRIBUTE
                 )
             )
+            .apply {
+                coreConfig.version?.let {
+                    setVersion(it)
+                }
+            }
             .setProxy(coreConfig.proxyConfiguration)
             .build()
     }
