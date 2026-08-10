@@ -1,3 +1,14 @@
+# 1.8.0 / 2026-08-10
+
+* [IMPROVEMENT] Add `Configuration#setVersion` API. See [#300](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/300)
+* [IMPROVEMENT] Add `UK1` datacenter support. See [#299](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/299)
+* [MAINTENANCE] Update Kotlin, AGP and Gradle versions. See [#290](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/290)
+* [MAINTENANCE] Generate compiler metadata information for Android and iOS/tvOS output binaries. See [#292](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/292)
+* [MAINTENANCE] Update AGP version to 9.2.1, Gradle version to 9.5.1. See [#293](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/293)
+* [MAINTENANCE] Use signed images in CI. See [#296](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/296)
+* [MAINTENANCE] Update Datadog iOS SDK to 3.14.0, Datadog Android SDK to 3.12.1. See [#298](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/298)
+* [MAINTENANCE] Bump iOS SDK used to version 3.15.0. See [#301](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/301)
+
 # 1.7.0 / 2026-06-10
 
 * [IMPROVEMENT] Add `US2_FED` support. See [#275](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/275)
