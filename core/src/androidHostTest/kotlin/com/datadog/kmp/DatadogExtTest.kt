@@ -101,7 +101,8 @@ internal class DatadogExtTest {
             DatadogSite.US5 to DatadogSiteAndroid.US5,
             DatadogSite.EU1 to DatadogSiteAndroid.EU1,
             DatadogSite.AP1 to DatadogSiteAndroid.AP1,
-            DatadogSite.AP2 to DatadogSiteAndroid.AP2
+            DatadogSite.AP2 to DatadogSiteAndroid.AP2,
+            DatadogSite.UK1 to DatadogSiteAndroid.UK1
         )
             .assertExhaustive(DatadogSite.entries)
             .assertAllKeysEqualToValuesWhen { it.native }
