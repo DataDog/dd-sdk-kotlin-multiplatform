@@ -7,19 +7,24 @@
 package com.datadog.build.plugin.apisurface
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-open class GenerateApiSurfaceTask : DefaultTask() {
+abstract class GenerateApiSurfaceTask : DefaultTask() {
 
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
-    lateinit var sourceFiles: FileCollection
+    abstract val sourceFiles: ConfigurableFileCollection
 
     @get:OutputFile
-    lateinit var surfaceFile: File
+    abstract val surfaceFile: RegularFileProperty
 
     private lateinit var visitor: KotlinFileVisitor
 
@@ -35,13 +40,21 @@ open class GenerateApiSurfaceTask : DefaultTask() {
         visitFileCollectionRecursively(sourceFiles)
 
         val apiSurface = visitor.description.toString()
+        writeToFile(surfaceFile.get().asFile, apiSurface)
+    }
+
+    private fun writeToFile(surfaceFile: File, apiSurface: String) {
         if (apiSurface.isNotEmpty()) {
+            surfaceFile.parentFile.mkdirs()
             surfaceFile.printWriter().use {
                 it.print(apiSurface)
             }
         } else {
-            if (surfaceFile.parentFile.exists()) {
-                surfaceFile.parentFile.deleteRecursively()
+            if (surfaceFile.exists()) {
+                surfaceFile.delete()
+            }
+            if (surfaceFile.parentFile.exists() && surfaceFile.parentFile.listFiles().isNullOrEmpty()) {
+                surfaceFile.parentFile.delete()
             }
         }
     }
@@ -55,6 +68,7 @@ open class GenerateApiSurfaceTask : DefaultTask() {
                 file.listFiles().orEmpty()
                     .sortedBy { it.absolutePath }
                     .forEach { visitDirectoryRecursively(it) }
+
             file.isFile -> visitFile(file)
             else -> logger.error("${file.path} is neither file nor directory")
         }

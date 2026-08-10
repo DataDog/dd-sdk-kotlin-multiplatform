@@ -12,9 +12,7 @@ plugins {
     // trick: for the same plugin versions in all sub-modules
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
-    alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
-    alias(libs.plugins.kotlinCocoapods) apply false
     alias(libs.plugins.dependencyLicense) apply false
     alias(libs.plugins.mokkery) apply false
     alias(libs.plugins.compose.compiler) apply false
@@ -55,7 +53,12 @@ project.taskConfig<AbstractNexusStagingRepositoryTask> {
 /**
  * Task necessary to be compliant with the shared Android static analysis pipeline
  */
-tasks.register("checkGeneratedFiles") { }
+tasks.register("checkGeneratedFiles") {
+    description = "Check generated files"
+    dependsOn("checkApiSurfaceChangesAll")
+    dependsOn("checkCompilerMetadataChangesAll")
+    dependsOn("checkTransitiveDependenciesListAll")
+}
 
 /**
  * Creates a task aggregating a task on all projects.
@@ -69,6 +72,7 @@ fun registerPluginSpecificAggregationTask(
     pluginName: String
 ) {
     tasks.register(aggregationTaskName) {
+        description = "Umbrella task to run $projectTaskName in all applicable projects."
         val aggregationTask = this
         allprojects.forEach {
             it.pluginManager.withPlugin(pluginName) {
@@ -79,20 +83,39 @@ fun registerPluginSpecificAggregationTask(
     }
 }
 
+@Suppress("PropertyName", "VariableNaming")
+val API_SURFACE_PLUGIN_NAME = "api-surface"
+
 registerPluginSpecificAggregationTask(
     "checkApiSurfaceChangesAll",
     "checkApiSurfaceChanges",
-    "api-surface"
+    API_SURFACE_PLUGIN_NAME
 )
 registerPluginSpecificAggregationTask(
     "generateApiSurfaceAll",
     "generateApiSurface",
-    "api-surface"
+    API_SURFACE_PLUGIN_NAME
+)
+registerPluginSpecificAggregationTask(
+    "checkCompilerMetadataChangesAll",
+    "checkCompilerMetadataChanges",
+    API_SURFACE_PLUGIN_NAME
+)
+registerPluginSpecificAggregationTask(
+    "generateCompilerMetadataAll",
+    "generateCompilerMetadata",
+    API_SURFACE_PLUGIN_NAME
 )
 
 registerPluginSpecificAggregationTask(
     "listTransitiveDependenciesAll",
     "listTransitiveDependencies",
+    "transitive-dependencies"
+)
+
+registerPluginSpecificAggregationTask(
+    "checkTransitiveDependenciesListAll",
+    "checkTransitiveDependenciesList",
     "transitive-dependencies"
 )
 
@@ -106,57 +129,50 @@ val publishableProjects = listOf(
     projects.integrations.ktor3
 )
 
-val jvmUnitTestDebugAllTask = tasks.register("jvmUnitTestDebugAll") {
-    val subProjectsTestTasks = publishableProjects.map {
-        "${it.targetProjectIdentity.buildTreePath.path}:testDebugUnitTest"
-    }
-    dependsOn(subProjectsTestTasks)
-}
-
-val jvmUnitTestReleaseAllTask = tasks.register("jvmUnitTestReleaseAll") {
-    val subProjectsTestTasks = publishableProjects.map {
-        "${it.targetProjectIdentity.buildTreePath.path}:testReleaseUnitTest"
-    }
-    dependsOn(subProjectsTestTasks)
-}
-
 // will cover Android-specific tests + tests from common source set
 val jvmUnitTestAllTask = tasks.register("jvmUnitTestAll") {
-    dependsOn(
-        jvmUnitTestDebugAllTask,
-        jvmUnitTestReleaseAllTask,
-        gradle.includedBuild("build-plugins").task(":test")
-    )
+    description = "Runs all JVM-targeted unit tests accross all projects where applicable."
+    val subProjectsTestTasks = publishableProjects.map {
+        "${it.targetProjectIdentity.buildTreePath.asString()}:testAndroidHostTest"
+    }
+    dependsOn(subProjectsTestTasks, gradle.includedBuild("build-plugins").task(":test"))
 }
 
 val iosUnitTestAllTask = tasks.register("iosUnitTestAll") {
+    description = "Runs iOS unit tests accross all projects where applicable."
     val subProjectsTestTasks = publishableProjects.map {
-        "${it.targetProjectIdentity.buildTreePath.path}:iosSimulatorArm64Test"
+        "${it.targetProjectIdentity.buildTreePath.asString()}:iosSimulatorArm64Test"
     }
     dependsOn(subProjectsTestTasks)
 }
 
 val tvosUnitTestAllTask = tasks.register("tvosUnitTestAll") {
+    description = "Runs tvOS unit tests accross all projects where applicable."
     val subProjectsTestTasks = publishableProjects
         // by some reason something like `projects.features.webview == projects.features.webview` evaluates to false
         .filter {
-            it.targetProjectIdentity.buildTreePath.path !in setOf(":features:session-replay", ":features:webview")
+            it.targetProjectIdentity.buildTreePath.asString() !in setOf(":features:session-replay", ":features:webview")
         }
-        .map { "${it.targetProjectIdentity.buildTreePath.path}:tvosSimulatorArm64Test" }
+        .map { "${it.targetProjectIdentity.buildTreePath.asString()}:tvosSimulatorArm64Test" }
     dependsOn(subProjectsTestTasks)
 }
 
 val appleUnitTestAllTask = tasks.register("appleUnitTestAll") {
+    description = "Runs iOS+tvOS unit tests accross all projects where applicable."
     dependsOn(iosUnitTestAllTask, tvosUnitTestAllTask)
 }
 
 tasks.register("unitTestAll") {
+    description = "Runs unit tests accross all projects."
     dependsOn(jvmUnitTestAllTask, appleUnitTestAllTask)
 }
 
 tasks.register("lintCheckAll") {
+    description = "Runs lint check accross all projects."
+    // TODO RUM-16772 Right now it will fail, because KMP Android Library plugin doesn't create lint tasks it seems,
+    //  despite having lint configuration in the target
     val subProjectsLintTasks = publishableProjects.map {
-        "${it.targetProjectIdentity.buildTreePath.path}:lintRelease"
+        "${it.targetProjectIdentity.buildTreePath.asString()}:lint"
     }
     dependsOn(subProjectsLintTasks)
 }

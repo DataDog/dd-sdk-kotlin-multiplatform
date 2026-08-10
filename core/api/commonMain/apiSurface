@@ -18,6 +18,7 @@ enum com.datadog.kmp.DatadogSite
   - EU1
   - AP1
   - AP2
+  - UK1
   - US1_FED
   - US2_FED
 enum com.datadog.kmp.SdkLogVerbosity
@@ -43,6 +44,7 @@ data class com.datadog.kmp.core.configuration.Configuration
     fun setBatchProcessingLevel(BatchProcessingLevel): Builder
     fun trackCrashes(Boolean): Builder
     fun setProxy(ProxyConfiguration): Builder
+    fun setVersion(String): Builder
 class com.datadog.kmp.core.configuration.ProxyConfiguration
   constructor(ProxyType, String, UInt)
   fun withBasicAuthentication(String, String): ProxyConfiguration

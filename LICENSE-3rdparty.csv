@@ -45,4 +45,6 @@ import(test),org.mockito,MIT,Copyright (c) 2007 Mockito contributors
 import(test),org.mockito.kotlin,MIT,"Copyright (c) 2016 Niek Haarman, Copyright (c) 2007 Mockito contributors"
 import(test),org.opentest4j,Apache-2.0,Copyright 2015-2018 the original author or authors
 build,androidx.compose.compiler,Apache-2.0,Copyright 2019 The Android Open Source Project
+build,com.android.tools.lint,Apache-2.0,Copyright (C) 2013 The Android Open Source Project
+build,org.bouncycastle,BouncyCastle-License,"Copyright (c) 2000-2026 The Legion of the Bouncy Castle Inc"
 build,org.slf4j,MIT,"Copyright (c) 2004-2022 QOS.ch Sarl (Switzerland)"

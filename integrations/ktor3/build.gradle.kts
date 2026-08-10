@@ -68,10 +68,10 @@ kotlin {
             }
         }
     }
-}
 
-android {
-    namespace = "com.datadog.kmp.ktor"
+    android {
+        namespace = "com.datadog.kmp.ktor"
+    }
 }
 
 mokkery {

@@ -47,7 +47,7 @@ kotlin {
             // expose native interface as argument
             api(libs.datadog.android.sessionReplay)
         }
-        androidUnitTest.dependencies {
+        androidHostTest.dependencies {
             implementation(libs.bundles.jUnit5)
             implementation(libs.bundles.jvmTestTools)
         }
@@ -59,10 +59,10 @@ kotlin {
             implementation(projects.tools.unit)
         }
     }
-}
 
-android {
-    namespace = "com.datadog.kmp.sessionreplay"
+    android {
+        namespace = "com.datadog.kmp.sessionreplay"
+    }
 }
 
 mokkery {

@@ -42,7 +42,7 @@ kotlin {
             implementation(libs.androidx.fragment)
             implementation(libs.androidx.navigation.runtime.forSdk)
         }
-        androidUnitTest.dependencies {
+        androidHostTest.dependencies {
             implementation(libs.bundles.jUnit5)
             implementation(libs.bundles.jvmTestTools)
             implementation(projects.tools.unit)
@@ -65,10 +65,10 @@ kotlin {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
     }
-}
 
-android {
-    namespace = "com.datadog.kmp.rum"
+    android {
+        namespace = "com.datadog.kmp.rum"
+    }
 }
 
 mokkery {

@@ -8,22 +8,22 @@ package com.datadog.build.plugin.apisurface
 
 import com.datadog.build.utils.execShell
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
-import java.io.File
 import javax.inject.Inject
 
-open class CheckApiSurfaceTask @Inject constructor(
+abstract class CheckApiSurfaceTask @Inject constructor(
     private val execOperations: ExecOperations
 ) : DefaultTask() {
 
     @Input
     lateinit var sourceSetName: String
 
-    @InputFile
-    lateinit var surfaceFile: File
+    @get:InputFiles
+    abstract val surfaceFile: RegularFileProperty
 
     init {
         group = "datadog"
@@ -33,13 +33,18 @@ open class CheckApiSurfaceTask @Inject constructor(
 
     @TaskAction
     fun applyTask() {
+        if (!surfaceFile.get().asFile.exists()) {
+            logger.info("Skipping check of API surface for ${surfaceFile.get().asFile}, it doesn't exist.")
+            return
+        }
+
         val lines = execOperations.execShell(
             "git",
             "diff",
             "--color=never",
             "HEAD",
             "--",
-            surfaceFile.absolutePath
+            surfaceFile.get().asFile.absolutePath
         )
 
         val additions = lines.filter { it.matches(Regex("^\\+[^+].*$")) }

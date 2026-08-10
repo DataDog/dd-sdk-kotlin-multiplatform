@@ -112,8 +112,8 @@ kotlin {
             kotlin.srcDir(generateLibConfigTask.map { it.destinationDir })
         }
     }
-}
 
-android {
-    namespace = "com.datadog.kmp.sample"
+    android {
+        namespace = "com.datadog.kmp.sample"
+    }
 }

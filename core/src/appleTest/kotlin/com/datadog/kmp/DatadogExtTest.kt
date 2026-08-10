@@ -31,6 +31,7 @@ import com.datadog.tools.random.randomEnumValue
 import com.datadog.tools.random.randomUInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @Suppress("FunctionNaming")
@@ -86,6 +87,7 @@ internal class DatadogExtTest {
 
     @Test
     fun `M return expected configuration W Configuration_native`() {
+        // Given
         val expectedProxyConfig = mapOf(
             "HTTPSEnable" to true,
             "HTTPSProxy" to "hostname",
@@ -104,6 +106,7 @@ internal class DatadogExtTest {
                     hostname = expectedProxyConfig["HTTPSProxy"] as String,
                     port = expectedProxyConfig["HTTPSPort"] as UInt
                 ),
+                version = "version",
                 backgroundTasksEnabled = randomBoolean()
             ),
             clientToken = "clientToken",
@@ -113,8 +116,10 @@ internal class DatadogExtTest {
 
         )
 
+        // When
         val nativeConfig = commonConfig.native
 
+        // Then
         nativeConfig.proxyConfiguration()
             ?.assertAllKeysEqualToValuesWhen { expectedProxyConfig[it] }
 
@@ -122,10 +127,38 @@ internal class DatadogExtTest {
         assertEquals(commonConfig.coreConfig.uploadFrequency.native, nativeConfig.uploadFrequency())
         assertEquals(commonConfig.coreConfig.batchProcessingLevel.native, nativeConfig.batchProcessingLevel())
         assertEquals(commonConfig.coreConfig.backgroundTasksEnabled, nativeConfig.backgroundTasksEnabled())
+        assertEquals(commonConfig.coreConfig.version, nativeConfig.version())
         assertEquals(commonConfig.clientToken, nativeConfig.clientToken())
         assertEquals(commonConfig.env, nativeConfig.env())
         assertEquals(commonConfig.service, nativeConfig.service())
         // TODO RUM-8122: support site equality verification
+    }
+
+    @Test
+    fun `M return null version on native configuration W Configuration_native without version`() {
+        // Given
+        val commonConfig = Configuration(
+            coreConfig = Configuration.Core(
+                batchSize = randomEnumValue(),
+                uploadFrequency = randomEnumValue(),
+                site = randomEnumValue(),
+                batchProcessingLevel = randomEnumValue(),
+                trackCrashes = randomBoolean(),
+                proxyConfiguration = null,
+                version = null,
+                backgroundTasksEnabled = randomBoolean()
+            ),
+            clientToken = "clientToken",
+            env = "env",
+            variant = "variant",
+            service = "service"
+        )
+
+        // When
+        val nativeConfig = commonConfig.native
+
+        // Then
+        assertNull(nativeConfig.version())
     }
 
     companion object {
