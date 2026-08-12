@@ -53,5 +53,21 @@ fun SessionReplayConfiguration.Builder.setSystemRequirements(
     return this
 }
 
+/**
+ * Enables or disables heatmap data collection for native Android views.
+ *
+ * Heatmaps are disabled by default. To collect the user interactions required for heatmaps,
+ * also enable RUM user interaction tracking with
+ * [com.datadog.kmp.rum.configuration.trackUserInteractions].
+ *
+ * @param enabled whether heatmap data collection is enabled.
+ */
+fun SessionReplayConfiguration.Builder.setHeatmapsEnabled(
+    enabled: Boolean
+): SessionReplayConfiguration.Builder {
+    (platformBuilder as AndroidSessionReplayConfigurationBuilder).setHeatmapsEnabled(enabled)
+    return this
+}
+
 internal actual fun platformConfigurationBuilder(sampleRate: Float): PlatformSessionReplayConfigurationBuilder<*> =
     AndroidSessionReplayConfigurationBuilder(sampleRate)

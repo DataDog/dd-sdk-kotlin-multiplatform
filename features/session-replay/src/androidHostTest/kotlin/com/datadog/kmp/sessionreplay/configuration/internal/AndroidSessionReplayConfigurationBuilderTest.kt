@@ -119,6 +119,17 @@ class AndroidSessionReplayConfigurationBuilderTest {
     }
 
     @Test
+    fun `M call platform configuration builder+setHeatmapsEnabled W setHeatmapsEnabled`(
+        @BoolForgery enabled: Boolean
+    ) {
+        // When
+        testedBuilder.setHeatmapsEnabled(enabled)
+
+        // Then
+        verify(mockNativeRumConfigurationBuilder).setHeatmapsEnabled(enabled)
+    }
+
+    @Test
     fun `M call platform configuration builder+startRecordingImmediately W startRecordingImmediately`(
         @BoolForgery fakeEnabled: Boolean
     ) {
