@@ -20,6 +20,7 @@ import com.datadog.kmp.sessionreplay.configuration.SessionReplayConfiguration
 import com.datadog.kmp.sessionreplay.configuration.TextAndInputPrivacy
 import com.datadog.kmp.sessionreplay.configuration.TouchPrivacy
 import com.datadog.kmp.sessionreplay.configuration.addExtensionSupport
+import com.datadog.kmp.sessionreplay.configuration.setHeatmapsEnabled
 import com.datadog.kmp.webview.WebViewTracking
 
 internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder) {
@@ -52,6 +53,7 @@ internal actual fun initSessionReplay() {
             .setImagePrivacy(ImagePrivacy.MASK_LARGE_ONLY)
             .setTouchPrivacy(TouchPrivacy.SHOW)
             .setTextAndInputPrivacy(TextAndInputPrivacy.MASK_SENSITIVE_INPUTS)
+            .setHeatmapsEnabled(true)
             .addExtensionSupport(ComposeExtensionSupport())
             .build()
     )

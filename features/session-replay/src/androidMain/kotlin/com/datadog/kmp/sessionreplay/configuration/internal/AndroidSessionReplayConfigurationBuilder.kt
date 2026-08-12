@@ -40,6 +40,10 @@ internal class AndroidSessionReplayConfigurationBuilder :
         nativeBuilder.setSystemRequirements(systemRequirementsConfiguration)
     }
 
+    fun setHeatmapsEnabled(enabled: Boolean) {
+        nativeBuilder.setHeatmapsEnabled(enabled)
+    }
+
     override fun setImagePrivacy(privacy: ImagePrivacy) {
         nativeBuilder.setImagePrivacy(privacy.native)
     }

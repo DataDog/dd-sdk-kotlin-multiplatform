@@ -5,3 +5,4 @@ actual object com.datadog.kmp.sessionreplay.SessionReplay
 fun SessionReplayConfiguration.Builder.addExtensionSupport(com.datadog.android.sessionreplay.ExtensionSupport): SessionReplayConfiguration.Builder
 fun SessionReplayConfiguration.Builder.setDynamicOptimizationEnabled(Boolean): SessionReplayConfiguration.Builder
 fun SessionReplayConfiguration.Builder.setSystemRequirements(com.datadog.android.sessionreplay.SystemRequirementsConfiguration): SessionReplayConfiguration.Builder
+fun SessionReplayConfiguration.Builder.setHeatmapsEnabled(Boolean): SessionReplayConfiguration.Builder
