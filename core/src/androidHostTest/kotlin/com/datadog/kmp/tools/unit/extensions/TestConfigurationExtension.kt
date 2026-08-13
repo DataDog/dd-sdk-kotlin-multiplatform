@@ -20,7 +20,7 @@ import java.lang.reflect.Method
 
 /**
  * A JUnit Jupiter extension that can ensure a test configuration state is properly handled with
- * self contained independent configurations.
+ * self-contained independent configurations.
  */
 class TestConfigurationExtension :
     BeforeAllCallback,
@@ -33,8 +33,7 @@ class TestConfigurationExtension :
     // region BeforeAllCallback
 
     /** @inheritdoc */
-    override fun beforeAll(context: ExtensionContext?) {
-        checkNotNull(context)
+    override fun beforeAll(context: ExtensionContext) {
         val methods = mutableListOf<Method>()
         collectProviderMethods(context.requiredTestClass, methods)
 
@@ -50,8 +49,8 @@ class TestConfigurationExtension :
     // region BeforeEachCallback
 
     /** @inheritdoc */
-    override fun beforeEach(context: ExtensionContext?) {
-        context?.callTestConfigurations { forge -> setUp(forge) }
+    override fun beforeEach(context: ExtensionContext) {
+        context.callTestConfigurations { forge -> setUp(forge) }
     }
 
     // endregion
@@ -59,7 +58,7 @@ class TestConfigurationExtension :
     // region AfterEachCallback
 
     /** @inheritdoc */
-    override fun afterEach(context: ExtensionContext?) {
+    override fun afterEach(context: ExtensionContext) {
         // reverse here is needed, because of the following example:
         // say there is test class A, and test class B : A.
         // both declare InternalLoggerTestExtension, which saves original logger in setUp
@@ -68,7 +67,7 @@ class TestConfigurationExtension :
         // logger in A. But during tear down we will restore first original logger in B, and then
         // mocked logger in A if we don't reverse the call order. So reversing the order to follow
         // the same call sequence as JUnit is doing.
-        context?.callTestConfigurations(reverseCallOrder = true) { forge -> tearDown(forge) }
+        context.callTestConfigurations(reverseCallOrder = true) { forge -> tearDown(forge) }
     }
 
     // endregion
@@ -76,8 +75,7 @@ class TestConfigurationExtension :
     // region AfterAllCallback
 
     /** @inheritdoc */
-    override fun afterAll(context: ExtensionContext?) {
-        checkNotNull(context)
+    override fun afterAll(context: ExtensionContext) {
         testConfigurations.remove(context.uniqueId)
     }
 
