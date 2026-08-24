@@ -23,6 +23,7 @@ import com.datadog.kmp.rum.Rum
 import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.configuration.RumConfiguration
+import com.datadog.kmp.rum.configuration.TimeseriesConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.operations.FailureReason
 import kotlin.time.Clock
@@ -44,6 +45,7 @@ const val WEB_VIEW_TRACKING_LOAD_URL = "https://datadoghq.dev/browser-sdk-test-p
     "&site=datadoghq.com"
 
 @Suppress("MagicNumber", "LongMethod", "StringLiteralDuplication")
+@OptIn(ExperimentalRumApi::class)
 fun initDatadog(context: Any? = null) {
     Datadog.verbosity = SdkLogVerbosity.DEBUG
 
@@ -83,11 +85,12 @@ fun initDatadog(context: Any? = null) {
         .trackFrustrations(true)
         .trackAnonymousUser(true)
         .collectAccessibility(true)
+        .setTimeseriesConfiguration(TimeseriesConfiguration.DEFAULT)
         .apply {
             setupRumMappers()
         }
         .apply {
-            platformSpecificSetup(this)
+            platformSpecificSetup(this, context)
         }
         .build()
     Rum.enable(rumConfiguration)
@@ -249,5 +252,5 @@ private data class SampleClassAttributeProperty(
 expect fun startWebViewTracking(webView: Any)
 expect fun stopWebViewTracking(webView: Any)
 internal expect fun initSessionReplay()
-internal expect fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder)
+internal expect fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder, context: Any?)
 internal expect fun platformSpecificSetup(configurationBuilder: Configuration.Builder)

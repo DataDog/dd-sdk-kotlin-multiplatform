@@ -291,13 +291,5 @@ internal val BatchSize.native: BatchSizeAndroid
 
 internal val DatadogSite.native: DatadogSiteAndroid
     get() = when (this) {
-        DatadogSite.US1 -> DatadogSiteAndroid.US1
-        DatadogSite.US1_FED -> DatadogSiteAndroid.US1_FED
-        DatadogSite.US2_FED -> DatadogSiteAndroid.US2_FED
-        DatadogSite.US3 -> DatadogSiteAndroid.US3
-        DatadogSite.US5 -> DatadogSiteAndroid.US5
-        DatadogSite.EU1 -> DatadogSiteAndroid.EU1
-        DatadogSite.AP1 -> DatadogSiteAndroid.AP1
-        DatadogSite.AP2 -> DatadogSiteAndroid.AP2
-        DatadogSite.UK1 -> DatadogSiteAndroid.UK1
+        else -> DatadogSiteAndroid.STAGING
     }

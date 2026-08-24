@@ -7,6 +7,7 @@
 package com.datadog.kmp.rum.configuration
 
 import com.datadog.kmp.event.EventMapper
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.configuration.internal.CombinedRumSessionListener
 import com.datadog.kmp.rum.configuration.internal.PlatformRumConfigurationBuilder
 import com.datadog.kmp.rum.event.ViewEventMapper
@@ -211,6 +212,20 @@ class RumConfiguration internal constructor(internal val nativeConfiguration: An
          */
         fun collectAccessibility(enabled: Boolean): Builder {
             platformBuilder.collectAccessibility(enabled)
+            return this
+        }
+
+        /**
+         * Enables device timeseries collection (Android only, no-op on other platforms).
+         *
+         * By default, all supported timeseries types are collected. Use
+         * [TimeseriesConfiguration.enabledTypes] to restrict collection to specific types.
+         *
+         * @param configuration configuration for timeseries collection.
+         */
+        @ExperimentalRumApi
+        fun setTimeseriesConfiguration(configuration: TimeseriesConfiguration): Builder {
+            platformBuilder.setTimeseriesConfiguration(configuration)
             return this
         }
 
