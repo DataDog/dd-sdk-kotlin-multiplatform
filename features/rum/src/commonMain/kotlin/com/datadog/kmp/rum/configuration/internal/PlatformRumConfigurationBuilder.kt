@@ -8,7 +8,6 @@ package com.datadog.kmp.rum.configuration.internal
 
 import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.rum.configuration.RumSessionListener
-import com.datadog.kmp.rum.configuration.TimeseriesConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.event.ViewEventMapper
 import com.datadog.kmp.rum.model.ActionEvent
@@ -48,8 +47,6 @@ internal interface PlatformRumConfigurationBuilder<out T : Any> {
     fun useCustomEndpoint(endpoint: String)
 
     fun collectAccessibility(enabled: Boolean)
-
-    fun setTimeseriesConfiguration(configuration: TimeseriesConfiguration)
 
     fun build(): T
 }

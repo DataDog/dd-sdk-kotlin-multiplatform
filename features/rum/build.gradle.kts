@@ -6,7 +6,6 @@
 
 import com.datadog.build.plugin.jsonschema.SchemaLocation
 import dev.mokkery.MockMode
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -36,15 +35,10 @@ datadogFrameworks {
     }
 }
 
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    compilerOptions.freeCompilerArgs.add("-Xwarning-level=ERROR_SUPPRESSION:disabled")
-}
-
 kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.datadog.android.rum)
-            implementation(libs.datadog.android.rumDebugWidget)
             implementation(libs.androidx.fragment)
             implementation(libs.androidx.navigation.runtime.forSdk)
         }

@@ -4,21 +4,15 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-@file:Suppress("ERROR_SUPPRESSION", "INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-
 package com.datadog.kmp.rum.configuration.internal
 
-import android.app.Application
 import android.content.Context
 import android.view.View
 import com.datadog.android.api.SdkCore
-import com.datadog.android.insights.enableRumDebugWidget
 import com.datadog.android.rum.ExperimentalRumApi
 import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.rum.configuration.RumSessionListener
 import com.datadog.kmp.rum.configuration.SlowFramesConfiguration
-import com.datadog.kmp.rum.configuration.TimeseriesConfiguration
-import com.datadog.kmp.rum.configuration.TimeseriesType
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.event.ViewEventMapper
 import com.datadog.kmp.rum.model.ActionEvent
@@ -35,8 +29,6 @@ import com.datadog.android.rum.RumSessionListener as NativeRumSessionListener
 import com.datadog.android.rum.configuration.SlowFramesConfiguration as NativeSlowFramesConfiguration
 import com.datadog.android.rum.configuration.VitalsUpdateFrequency as NativeVitalsUpdateFrequency
 import com.datadog.android.rum.model.ErrorEvent as NativeErrorEvent
-import com.datadog.android.rum.timeseries.TimeseriesConfiguration as NativeTimeseriesConfiguration
-import com.datadog.android.rum.timeseries.TimeseriesType as NativeTimeseriesType
 import com.datadog.android.rum.tracking.InteractionPredicate as NativeInteractionPredicate
 import com.datadog.android.rum.tracking.ViewAttributesProvider as NativeViewAttributesProvider
 import com.datadog.android.rum.tracking.ViewTrackingStrategy as NativeViewTrackingStrategy
@@ -101,11 +93,9 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
         nativeConfigurationBuilder.setResourceEventMapper native@{ resource ->
             val mapped = eventMapper.map(resource.toCommonModel()) ?: return@native null
 
-            resource.view?.let {
-                it.referrer = mapped.view.referrer
-                it.url = mapped.view.url
-                it.name = mapped.view.name
-            }
+            resource.view.referrer = mapped.view.referrer
+            resource.view.url = mapped.view.url
+            resource.view.name = mapped.view.name
 
             resource.resource.url = mapped.resource.url
 
@@ -122,11 +112,9 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
         nativeConfigurationBuilder.setActionEventMapper native@{ action ->
             val mapped = eventMapper.map(action.toCommonModel()) ?: return@native null
 
-            action.view?.let {
-                it.referrer = mapped.view.referrer
-                it.url = mapped.view.url
-                it.name = mapped.view.name
-            }
+            action.view.referrer = mapped.view.referrer
+            action.view.url = mapped.view.url
+            action.view.name = mapped.view.name
 
             mapped.action.target?.let { target ->
                 action.action.target?.name = target.name
@@ -142,11 +130,9 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
         nativeConfigurationBuilder.setErrorEventMapper native@{ error ->
             val mapped = eventMapper.map(error.toCommonModel()) ?: return@native null
 
-            error.view?.let {
-                it.referrer = mapped.view.referrer
-                it.url = mapped.view.url
-                it.name = mapped.view.name
-            }
+            error.view.referrer = mapped.view.referrer
+            error.view.url = mapped.view.url
+            error.view.name = mapped.view.name
 
             error.error.message = mapped.error.message
             error.error.stack = mapped.error.stack
@@ -183,11 +169,9 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
         nativeConfigurationBuilder.setLongTaskEventMapper native@{ longTask ->
             val mapped = eventMapper.map(longTask.toCommonModel()) ?: return@native null
 
-            longTask.view?.let {
-                it.referrer = mapped.view.referrer
-                it.url = mapped.view.url
-                it.name = mapped.view.name
-            }
+            longTask.view.referrer = mapped.view.referrer
+            longTask.view.url = mapped.view.url
+            longTask.view.name = mapped.view.name
 
             longTask
         }
@@ -232,15 +216,6 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
 
     fun setSlowFramesConfiguration(slowFramesConfiguration: SlowFramesConfiguration?) {
         nativeConfigurationBuilder.setSlowFramesConfiguration(slowFramesConfiguration?.native)
-    }
-
-    @OptIn(ExperimentalRumApi::class)
-    override fun setTimeseriesConfiguration(configuration: TimeseriesConfiguration) {
-        nativeConfigurationBuilder.setTimeseriesConfiguration(configuration.native)
-    }
-
-    fun enableRumDebugWidget(application: Application, allowInRelease: Boolean) {
-        nativeConfigurationBuilder.enableRumDebugWidget(application, allowInRelease)
     }
 
     override fun build(): NativeAndroidConfiguration {
@@ -296,15 +271,3 @@ private val SlowFramesConfiguration.native: NativeSlowFramesConfiguration
         freezeDurationThresholdNs = freezeDurationThresholdNs,
         minViewLifetimeThresholdNs = minViewLifetimeThresholdNs
     )
-
-@OptIn(ExperimentalRumApi::class)
-private val TimeseriesConfiguration.native: NativeTimeseriesConfiguration
-    get() = NativeTimeseriesConfiguration.Builder()
-        .collectOnly(*enabledTypes.map { it.native }.toTypedArray())
-        .build()
-
-private val TimeseriesType.native: NativeTimeseriesType
-    get() = when (this) {
-        TimeseriesType.CPU -> NativeTimeseriesType.CPU
-        TimeseriesType.MEMORY -> NativeTimeseriesType.MEMORY
-    }

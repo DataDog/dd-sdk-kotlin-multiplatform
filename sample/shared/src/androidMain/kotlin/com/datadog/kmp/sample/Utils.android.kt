@@ -6,14 +6,11 @@
 
 package com.datadog.kmp.sample
 
-import android.app.Application
 import android.webkit.WebView
 import com.datadog.android.sessionreplay.compose.ComposeExtensionSupport
 import com.datadog.android.sessionreplay.compose.ExperimentalSessionReplayApi
 import com.datadog.kmp.core.configuration.Configuration
-import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.configuration.RumConfiguration
-import com.datadog.kmp.rum.configuration.enableRumDebugWidget
 import com.datadog.kmp.rum.configuration.trackNonFatalAnrs
 import com.datadog.kmp.rum.configuration.trackUserInteractions
 import com.datadog.kmp.rum.configuration.useViewTrackingStrategy
@@ -26,21 +23,14 @@ import com.datadog.kmp.sessionreplay.configuration.addExtensionSupport
 import com.datadog.kmp.sessionreplay.configuration.setHeatmapsEnabled
 import com.datadog.kmp.webview.WebViewTracking
 
-@OptIn(ExperimentalRumApi::class)
-internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder, context: Any?) {
+internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder) {
     with(rumConfigurationBuilder) {
         // going to use NavigationViewTrackingEffect
         useViewTrackingStrategy(null)
         trackUserInteractions()
         trackNonFatalAnrs(true)
-        enableRumWidget(context)
     }
 }
-
-private fun RumConfiguration.Builder.enableRumWidget(context: Any?): RumConfiguration.Builder {
-    return enableRumDebugWidget(context as? Application ?: return this)
-}
-
 
 internal actual fun platformSpecificSetup(configurationBuilder: Configuration.Builder) {
     // nothing

@@ -12,8 +12,8 @@ androidx-fragment = "1.5.1"
 androidx-navigation-forSdk = "2.3.0"
 androidx-navigation-forApp = "2.7.7"
 androidx-activityCompose = "1.13.0"
-datadog-android = "3.13.1"
-datadog-ios = "3.16.0"
+datadog-android = "3.12.1"
+datadog-ios = "3.15.0"
 dependencyLicense = "0.4.0"
 nexusPublish = "2.0.0"
 kotlinGrammarParser = "0.1.0"
@@ -62,7 +62,6 @@ datadog-android-webview = { module = "com.datadoghq:dd-sdk-android-webview", ver
 datadog-android-sessionReplay = { module = "com.datadoghq:dd-sdk-android-session-replay", version.ref = "datadog-android" }
 datadog-android-sessionReplayCompose = { module = "com.datadoghq:dd-sdk-android-session-replay-compose", version.ref = "datadog-android" }
 datadog-android-compose = { module = "com.datadoghq:dd-sdk-android-compose", version.ref = "datadog-android" }
-datadog-android-rumDebugWidget = { module = "com.datadoghq:dd-sdk-android-rum-debug-widget", version.ref = "datadog-android" }
 kotlinGrammarParser = { module = "com.github.kotlinx.ast:grammar-kotlin-parser-antlr-kotlin-jvm", version.ref = "kotlinGrammarParser" }
 kotlinAntlrRuntime = { module = "com.github.drieks.antlr-kotlin:antlr-kotlin-runtime", version.ref = "kotlinAntlrRuntime" }
 kotlinPoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinPoet" }

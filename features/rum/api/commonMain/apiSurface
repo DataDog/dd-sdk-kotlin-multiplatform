@@ -85,7 +85,6 @@ class com.datadog.kmp.rum.configuration.RumConfiguration
     fun trackAnonymousUser(Boolean): Builder
     fun useCustomEndpoint(String): Builder
     fun collectAccessibility(Boolean): Builder
-    fun setTimeseriesConfiguration(TimeseriesConfiguration): Builder
     fun build(): RumConfiguration
 fun interface com.datadog.kmp.rum.configuration.RumSessionListener
   fun onSessionStarted(String, Boolean)
@@ -93,13 +92,6 @@ interface com.datadog.kmp.rum.configuration.RumSessionProvider
   val sessionId: String?
   companion object 
     fun get(): RumSessionProvider
-data class com.datadog.kmp.rum.configuration.TimeseriesConfiguration
-  constructor(Set<TimeseriesType> = TimeseriesType.entries.toSet())
-  companion object 
-    val DEFAULT: TimeseriesConfiguration
-enum com.datadog.kmp.rum.configuration.TimeseriesType
-  - CPU
-  - MEMORY
 enum com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
   - FREQUENT
   - AVERAGE

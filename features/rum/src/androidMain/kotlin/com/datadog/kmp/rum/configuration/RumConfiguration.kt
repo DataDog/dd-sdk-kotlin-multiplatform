@@ -6,7 +6,6 @@
 
 package com.datadog.kmp.rum.configuration
 
-import android.app.Application
 import com.datadog.android.rum.RumMonitor
 import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.configuration.internal.AndroidRumConfigurationBuilder
@@ -118,26 +117,6 @@ fun RumConfiguration.Builder.setSlowFramesConfiguration(
     slowFramesConfiguration: SlowFramesConfiguration?
 ): RumConfiguration.Builder {
     nativePlatformBuilder.setSlowFramesConfiguration(slowFramesConfiguration)
-    return this
-}
-
-/**
- * Enables the RUM Debug Widget for the given [application].
- *
- * By default, the widget only shows in debug builds (when the application is debuggable).
- * In release builds, this call is a no-op unless [allowInRelease] is set to `true`.
- *
- * **Important:** Remember to remove this call before shipping to production.
- *
- * @param application The application where to enable the RUM Debug Widget.
- * @param allowInRelease Set to `true` to enable the widget in release builds (e.g., for local
- * testing). Defaults to `false` to prevent accidental exposure in production.
- */
-fun RumConfiguration.Builder.enableRumDebugWidget(
-    application: Application,
-    allowInRelease: Boolean = false
-): RumConfiguration.Builder {
-    nativePlatformBuilder.enableRumDebugWidget(application, allowInRelease)
     return this
 }
 

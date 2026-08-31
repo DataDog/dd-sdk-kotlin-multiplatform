@@ -140,10 +140,7 @@ internal class AndroidModelsMappingFileGenerator(
         codeBlockBuilder: CodeBlock.Builder
     ) {
         typeDefinition.properties.forEach {
-            // ponytail: dd-sdk-android made `view` nullable on some native event models even though our schema
-            // still marks it as required; force non-null since RUM events always carry a view. Revisit if the
-            // schema itself gets updated to mark `view` optional.
-            val separator = if (it.optional) "?." else if (it.asPropertyName == "view") "!!." else "."
+            val separator = if (it.optional) "?." else "."
             if (it.type is TypeDefinition.Primitive) {
                 codeBlockBuilder.addStatement("%N = %N,", it.asPropertyName, it.asPropertyName)
             } else if (it.type is TypeDefinition.Class) {

@@ -21,7 +21,6 @@ import cocoapods.DatadogRUM.DDUIKitRUMViewsPredicateProtocol
 import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.internal.eraseKeyType
 import com.datadog.kmp.rum.configuration.RumSessionListener
-import com.datadog.kmp.rum.configuration.TimeseriesConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.event.ViewEventMapper
 import com.datadog.kmp.rum.model.ActionEvent
@@ -258,10 +257,6 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
 
     override fun collectAccessibility(enabled: Boolean) {
         nativeConfiguration.setCollectAccessibility(enabled)
-    }
-
-    override fun setTimeseriesConfiguration(configuration: TimeseriesConfiguration) {
-
     }
 
     fun setUiKitViewsPredicate(uiKitViewsPredicate: UIKitRUMViewsPredicate) {
