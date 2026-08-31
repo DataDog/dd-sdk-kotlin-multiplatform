@@ -24,6 +24,7 @@ plugins {
 
 datadogPodsBuild {
     podVersion.set(libs.versions.datadog.ios.get())
+    localSourcePath.set(providers.gradleProperty("datadogIosLocalSource"))
 }
 
 nexusPublishing {

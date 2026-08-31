@@ -12,6 +12,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
@@ -20,6 +21,10 @@ abstract class GenerateSyntheticDatadogPodspecTask : DefaultTask() {
 
     @get:Input
     abstract val podVersion: Property<String>
+
+    @get:Input
+    @get:Optional
+    abstract val localSourcePath: Property<String>
 
     @get:Input
     abstract val iosDeploymentTarget: Property<String>
@@ -45,9 +50,12 @@ abstract class GenerateSyntheticDatadogPodspecTask : DefaultTask() {
         val sourcesDir = File(rootDirFile, "Sources")
         sourcesDir.mkdirs()
 
+        val localDatadogSourcePath = localSourcePath.orNull?.let(::File)
+        require(localDatadogSourcePath == null || localDatadogSourcePath.isDirectory) {
+            "Datadog iOS local source directory does not exist: $localDatadogSourcePath"
+        }
         val iosPodspecFile = File(rootDirFile, "${DatadogPodsBuildPlugin.SYNTHETIC_IOS_TARGET_NAME}Root.podspec")
-        val iosPodDependencies = iosPods.get()
-            .joinToString(separator = "\n") { "  s.dependency '$it', '${podVersion.get()}'" }
+        val iosPodDependencies = podDependencies(iosPods.get(), localDatadogSourcePath)
 
         iosPodspecFile.writeText(
             """
@@ -70,8 +78,7 @@ abstract class GenerateSyntheticDatadogPodspecTask : DefaultTask() {
         )
 
         val tvosPodspecFile = File(rootDirFile, "${DatadogPodsBuildPlugin.SYNTHETIC_TVOS_TARGET_NAME}Root.podspec")
-        val tvosPodDependencies = tvosPods.get()
-            .joinToString(separator = "\n") { "  s.dependency '$it', '${podVersion.get()}'" }
+        val tvosPodDependencies = podDependencies(tvosPods.get(), localDatadogSourcePath)
         tvosPodspecFile.writeText(
             """
             |Pod::Spec.new do |s|
@@ -107,11 +114,13 @@ abstract class GenerateSyntheticDatadogPodspecTask : DefaultTask() {
             |target '${DatadogPodsBuildPlugin.SYNTHETIC_IOS_TARGET_NAME}' do
             |  platform :ios, '${iosDeploymentTarget.get()}'
             |  pod '${DatadogPodsBuildPlugin.SYNTHETIC_IOS_TARGET_NAME}Root', :path => '.'
+            |${localPodDeclarations(iosPods.get(), localDatadogSourcePath)}
             |end
             |
             |target '${DatadogPodsBuildPlugin.SYNTHETIC_TVOS_TARGET_NAME}' do
             |  platform :tvos, '${tvosDeploymentTarget.get()}'
             |  pod '${DatadogPodsBuildPlugin.SYNTHETIC_TVOS_TARGET_NAME}Root', :path => '.'
+            |${localPodDeclarations(tvosPods.get(), localDatadogSourcePath)}
             |end
             |
             |post_install do |installer|
@@ -126,5 +135,18 @@ abstract class GenerateSyntheticDatadogPodspecTask : DefaultTask() {
             |
             """.trimMargin()
         )
+    }
+
+    private fun podDependencies(pods: List<String>, localSourcePath: File?): String {
+        if (localSourcePath != null) return ""
+        return pods.joinToString(separator = "\n") { "  s.dependency '$it', '${podVersion.get()}'" }
+    }
+
+    private fun localPodDeclarations(pods: List<String>, localSourcePath: File?): String {
+        if (localSourcePath == null) return ""
+        val path = localSourcePath.absolutePath.replace("'", "\\\\'")
+        return (pods + "DatadogInternal")
+            .distinct()
+            .joinToString(separator = "\n") { "  pod '$it', :path => '$path'" }
     }
 }

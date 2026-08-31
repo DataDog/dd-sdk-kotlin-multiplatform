@@ -28,6 +28,7 @@ class DatadogPodsBuildPlugin : Plugin<Project> {
         ) {
             outputDirectory.set(syntheticPodsRootDir)
             podVersion.set(extension.podVersion)
+            localSourcePath.set(extension.localSourcePath)
             iosDeploymentTarget.set(extension.iosDeploymentTarget)
             tvosDeploymentTarget.set(extension.tvosDeploymentTarget)
             iosPods.set(extension.iosPods)

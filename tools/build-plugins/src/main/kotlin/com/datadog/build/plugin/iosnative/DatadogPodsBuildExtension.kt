@@ -15,6 +15,7 @@ import javax.inject.Inject
 
 abstract class DatadogPodsBuildExtension @Inject constructor(objects: ObjectFactory) {
     val podVersion: Property<String> = objects.property<String>()
+    val localSourcePath: Property<String> = objects.property<String>()
     val iosDeploymentTarget: Property<String> = objects.property<String>()
         .convention("12.0")
     val tvosDeploymentTarget: Property<String> = objects.property<String>()

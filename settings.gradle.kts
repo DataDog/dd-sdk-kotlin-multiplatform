@@ -19,6 +19,7 @@ rootProject.name = "dd-sdk-kotlin-multiplatform"
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
     }

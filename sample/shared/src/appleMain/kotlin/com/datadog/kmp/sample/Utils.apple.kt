@@ -15,7 +15,7 @@ import com.datadog.kmp.rum.configuration.trackSwiftUIViews
 import com.datadog.kmp.rum.configuration.trackWatchdogTerminations
 
 @OptIn(ExperimentalRumApi::class)
-internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder) {
+internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder, context: Any?) {
     with(rumConfigurationBuilder) {
         // uncomment the following if your application is UIKit-based
         // trackUiKitViews()
