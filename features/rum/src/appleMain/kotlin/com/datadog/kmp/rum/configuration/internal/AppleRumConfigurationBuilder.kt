@@ -9,8 +9,6 @@ package com.datadog.kmp.rum.configuration.internal
 import cocoapods.DatadogRUM.DDRUMAction
 import cocoapods.DatadogRUM.DDRUMConfiguration
 import cocoapods.DatadogRUM.DDRUMErrorEventErrorCauses
-import cocoapods.DatadogRUM.DDRUMTimeseriesConfiguration
-import cocoapods.DatadogRUM.DDRUMTimeseriesType
 import cocoapods.DatadogRUM.DDRUMView
 import cocoapods.DatadogRUM.DDRUMVitalsFrequency
 import cocoapods.DatadogRUM.DDRUMVitalsFrequencyAverage
@@ -24,7 +22,6 @@ import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.internal.eraseKeyType
 import com.datadog.kmp.rum.configuration.RumSessionListener
 import com.datadog.kmp.rum.configuration.TimeseriesConfiguration
-import com.datadog.kmp.rum.configuration.TimeseriesType
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.event.ViewEventMapper
 import com.datadog.kmp.rum.model.ActionEvent
@@ -264,9 +261,7 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
     }
 
     override fun setTimeseriesConfiguration(configuration: TimeseriesConfiguration) {
-        nativeConfiguration.setTimeseriesConfiguration(
-            DDRUMTimeseriesConfiguration(configuration.enabledTypes.map { it.native })
-        )
+
     }
 
     fun setUiKitViewsPredicate(uiKitViewsPredicate: UIKitRUMViewsPredicate) {
@@ -365,12 +360,6 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
         const val MILLISECONDS_IN_SECOND = 1000
     }
 }
-
-private val TimeseriesType.native: DDRUMTimeseriesType
-    get() = when (this) {
-        TimeseriesType.CPU -> DDRUMTimeseriesType.cpu()
-        TimeseriesType.MEMORY -> DDRUMTimeseriesType.memory()
-    }
 
 private val VitalsUpdateFrequency.native: DDRUMVitalsFrequency
     get() = when (this) {
