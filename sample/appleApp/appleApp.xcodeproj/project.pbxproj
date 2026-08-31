@@ -205,7 +205,7 @@
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
-				F64846B62C3DA0F5000AC3A0 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */,
+				F64846B62C3DA0F5000AC3A0 /* XCLocalSwiftPackageReference "dd-sdk-ios" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -575,66 +575,62 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		F64846B62C3DA0F5000AC3A0 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/DataDog/dd-sdk-ios";
-			requirement = {
-				kind = exactVersion;
-				version = 3.16.0;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		F64846B62C3DA0F5000AC3A0 /* XCLocalSwiftPackageReference "dd-sdk-ios" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../../dd-sdk-ios;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		F604CAC12E68519E00A967B7 /* DatadogRUM */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F64846B62C3DA0F5000AC3A0 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
+			package = F64846B62C3DA0F5000AC3A0 /* XCLocalSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogRUM;
 		};
 		F604CAC32E6851A200A967B7 /* DatadogLogs */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F64846B62C3DA0F5000AC3A0 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
+			package = F64846B62C3DA0F5000AC3A0 /* XCLocalSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogLogs;
 		};
 		F604CAC52E6851AC00A967B7 /* DatadogRUM */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F64846B62C3DA0F5000AC3A0 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
+			package = F64846B62C3DA0F5000AC3A0 /* XCLocalSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogRUM;
 		};
 		F604CAC72E6851B100A967B7 /* DatadogLogs */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F64846B62C3DA0F5000AC3A0 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
+			package = F64846B62C3DA0F5000AC3A0 /* XCLocalSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogLogs;
 		};
 		F604CAC92E68563D00A967B7 /* DatadogCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F64846B62C3DA0F5000AC3A0 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
+			package = F64846B62C3DA0F5000AC3A0 /* XCLocalSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogCore;
 		};
 		F604CACB2E68564400A967B7 /* DatadogCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F64846B62C3DA0F5000AC3A0 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
+			package = F64846B62C3DA0F5000AC3A0 /* XCLocalSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogCore;
 		};
 		F64846B72C3DA0F5000AC3A0 /* DatadogCrashReporting */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F64846B62C3DA0F5000AC3A0 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
+			package = F64846B62C3DA0F5000AC3A0 /* XCLocalSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogCrashReporting;
 		};
 		F64846BB2C3DA0F5000AC3A0 /* DatadogWebViewTracking */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F64846B62C3DA0F5000AC3A0 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
+			package = F64846B62C3DA0F5000AC3A0 /* XCLocalSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogWebViewTracking;
 		};
 		F66EF2A82C8F263C00AFC7E3 /* DatadogSessionReplay */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F64846B62C3DA0F5000AC3A0 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
+			package = F64846B62C3DA0F5000AC3A0 /* XCLocalSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogSessionReplay;
 		};
 		F6ACA4BE2CFDD2240060B034 /* DatadogCrashReporting */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F64846B62C3DA0F5000AC3A0 /* XCRemoteSwiftPackageReference "dd-sdk-ios" */;
+			package = F64846B62C3DA0F5000AC3A0 /* XCLocalSwiftPackageReference "dd-sdk-ios" */;
 			productName = DatadogCrashReporting;
 		};
 /* End XCSwiftPackageProductDependency section */

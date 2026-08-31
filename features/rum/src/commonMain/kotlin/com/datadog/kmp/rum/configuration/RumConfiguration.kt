@@ -216,7 +216,7 @@ class RumConfiguration internal constructor(internal val nativeConfiguration: An
         }
 
         /**
-         * Enables device timeseries collection (Android only, no-op on other platforms).
+         * Enables device timeseries collection.
          *
          * By default, all supported timeseries types are collected. Use
          * [TimeseriesConfiguration.enabledTypes] to restrict collection to specific types.
