@@ -40,7 +40,7 @@ jUnitMockitoExt = "5.23.0"
 assertJ = "3.27.7"
 elmyr = "1.4.1"
 mockitoKotlin = "6.3.0"
-mokkery = "2.10.2"
+mokkery = "3.4.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
