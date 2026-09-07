@@ -29,7 +29,7 @@ ktor3 = "3.0.3"
 kotlinxCoroutines = "1.8.1"
 uuid = "0.8.4"
 
-okHttp = "4.12.0"
+okHttp = "5.5.0"
 
 # JUnit 5
 jUnitJupiter = "6.1.3"
