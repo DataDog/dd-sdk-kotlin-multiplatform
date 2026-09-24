@@ -15,21 +15,19 @@ import com.datadog.kmp.rum.configuration.trackSwiftUIViews
 import com.datadog.kmp.rum.configuration.trackWatchdogTerminations
 
 @OptIn(ExperimentalRumApi::class)
-internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder) {
-    with(rumConfigurationBuilder) {
-        // uncomment the following if your application is UIKit-based
-        // trackUiKitViews()
-        // setupUiKitActionsTracking(this)
-        trackSwiftUIViews()
-        // SwiftUI actions detection is not capable of capturing labels yet, so we will track them manually
-        // trackSwiftUIActions(isLegacyDetectionEnabled = true)
-        setAppHangThreshold(APP_HANG_THRESHOLD_MS)
-        trackWatchdogTerminations(true)
-    }
+internal actual fun RumConfiguration.Builder.platformSpecificSetup(): RumConfiguration.Builder = apply {
+    // uncomment the following if your application is UIKit-based
+    // trackUiKitViews()
+    // setupUiKitActionsTracking(this)
+    trackSwiftUIViews()
+    // SwiftUI actions detection is not capable of capturing labels yet, so we will track them manually
+    // trackSwiftUIActions(isLegacyDetectionEnabled = true)
+    setAppHangThreshold(APP_HANG_THRESHOLD_MS)
+    trackWatchdogTerminations(true)
 }
 
-internal actual fun platformSpecificSetup(configurationBuilder: Configuration.Builder) {
-    configurationBuilder.enableBackgroundTasks(true)
+internal actual fun Configuration.Builder.platformSpecificSetup(): Configuration.Builder = apply {
+    enableBackgroundTasks(true)
 }
 
 const val APP_HANG_THRESHOLD_MS = 100L
