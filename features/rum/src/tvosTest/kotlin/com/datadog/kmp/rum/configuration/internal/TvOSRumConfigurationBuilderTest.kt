@@ -6,6 +6,7 @@
 
 package com.datadog.kmp.rum.configuration.internal
 
+import cocoapods.DatadogRUM.DDRUMConfiguration
 import com.datadog.kmp.rum.tracking.RumAction
 import com.datadog.kmp.rum.tracking.UIKitRUMActionsPredicate
 import com.datadog.tools.random.exhaustiveAttributes
@@ -25,7 +26,9 @@ import kotlin.test.assertEquals
 
 internal class TvOSRumConfigurationBuilderTest : AppleRumConfigurationBuilderTest<TvOSRumConfigurationBuilder>() {
 
-    override fun createTestedBuilder() = TvOSRumConfigurationBuilder(fakeNativeRumConfiguration)
+    override fun createTestedBuilder(
+        nativeConfiguration: DDRUMConfiguration
+    ) = TvOSRumConfigurationBuilder(nativeConfiguration)
 
     @Test
     fun `M set UIKit actions predicate W setUiKitActionsPredicate`() {

@@ -9,10 +9,12 @@ package com.datadog.kmp.rum.configuration.internal
 import android.app.Activity
 import android.content.Context
 import android.view.View
-import com.datadog.android.rum.ExperimentalRumApi
 import com.datadog.kmp.event.EventMapper
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.configuration.RumSessionListener
 import com.datadog.kmp.rum.configuration.SlowFramesConfiguration
+import com.datadog.kmp.rum.configuration.TimeseriesConfiguration
+import com.datadog.kmp.rum.configuration.TimeseriesType
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.event.ViewEventMapper
 import com.datadog.kmp.rum.model.ActionEvent
@@ -49,6 +51,7 @@ import org.mockito.kotlin.whenever
 import org.mockito.quality.Strictness
 import java.util.UUID
 import com.datadog.android.event.EventMapper as NativeEventMapper
+import com.datadog.android.rum.ExperimentalRumApi as NativeExperimentalRumApi
 import com.datadog.android.rum.RumConfiguration as NativeAndroidConfiguration
 import com.datadog.android.rum.RumConfiguration as NativeRumConfiguration
 import com.datadog.android.rum.RumSessionListener as NativeRumSessionListener
@@ -61,6 +64,7 @@ import com.datadog.android.rum.model.LongTaskEvent as NativeLongTaskEvent
 import com.datadog.android.rum.model.ResourceEvent as NativeResourceEvent
 import com.datadog.android.rum.model.ViewEvent as NativeViewEvent
 import com.datadog.android.rum.startup.AppStartupActivityPredicate as NativeAppStartupActivityPredicate
+import com.datadog.android.rum.timeseries.TimeseriesConfiguration as NativeTimeseriesConfiguration
 import com.datadog.android.rum.tracking.InteractionPredicate as NativeInteractionPredicate
 import com.datadog.android.rum.tracking.ViewAttributesProvider as NativeViewAttributesProvider
 import com.datadog.android.rum.tracking.ViewTrackingStrategy as NativeViewTrackingStrategy
@@ -455,7 +459,7 @@ internal class AndroidRumConfigurationBuilderTest {
         verify(mockNativeRumConfigurationBuilder).collectAccessibility(fakeEnabled)
     }
 
-    @OptIn(ExperimentalRumApi::class)
+    @OptIn(NativeExperimentalRumApi::class)
     @Test
     fun `M call platform RUM configuration builder+setAppStartupActivityPredicate W setAppStartupActivityPredicate`() {
         // Given
@@ -504,6 +508,24 @@ internal class AndroidRumConfigurationBuilderTest {
         verify(mockNativeRumConfigurationBuilder).setSlowFramesConfiguration(null)
     }
 
+    @OptIn(ExperimentalRumApi::class, NativeExperimentalRumApi::class)
+    @Test
+    fun `M call platform RUM configuration builder+setTimeseriesConfiguration W setTimeseriesConfiguration`() {
+        // Given
+        val fakeConfiguration = TimeseriesConfiguration.Builder()
+            .collectTypes(TimeseriesType.CPU, TimeseriesType.MEMORY)
+            .build()
+
+        // When
+        testedBuilder.setTimeseriesConfiguration(fakeConfiguration)
+
+        // Then
+        val captor = argumentCaptor<NativeTimeseriesConfiguration>()
+        verify(mockNativeRumConfigurationBuilder).setTimeseriesConfiguration(captor.capture())
+
+        assertThat(captor.firstValue.enabledTypes).isEqualTo(fakeConfiguration.native.enabledTypes)
+    }
+
     @Test
     fun `M call platform RUM configuration builder+build W build`() {
         // Given
@@ -515,5 +537,12 @@ internal class AndroidRumConfigurationBuilderTest {
 
         // Then
         assertThat(rumConfiguration).isSameAs(mockNativeConfiguration)
+    }
+
+    companion object {
+        private val NativeTimeseriesConfiguration.enabledTypes: Set<*>
+            get() = NativeTimeseriesConfiguration::class.java.getDeclaredField("enabledTypes")
+                .apply { isAccessible = true }
+                .get(this) as Set<*>
     }
 }

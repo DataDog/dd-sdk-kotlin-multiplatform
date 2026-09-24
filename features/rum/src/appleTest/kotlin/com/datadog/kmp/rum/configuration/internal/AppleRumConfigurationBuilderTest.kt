@@ -7,6 +7,7 @@
 package com.datadog.kmp.rum.configuration.internal
 
 import cocoapods.DatadogRUM.DDRUMConfiguration
+import cocoapods.DatadogRUM.DDRUMTimeseriesConfiguration
 import cocoapods.DatadogRUM.DDRUMVitalsFrequencyAverage
 import cocoapods.DatadogRUM.DDRUMVitalsFrequencyFrequent
 import cocoapods.DatadogRUM.DDRUMVitalsFrequencyNever
@@ -14,11 +15,14 @@ import cocoapods.DatadogRUM.DDRUMVitalsFrequencyRare
 import com.datadog.kmp.Datadog
 import com.datadog.kmp.core.configuration.Configuration
 import com.datadog.kmp.privacy.TrackingConsent
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.Rum
 import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.configuration.RumConfiguration
 import com.datadog.kmp.rum.configuration.RumSessionListener
+import com.datadog.kmp.rum.configuration.TimeseriesConfiguration
+import com.datadog.kmp.rum.configuration.TimeseriesType
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.tracking.RumAction
 import com.datadog.kmp.rum.tracking.RumView
@@ -47,9 +51,9 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
 
     protected val fakeNativeRumConfiguration = DDRUMConfiguration("fake-app-id")
 
-    protected val testedBuilder by lazy { createTestedBuilder() }
+    protected val testedBuilder by lazy { createTestedBuilder(fakeNativeRumConfiguration) }
 
-    protected abstract fun createTestedBuilder(): T
+    protected abstract fun createTestedBuilder(nativeConfiguration: DDRUMConfiguration): T
 
     @Test
     fun `M set session sample rate W setSessionSampleRate`() {
@@ -447,6 +451,23 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
         assertEquals(fakeEnabled, fakeNativeRumConfiguration.collectAccessibility())
     }
 
+    @OptIn(ExperimentalRumApi::class)
+    @Test
+    fun `M call platform RUM configuration builder+setTimeseriesConfiguration W setTimeseriesConfiguration`() {
+        // Given
+        val fakeConfiguration = TimeseriesConfiguration.Builder()
+            .collectTypes(TimeseriesType.CPU, TimeseriesType.MEMORY)
+            .build()
+        val recordingRumConfiguration = RecordingRUMConfiguration()
+        val builder = createTestedBuilder(recordingRumConfiguration)
+
+        // When
+        builder.setTimeseriesConfiguration(fakeConfiguration)
+
+        // Then
+        assertEquals(1, recordingRumConfiguration.timeseriesConfigurationCallCount)
+    }
+
     @Test
     fun `M set memory warnings tracking W trackMemoryWarnings`() {
         // Given
@@ -515,5 +536,18 @@ internal abstract class AppleRumConfigurationBuilderTest<T : AppleRumConfigurati
 
     private companion object {
         const val EVENTS_WAIT_TIMEOUT_MS = 2000L
+    }
+}
+
+// setTimeseriesConfiguration has no getter on DDRUMConfiguration, so a real subclass is used to record the call
+// instead of relying on a mock (Mokkery cannot mix a mock with an Objective-C supertype).
+internal class RecordingRUMConfiguration : DDRUMConfiguration("fake-app-id") {
+
+    var timeseriesConfigurationCallCount = 0
+        private set
+
+    override fun setTimeseriesConfiguration(configuration: DDRUMTimeseriesConfiguration) {
+        timeseriesConfigurationCallCount++
+        super.setTimeseriesConfiguration(configuration)
     }
 }
