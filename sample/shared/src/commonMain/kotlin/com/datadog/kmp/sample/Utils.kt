@@ -56,9 +56,7 @@ fun initDatadog(context: Any? = null) {
         .setBatchSize(BatchSize.MEDIUM)
         .setUploadFrequency(UploadFrequency.AVERAGE)
         .setBatchProcessingLevel(BatchProcessingLevel.MEDIUM)
-        .apply {
-            platformSpecificSetup(this)
-        }
+        .platformSpecificSetup()
         .build()
 
     Datadog.initialize(context = context, configuration = configuration, trackingConsent = TrackingConsent.GRANTED)
@@ -83,12 +81,8 @@ fun initDatadog(context: Any? = null) {
         .trackFrustrations(true)
         .trackAnonymousUser(true)
         .collectAccessibility(true)
-        .apply {
-            setupRumMappers()
-        }
-        .apply {
-            platformSpecificSetup(this)
-        }
+        .setupRumMappers()
+        .platformSpecificSetup()
         .build()
     Rum.enable(rumConfiguration)
 
@@ -204,7 +198,7 @@ fun addViewOpenedAtAttribute() {
     )
 }
 
-private fun RumConfiguration.Builder.setupRumMappers() {
+private fun RumConfiguration.Builder.setupRumMappers() = apply {
     setViewEventMapper {
         it.context?.additionalProperties?.putAll(extensiveAdditionalProperties)
         it
@@ -249,5 +243,5 @@ private data class SampleClassAttributeProperty(
 expect fun startWebViewTracking(webView: Any)
 expect fun stopWebViewTracking(webView: Any)
 internal expect fun initSessionReplay()
-internal expect fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder)
-internal expect fun platformSpecificSetup(configurationBuilder: Configuration.Builder)
+internal expect fun RumConfiguration.Builder.platformSpecificSetup(): RumConfiguration.Builder
+internal expect fun Configuration.Builder.platformSpecificSetup(): Configuration.Builder

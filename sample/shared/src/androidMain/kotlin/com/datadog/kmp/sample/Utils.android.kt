@@ -23,16 +23,14 @@ import com.datadog.kmp.sessionreplay.configuration.addExtensionSupport
 import com.datadog.kmp.sessionreplay.configuration.setHeatmapsEnabled
 import com.datadog.kmp.webview.WebViewTracking
 
-internal actual fun platformSpecificSetup(rumConfigurationBuilder: RumConfiguration.Builder) {
-    with(rumConfigurationBuilder) {
-        // going to use NavigationViewTrackingEffect
-        useViewTrackingStrategy(null)
-        trackUserInteractions()
-        trackNonFatalAnrs(true)
-    }
+internal actual fun RumConfiguration.Builder.platformSpecificSetup(): RumConfiguration.Builder = apply {
+    // going to use NavigationViewTrackingEffect
+    useViewTrackingStrategy(null)
+    trackUserInteractions()
+    trackNonFatalAnrs(true)
 }
 
-internal actual fun platformSpecificSetup(configurationBuilder: Configuration.Builder) {
+internal actual fun Configuration.Builder.platformSpecificSetup(): Configuration.Builder = apply {
     // nothing
 }
 

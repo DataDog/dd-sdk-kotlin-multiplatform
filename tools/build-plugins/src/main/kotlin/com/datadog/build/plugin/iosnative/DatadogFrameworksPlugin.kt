@@ -115,7 +115,10 @@ class DatadogFrameworksPlugin : Plugin<Project> {
                     freeCompilerArgs.addAll(
                         listOf(
                             "-linker-options",
-                            frameworkArgs
+                            frameworkArgs,
+                            // Keep binary min OS in sync with pods (K/N defaults to 14.0), otherwise
+                            // Swift Concurrency is linked as back-deployed @rpath lib and test.kexe can't launch.
+                            "-Xoverride-konan-properties=osVersionMin.${konanTarget.name}=$MIN_OS_VERSION"
                         )
                     )
                 }
@@ -151,6 +154,7 @@ class DatadogFrameworksPlugin : Plugin<Project> {
     }
 
     companion object {
+        private const val MIN_OS_VERSION = "15.0"
         private val swiftToolchainUsrDirectory: File? by lazy { findSwiftToolchainUsrDirectory() }
 
         private fun findSwiftToolchainUsrDirectory(): File? {
