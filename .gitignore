@@ -33,8 +33,5 @@ Package.resolved
 gh_token
 sdk_classpath
 
-# Generated .podspec files
-**/*.podspec
-
 # Local CI tooling binaries
 .static-checks-tooling/
