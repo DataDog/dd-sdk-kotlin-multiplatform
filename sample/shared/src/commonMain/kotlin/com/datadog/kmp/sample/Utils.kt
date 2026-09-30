@@ -23,6 +23,7 @@ import com.datadog.kmp.rum.Rum
 import com.datadog.kmp.rum.RumActionType
 import com.datadog.kmp.rum.RumMonitor
 import com.datadog.kmp.rum.configuration.RumConfiguration
+import com.datadog.kmp.rum.configuration.TimeseriesConfiguration
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.operations.FailureReason
 import kotlin.time.Clock
@@ -43,6 +44,7 @@ const val WEB_VIEW_TRACKING_LOAD_URL = "https://datadoghq.dev/browser-sdk-test-p
     "&application_id=${LibraryConfig.DD_APPLICATION_ID}" +
     "&site=datadoghq.com"
 
+@OptIn(ExperimentalRumApi::class)
 @Suppress("MagicNumber", "LongMethod", "StringLiteralDuplication")
 fun initDatadog(context: Any? = null) {
     Datadog.verbosity = SdkLogVerbosity.DEBUG
@@ -81,6 +83,7 @@ fun initDatadog(context: Any? = null) {
         .trackFrustrations(true)
         .trackAnonymousUser(true)
         .collectAccessibility(true)
+        .setTimeseriesConfiguration(TimeseriesConfiguration.DEFAULT)
         .setupRumMappers()
         .platformSpecificSetup()
         .build()

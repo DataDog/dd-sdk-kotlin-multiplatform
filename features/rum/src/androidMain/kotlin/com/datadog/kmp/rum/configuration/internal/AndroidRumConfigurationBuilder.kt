@@ -9,10 +9,12 @@ package com.datadog.kmp.rum.configuration.internal
 import android.content.Context
 import android.view.View
 import com.datadog.android.api.SdkCore
-import com.datadog.android.rum.ExperimentalRumApi
 import com.datadog.kmp.event.EventMapper
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.configuration.RumSessionListener
 import com.datadog.kmp.rum.configuration.SlowFramesConfiguration
+import com.datadog.kmp.rum.configuration.TimeseriesConfiguration
+import com.datadog.kmp.rum.configuration.TimeseriesType
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.event.ViewEventMapper
 import com.datadog.kmp.rum.model.ActionEvent
@@ -24,11 +26,14 @@ import com.datadog.kmp.rum.startup.AppStartupActivityPredicate
 import com.datadog.kmp.rum.tracking.InteractionPredicate
 import com.datadog.kmp.rum.tracking.ViewAttributesProvider
 import com.datadog.kmp.rum.tracking.ViewTrackingStrategy
+import com.datadog.android.rum.ExperimentalRumApi as NativeExperimentalRumApi
 import com.datadog.android.rum.RumConfiguration as NativeAndroidConfiguration
 import com.datadog.android.rum.RumSessionListener as NativeRumSessionListener
 import com.datadog.android.rum.configuration.SlowFramesConfiguration as NativeSlowFramesConfiguration
 import com.datadog.android.rum.configuration.VitalsUpdateFrequency as NativeVitalsUpdateFrequency
 import com.datadog.android.rum.model.ErrorEvent as NativeErrorEvent
+import com.datadog.android.rum.timeseries.TimeseriesConfiguration as NativeTimeseriesConfiguration
+import com.datadog.android.rum.timeseries.TimeseriesType as NativeTimeseriesType
 import com.datadog.android.rum.tracking.InteractionPredicate as NativeInteractionPredicate
 import com.datadog.android.rum.tracking.ViewAttributesProvider as NativeViewAttributesProvider
 import com.datadog.android.rum.tracking.ViewTrackingStrategy as NativeViewTrackingStrategy
@@ -207,7 +212,7 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
         )
     }
 
-    @OptIn(ExperimentalRumApi::class)
+    @OptIn(NativeExperimentalRumApi::class)
     fun setAppStartupActivityPredicate(predicate: AppStartupActivityPredicate) {
         nativeConfigurationBuilder.setAppStartupActivityPredicate {
             predicate.shouldTrackStartup(it)
@@ -216,6 +221,12 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
 
     fun setSlowFramesConfiguration(slowFramesConfiguration: SlowFramesConfiguration?) {
         nativeConfigurationBuilder.setSlowFramesConfiguration(slowFramesConfiguration?.native)
+    }
+
+    @ExperimentalRumApi
+    @OptIn(NativeExperimentalRumApi::class)
+    override fun setTimeseriesConfiguration(configuration: TimeseriesConfiguration) {
+        nativeConfigurationBuilder.setTimeseriesConfiguration(configuration.native)
     }
 
     override fun build(): NativeAndroidConfiguration {
@@ -271,3 +282,14 @@ private val SlowFramesConfiguration.native: NativeSlowFramesConfiguration
         freezeDurationThresholdNs = freezeDurationThresholdNs,
         minViewLifetimeThresholdNs = minViewLifetimeThresholdNs
     )
+
+@OptIn(ExperimentalRumApi::class, NativeExperimentalRumApi::class)
+internal val TimeseriesConfiguration.native: NativeTimeseriesConfiguration
+    get() = NativeTimeseriesConfiguration(enabledTypes.map { it.native }.toSet())
+
+@OptIn(ExperimentalRumApi::class)
+private val TimeseriesType.native: NativeTimeseriesType
+    get() = when (this) {
+        TimeseriesType.CPU -> NativeTimeseriesType.CPU
+        TimeseriesType.MEMORY -> NativeTimeseriesType.MEMORY
+    }

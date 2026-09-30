@@ -9,6 +9,8 @@ package com.datadog.kmp.rum.configuration.internal
 import cocoapods.DatadogRUM.DDRUMAction
 import cocoapods.DatadogRUM.DDRUMConfiguration
 import cocoapods.DatadogRUM.DDRUMErrorEventErrorCauses
+import cocoapods.DatadogRUM.DDRUMTimeseriesConfiguration
+import cocoapods.DatadogRUM.DDRUMTimeseriesType
 import cocoapods.DatadogRUM.DDRUMView
 import cocoapods.DatadogRUM.DDRUMVitalsFrequency
 import cocoapods.DatadogRUM.DDRUMVitalsFrequencyAverage
@@ -20,7 +22,10 @@ import cocoapods.DatadogRUM.DDSwiftUIRUMViewsPredicateProtocol
 import cocoapods.DatadogRUM.DDUIKitRUMViewsPredicateProtocol
 import com.datadog.kmp.event.EventMapper
 import com.datadog.kmp.internal.eraseKeyType
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.configuration.RumSessionListener
+import com.datadog.kmp.rum.configuration.TimeseriesConfiguration
+import com.datadog.kmp.rum.configuration.TimeseriesType
 import com.datadog.kmp.rum.configuration.VitalsUpdateFrequency
 import com.datadog.kmp.rum.event.ViewEventMapper
 import com.datadog.kmp.rum.model.ActionEvent
@@ -259,6 +264,11 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
         nativeConfiguration.setCollectAccessibility(enabled)
     }
 
+    @ExperimentalRumApi
+    override fun setTimeseriesConfiguration(configuration: TimeseriesConfiguration) {
+        nativeConfiguration.setTimeseriesConfiguration(configuration.native)
+    }
+
     fun setUiKitViewsPredicate(uiKitViewsPredicate: UIKitRUMViewsPredicate) {
         val nativePredicate = if (uiKitViewsPredicate is DefaultUIKitRUMViewsPredicate) {
             // just a short path to avoid creating unnecessary layers. NB: if DefaultUIKitRUMViewsPredicate becomes
@@ -362,4 +372,15 @@ private val VitalsUpdateFrequency.native: DDRUMVitalsFrequency
         VitalsUpdateFrequency.AVERAGE -> DDRUMVitalsFrequencyAverage
         VitalsUpdateFrequency.RARE -> DDRUMVitalsFrequencyRare
         VitalsUpdateFrequency.NEVER -> DDRUMVitalsFrequencyNever
+    }
+
+@OptIn(ExperimentalRumApi::class)
+private val TimeseriesConfiguration.native: DDRUMTimeseriesConfiguration
+    get() = DDRUMTimeseriesConfiguration(enabledTypes.map { it.native })
+
+@OptIn(ExperimentalRumApi::class)
+private val TimeseriesType.native: DDRUMTimeseriesType
+    get() = when (this) {
+        TimeseriesType.CPU -> DDRUMTimeseriesType.cpu()
+        TimeseriesType.MEMORY -> DDRUMTimeseriesType.memory()
     }

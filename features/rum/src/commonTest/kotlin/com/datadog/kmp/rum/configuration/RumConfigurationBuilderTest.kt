@@ -7,6 +7,7 @@
 package com.datadog.kmp.rum.configuration
 
 import com.datadog.kmp.event.EventMapper
+import com.datadog.kmp.rum.ExperimentalRumApi
 import com.datadog.kmp.rum.configuration.internal.CombinedRumSessionListener
 import com.datadog.kmp.rum.configuration.internal.PlatformRumConfigurationBuilder
 import com.datadog.kmp.rum.event.ViewEventMapper
@@ -258,6 +259,23 @@ class RumConfigurationBuilderTest {
         // Then
         verify {
             mockPlatformRumConfigurationBuilder.collectAccessibility(fakeEnabled)
+        }
+    }
+
+    @OptIn(ExperimentalRumApi::class)
+    @Test
+    fun `M call platform RUM configuration builder+setTimeseriesConfiguration W setTimeseriesConfiguration`() {
+        // Given
+        val fakeTimeseriesConfiguration = TimeseriesConfiguration.Builder()
+            .collectTypes(TimeseriesType.CPU)
+            .build()
+
+        // When
+        testedRumConfigurationBuilder.setTimeseriesConfiguration(fakeTimeseriesConfiguration)
+
+        // Then
+        verify {
+            mockPlatformRumConfigurationBuilder.setTimeseriesConfiguration(fakeTimeseriesConfiguration)
         }
     }
 }
