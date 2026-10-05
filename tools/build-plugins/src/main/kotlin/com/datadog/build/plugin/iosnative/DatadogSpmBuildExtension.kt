@@ -13,13 +13,15 @@ import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
 
-abstract class DatadogPodsBuildExtension @Inject constructor(objects: ObjectFactory) {
-    val podVersion: Property<String> = objects.property<String>()
+abstract class DatadogSpmBuildExtension @Inject constructor(objects: ObjectFactory) {
+    val sdkVersion: Property<String> = objects.property<String>()
+    val packageUrl: Property<String> = objects.property<String>()
+        .convention("https://github.com/DataDog/dd-sdk-ios.git")
     val iosDeploymentTarget: Property<String> = objects.property<String>()
         .convention("15.0")
     val tvosDeploymentTarget: Property<String> = objects.property<String>()
         .convention("15.0")
-    val iosPods: ListProperty<String> = objects.listProperty<String>()
+    val iosProducts: ListProperty<String> = objects.listProperty<String>()
         .convention(
             listOf(
                 "DatadogCore",
@@ -30,7 +32,7 @@ abstract class DatadogPodsBuildExtension @Inject constructor(objects: ObjectFact
                 "DatadogSessionReplay"
             )
         )
-    val tvosPods: ListProperty<String> = objects.listProperty<String>()
+    val tvosProducts: ListProperty<String> = objects.listProperty<String>()
         .convention(
             listOf(
                 "DatadogCore",

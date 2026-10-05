@@ -16,7 +16,6 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -46,18 +45,15 @@ class DatadogFrameworksPlugin : Plugin<Project> {
             kmpExtension.targets.withType<KotlinNativeTarget>().all {
                 if (!konanTarget.family.isAppleFamily) return@all
 
+                val slice = when (konanTarget) {
+                    KonanTarget.IOS_ARM64 -> DatadogSpmBuildPlugin.IOS_DEVICE_SLICE
+                    KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> DatadogSpmBuildPlugin.IOS_SIMULATOR_SLICE
+                    KonanTarget.TVOS_ARM64 -> DatadogSpmBuildPlugin.TVOS_DEVICE_SLICE
+                    KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64 -> DatadogSpmBuildPlugin.TVOS_SIMULATOR_SLICE
+                    else -> error("Unsupported Apple target for Datadog root frameworks linkage: $konanTarget")
+                }
                 val frameworksDirectoryPath = project.rootProject.layout.buildDirectory
-                    .dir(
-                        when (konanTarget) {
-                            KonanTarget.IOS_ARM64 -> "datadog-pods-build/ios-device"
-                            KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> "datadog-pods-build/ios-simulator"
-                            KonanTarget.TVOS_ARM64 -> "datadog-pods-build/tvos-device"
-                            KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64 ->
-                                "datadog-pods-build/tvos-simulator"
-
-                            else -> error("Unsupported Apple target for Datadog root pods linkage: $konanTarget")
-                        }
-                    )
+                    .dir("${DatadogSpmBuildPlugin.FRAMEWORKS_BUILD_DIRECTORY}/$slice")
                     .get()
                     .asFile
                     .absolutePath
@@ -77,14 +73,8 @@ class DatadogFrameworksPlugin : Plugin<Project> {
                         }
                     }
 
-                val umbrellaFramework = when (konanTarget.family) {
-                    Family.IOS -> extension.iosUmbrellaFramework.get()
-                    Family.TVOS -> extension.tvosUmbrellaFramework.get()
-                    else -> error("Unsupported Apple family for Datadog frameworks processing: ${konanTarget.family}")
-                }
-
                 val frameworkArgs = buildString {
-                    append("-F$frameworksDirectoryPath -framework $umbrellaFramework")
+                    append("-F$frameworksDirectoryPath -framework ${extension.umbrellaFramework.get()}")
                     extension.frameworks.forEach { framework ->
                         append(" -framework ${framework.name}")
                     }
@@ -116,7 +106,7 @@ class DatadogFrameworksPlugin : Plugin<Project> {
                         listOf(
                             "-linker-options",
                             frameworkArgs,
-                            // Keep binary min OS in sync with pods (K/N defaults to 14.0), otherwise
+                            // Keep binary min OS in sync with Datadog frameworks (K/N defaults to 14.0), otherwise
                             // Swift Concurrency is linked as back-deployed @rpath lib and test.kexe can't launch.
                             "-Xoverride-konan-properties=osVersionMin.${konanTarget.name}=$MIN_OS_VERSION"
                         )

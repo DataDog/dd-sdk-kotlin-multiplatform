@@ -131,7 +131,6 @@ ios-unit-test:
   tags: [ "macos:sequoia-arm64, specific:true" ]
   timeout: 1h
   script:
-    - pod repo update
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
     - ./gradlew iosUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
   artifacts:
@@ -146,7 +145,6 @@ tvos-unit-test:
   tags: [ "macos:sequoia-arm64, specific:true" ]
   timeout: 1h
   script:
-    - pod repo update
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
     - ./gradlew tvosUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
   artifacts:
@@ -163,9 +161,8 @@ sample-app-build-ios:
   variables:
     BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5"
   script:
-    - pod repo update
-    # by some reason if we build Datadog pods from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
-    - ./gradlew :buildDatadogPods
+    # by some reason if we build Datadog frameworks from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
+    - ./gradlew :buildDatadogFrameworks
     - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample iOS" build | xcbeautify --preserve-unbeautified
 
 sample-app-build-tvos:
@@ -175,9 +172,8 @@ sample-app-build-tvos:
   variables:
     BUILD_DESTINATION: "platform=tvOS Simulator,name=Apple TV,OS=17.5"
   script:
-    - pod repo update
-    # by some reason if we build Datadog pods from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
-    - ./gradlew :buildDatadogPods
+    # by some reason if we build Datadog frameworks from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
+    - ./gradlew :buildDatadogFrameworks
     - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample tvOS" build | xcbeautify --preserve-unbeautified
 
 sample-app-build-android:
