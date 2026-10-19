@@ -48,6 +48,10 @@ class ApiSurfacePlugin : Plugin<Project> {
             group = "datadog"
             description = "Check compiler metadata changes for all eligible targets"
         }
+        val commonCheckKlibCompilerMetadataChangesTask = target.tasks.register("checkKlibCompilerMetadataChanges") {
+            group = "datadog"
+            description = "Check compiler metadata changes for all eligible Apple targets"
+        }
 
         target.kotlinExtension.sourceSets.all {
             val sourceSetName = name
@@ -89,14 +93,16 @@ class ApiSurfacePlugin : Plugin<Project> {
         target.afterEvaluate {
             target.registerCompilerMetadataTasks(
                 commonGenerateCompilerMetadataTask = commonGenerateCompilerMetadataTask,
-                commonCheckCompilerMetadataChangesTask = commonCheckCompilerMetadataChangesTask
+                commonCheckCompilerMetadataChangesTask = commonCheckCompilerMetadataChangesTask,
+                commonCheckKlibCompilerMetadataChangesTask = commonCheckKlibCompilerMetadataChangesTask
             )
         }
     }
 
     private fun Project.registerCompilerMetadataTasks(
         commonGenerateCompilerMetadataTask: TaskProvider<Task>,
-        commonCheckCompilerMetadataChangesTask: TaskProvider<Task>
+        commonCheckCompilerMetadataChangesTask: TaskProvider<Task>,
+        commonCheckKlibCompilerMetadataChangesTask: TaskProvider<Task>
     ) {
         val androidTarget = extensions.getByType<KotlinMultiplatformExtension>().targets
             .first { it.platformType == KotlinPlatformType.androidJvm }
@@ -130,7 +136,8 @@ class ApiSurfacePlugin : Plugin<Project> {
             sourceSetName = if (multipleAppleFamilies) SOURCE_SET_APPLE_MAIN else SOURCE_SET_IOS_MAIN,
             kotlinCompileTask = checkNotNull(appleTarget.compilations.findByName(COMPILATION_MAIN)).compileTaskProvider,
             commonGenerateCompilerMetadataTask = commonGenerateCompilerMetadataTask,
-            commonCheckCompilerMetadataChangesTask = commonCheckCompilerMetadataChangesTask
+            commonCheckCompilerMetadataChangesTask = commonCheckCompilerMetadataChangesTask,
+            commonCheckKlibCompilerMetadataChangesTask = commonCheckKlibCompilerMetadataChangesTask
         )
     }
 
@@ -164,7 +171,8 @@ class ApiSurfacePlugin : Plugin<Project> {
         sourceSetName: String,
         kotlinCompileTask: TaskProvider<KotlinNativeCompile>,
         commonGenerateCompilerMetadataTask: TaskProvider<Task>,
-        commonCheckCompilerMetadataChangesTask: TaskProvider<Task>
+        commonCheckCompilerMetadataChangesTask: TaskProvider<Task>,
+        commonCheckKlibCompilerMetadataChangesTask: TaskProvider<Task>
     ) {
         val compilerMetadata = compilerMetadata(
             sourceSetName = sourceSetName,
@@ -188,6 +196,7 @@ class ApiSurfacePlugin : Plugin<Project> {
             dependsOn(generateCompilerMetadataTask)
         }
         commonCheckCompilerMetadataChangesTask.configure { dependsOn(checkCompilerMetadataTask) }
+        commonCheckKlibCompilerMetadataChangesTask.configure { dependsOn(checkCompilerMetadataTask) }
     }
 
     private fun KotlinCompilation<*>.jvmCompilerMetadataOrNull(project: Project): CompilerMetadataRegistration? {

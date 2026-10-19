@@ -85,6 +85,15 @@ static-analysis-ios:
 #    - ./tools/lint/run-linter.sh
     - ./tools/license/check-license.sh
 
+# Android compiler metadata is checked by the shared static analysis pipeline (checkGeneratedFiles), which runs on Linux,
+# where Apple targets are not available, so KLIB compiler metadata needs a dedicated check on macOS.
+analysis:apple-compiler-metadata:
+  stage: analysis
+  tags: [ "macos:sequoia-arm64, specific:true" ]
+  timeout: 1h
+  script:
+    - ./gradlew checkKlibCompilerMetadataChangesAll --stacktrace --no-daemon
+
 static-analysis-android:
   stage: analysis
   variables:
