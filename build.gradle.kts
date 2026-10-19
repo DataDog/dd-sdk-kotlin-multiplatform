@@ -102,6 +102,11 @@ registerPluginSpecificAggregationTask(
     API_SURFACE_PLUGIN_NAME
 )
 registerPluginSpecificAggregationTask(
+    "checkKlibCompilerMetadataChangesAll",
+    "checkKlibCompilerMetadataChanges",
+    API_SURFACE_PLUGIN_NAME
+)
+registerPluginSpecificAggregationTask(
     "generateCompilerMetadataAll",
     "generateCompilerMetadata",
     API_SURFACE_PLUGIN_NAME
