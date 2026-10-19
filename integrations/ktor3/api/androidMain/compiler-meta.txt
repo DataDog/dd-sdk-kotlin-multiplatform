@@ -1,2 +1,2 @@
-kotlin_abi_version=2.1.0
+kotlin_abi_version=2.2.0
 jvm_bytecode_version=17
