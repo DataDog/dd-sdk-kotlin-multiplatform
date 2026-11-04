@@ -13,7 +13,6 @@
       "Bash(git stash:*)",
       "Bash(git status:*)",
       "Bash(grep:*)",
-      "Bash(ktlint:*)",
       "Bash(lipo:*)",
       "Bash(ls:*)",
       "Bash(nm:*)",

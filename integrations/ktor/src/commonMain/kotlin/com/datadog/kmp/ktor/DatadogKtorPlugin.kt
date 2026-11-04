@@ -39,15 +39,15 @@ fun datadogKtorPlugin(
     rumResourceAttributesProvider: RumResourceAttributesProvider = DefaultRumResourceAttributesProvider
 ): ClientPlugin<Unit> {
     return DatadogKtorPlugin(
-        { RumMonitor.get() },
-        RumSessionProvider.get(),
-        DatadogContextProvider.get(),
-        tracedHosts,
-        DeterministicTraceSampler(traceSampleRate),
-        traceContextInjection,
-        DefaultTraceIdGenerator(),
-        DefaultSpanIdGenerator(),
-        rumResourceAttributesProvider
+        rumMonitorProvider = { RumMonitor.get() },
+        rumSessionProvider = RumSessionProvider.get(),
+        datadogContextProvider = DatadogContextProvider.get(),
+        tracedHosts = tracedHosts,
+        traceSampler = DeterministicTraceSampler(traceSampleRate),
+        traceContextInjection = traceContextInjection,
+        traceIdGenerator = DefaultTraceIdGenerator(),
+        spanIdGenerator = DefaultSpanIdGenerator(),
+        rumResourceAttributesProvider = rumResourceAttributesProvider
     ).buildClientPlugin()
 }
 

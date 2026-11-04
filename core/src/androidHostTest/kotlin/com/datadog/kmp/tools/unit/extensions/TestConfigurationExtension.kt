@@ -37,7 +37,7 @@ class TestConfigurationExtension :
         val methods = mutableListOf<Method>()
         collectProviderMethods(context.requiredTestClass, methods)
 
-        val configs = methods.flatMap { it.invoke(null) as List<*> }
+        val configs = methods.flatMap { checkNotNull(it.invoke(null)) as List<*> }
             .filterIsInstance<TestConfiguration>()
         if (configs.isNotEmpty()) {
             testConfigurations[context.uniqueId] = configs
@@ -129,8 +129,9 @@ class TestConfigurationExtension :
             .filter {
                 it.isAnnotationPresent(TestConfigurationsProvider::class.java)
             }
-        if (clazz.superclass != null) {
-            collectProviderMethods(clazz.superclass as Class<*>, accumulator)
+        val superclass: Class<*>? = clazz.superclass
+        if (superclass != null) {
+            collectProviderMethods(superclass, accumulator)
         }
     }
 

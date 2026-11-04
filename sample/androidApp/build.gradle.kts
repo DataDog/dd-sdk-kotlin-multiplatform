@@ -5,11 +5,17 @@
  */
 
 plugins {
+    // Build
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.builtInKotlin)
-    id("datadog-build-config")
-    alias(libs.plugins.dependencyLicense)
     alias(libs.plugins.compose.compiler)
+    id("datadog-build-config")
+
+    // Analysis tools
+    // ktlint must be applied after built-in Kotlin, otherwise it doesn't pick up the Kotlin source sets
+    id("ktlint")
+    id("detekt-conventions")
+    alias(libs.plugins.dependencyLicense)
 }
 
 android {

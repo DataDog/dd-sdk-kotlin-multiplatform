@@ -55,7 +55,7 @@ internal class LogEventForgeryFactory : ForgeryFactory<LogEvent> {
                 LogEvent.Error(
                     message = throwable?.message,
                     stack = throwable?.stackTraceToString(),
-                    kind = throwable?.javaClass?.canonicalName ?: throwable?.javaClass?.simpleName,
+                    kind = throwable?.run { javaClass.canonicalName ?: javaClass.simpleName },
                     threads = aNullable {
                         aList {
                             LogEvent.Thread(
@@ -100,7 +100,7 @@ internal class LogEventForgeryFactory : ForgeryFactory<LogEvent> {
                         signalStrength = networkInfo?.strength?.toString(),
                         uplinkKbps = networkInfo?.upKbps?.toString(),
                         downlinkKbps = networkInfo?.downKbps?.toString(),
-                        connectivity = networkInfo?.connectivity?.toString().orEmpty()
+                        connectivity = networkInfo?.run { connectivity.toString() }.orEmpty()
                     )
                 )
             },

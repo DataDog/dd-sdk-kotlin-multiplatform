@@ -4,6 +4,7 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
+import dev.detekt.gradle.Detekt
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 /*
@@ -14,11 +15,14 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     `kotlin-dsl`
+    alias(libs.plugins.ktlintGradlePlugin)
+    alias(libs.plugins.detektGradlePlugin)
 }
 
 repositories {
     google()
     mavenCentral()
+    gradlePluginPortal()
     maven {
         setUrl("https://jitpack.io")
         mavenContent {
@@ -35,9 +39,51 @@ dependencies {
     implementation(libs.kotlinAntlrRuntime)
     implementation(libs.kotlinPoet)
     implementation(libs.gson)
+    implementation(libs.ktlintGradlePlugin)
+    implementation(libs.detektGradlePlugin)
 
     testImplementation(libs.bundles.jUnit5)
     testImplementation(libs.bundles.jvmTestTools)
+}
+
+ktlint {
+    version = provider { libs.versions.ktlint.get() }
+    filter {
+        exclude { it.file.invariantSeparatorsPath.contains("/build/generated") }
+    }
+}
+
+detekt {
+    config.setFrom(file("../../detekt.yml"))
+    // Keep in sync with `detekt-conventions`: excludes are matched relative to the repository root.
+    basePath.set(layout.projectDirectory.dir("../..").asFile.normalize())
+    buildUponDefaultConfig = false
+    parallel = true
+    source.setFrom(
+        fileTree(layout.projectDirectory) {
+            include("*.kts", "src/**/*.gradle.kts")
+        }
+    )
+}
+
+tasks.named<Detekt>("detektMain") {
+    exclude("**/*.gradle.kts")
+}
+
+tasks.named("detekt") {
+    dependsOn("detektMain", "detektTest")
+}
+
+tasks.withType<Detekt>().configureEach {
+    jvmTarget = "17"
+    val buildDir = layout.buildDirectory.get().asFile
+    exclude { it.file.startsWith(buildDir) }
+    reports {
+        sarif.required = false
+        html.required = false
+        markdown.required = false
+        checkstyle.required = false
+    }
 }
 
 tasks.withType<Test> {
@@ -84,6 +130,10 @@ gradlePlugin {
         register("DatadogFrameworksPlugin") {
             id = "datadog-ios-frameworks"
             implementationClass = "com.datadog.build.plugin.iosnative.DatadogFrameworksPlugin"
+        }
+        register("DetektConventionsPlugin") {
+            id = "detekt-conventions"
+            implementationClass = "com.datadog.build.plugin.detekt.DetektConventionsPlugin"
         }
     }
 }

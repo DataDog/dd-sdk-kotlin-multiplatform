@@ -29,11 +29,11 @@ internal constructor(
         val uploadFrequency: UploadFrequency,
         val site: DatadogSite,
         val batchProcessingLevel: BatchProcessingLevel,
-        val trackCrashes: Boolean,
+        val isCrashTrackingEnabled: Boolean,
         val proxyConfiguration: ProxyConfiguration?,
         val version: String?,
         // iOS only
-        val backgroundTasksEnabled: Boolean
+        val areBackgroundTasksEnabled: Boolean
     )
 
     // region Builder
@@ -117,7 +117,7 @@ internal constructor(
          * able to symbolicate non-crash errors on iOS.
          */
         fun trackCrashes(enabled: Boolean): Builder {
-            coreConfig = coreConfig.copy(trackCrashes = enabled)
+            coreConfig = coreConfig.copy(isCrashTrackingEnabled = enabled)
             return this
         }
 
@@ -156,10 +156,10 @@ internal constructor(
             uploadFrequency = UploadFrequency.AVERAGE,
             site = DatadogSite.US1,
             batchProcessingLevel = BatchProcessingLevel.MEDIUM,
-            trackCrashes = true,
+            isCrashTrackingEnabled = true,
             proxyConfiguration = null,
             version = null,
-            backgroundTasksEnabled = false
+            areBackgroundTasksEnabled = false
         )
     }
 }

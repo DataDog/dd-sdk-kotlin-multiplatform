@@ -230,11 +230,11 @@ internal class AndroidRumConfigurationBuilderTest {
         verify(mockNativeRumConfigurationBuilder)
             .trackUserInteractions(attributesProvidersCaptor.capture(), interactionPredicateCaptor.capture())
 
-        attributesProvidersCaptor.firstValue.let {
+        attributesProvidersCaptor.firstValue.let { nativeProviders ->
             val mockView = mock<View>()
             val fakeAttributes = forge.exhaustiveAttributes().toMutableMap()
-            assertThat(it).hasSameSizeAs(mockTouchTargetExtraAttributeProviders)
-            it.forEach {
+            assertThat(nativeProviders).hasSameSizeAs(mockTouchTargetExtraAttributeProviders)
+            nativeProviders.forEach {
                 it.extractAttributes(mockView, fakeAttributes)
             }
             mockTouchTargetExtraAttributeProviders.forEach {
@@ -289,16 +289,16 @@ internal class AndroidRumConfigurationBuilderTest {
         @StringForgery fakeActionTargetName: String
     ) {
         // Given
-        val fakeActionEventMapper = EventMapper<ActionEvent> {
-            it.view.referrer = fakeViewReferrer
-            it.view.name = fakeViewName
-            it.view.url = fakeViewUrl
+        val fakeActionEventMapper = EventMapper<ActionEvent> { event ->
+            event.view.referrer = fakeViewReferrer
+            event.view.name = fakeViewName
+            event.view.url = fakeViewUrl
 
-            it.action.target?.let {
+            event.action.target?.let {
                 it.name = fakeActionTargetName
             }
 
-            it
+            event
         }
 
         // When
@@ -541,8 +541,10 @@ internal class AndroidRumConfigurationBuilderTest {
 
     companion object {
         private val NativeTimeseriesConfiguration.enabledTypes: Set<*>
-            get() = NativeTimeseriesConfiguration::class.java.getDeclaredField("enabledTypes")
-                .apply { isAccessible = true }
-                .get(this) as Set<*>
+            get() = checkNotNull(
+                NativeTimeseriesConfiguration::class.java.getDeclaredField("enabledTypes")
+                    .apply { isAccessible = true }
+                    .get(this)
+            ) as Set<*>
     }
 }

@@ -375,6 +375,7 @@ interface RumMonitor {
      *
      * Default value is `false`.
      */
+    @Suppress("BooleanPropertyNaming") // public API, can't be renamed
     var debug: Boolean
 
     companion object {

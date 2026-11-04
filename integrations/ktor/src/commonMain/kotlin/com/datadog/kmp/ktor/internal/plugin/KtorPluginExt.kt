@@ -21,6 +21,8 @@ internal fun KtorPlugin.buildClientPlugin(): ClientPlugin<Unit> {
         }
 
         on(Send) {
+            // The exception (including cancellation) is always re-thrown, `onError` only closes the RUM resource.
+            @Suppress("SuspendFunSwallowedCancellation")
             try {
                 proceed(it)
             } catch (@Suppress("TooGenericExceptionCaught") t: Throwable) {
