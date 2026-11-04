@@ -10,6 +10,7 @@ import dev.detekt.gradle.Detekt
 import dev.detekt.gradle.extensions.DetektExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
@@ -68,7 +69,13 @@ class DetektConventionsPlugin : Plugin<Project> {
     private fun configureTasks(target: Project) {
         val buildDir = target.layout.buildDirectory.get().asFile
         target.tasks.withType<Detekt>().configureEach {
-            jvmTarget.set(JVM_TARGET)
+            jvmTarget.set(
+                target.extensions.getByType<VersionCatalogsExtension>()
+                    .named("libs")
+                    .findVersion("jdk")
+                    .orElseThrow { IllegalStateException("JDK version is not specified") }
+                    .requiredVersion
+            )
             exclude { it.file.startsWith(buildDir) }
             reports {
                 sarif.required.set(false)
@@ -143,6 +150,5 @@ class DetektConventionsPlugin : Plugin<Project> {
         const val DETEKT_MAIN_TASK_NAME = "detektMain"
         const val DETEKT_TEST_TASK_NAME = "detektTest"
         const val CONFIG_FILE_NAME = "detekt.yml"
-        const val JVM_TARGET = "17"
     }
 }

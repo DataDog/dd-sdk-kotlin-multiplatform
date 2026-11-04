@@ -15,6 +15,7 @@ import com.datadog.build.utils.taskConfig
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.testing.Test
@@ -22,7 +23,6 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.SigningExtension
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.target.Family
@@ -60,6 +61,8 @@ class DatadogProjectConfigurationPlugin : Plugin<Project> {
 
 private fun Project.applyKotlinConfig(configExtension: DatadogBuildConfigExtension) {
     kotlinExtension.apply {
+        // JDK used to compile and test JVM and Android targets. Bytecode target is set separately.
+        jvmToolchain(jdkVersion)
         sourceSets.all {
             languageSettings {
                 languageVersion = configExtension.kotlinVersionOrDefault.version
@@ -69,7 +72,7 @@ private fun Project.applyKotlinConfig(configExtension: DatadogBuildConfigExtensi
     }
     taskConfig<KotlinCompile> {
         compilerOptions {
-            jvmTarget.set(configExtension.jvmTargetOrDefault)
+            jvmTarget.set(configExtension.jvmTargetOrDefaultProvider)
             // there are few warnings coming from the fact that the JetBrains Compose Compiler is the new one, but AGP
             // is still using old values for the configuration
             // w: intrinsicRemember is deprecated. Use
@@ -90,7 +93,6 @@ private fun Project.applyKotlinConfig(configExtension: DatadogBuildConfigExtensi
     }
 }
 
-@OptIn(ExperimentalKotlinGradlePluginApi::class)
 private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuildConfigExtension) {
     val projectToApply = this
     extensions.getByType<KotlinMultiplatformExtension>()
@@ -127,6 +129,10 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
                         (this as KotlinMultiplatformAndroidLibraryTarget).applyLibraryAndroidConfig(configExtension)
                     }
 
+                    KotlinPlatformType.jvm -> {
+                        (this as KotlinJvmTarget).applyJvmReleaseConfig(configExtension)
+                    }
+
                     KotlinPlatformType.native -> {
                         if (this is KotlinNativeTargetWithTests<*>) {
                             testRuns.all {
@@ -159,7 +165,7 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
                 if (this is HasConfigurableKotlinCompilerOptions<*>) {
                     compilerOptions {
                         if (this is KotlinJvmCompilerOptions) {
-                            jvmTarget.set(configExtension.jvmTargetOrDefault)
+                            jvmTarget.set(configExtension.jvmTargetOrDefaultProvider)
                         }
                         // https://kotlinlang.org/docs/components-stability.html#current-stability-of-kotlin-components
                         // https://youtrack.jetbrains.com/issue/KT-61573
@@ -184,6 +190,30 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
         }
 }
 
+private fun KotlinJvmTarget.applyJvmReleaseConfig(configExtension: DatadogBuildConfigExtension) {
+    // Compile against the class library of the bytecode target rather than the toolchain one,
+    // so that APIs newer than the bytecode target can't be used.
+    // Android targets compile against android.jar, which is incompatible with -Xjdk-release / --release.
+    // Resolved lazily: the target is created before the module's `datadogBuildConfig` block is evaluated.
+    val jvmTarget = configExtension.jvmTargetOrDefaultProvider
+    compilerOptions {
+        freeCompilerArgs.add(jvmTarget.map { "-Xjdk-release=${it.target}" })
+    }
+    compilations.configureEach {
+        compileJavaTaskProvider?.configure {
+            options.release.set(jvmTarget.map { it.target.toInt() })
+        }
+    }
+}
+
+private val Project.jdkVersion: Int
+    get() = extensions.getByType<VersionCatalogsExtension>()
+        .named("libs")
+        .findVersion("jdk")
+        .orElseThrow { IllegalStateException("No `jdk` version found in the version catalog") }
+        .requiredVersion
+        .toInt()
+
 // endregion
 
 // region Android
@@ -191,10 +221,10 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
 private fun Project.applyApplicationAndroidConfig(configExtension: DatadogBuildConfigExtension) {
     extensions.getByType<ApplicationExtension>()
         .apply {
-            val javaVersion = configExtension.jvmTargetOrDefault.toJavaVersion()
+            val javaVersion = configExtension.jvmTargetOrDefaultProvider.map { it.toJavaVersion() }
             compileOptions {
-                sourceCompatibility = javaVersion
-                targetCompatibility = javaVersion
+                sourceCompatibility = javaVersion.get()
+                targetCompatibility = javaVersion.get()
             }
             compileSdk = ProjectConfig.Android.COMPILE_SDK
             buildToolsVersion = ProjectConfig.Android.BUILD_TOOLS_VERSION
@@ -219,7 +249,7 @@ private fun KotlinMultiplatformAndroidLibraryTarget.applyLibraryAndroidConfig(
     configExtension: DatadogBuildConfigExtension
 ) {
     compilerOptions {
-        jvmTarget.set(configExtension.jvmTargetOrDefault)
+        jvmTarget.set(configExtension.jvmTargetOrDefaultProvider)
     }
     minSdk = ProjectConfig.Android.MIN_SDK
     compileSdk = ProjectConfig.Android.COMPILE_SDK
