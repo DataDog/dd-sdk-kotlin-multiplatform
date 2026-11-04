@@ -20,8 +20,8 @@ kotlin {
 
 ### Initial Setup
 
-1. Set up RUM monitoring, see the dedicated [Datadog Kotlin Multiplatform RUM Collection documentation][2] to learn how.
-2. Add `DatadogCoilRequestListener` to your Coil `ImageRequest` whenever you load an image:
+1. Set up RUM monitoring. See the [Datadog Kotlin Multiplatform RUM Collection documentation][2] for instructions.
+2. When loading images, add `DatadogCoilRequestListener` to your Coil `ImageRequest`:
 
 ```kotlin
 AsyncImage(
@@ -33,7 +33,7 @@ AsyncImage(
 )
 ```
 
-When an image fails to load, a RUM Error event is sent. When available, the location of the image is added in the `request_path` attribute.
+When an image fails to load, a RUM Error event is sent. The location of the image, when available, is added in the `request_path` attribute.
 
 ## Contributing
 
