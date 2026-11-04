@@ -6,4 +6,11 @@
 
 package com.datadog.kmp.coil3
 
-internal actual fun platformRequestPath(data: Any): String? = null
+import platform.Foundation.NSURL
+
+internal actual fun platformRequestPath(data: Any): String? {
+    return when (data) {
+        is NSURL -> data.absoluteString
+        else -> null
+    }
+}
