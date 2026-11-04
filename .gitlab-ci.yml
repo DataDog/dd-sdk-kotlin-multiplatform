@@ -31,6 +31,15 @@ stages:
     - export CENTRAL_PUBLISHER_USERNAME=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.publishing.central_username --with-decryption --query "Parameter.Value" --out text)
     - export CENTRAL_PUBLISHER_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.publishing.central_password --with-decryption --query "Parameter.Value" --out text)
 
+# Gradle sizes its worker pool by the visible CPU count, so without a CPU limit it sees all node vCPUs
+# (up to 96 on shared runners) and can get the job OOMKilled. Use for Gradle jobs on Kubernetes runners.
+.cpu-memory-intensive-job:
+  variables:
+    KUBERNETES_MEMORY_REQUEST: 8Gi
+    KUBERNETES_MEMORY_LIMIT: 16Gi
+    KUBERNETES_CPU_REQUEST: 16
+    KUBERNETES_CPU_LIMIT: 16
+
 # Security
 
 # TODO RUM-5306 Signing keys were generated using the image
@@ -95,6 +104,7 @@ analysis:apple-compiler-metadata:
     - ./gradlew checkKlibCompilerMetadataChangesAll --stacktrace --no-daemon
 
 analysis:generated-files-check:
+  extends: .cpu-memory-intensive-job
   tags: [ "arch:amd64" ]
   image: $CI_IMAGE_DOCKER
   stage: analysis
@@ -103,6 +113,7 @@ analysis:generated-files-check:
     - ./gradlew checkGeneratedFiles --stacktrace --no-daemon
 
 analysis:detekt:
+  extends: .cpu-memory-intensive-job
   tags: [ "arch:amd64" ]
   image: $CI_IMAGE_DOCKER
   stage: analysis
@@ -111,6 +122,7 @@ analysis:detekt:
     - ./gradlew detektAll --continue --stacktrace --no-daemon
 
 analysis:android-lint:
+  extends: .cpu-memory-intensive-job
   tags: [ "arch:amd64" ]
   image: $CI_IMAGE_DOCKER
   stage: analysis
@@ -119,6 +131,7 @@ analysis:android-lint:
     - ./gradlew lintRelease --stacktrace --no-daemon
 
 analysis:ktlint:
+  extends: .cpu-memory-intensive-job
   tags: [ "arch:amd64" ]
   image: $CI_IMAGE_DOCKER
   stage: analysis
@@ -127,6 +140,7 @@ analysis:ktlint:
     - ./gradlew ktlintCheckAll --stacktrace --no-daemon
 
 analysis:licenses:
+  extends: .cpu-memory-intensive-job
   tags: [ "arch:amd64" ]
   image: $CI_IMAGE_DOCKER
   stage: analysis
@@ -137,6 +151,7 @@ analysis:licenses:
 # Test
 
 jvm-unit-test:
+  extends: .cpu-memory-intensive-job
   stage: test
   tags: [ "arch:amd64" ]
   image: $CI_IMAGE_DOCKER
@@ -204,6 +219,7 @@ sample-app-build-tvos:
     - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample tvOS" build | xcbeautify --preserve-unbeautified
 
 sample-app-build-android:
+  extends: .cpu-memory-intensive-job
   stage: test
   tags: [ "arch:amd64" ]
   image: $CI_IMAGE_DOCKER
