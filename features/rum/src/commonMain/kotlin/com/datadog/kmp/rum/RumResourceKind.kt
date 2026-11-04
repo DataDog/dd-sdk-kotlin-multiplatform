@@ -33,6 +33,7 @@ enum class RumResourceKind {
     DOCUMENT,
 
     // Common kinds
+
     /**
      * Native type resource.
      */
