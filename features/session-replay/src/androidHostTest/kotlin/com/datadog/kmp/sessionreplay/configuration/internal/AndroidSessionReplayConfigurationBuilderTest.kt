@@ -58,7 +58,7 @@ class AndroidSessionReplayConfigurationBuilderTest {
         testedBuilder.setImagePrivacy(fakeImagePrivacy)
 
         // Then
-        verify(mockNativeRumConfigurationBuilder).setImagePrivacy(fakeImagePrivacy.native)
+        verify(mockNativeRumConfigurationBuilder).setImagePrivacy(fakeImagePrivacy.toNative())
     }
 
     @Test
@@ -69,7 +69,7 @@ class AndroidSessionReplayConfigurationBuilderTest {
         testedBuilder.setTouchPrivacy(fakeTouchPrivacy)
 
         // Then
-        verify(mockNativeRumConfigurationBuilder).setTouchPrivacy(fakeTouchPrivacy.native)
+        verify(mockNativeRumConfigurationBuilder).setTouchPrivacy(fakeTouchPrivacy.toNative())
     }
 
     @Test
@@ -80,7 +80,7 @@ class AndroidSessionReplayConfigurationBuilderTest {
         testedBuilder.setTextAndInputPrivacy(fakeTextAndInputPrivacy)
 
         // Then
-        verify(mockNativeRumConfigurationBuilder).setTextAndInputPrivacy(fakeTextAndInputPrivacy.native)
+        verify(mockNativeRumConfigurationBuilder).setTextAndInputPrivacy(fakeTextAndInputPrivacy.toNative())
     }
 
     @Test
@@ -164,21 +164,21 @@ class AndroidSessionReplayConfigurationBuilderTest {
         assertThat(sessionReplayConfiguration).isSameAs(mockNativeConfiguration)
     }
 
-    private val ImagePrivacy.native: com.datadog.android.sessionreplay.ImagePrivacy
-        get() = when (this) {
+    private fun ImagePrivacy.toNative(): com.datadog.android.sessionreplay.ImagePrivacy =
+        when (this) {
             ImagePrivacy.MASK_NONE -> NativeImagePrivacy.MASK_NONE
             ImagePrivacy.MASK_LARGE_ONLY -> NativeImagePrivacy.MASK_LARGE_ONLY
             ImagePrivacy.MASK_ALL -> NativeImagePrivacy.MASK_ALL
         }
 
-    private val TouchPrivacy.native: com.datadog.android.sessionreplay.TouchPrivacy
-        get() = when (this) {
+    private fun TouchPrivacy.toNative(): com.datadog.android.sessionreplay.TouchPrivacy =
+        when (this) {
             TouchPrivacy.SHOW -> NativeTouchPrivacy.SHOW
             TouchPrivacy.HIDE -> NativeTouchPrivacy.HIDE
         }
 
-    private val TextAndInputPrivacy.native: com.datadog.android.sessionreplay.TextAndInputPrivacy
-        get() = when (this) {
+    private fun TextAndInputPrivacy.toNative(): com.datadog.android.sessionreplay.TextAndInputPrivacy =
+        when (this) {
             TextAndInputPrivacy.MASK_SENSITIVE_INPUTS -> NativeTextAndInputPrivacy.MASK_SENSITIVE_INPUTS
             TextAndInputPrivacy.MASK_ALL_INPUTS -> NativeTextAndInputPrivacy.MASK_ALL_INPUTS
             TextAndInputPrivacy.MASK_ALL -> NativeTextAndInputPrivacy.MASK_ALL

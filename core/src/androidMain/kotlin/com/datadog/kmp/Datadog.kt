@@ -69,7 +69,7 @@ actual object Datadog {
     ) {
         requireNotNull(context)
         DatadogAndroid.initialize(context as Context, configuration.native, trackingConsent.native)
-        isCrashReportingEnabled = configuration.coreConfig.trackCrashes
+        isCrashReportingEnabled = configuration.coreConfig.isCrashTrackingEnabled
     }
 
     /**
@@ -245,7 +245,7 @@ internal val Configuration.native: ConfigurationAndroid
             .setBatchSize(coreConfig.batchSize.native)
             .setUploadFrequency(coreConfig.uploadFrequency.native)
             .setBatchProcessingLevel(coreConfig.batchProcessingLevel.native)
-            .setCrashReportsEnabled(coreConfig.trackCrashes)
+            .setCrashReportsEnabled(coreConfig.isCrashTrackingEnabled)
             .setAdditionalConfiguration(
                 mapOf(
                     InternalAttributes.SOURCE_ATTRIBUTE,

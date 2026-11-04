@@ -47,6 +47,12 @@ import(test),org.mockito,MIT,Copyright (c) 2007 Mockito contributors
 import(test),org.mockito.kotlin,MIT,"Copyright (c) 2016 Niek Haarman, Copyright (c) 2007 Mockito contributors"
 import(test),org.opentest4j,Apache-2.0,Copyright 2015-2018 the original author or authors
 build,androidx.compose.compiler,Apache-2.0,Copyright 2019 The Android Open Source Project
+build,com.pinterest.ktlint,MIT,"Copyright 2019 Pinterest, Inc."
 build,com.android.tools.lint,Apache-2.0,Copyright (C) 2013 The Android Open Source Project
+build,dev.detekt,Apache-2.0,"Copyright 2016-2021 Artur Bosch & Contributors"
+build,io.github.detekt.sarif4k,Apache-2.0,"Copyright 2021 Artur Bosch & Contributors"
+build,io.github.oshai,Apache-2.0,"Copyright oshai authors"
 build,org.bouncycastle,BouncyCastle-License,"Copyright (c) 2000-2026 The Legion of the Bouncy Castle Inc"
+build,org.ec4j.core,Apache-2.0,"Copyright (c) 2017 Angelo Zerr and other contributors"
+build,org.jetbrains.intellij.deps,LGPL-2.1-only,"Copyright (c) 2001-2002, Eric D. Friedman, Jason Baldridge, Copyright (c) 1999 CERN - European Organization for Nuclear Research"
 build,org.slf4j,MIT,"Copyright (c) 2004-2022 QOS.ch Sarl (Switzerland)"

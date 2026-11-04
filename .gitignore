@@ -33,5 +33,3 @@ Package.resolved
 gh_token
 sdk_classpath
 
-# Local CI tooling binaries
-.static-checks-tooling/

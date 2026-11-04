@@ -16,9 +16,14 @@ import kotlin.io.path.pathString
  */
 
 plugins {
+    // Build
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     id("datadog-build-config")
+
+    // Analysis tools
+    id("ktlint")
+    id("detekt-conventions")
     alias(libs.plugins.dependencyLicense)
 }
 

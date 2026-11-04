@@ -41,7 +41,7 @@ internal interface AdvancedNetworkRumMonitor {
         attributes: Map<String, Any?> = emptyMap()
     )
 
-    @SuppressWarnings("LongParameterList")
+    @Suppress("LongParameterList")
     fun stopResourceWithError(
         key: ResourceId,
         statusCode: Int?,

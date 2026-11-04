@@ -122,7 +122,7 @@ internal class DatadogExtTest {
             .setBatchSize(coreConfig.batchSize.native)
             .setUploadFrequency(coreConfig.uploadFrequency.native)
             .setBatchProcessingLevel(coreConfig.batchProcessingLevel.native)
-            .setCrashReportsEnabled(coreConfig.trackCrashes)
+            .setCrashReportsEnabled(coreConfig.isCrashTrackingEnabled)
             .setAdditionalConfiguration(
                 mapOf(
                     InternalAttributes.SOURCE_ATTRIBUTE,
@@ -161,7 +161,7 @@ internal class DatadogExtTest {
             .setBatchSize(configuration.coreConfig.batchSize.native)
             .setUploadFrequency(configuration.coreConfig.uploadFrequency.native)
             .setBatchProcessingLevel(configuration.coreConfig.batchProcessingLevel.native)
-            .setCrashReportsEnabled(configuration.coreConfig.trackCrashes)
+            .setCrashReportsEnabled(configuration.coreConfig.isCrashTrackingEnabled)
             .setAdditionalConfiguration(
                 mapOf(
                     InternalAttributes.SOURCE_ATTRIBUTE,
@@ -197,7 +197,7 @@ internal class DatadogExtTest {
             .setBatchSize(configuration.coreConfig.batchSize.native)
             .setUploadFrequency(configuration.coreConfig.uploadFrequency.native)
             .setBatchProcessingLevel(configuration.coreConfig.batchProcessingLevel.native)
-            .setCrashReportsEnabled(configuration.coreConfig.trackCrashes)
+            .setCrashReportsEnabled(configuration.coreConfig.isCrashTrackingEnabled)
             .setAdditionalConfiguration(
                 mapOf(
                     InternalAttributes.SOURCE_ATTRIBUTE,

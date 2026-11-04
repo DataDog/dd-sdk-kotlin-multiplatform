@@ -24,6 +24,9 @@ kotlinGrammarParser = "0.1.0"
 kotlinAntlrRuntime = "v0.1.0"
 kotlinPoet = "1.18.1"
 gson = "2.11.0"
+detekt = "2.0.0-alpha.6"
+ktlint = "1.5.0"
+ktlintGradlePlugin = "14.2.0"
 
 ktor2 = "2.3.13"
 ktor3 = "3.0.3"
@@ -56,6 +59,8 @@ compose-foundation = { module = "androidx.compose.foundation:foundation", versio
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 android-tools = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+detektGradlePlugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+ktlintGradlePlugin = { module = "org.jlleitschuh.gradle.ktlint:org.jlleitschuh.gradle.ktlint.gradle.plugin", version.ref = "ktlintGradlePlugin" }
 datadog-android-core = { module = "com.datadoghq:dd-sdk-android-core", version.ref = "datadog-android" }
 datadog-android-logs = { module = "com.datadoghq:dd-sdk-android-logs", version.ref = "datadog-android" }
 datadog-android-rum = { module = "com.datadoghq:dd-sdk-android-rum", version.ref = "datadog-android" }
@@ -114,6 +119,8 @@ dependencyLicense = { id = "com.datadoghq.dependency-license", version.ref = "de
 mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexusPublish" }
+detektGradlePlugin = { id = "dev.detekt", version.ref = "detekt" }
+ktlintGradlePlugin = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintGradlePlugin" }
 
 [bundles]
 

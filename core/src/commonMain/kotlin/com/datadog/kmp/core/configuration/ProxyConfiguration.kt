@@ -20,7 +20,7 @@ class ProxyConfiguration(internal val type: ProxyType, internal val hostname: St
     /**
      * Adds Basic authentication scheme to the proxy connection request.
      *
-     * @param username the user name.
+     * @param username the username.
      * @param password the password.
      */
     fun withBasicAuthentication(username: String, password: String): ProxyConfiguration {
@@ -33,8 +33,8 @@ class ProxyConfiguration(internal val type: ProxyType, internal val hostname: St
     override fun toString(): String {
         var description = "${ProxyConfiguration::class.simpleName}: type=$type, hostname=$hostname, port=$port"
 
-        if (username != null) {
-            description += ", username=$username"
+        username?.let {
+            description += ", username=$it"
         }
         if (password != null) {
             description += ", password=***"

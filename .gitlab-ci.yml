@@ -85,7 +85,7 @@ static-analysis-ios:
 #    - ./tools/lint/run-linter.sh
     - ./tools/license/check-license.sh
 
-# Android compiler metadata is checked by the shared static analysis pipeline (checkGeneratedFiles), which runs on Linux,
+# Android compiler metadata is checked by the analysis:generated-files-check job (checkGeneratedFiles), which runs on Linux,
 # where Apple targets are not available, so KLIB compiler metadata needs a dedicated check on macOS.
 analysis:apple-compiler-metadata:
   stage: analysis
@@ -94,19 +94,37 @@ analysis:apple-compiler-metadata:
   script:
     - ./gradlew checkKlibCompilerMetadataChangesAll --stacktrace --no-daemon
 
-static-analysis-android:
+analysis:generated-files-check:
+  tags: [ "arch:amd64" ]
+  image: $CI_IMAGE_DOCKER
   stage: analysis
-  variables:
-    DETEKT_PUBLIC_API: "true"
-    DETEKT_CUSTOM_RULES_BUILD_TASK: ""
-    DETEKT_CUSTOM_RULES_JAR_PATH: ""
-    DETEKT_CUSTOM_RULES_YML_PATH: ""
-    DETEKT_GENERATE_CLASSPATH_BUILD_TASK: "printSdkDebugRuntimeClasspath"
-    DETEKT_CLASSPATH_FILE_PATH: ""
-    FLAVORED_ANDROID_LINT: ""
-  trigger:
-    include: "https://gitlab-templates.ddbuild.io/mobile/v123745390-227cb48b/static-analysis.yml"
-    strategy: depend
+  timeout: 30m
+  script:
+    - ./gradlew checkGeneratedFiles --stacktrace --no-daemon
+
+analysis:detekt:
+  tags: [ "arch:amd64" ]
+  image: $CI_IMAGE_DOCKER
+  stage: analysis
+  timeout: 30m
+  script:
+    - ./gradlew detektAll --continue --stacktrace --no-daemon
+
+analysis:android-lint:
+  tags: [ "arch:amd64" ]
+  image: $CI_IMAGE_DOCKER
+  stage: analysis
+  timeout: 30m
+  script:
+    - ./gradlew lintRelease --stacktrace --no-daemon
+
+analysis:ktlint:
+  tags: [ "arch:amd64" ]
+  image: $CI_IMAGE_DOCKER
+  stage: analysis
+  timeout: 30m
+  script:
+    - ./gradlew ktlintCheckAll --stacktrace --no-daemon
 
 analysis:licenses:
   tags: [ "arch:amd64" ]

@@ -127,14 +127,13 @@ private object DatadogTraceContextAssert : TraceContextAssert<Headers> {
 
     override fun assertTraceId(carrier: Headers, traceIdHex: String) {
         val actualLeastSignificantTraceId = carrier["x-datadog-trace-id"]
-            ?.toULong()
-            ?.toString(HEX_RADIX)
-            ?.padStart(16, '0')
+            ?.run { toULong().toString(HEX_RADIX).padStart(16, '0') }
             .orEmpty()
         val actualMostSignificantTraceId = carrier["x-datadog-tags"]
-            ?.split(",")
-            ?.associate { it.split("=").let { it[0] to it[1] } }
-            ?.get("_dd.p.tid")
+            ?.run {
+                split(",")
+                    .associate { tag -> tag.split("=").let { it[0] to it[1] } }["_dd.p.tid"]
+            }
             .orEmpty()
         val actualTraceId = actualMostSignificantTraceId + actualLeastSignificantTraceId
         assertEquals(

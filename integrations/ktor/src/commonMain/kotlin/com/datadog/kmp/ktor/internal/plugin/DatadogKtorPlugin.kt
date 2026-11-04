@@ -62,13 +62,13 @@ internal class DatadogKtorPlugin(
         if (isSampledIn && traceHeaderTypes.isNotEmpty()) {
             traceHeaderTypes.forEach { headerType ->
                 headerType.injectHeaders(
-                    request,
-                    true,
-                    traceId,
-                    spanId,
-                    rumSessionProvider.sessionId,
-                    datadogContextProvider.userId,
-                    datadogContextProvider.accountId
+                    request = request,
+                    sampledIn = true,
+                    traceId = traceId,
+                    spanId = spanId,
+                    rumSessionId = rumSessionProvider.sessionId,
+                    userId = datadogContextProvider.userId,
+                    accountId = datadogContextProvider.accountId
                 )
             }
             request.attributes.put(DD_TRACE_ID_ATTR, traceId)
@@ -78,13 +78,13 @@ internal class DatadogKtorPlugin(
             if (traceContextInjection == TraceContextInjection.All) {
                 traceHeaderTypes.forEach { headerType ->
                     headerType.injectHeaders(
-                        request,
-                        false,
-                        traceId,
-                        spanId,
-                        rumSessionProvider.sessionId,
-                        datadogContextProvider.userId,
-                        datadogContextProvider.accountId
+                        request = request,
+                        sampledIn = false,
+                        traceId = traceId,
+                        spanId = spanId,
+                        rumSessionId = rumSessionProvider.sessionId,
+                        userId = datadogContextProvider.userId,
+                        accountId = datadogContextProvider.accountId
                     )
                 }
             }

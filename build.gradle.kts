@@ -18,6 +18,8 @@ plugins {
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.nexusPublish)
     id("datadog-ios-build-spm")
+    id("ktlint")
+    id("detekt-conventions")
     // false - just to load classes into a classpath
     id("datadog-build-config") apply false
 }
@@ -50,14 +52,31 @@ project.taskConfig<AbstractNexusStagingRepositoryTask> {
     )
 }
 
-/**
- * Task necessary to be compliant with the shared Android static analysis pipeline
- */
 tasks.register("checkGeneratedFiles") {
     description = "Check generated files"
     dependsOn("checkApiSurfaceChangesAll")
     dependsOn("checkCompilerMetadataChangesAll")
     dependsOn("checkTransitiveDependenciesListAll")
+}
+
+val buildPluginsBuild = gradle.includedBuild("build-plugins")
+
+tasks.register("ktlintCheckAll") {
+    description = "Runs ktlint check for both main and included (`:build-plugins`) builds."
+    dependsOn(allprojects.mapNotNull { it.tasks.named { it == "ktlintCheck" } })
+    dependsOn(buildPluginsBuild.task(":ktlintCheck"))
+}
+
+tasks.register("detektAll") {
+    description = "Runs Detekt for both main and included (`:build-plugins`) builds."
+    dependsOn(allprojects.mapNotNull { it.tasks.named { it == "detekt" } })
+    dependsOn(buildPluginsBuild.task(":detekt"))
+}
+
+tasks.register("ktlintFormatAll") {
+    description = "Runs code formatting with ktlint for both main and included (`:build-plugins`) builds."
+    dependsOn(allprojects.mapNotNull { it.tasks.named { it == "ktlintFormat" } })
+    dependsOn(buildPluginsBuild.task(":ktlintFormat"))
 }
 
 /**
@@ -141,7 +160,7 @@ val jvmUnitTestAllTask = tasks.register("jvmUnitTestAll") {
     val subProjectsTestTasks = publishableProjects.map {
         "${it.targetProjectIdentity.buildTreePath.asString()}:testAndroidHostTest"
     }
-    dependsOn(subProjectsTestTasks, gradle.includedBuild("build-plugins").task(":test"))
+    dependsOn(subProjectsTestTasks, buildPluginsBuild.task(":test"))
 }
 
 val iosUnitTestAllTask = tasks.register("iosUnitTestAll") {

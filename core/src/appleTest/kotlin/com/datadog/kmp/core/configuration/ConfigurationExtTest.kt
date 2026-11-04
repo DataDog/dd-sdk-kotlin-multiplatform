@@ -227,6 +227,6 @@ class ConfigurationExtTest {
         fakeConfigurationBuilder.enableBackgroundTasks(enableBackgroundTasks)
 
         // Then
-        assertEquals(enableBackgroundTasks, fakeConfigurationBuilder.coreConfig.backgroundTasksEnabled)
+        assertEquals(enableBackgroundTasks, fakeConfigurationBuilder.coreConfig.areBackgroundTasksEnabled)
     }
 }

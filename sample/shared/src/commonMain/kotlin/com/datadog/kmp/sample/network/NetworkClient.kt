@@ -4,6 +4,10 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
+// `Dispatchers.IO` is an extension requiring the `kotlinx.coroutines.IO` import on non-JVM targets. Detekt type
+// resolution for common code uses the Android classpath, where it is a member, and reports the import as unused.
+@file:Suppress("UnusedImport")
+
 package com.datadog.kmp.sample.network
 
 import com.datadog.kmp.ktor.HttpRequestSnapshot
@@ -16,6 +20,8 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
@@ -48,9 +54,10 @@ object NetworkClient {
     suspend fun get(
         url: String,
         onSuccess: (String) -> Unit,
-        onFailure: (Int, Throwable?) -> Unit
+        onFailure: (Int, Throwable?) -> Unit,
+        dispatcher: CoroutineDispatcher = Dispatchers.IO
     ) {
-        withContext(Dispatchers.IO) {
+        withContext(dispatcher) {
             try {
                 val response = client.get(url) {
                     headers[CUSTOM_HEADER_NAME] = "some-get-value"
@@ -61,6 +68,8 @@ object NetworkClient {
                     val responseBody = response.bodyAsText()
                     onSuccess(responseBody)
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                 onFailure(0, e)
             }
@@ -71,9 +80,10 @@ object NetworkClient {
         url: String,
         payload: String,
         onSuccess: (String) -> Unit,
-        onFailure: (Int, Throwable?) -> Unit
+        onFailure: (Int, Throwable?) -> Unit,
+        dispatcher: CoroutineDispatcher = Dispatchers.IO
     ) {
-        withContext(Dispatchers.IO) {
+        withContext(dispatcher) {
             try {
                 val response = client.post(url) {
                     setBody(payload)
@@ -85,6 +95,8 @@ object NetworkClient {
                     val responseBody = response.bodyAsText()
                     onSuccess(responseBody)
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                 onFailure(0, e)
             }

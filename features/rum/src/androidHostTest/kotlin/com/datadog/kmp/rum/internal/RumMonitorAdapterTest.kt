@@ -151,7 +151,7 @@ class RumMonitorAdapterTest {
         testedRumMonitorAdapter.addAction(fakeActionType, fakeActionName, fakeAttributes)
 
         // Then
-        verify(mockNativeRumMonitor).addAction(fakeActionType.native, fakeActionName, fakeAttributes)
+        verify(mockNativeRumMonitor).addAction(fakeActionType.toNative(), fakeActionName, fakeAttributes)
     }
 
     @Test
@@ -167,7 +167,7 @@ class RumMonitorAdapterTest {
         testedRumMonitorAdapter.startAction(fakeActionType, fakeActionName, fakeAttributes)
 
         // Then
-        verify(mockNativeRumMonitor).startAction(fakeActionType.native, fakeActionName, fakeAttributes)
+        verify(mockNativeRumMonitor).startAction(fakeActionType.toNative(), fakeActionName, fakeAttributes)
     }
 
     @Test
@@ -183,7 +183,7 @@ class RumMonitorAdapterTest {
         testedRumMonitorAdapter.stopAction(fakeActionType, fakeActionName, fakeAttributes)
 
         // Then
-        verify(mockNativeRumMonitor).stopAction(fakeActionType.native, fakeActionName, fakeAttributes)
+        verify(mockNativeRumMonitor).stopAction(fakeActionType.toNative(), fakeActionName, fakeAttributes)
     }
 
     @Test
@@ -200,7 +200,7 @@ class RumMonitorAdapterTest {
         testedRumMonitorAdapter.startResource(fakeKey, fakeMethod, fakeUrl, fakeAttributes)
 
         // Then
-        verify(mockNativeRumMonitor).startResource(fakeKey, fakeMethod.native, fakeUrl, fakeAttributes)
+        verify(mockNativeRumMonitor).startResource(fakeKey, fakeMethod.toNative(), fakeUrl, fakeAttributes)
     }
 
     @Test
@@ -222,7 +222,7 @@ class RumMonitorAdapterTest {
             fakeKey,
             fakeStatusCode,
             fakeSize,
-            fakeResourceKind.native,
+            fakeResourceKind.toNative(),
             fakeAttributes
         )
     }
@@ -279,7 +279,7 @@ class RumMonitorAdapterTest {
         // Then
         verify(mockNativeRumMonitor).addError(
             fakeMessage,
-            fakeErrorSource.native,
+            fakeErrorSource.toNative(),
             fakeThrowable,
             fakeAttributes
         )
@@ -440,7 +440,7 @@ class RumMonitorAdapterTest {
         verify(mockNativeRumMonitor).failOperation(
             fakeName,
             fakeOperationKey,
-            fakeFailureReason.native,
+            fakeFailureReason.toNative(),
             fakeAttributes
         )
     }
@@ -463,7 +463,7 @@ class RumMonitorAdapterTest {
         verify(mockNativeRumMonitor).failOperation(
             fakeName,
             fakeOperationKey,
-            fakeFailureReason.native,
+            fakeFailureReason.toNative(),
             fakeAttributes
         )
     }
@@ -535,77 +535,71 @@ class RumMonitorAdapterTest {
 
     // region private
 
-    private val RumActionType.native: NativeRumActionType
-        get() {
-            return when (this) {
-                RumActionType.TAP -> NativeRumActionType.TAP
-                RumActionType.BACK -> NativeRumActionType.BACK
-                RumActionType.CLICK -> NativeRumActionType.CLICK
-                RumActionType.SWIPE -> NativeRumActionType.SWIPE
-                RumActionType.SCROLL -> NativeRumActionType.SCROLL
-                RumActionType.CUSTOM -> NativeRumActionType.CUSTOM
-            }
+    private fun RumActionType.toNative(): NativeRumActionType {
+        return when (this) {
+            RumActionType.TAP -> NativeRumActionType.TAP
+            RumActionType.BACK -> NativeRumActionType.BACK
+            RumActionType.CLICK -> NativeRumActionType.CLICK
+            RumActionType.SWIPE -> NativeRumActionType.SWIPE
+            RumActionType.SCROLL -> NativeRumActionType.SCROLL
+            RumActionType.CUSTOM -> NativeRumActionType.CUSTOM
         }
+    }
 
-    private val RumResourceMethod.native: NativeRumResourceMethod
-        get() {
-            return when (this) {
-                RumResourceMethod.GET -> NativeRumResourceMethod.GET
-                RumResourceMethod.POST -> NativeRumResourceMethod.POST
-                RumResourceMethod.PUT -> NativeRumResourceMethod.PUT
-                RumResourceMethod.PATCH -> NativeRumResourceMethod.PATCH
-                RumResourceMethod.DELETE -> NativeRumResourceMethod.DELETE
-                RumResourceMethod.HEAD -> NativeRumResourceMethod.HEAD
-                RumResourceMethod.CONNECT -> NativeRumResourceMethod.CONNECT
-                RumResourceMethod.TRACE -> NativeRumResourceMethod.TRACE
-                RumResourceMethod.OPTIONS -> NativeRumResourceMethod.OPTIONS
-            }
+    private fun RumResourceMethod.toNative(): NativeRumResourceMethod {
+        return when (this) {
+            RumResourceMethod.GET -> NativeRumResourceMethod.GET
+            RumResourceMethod.POST -> NativeRumResourceMethod.POST
+            RumResourceMethod.PUT -> NativeRumResourceMethod.PUT
+            RumResourceMethod.PATCH -> NativeRumResourceMethod.PATCH
+            RumResourceMethod.DELETE -> NativeRumResourceMethod.DELETE
+            RumResourceMethod.HEAD -> NativeRumResourceMethod.HEAD
+            RumResourceMethod.CONNECT -> NativeRumResourceMethod.CONNECT
+            RumResourceMethod.TRACE -> NativeRumResourceMethod.TRACE
+            RumResourceMethod.OPTIONS -> NativeRumResourceMethod.OPTIONS
         }
+    }
 
-    private val RumResourceKind.native: NativeRumResourceKind
-        get() {
-            return when (this) {
-                RumResourceKind.NATIVE -> NativeRumResourceKind.NATIVE
-                RumResourceKind.IMAGE -> NativeRumResourceKind.IMAGE
-                RumResourceKind.MEDIA -> NativeRumResourceKind.MEDIA
-                RumResourceKind.FONT -> NativeRumResourceKind.FONT
-                RumResourceKind.FETCH -> NativeRumResourceKind.FETCH
-                RumResourceKind.DOCUMENT -> NativeRumResourceKind.DOCUMENT
-                RumResourceKind.XHR -> NativeRumResourceKind.XHR
-                RumResourceKind.JS -> NativeRumResourceKind.JS
-                RumResourceKind.CSS -> NativeRumResourceKind.CSS
-                RumResourceKind.BEACON -> NativeRumResourceKind.BEACON
-                RumResourceKind.OTHER -> NativeRumResourceKind.OTHER
-            }
+    private fun RumResourceKind.toNative(): NativeRumResourceKind {
+        return when (this) {
+            RumResourceKind.NATIVE -> NativeRumResourceKind.NATIVE
+            RumResourceKind.IMAGE -> NativeRumResourceKind.IMAGE
+            RumResourceKind.MEDIA -> NativeRumResourceKind.MEDIA
+            RumResourceKind.FONT -> NativeRumResourceKind.FONT
+            RumResourceKind.FETCH -> NativeRumResourceKind.FETCH
+            RumResourceKind.DOCUMENT -> NativeRumResourceKind.DOCUMENT
+            RumResourceKind.XHR -> NativeRumResourceKind.XHR
+            RumResourceKind.JS -> NativeRumResourceKind.JS
+            RumResourceKind.CSS -> NativeRumResourceKind.CSS
+            RumResourceKind.BEACON -> NativeRumResourceKind.BEACON
+            RumResourceKind.OTHER -> NativeRumResourceKind.OTHER
         }
+    }
 
-    private val RumErrorSource.native: NativeRumErrorSource
-        get() {
-            return when (this) {
-                RumErrorSource.SOURCE -> NativeRumErrorSource.SOURCE
-                RumErrorSource.LOGGER -> NativeRumErrorSource.LOGGER
-                RumErrorSource.WEBVIEW -> NativeRumErrorSource.WEBVIEW
-                RumErrorSource.NETWORK -> NativeRumErrorSource.NETWORK
-            }
+    private fun RumErrorSource.toNative(): NativeRumErrorSource {
+        return when (this) {
+            RumErrorSource.SOURCE -> NativeRumErrorSource.SOURCE
+            RumErrorSource.LOGGER -> NativeRumErrorSource.LOGGER
+            RumErrorSource.WEBVIEW -> NativeRumErrorSource.WEBVIEW
+            RumErrorSource.NETWORK -> NativeRumErrorSource.NETWORK
         }
+    }
 
-    private val FailureReason.native: NativeFailureReason
-        get() {
-            return when (this) {
-                FailureReason.ERROR -> NativeFailureReason.ERROR
-                FailureReason.OTHER -> NativeFailureReason.OTHER
-                FailureReason.ABANDONED -> NativeFailureReason.ABANDONED
-            }
+    private fun FailureReason.toNative(): NativeFailureReason {
+        return when (this) {
+            FailureReason.ERROR -> NativeFailureReason.ERROR
+            FailureReason.OTHER -> NativeFailureReason.OTHER
+            FailureReason.ABANDONED -> NativeFailureReason.ABANDONED
         }
+    }
 
-    private val DeprecatedFeatureFailureReason.native: NativeFailureReason
-        get() {
-            return when (this) {
-                DeprecatedFeatureFailureReason.ERROR -> NativeFailureReason.ERROR
-                DeprecatedFeatureFailureReason.OTHER -> NativeFailureReason.OTHER
-                DeprecatedFeatureFailureReason.ABANDONED -> NativeFailureReason.ABANDONED
-            }
+    private fun DeprecatedFeatureFailureReason.toNative(): NativeFailureReason {
+        return when (this) {
+            DeprecatedFeatureFailureReason.ERROR -> NativeFailureReason.ERROR
+            DeprecatedFeatureFailureReason.OTHER -> NativeFailureReason.OTHER
+            DeprecatedFeatureFailureReason.ABANDONED -> NativeFailureReason.ABANDONED
         }
+    }
 
     // endregion
 }

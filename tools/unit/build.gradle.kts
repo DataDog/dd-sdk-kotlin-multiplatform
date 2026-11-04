@@ -5,9 +5,14 @@
  */
 
 plugins {
+    // Build
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.dependencyLicense)
     id("datadog-build-config")
+
+    // Analysis tools
+    id("ktlint")
+    id("detekt-conventions")
+    alias(libs.plugins.dependencyLicense)
 }
 
 kotlin {

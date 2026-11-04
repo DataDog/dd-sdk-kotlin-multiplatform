@@ -100,14 +100,14 @@ internal class DatadogExtTest {
                 uploadFrequency = randomEnumValue(),
                 site = randomEnumValue(),
                 batchProcessingLevel = randomEnumValue(),
-                trackCrashes = randomBoolean(),
+                isCrashTrackingEnabled = randomBoolean(),
                 proxyConfiguration = ProxyConfiguration(
                     type = ProxyType.HTTP,
                     hostname = expectedProxyConfig["HTTPSProxy"] as String,
                     port = expectedProxyConfig["HTTPSPort"] as UInt
                 ),
                 version = "version",
-                backgroundTasksEnabled = randomBoolean()
+                areBackgroundTasksEnabled = randomBoolean()
             ),
             clientToken = "clientToken",
             env = "env",
@@ -126,7 +126,7 @@ internal class DatadogExtTest {
         assertEquals(commonConfig.coreConfig.batchSize.native, nativeConfig.batchSize())
         assertEquals(commonConfig.coreConfig.uploadFrequency.native, nativeConfig.uploadFrequency())
         assertEquals(commonConfig.coreConfig.batchProcessingLevel.native, nativeConfig.batchProcessingLevel())
-        assertEquals(commonConfig.coreConfig.backgroundTasksEnabled, nativeConfig.backgroundTasksEnabled())
+        assertEquals(commonConfig.coreConfig.areBackgroundTasksEnabled, nativeConfig.backgroundTasksEnabled())
         assertEquals(commonConfig.coreConfig.version, nativeConfig.version())
         assertEquals(commonConfig.clientToken, nativeConfig.clientToken())
         assertEquals(commonConfig.env, nativeConfig.env())
@@ -143,10 +143,10 @@ internal class DatadogExtTest {
                 uploadFrequency = randomEnumValue(),
                 site = randomEnumValue(),
                 batchProcessingLevel = randomEnumValue(),
-                trackCrashes = randomBoolean(),
+                isCrashTrackingEnabled = randomBoolean(),
                 proxyConfiguration = null,
                 version = null,
-                backgroundTasksEnabled = randomBoolean()
+                areBackgroundTasksEnabled = randomBoolean()
             ),
             clientToken = "clientToken",
             env = "env",
