@@ -131,7 +131,8 @@ val publishableProjects = listOf(
     projects.features.webview,
     projects.features.sessionReplay,
     projects.integrations.ktor,
-    projects.integrations.ktor3
+    projects.integrations.ktor3,
+    projects.integrations.coil3
 )
 
 // will cover Android-specific tests + tests from common source set
@@ -156,7 +157,7 @@ val tvosUnitTestAllTask = tasks.register("tvosUnitTestAll") {
     val subProjectsTestTasks = publishableProjects
         // by some reason something like `projects.features.webview == projects.features.webview` evaluates to false
         .filter {
-            it.targetProjectIdentity.buildTreePath.asString() !in setOf(":features:session-replay", ":features:webview")
+            it.targetProjectIdentity.buildTreePath.asString() !in setOf(":features:session-replay", ":features:webview", ":integrations:coil3")
         }
         .map { "${it.targetProjectIdentity.buildTreePath.asString()}:tvosSimulatorArm64Test" }
     dependsOn(subProjectsTestTasks)

@@ -1,0 +1,3 @@
+class com.datadog.kmp.coil3.DatadogCoilRequestListener : coil3.request.ImageRequest.Listener
+  constructor()
+  override fun onError(coil3.request.ImageRequest, coil3.request.ErrorResult)
