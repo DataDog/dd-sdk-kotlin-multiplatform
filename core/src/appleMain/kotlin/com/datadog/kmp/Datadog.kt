@@ -79,7 +79,7 @@ actual object Datadog {
     ) {
         DatadogIOS.initializeWithConfiguration(configuration.native, trackingConsent.native)
 
-        if (configuration.coreConfig.trackCrashes) {
+        if (configuration.coreConfig.isCrashTrackingEnabled) {
             DDCrashReporter.enable()
             isCrashReportingEnabled = true
         }
@@ -270,7 +270,7 @@ internal val Configuration.native: DDConfiguration
         )
         nativeConfig.setVersion(coreConfig.version)
         nativeConfig.setProxy(coreConfig.proxyConfiguration)
-        nativeConfig.setBackgroundTasksEnabled(coreConfig.backgroundTasksEnabled)
+        nativeConfig.setBackgroundTasksEnabled(coreConfig.areBackgroundTasksEnabled)
         return nativeConfig
     }
 

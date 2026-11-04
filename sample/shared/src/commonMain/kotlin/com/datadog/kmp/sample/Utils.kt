@@ -203,23 +203,23 @@ fun addViewOpenedAtAttribute() {
 
 private fun RumConfiguration.Builder.setupRumMappers() = apply {
     setViewEventMapper {
-        it.context?.additionalProperties?.putAll(extensiveAdditionalProperties)
+        it.context?.run { additionalProperties.putAll(extensiveAdditionalProperties) }
         it
     }
     setResourceEventMapper {
-        it.context?.additionalProperties?.putAll(extensiveAdditionalProperties)
+        it.context?.run { additionalProperties.putAll(extensiveAdditionalProperties) }
         it
     }
     setActionEventMapper {
-        it.context?.additionalProperties?.putAll(extensiveAdditionalProperties)
+        it.context?.run { additionalProperties.putAll(extensiveAdditionalProperties) }
         it
     }
     setErrorEventMapper {
-        it.context?.additionalProperties?.putAll(extensiveAdditionalProperties)
+        it.context?.run { additionalProperties.putAll(extensiveAdditionalProperties) }
         it
     }
     setLongTaskEventMapper {
-        it.context?.additionalProperties?.putAll(extensiveAdditionalProperties)
+        it.context?.run { additionalProperties.putAll(extensiveAdditionalProperties) }
         it
     }
 }

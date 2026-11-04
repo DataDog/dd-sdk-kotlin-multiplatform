@@ -16,17 +16,24 @@ import kotlin.io.path.pathString
  */
 
 plugins {
+    // Build
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     id("datadog-build-config")
     id("datadog-ios-frameworks")
-    alias(libs.plugins.dependencyLicense)
-    id("api-surface")
-    id("transitive-dependencies")
 
-    // publishing
+    // Publish
     `maven-publish`
     signing
+
+    // Analysis tools
+    id("ktlint")
+    id("detekt-conventions")
+    alias(libs.plugins.dependencyLicense)
+
+    // Internal Generation
+    id("api-surface")
+    id("transitive-dependencies")
 }
 
 val generateLibConfigTask = tasks.register("generateLibConfig", Sync::class) {

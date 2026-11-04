@@ -13,18 +13,27 @@ import dev.mokkery.MockMode
  */
 
 plugins {
+    // Build
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     id("datadog-build-config")
     id("datadog-ios-frameworks")
-    alias(libs.plugins.dependencyLicense)
-    id("api-surface")
-    id("transitive-dependencies")
-    alias(libs.plugins.mokkery)
 
-    // publishing
+    // Publish
     `maven-publish`
     signing
+
+    // Analysis tools
+    id("ktlint")
+    id("detekt-conventions")
+    alias(libs.plugins.dependencyLicense)
+
+    // Tests
+    alias(libs.plugins.mokkery)
+
+    // Internal Generation
+    id("api-surface")
+    id("transitive-dependencies")
 }
 
 datadogFrameworks {

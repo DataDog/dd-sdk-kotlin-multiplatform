@@ -25,13 +25,13 @@ internal fun HeadersBuilder.w3cBaggage(): List<List<BaggageItem>>? {
     // baggage value can be split in multiple headers
     val existingHeaders = getAll(W3C_BAGGAGE_KEY) ?: return null
     return existingHeaders
-        .map {
-            it.split(",")
+        .map { header ->
+            header.split(",")
                 .filter { it.contains("=") }
-                .map {
-                    val keyValueDelimiterIndex = it.indexOf('=')
-                    val key = it.substring(0, keyValueDelimiterIndex).trim()
-                    val value = it.substring(keyValueDelimiterIndex + 1).trim()
+                .map { item ->
+                    val keyValueDelimiterIndex = item.indexOf('=')
+                    val key = item.substring(0, keyValueDelimiterIndex).trim()
+                    val value = item.substring(keyValueDelimiterIndex + 1).trim()
                     val metaIndex = value.indexOf(";")
                     // don't decode existing items, we assume they are coming from elsewhere
                     // we will encode values added by addToW3cBaggage below
@@ -47,7 +47,7 @@ internal fun HeadersBuilder.w3cBaggage(): List<List<BaggageItem>>? {
 
 internal fun HeadersBuilder.addToW3cBaggage(key: String, value: String) {
     val existingBaggage = w3cBaggage()
-    if (existingBaggage == null || existingBaggage.isEmpty()) {
+    if (existingBaggage.isNullOrEmpty()) {
         append(W3C_BAGGAGE_KEY, "$key=${encodeBaggageValue(value)}")
     } else {
         remove(W3C_BAGGAGE_KEY)
@@ -59,14 +59,14 @@ internal fun HeadersBuilder.addToW3cBaggage(key: String, value: String) {
             existingBaggage.filter { baggage -> baggage.any { it.key == key } }
         val updatedBaggage = if (headersWithGivenKey.isNotEmpty()) {
             // we will deduplicate keys during the update
-            var keyUpdated = false
+            var isKeyUpdated = false
             existingBaggage.map { baggage ->
                 baggage.mapNotNull {
                     if (it.key == key) {
-                        if (keyUpdated) {
+                        if (isKeyUpdated) {
                             null
                         } else {
-                            keyUpdated = true
+                            isKeyUpdated = true
                             it.copy(
                                 value = encodeBaggageValue(value),
                                 metadata = null
@@ -87,10 +87,10 @@ internal fun HeadersBuilder.addToW3cBaggage(key: String, value: String) {
         }
         updatedBaggage
             .filter { it.isNotEmpty() }
-            .forEach {
+            .forEach { baggage ->
                 append(
                     W3C_BAGGAGE_KEY,
-                    it.joinToString(separator = ",") { it.toHeaderString() }
+                    baggage.joinToString(separator = ",") { it.toHeaderString() }
                 )
             }
     }

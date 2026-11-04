@@ -208,6 +208,8 @@ class Logger internal constructor(internal val platformLogger: PlatformLogger) {
      */
     class Builder {
 
+        private val platformLoggerBuilder: PlatformLogger.Builder
+
         /**
          * Creates an instance of [Builder].
          */
@@ -216,8 +218,6 @@ class Logger internal constructor(internal val platformLogger: PlatformLogger) {
         internal constructor(platformLoggerBuilder: PlatformLogger.Builder) {
             this.platformLoggerBuilder = platformLoggerBuilder
         }
-
-        private val platformLoggerBuilder: PlatformLogger.Builder
 
         /**
          * Builds a [Logger] based on the current state of this Builder.

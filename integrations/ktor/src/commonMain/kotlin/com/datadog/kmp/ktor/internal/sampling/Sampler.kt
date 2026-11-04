@@ -24,6 +24,9 @@ internal open class DeterministicTraceSampler(
     sampleRate: Float
 ) : Sampler<TraceId> {
 
+    override val sampleRate: Float = sampleRate.coerceAtLeast(0f)
+        .coerceAtMost(SAMPLE_ALL_RATE)
+
     override fun sample(item: TraceId): Boolean {
         return when {
             sampleRate >= SAMPLE_ALL_RATE -> true
@@ -35,9 +38,6 @@ internal open class DeterministicTraceSampler(
             }
         }
     }
-
-    override val sampleRate: Float = sampleRate.coerceAtLeast(0f)
-        .coerceAtMost(SAMPLE_ALL_RATE)
 
     private companion object {
         const val SAMPLE_ALL_RATE = 100f

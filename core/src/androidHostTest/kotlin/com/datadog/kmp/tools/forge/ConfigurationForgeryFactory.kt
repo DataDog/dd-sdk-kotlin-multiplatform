@@ -22,7 +22,7 @@ internal class ConfigurationForgeryFactory : ForgeryFactory<Configuration> {
             uploadFrequency = forge.aValueFrom(UploadFrequency::class.java),
             site = forge.aValueFrom(DatadogSite::class.java),
             batchProcessingLevel = forge.aValueFrom(BatchProcessingLevel::class.java),
-            trackCrashes = forge.aBool(),
+            isCrashTrackingEnabled = forge.aBool(),
             version = forge.aNullable { forge.aString() },
             proxyConfiguration = forge.aNullable {
                 ProxyConfiguration(
@@ -31,7 +31,7 @@ internal class ConfigurationForgeryFactory : ForgeryFactory<Configuration> {
                     port = forge.anInt(min = 0, max = 65535).toUInt()
                 )
             },
-            backgroundTasksEnabled = forge.aBool()
+            areBackgroundTasksEnabled = forge.aBool()
         ),
         clientToken = forge.aString(),
         env = forge.aStringMatching("[a-zA-Z0-9_:./-]{0,195}[a-zA-Z0-9_./-]"),

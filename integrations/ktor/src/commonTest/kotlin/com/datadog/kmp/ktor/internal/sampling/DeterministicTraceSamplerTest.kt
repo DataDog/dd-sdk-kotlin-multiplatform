@@ -47,8 +47,8 @@ class DeterministicTraceSamplerTest {
             var sampledIn = 0
 
             // When
-            fakeTraceIds.forEach {
-                if (testedSampler.sample(it)) {
+            fakeTraceIds.forEach { traceId ->
+                if (testedSampler.sample(traceId)) {
                     sampledIn++
                 }
             }

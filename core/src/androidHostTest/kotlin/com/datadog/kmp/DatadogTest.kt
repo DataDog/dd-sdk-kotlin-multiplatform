@@ -85,7 +85,7 @@ internal class DatadogTest {
             atLeastOnce()
         )
 
-        assertThat(Datadog.isCrashReportingEnabled).isEqualTo(configuration.coreConfig.trackCrashes)
+        assertThat(Datadog.isCrashReportingEnabled).isEqualTo(configuration.coreConfig.isCrashTrackingEnabled)
     }
 
     @Test

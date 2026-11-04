@@ -16,9 +16,9 @@ import kotlin.test.assertEquals
 
 class TracingHeaderTypeTest {
 
-    private var fakeRumSessionId = nullable(uuid4().toString())
-    private var fakeUserId = nullable(uuid4().toString())
-    private var fakeAccountId = nullable(uuid4().toString())
+    private val fakeRumSessionId = nullable(uuid4().toString())
+    private val fakeUserId = nullable(uuid4().toString())
+    private val fakeAccountId = nullable(uuid4().toString())
 
     @Test
     fun `M inject Datadog headers W injectHeaders`() {
@@ -83,23 +83,23 @@ class TracingHeaderTypeTest {
         )
 
         // When + Then
-        expectedHeaders.forEach {
+        expectedHeaders.forEach { (fixture, expectedValue) ->
             val fakeRequestBuilder = HttpRequestBuilder()
             TracingHeaderType.DATADOG.injectHeaders(
-                fakeRequestBuilder,
-                it.key.sampledIn,
-                it.key.traceId,
-                it.key.spanId,
-                it.key.rumSessionId,
-                it.key.userId,
-                it.key.accountId
+                request = fakeRequestBuilder,
+                sampledIn = fixture.sampledIn,
+                traceId = fixture.traceId,
+                spanId = fixture.spanId,
+                rumSessionId = fixture.rumSessionId,
+                userId = fixture.userId,
+                accountId = fixture.accountId
             )
             val headers = fakeRequestBuilder.headers.entries()
                 .associate {
                     assertEquals(1, it.value.size)
                     it.key to it.value.first()
                 }
-            assertEquals(it.value, headers)
+            assertEquals(expectedValue, headers)
         }
     }
 
@@ -154,23 +154,23 @@ class TracingHeaderTypeTest {
         )
 
         // When + Then
-        expectedHeaders.forEach {
+        expectedHeaders.forEach { (fixture, expectedValue) ->
             val fakeRequestBuilder = HttpRequestBuilder()
             TracingHeaderType.TRACECONTEXT.injectHeaders(
-                fakeRequestBuilder,
-                it.key.sampledIn,
-                it.key.traceId,
-                it.key.spanId,
-                it.key.rumSessionId,
-                it.key.userId,
-                it.key.accountId
+                request = fakeRequestBuilder,
+                sampledIn = fixture.sampledIn,
+                traceId = fixture.traceId,
+                spanId = fixture.spanId,
+                rumSessionId = fixture.rumSessionId,
+                userId = fixture.userId,
+                accountId = fixture.accountId
             )
             val headers = fakeRequestBuilder.headers.entries()
                 .associate {
                     assertEquals(1, it.value.size)
                     it.key to it.value.first()
                 }
-            assertEquals(it.value, headers)
+            assertEquals(expectedValue, headers)
         }
     }
 
@@ -221,23 +221,23 @@ class TracingHeaderTypeTest {
         )
 
         // When + Then
-        expectedHeaders.forEach {
+        expectedHeaders.forEach { (fixture, expectedValue) ->
             val fakeRequestBuilder = HttpRequestBuilder()
             TracingHeaderType.B3.injectHeaders(
-                fakeRequestBuilder,
-                it.key.sampledIn,
-                it.key.traceId,
-                it.key.spanId,
-                it.key.rumSessionId,
-                it.key.userId,
-                it.key.accountId
+                request = fakeRequestBuilder,
+                sampledIn = fixture.sampledIn,
+                traceId = fixture.traceId,
+                spanId = fixture.spanId,
+                rumSessionId = fixture.rumSessionId,
+                userId = fixture.userId,
+                accountId = fixture.accountId
             )
             val headers = fakeRequestBuilder.headers.entries()
                 .associate {
                     assertEquals(1, it.value.size)
                     it.key to it.value.first()
                 }
-            assertEquals(it.value, headers)
+            assertEquals(expectedValue, headers)
         }
     }
 
@@ -294,23 +294,23 @@ class TracingHeaderTypeTest {
         )
 
         // When + Then
-        expectedHeaders.forEach {
+        expectedHeaders.forEach { (fixture, expectedValue) ->
             val fakeRequestBuilder = HttpRequestBuilder()
             TracingHeaderType.B3MULTI.injectHeaders(
-                fakeRequestBuilder,
-                it.key.sampledIn,
-                it.key.traceId,
-                it.key.spanId,
-                it.key.rumSessionId,
-                it.key.userId,
-                it.key.accountId
+                request = fakeRequestBuilder,
+                sampledIn = fixture.sampledIn,
+                traceId = fixture.traceId,
+                spanId = fixture.spanId,
+                rumSessionId = fixture.rumSessionId,
+                userId = fixture.userId,
+                accountId = fixture.accountId
             )
             val headers = fakeRequestBuilder.headers.entries()
                 .associate {
                     assertEquals(1, it.value.size)
                     it.key to it.value.first()
                 }
-            assertEquals(it.value, headers)
+            assertEquals(expectedValue, headers)
         }
     }
 

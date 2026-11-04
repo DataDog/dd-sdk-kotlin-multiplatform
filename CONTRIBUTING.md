@@ -12,12 +12,6 @@ To setup your environment, make sure you installed [Android Studio](https://deve
 
 **Note**: You can also compile and develop using only an IDE of choice, e.g.: IntelliJ Idea, Vim, etc.
 
-In addition, to be able to run the static analysis tools locally, you should run the `local-ci.sh` script locally as follows.
-
-```shell
-./local_ci.sh --setup
-```
-
 ### Modules
 
 This project hosts the following modules:
@@ -153,17 +147,39 @@ atomic, with a proper commit message.
 
 ### Code quality
 
-Our code uses [Detekt](https://detekt.dev/) static analysis with a shared configuration, which is slightly
-stricter than the default one. A Detekt check is run on every PR to ensure that all new code
+Our code uses [Detekt](https://detekt.dev/) static analysis with the configuration described in `detekt.yml`,
+which is slightly stricter than the default one. A Detekt check is run on every PR to ensure that all new code
 follow this rule.
-Current Detekt version: 1.23.8
+
+To run Detekt checks, run:
+
+```shell
+./gradlew detektAll
+
+# alternatively per module
+./gradlew <module_name>:detekt
+```
 
 ### Code style
 
 Our coding style is ensured by [KtLint](https://ktlint.github.io/), with the
-default settings. A KtLint check is run on every PR to ensure that all new code
+settings described in `.editorconfig`. A KtLint check is run on every PR to ensure that all new code
 follow this rule.
-Current KtLint version: 1.5.0
+
+To check code style, run:
+
+```shell
+./gradlew ktlintCheckAll
+```
+
+To format code, run:
+
+```shell
+./gradlew ktlintFormatAll
+
+# alternatively per module
+./gradlew <module_name>:ktlintFormat
+```
 
 Classes should group their methods in folding regions named after the declaring
 class. Private methods should be grouped in an `Internal` named folding region.
@@ -202,13 +218,6 @@ class Foo : Observable(), Runnable {
     // endregion
 }
 
-```
-
-There is also a command that you can use to automatically format the code following the
-required styling rules (requires `ktlint` installed on your machine):
-
-```console
-ktlint -F "**/*.kt" "**/*.kts" '!**/build/generated/**' '!**/build/kspCaches/**'
 ```
 
 ### #TestMatters

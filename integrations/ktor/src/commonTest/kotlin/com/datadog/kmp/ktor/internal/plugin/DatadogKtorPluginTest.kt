@@ -91,11 +91,11 @@ class DatadogKtorPluginTest {
     private val fakeRumResponseAttributes = exhaustiveAttributes()
     private val fakeRumErrorAttributes = exhaustiveAttributes()
 
-    private var fakeRumSessionId = nullable(uuid4().toString())
-    private var fakeUserId = nullable(uuid4().toString())
-    private var fakeAccountId = nullable(uuid4().toString())
+    private val fakeRumSessionId = nullable(uuid4().toString())
+    private val fakeUserId = nullable(uuid4().toString())
+    private val fakeAccountId = nullable(uuid4().toString())
 
-    private var testedPlugin = DatadogKtorPlugin(
+    private val testedPlugin = DatadogKtorPlugin(
         rumMonitorProvider = { mockRumMonitor },
         tracedHosts = fakeTracedHosts,
         traceSampler = mockTraceSampler,
@@ -184,14 +184,14 @@ class DatadogKtorPluginTest {
         val capturedRequestHeaders = mockEngine.requestHistory.map { it.headers }
         verify(VerifyMode.exhaustiveOrder) {
             mockRumMonitor.startResource(
-                key = response.request.requestId,
+                key = response.request.requestId(),
                 method = fakeMethod.asRumMethod(),
                 url = fakeUrl,
                 attributes = fakeRumRequestAttributes
             )
 
             mockRumMonitor.stopResource(
-                key = response.request.requestId,
+                key = response.request.requestId(),
                 statusCode = fakeStatusCode.value,
                 kind = RumResourceKind.NATIVE,
                 size = if (addContentLengthHeader) fakeContent.size.toLong() else null,
@@ -298,12 +298,12 @@ class DatadogKtorPluginTest {
         val recordedResponses = mockEngine.responseHistory
         assertEquals(2, recordedRequests.size)
         assertEquals(2, recordedResponses.size)
-        val firstRequestId = recordedRequests[0].requestId
-        val redirectRequestId = recordedRequests[1].requestId
+        val firstRequestId = recordedRequests[0].requestId()
+        val redirectRequestId = recordedRequests[1].requestId()
         assertNotEquals(firstRequestId, redirectRequestId)
         val capturedRequestHeaders = recordedRequests.map { it.headers }
-        assertEquals(recordedRequests[0].traceId, recordedRequests[1].traceId)
-        assertNotEquals(recordedRequests[0].spanId, recordedRequests[1].spanId)
+        assertEquals(recordedRequests[0].traceId(), recordedRequests[1].traceId())
+        assertNotEquals(recordedRequests[0].spanId(), recordedRequests[1].spanId())
 
         verify(VerifyMode.exhaustiveOrder) {
             mockRumMonitor.startResource(
@@ -460,14 +460,14 @@ class DatadogKtorPluginTest {
         // Then
         verify {
             mockRumMonitor.startResource(
-                key = response.request.requestId,
+                key = response.request.requestId(),
                 method = fakeMethod.asRumMethod(),
                 url = fakeUrl,
                 attributes = fakeRumRequestAttributes
             )
 
             mockRumMonitor.stopResource(
-                key = response.request.requestId,
+                key = response.request.requestId(),
                 statusCode = fakeStatusCode.value,
                 kind = RumResourceKind.NATIVE,
                 size = if (addContentLengthHeader) fakeContent.size.toLong() else null,
@@ -555,8 +555,8 @@ class DatadogKtorPluginTest {
         val recordedResponses = mockEngine.responseHistory
         assertEquals(2, recordedRequests.size)
         assertEquals(2, recordedResponses.size)
-        val firstRequestId = recordedRequests[0].requestId
-        val redirectRequestId = recordedRequests[1].requestId
+        val firstRequestId = recordedRequests[0].requestId()
+        val redirectRequestId = recordedRequests[1].requestId()
         assertNotEquals(firstRequestId, redirectRequestId)
         val capturedRequestHeaders = recordedRequests.map { it.headers }
 
@@ -722,7 +722,7 @@ class DatadogKtorPluginTest {
         val capturedRulePsrValues = mutableListOf<Float>()
         verify(VerifyMode.exactly(10)) {
             mockRumMonitor.stopResource(
-                key = isIn(mockEngine.requestHistory.map { it.requestId }),
+                key = isIn(mockEngine.requestHistory.map { it.requestId() }),
                 statusCode = fakeStatusCode.value,
                 size = if (addContentLengthHeader) fakeContent.size.toLong() else null,
                 kind = RumResourceKind.NATIVE,
@@ -759,7 +759,7 @@ class DatadogKtorPluginTest {
         everySuspend {
             mockRequestHandler.invoke(any(), any())
         } calls { (_: MockRequestHandleScope, request: HttpRequestData) ->
-            capturedRequestId = request.requestId
+            capturedRequestId = request.requestId()
             throw fakeThrowable
         }
 
@@ -821,7 +821,7 @@ class DatadogKtorPluginTest {
                     }
                 )
             } else {
-                capturedRedirectRequestId = request.requestId
+                capturedRedirectRequestId = request.requestId()
                 throw fakeThrowable
             }
         }
@@ -836,7 +836,7 @@ class DatadogKtorPluginTest {
         }
 
         // Then
-        val firstRequestId = mockEngine.requestHistory.first().requestId
+        val firstRequestId = mockEngine.requestHistory.first().requestId()
         assertNotEquals(capturedRedirectRequestId, firstRequestId)
 
         verify {
@@ -987,7 +987,7 @@ class DatadogKtorPluginTest {
         // Then
         verify {
             mockRumMonitor.stopResource(
-                key = mockEngine.requestHistory.first().requestId,
+                key = mockEngine.requestHistory.first().requestId(),
                 statusCode = fakeStatusCode.value,
                 kind = RumResourceKind.NATIVE,
                 size = if (addContentLengthHeader) fakeContent.size.toLong() else null,
@@ -1114,29 +1114,33 @@ class DatadogKtorPluginTest {
         }
     }
 
-    private val HttpRequestData.requestId: String
-        get() = attributes[DatadogKtorPlugin.DD_REQUEST_ID_ATTR]
+    private fun HttpRequestData.requestId(): String =
+        attributes[DatadogKtorPlugin.DD_REQUEST_ID_ATTR]
 
-    private val HttpRequestData.traceId: TraceId
-        get() = attributes[DatadogKtorPlugin.DD_TRACE_ID_ATTR]
+    private fun HttpRequestData.traceId(): TraceId =
+        attributes[DatadogKtorPlugin.DD_TRACE_ID_ATTR]
 
-    private val HttpRequestData.spanId: SpanId
-        get() = attributes[DatadogKtorPlugin.DD_SPAN_ID_ATTR]
+    private fun HttpRequestData.spanId(): SpanId =
+        attributes[DatadogKtorPlugin.DD_SPAN_ID_ATTR]
 
-    private val HttpRequest.requestId: String
-        get() = attributes[DatadogKtorPlugin.DD_REQUEST_ID_ATTR]
+    private fun HttpRequest.requestId(): String =
+        attributes[DatadogKtorPlugin.DD_REQUEST_ID_ATTR]
 
     private fun expectedSpanId(spanIdDec: String, headerType: TracingHeaderType): String {
         return when (headerType) {
             TracingHeaderType.DATADOG -> spanIdDec
-            else -> spanIdDec.toULong().toString(HEX_RADIX).lowercase().padStart(16, '0')
+            TracingHeaderType.B3,
+            TracingHeaderType.B3MULTI,
+            TracingHeaderType.TRACECONTEXT -> spanIdDec.toULong().toString(HEX_RADIX).lowercase().padStart(16, '0')
         }
     }
 
     private fun expectedTraceId(traceIdHex: String, headerType: TracingHeaderType): String {
         return when (headerType) {
             TracingHeaderType.DATADOG -> traceIdHex
-            else -> traceIdHex.padStart(32, '0')
+            TracingHeaderType.B3,
+            TracingHeaderType.B3MULTI,
+            TracingHeaderType.TRACECONTEXT -> traceIdHex.padStart(32, '0')
         }
     }
 

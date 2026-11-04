@@ -20,7 +20,7 @@ import cocoapods.DatadogCore.DDConfiguration
  */
 
 fun Configuration.Builder.enableBackgroundTasks(enabled: Boolean): Configuration.Builder {
-    coreConfig = coreConfig.copy(backgroundTasksEnabled = enabled)
+    coreConfig = coreConfig.copy(areBackgroundTasksEnabled = enabled)
     return this
 }
 
