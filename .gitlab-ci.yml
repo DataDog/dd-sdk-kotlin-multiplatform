@@ -16,6 +16,9 @@ variables:
   DD_COMMON_AGENT_CONFIG: "dd.env=ci,dd.trace.enabled=false,dd.jmx.fetch.enabled=false"
   DD_JAVA_AGENT_FILE: "dd-java-agent-1.50.0.jar"
 
+  # Xcode used by all macOS jobs. Datadog iOS SDK >= 3.19.0 requires Swift tools 6.2 (Xcode 26+).
+  XCODE_VERSION: "26.0.0"
+
 stages:
   - ci-image
   - info
@@ -39,6 +42,27 @@ stages:
     KUBERNETES_MEMORY_LIMIT: 16Gi
     KUBERNETES_CPU_REQUEST: 16
     KUBERNETES_CPU_LIMIT: 16
+
+# Common setup for jobs running on macOS runners: selects the Xcode version defined by XCODE_VERSION.
+.macos-job:
+  tags: [ "macos:sequoia-arm64", "specific:true" ]
+  variables:
+    DEVELOPER_DIR: "/Applications/Xcode-$XCODE_VERSION.app/Contents/Developer"
+  before_script:
+    - |
+      if [ ! -d "$DEVELOPER_DIR" ]; then
+        echo "Xcode $XCODE_VERSION not found at $DEVELOPER_DIR. Available Xcode versions:"
+        ls /Applications/ | grep Xcode
+        exit 1
+      fi
+    - xcodebuild -version
+
+# Installs the iOS/tvOS simulator runtimes for the selected Xcode if they are missing.
+.snippets-simulator-runtime:
+  ios:
+    - xcrun simctl list runtimes | grep -q "iOS 26" || xcodebuild -downloadPlatform iOS -quiet
+  tvos:
+    - xcrun simctl list runtimes | grep -q "tvOS 26" || xcodebuild -downloadPlatform tvOS -quiet
 
 # Security
 
@@ -66,7 +90,7 @@ ci-image:
 env-info:
   stage: info
   when: manual
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   allow_failure: true # do not block GH PRs
   script:
     - system_profiler SPSoftwareDataType # system info
@@ -88,7 +112,7 @@ env-info:
 
 static-analysis-ios:
   stage: analysis
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   timeout: 1h
   script:
 #    - ./tools/lint/run-linter.sh
@@ -98,7 +122,7 @@ static-analysis-ios:
 # where Apple targets are not available, so KLIB compiler metadata needs a dedicated check on macOS.
 analysis:apple-compiler-metadata:
   stage: analysis
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   timeout: 1h
   script:
     - ./gradlew checkKlibCompilerMetadataChangesAll --stacktrace --no-daemon
@@ -170,10 +194,11 @@ jvm-unit-test:
 
 ios-unit-test:
   stage: test
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   timeout: 1h
   script:
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
+    - !reference [.snippets-simulator-runtime, ios]
     - ./gradlew iosUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
   artifacts:
     when: always
@@ -184,10 +209,11 @@ ios-unit-test:
 
 tvos-unit-test:
   stage: test
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   timeout: 1h
   script:
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
+    - !reference [.snippets-simulator-runtime, tvos]
     - ./gradlew tvosUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
   artifacts:
     when: always
@@ -198,10 +224,10 @@ tvos-unit-test:
 
 sample-app-build-ios:
   stage: test
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   timeout: 1h
   variables:
-    BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5"
+    BUILD_DESTINATION: "generic/platform=iOS Simulator"
   script:
     # by some reason if we build Datadog frameworks from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
     - ./gradlew :buildDatadogFrameworks
@@ -209,10 +235,10 @@ sample-app-build-ios:
 
 sample-app-build-tvos:
   stage: test
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   timeout: 1h
   variables:
-    BUILD_DESTINATION: "platform=tvOS Simulator,name=Apple TV,OS=17.5"
+    BUILD_DESTINATION: "generic/platform=tvOS Simulator"
   script:
     # by some reason if we build Datadog frameworks from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
     - ./gradlew :buildDatadogFrameworks
@@ -233,7 +259,7 @@ sample-app-build-android:
 # PUBLISH ARTIFACTS ON MAVEN
 
 publish:release-core:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   only:
     - tags
   stage: publish
@@ -243,7 +269,7 @@ publish:release-core:
     - ./gradlew :core:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-logs:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   only:
     - tags
   stage: publish
@@ -253,7 +279,7 @@ publish:release-logs:
     - ./gradlew :features:logs:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-rum:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   only:
     - tags
   stage: publish
@@ -263,7 +289,7 @@ publish:release-rum:
     - ./gradlew :features:rum:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-webview:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   only:
     - tags
   stage: publish
@@ -273,7 +299,7 @@ publish:release-webview:
     - ./gradlew :features:webview:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-session-replay:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   only:
     - tags
   stage: publish
@@ -283,7 +309,7 @@ publish:release-session-replay:
     - ./gradlew :features:session-replay:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-ktor:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   only:
     - tags
   stage: publish
@@ -293,7 +319,7 @@ publish:release-ktor:
     - ./gradlew :integrations:ktor:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-ktor3:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   only:
     - tags
   stage: publish
@@ -303,7 +329,7 @@ publish:release-ktor3:
     - ./gradlew :integrations:ktor3:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-coil3:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  extends: .macos-job
   only:
     - tags
   stage: publish
