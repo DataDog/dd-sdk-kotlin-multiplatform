@@ -11,6 +11,8 @@
 
 **Note**: Session Replay and WebView tracking are not supported on `tvOS`.
 
+**Note**: The Coil 3 integration is not supported on `tvOS`.
+
 ## Getting Started
 
 ### Log Collection
@@ -26,6 +28,9 @@ See the dedicated [Datadog Kotlin Multiplatform RUM Collection documentation][2]
 ### Ktor
 
 If you use Ktor to make network requests in your application, see Datadog's [dedicated library](integrations/ktor/README.md).
+
+### Coil
+If you use Coil to load images in your application, see Datadog's [dedicated library](integrations/coil3/README.md).
 
 ## Looking up your logs
 

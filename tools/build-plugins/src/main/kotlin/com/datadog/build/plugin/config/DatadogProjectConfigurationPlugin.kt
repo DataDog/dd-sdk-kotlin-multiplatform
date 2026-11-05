@@ -106,7 +106,7 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
 
             // at this point DatadogBuildConfigExtension is not yet read, so just use project names instead of
             // doing `afterEvaluate` tricks
-            if (projectToApply.path !in setOf(":features:session-replay", ":features:webview")) {
+            if (projectToApply.path !in setOf(":features:session-replay", ":features:webview", ":integrations:coil3")) {
                 tvosX64()
                 tvosArm64()
                 tvosSimulatorArm64()

@@ -8,6 +8,7 @@ agp = "9.2.1"
 kotlin = "2.2.21"
 compose = "1.11.2"
 compose-material3 = "1.4.0"
+coil3 = "3.0.4"
 androidx-fragment = "1.5.1"
 androidx-navigation-forSdk = "2.3.0"
 androidx-navigation-forApp = "2.7.7"
@@ -81,6 +82,8 @@ ktor3-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor3"
 ktor3-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor3" }
 ktor3-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor3" }
 ktor3-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor3" }
+
+coil3-core = { module = "io.coil-kt.coil3:coil-core", version.ref = "coil3" }
 
 okHttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okHttp" }
 

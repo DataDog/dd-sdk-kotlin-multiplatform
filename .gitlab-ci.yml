@@ -302,6 +302,16 @@ publish:release-ktor3:
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :integrations:ktor3:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
+publish:release-coil3:
+  tags: [ "macos:sequoia-arm64, specific:true" ]
+  only:
+    - tags
+  stage: publish
+  timeout: 30m
+  script:
+    - !reference [.snippets, set-publishing-credentials]
+    - ./gradlew :integrations:coil3:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
+
 # SLACK NOTIFICATIONS
 
 notify:publish-release-success:
