@@ -542,7 +542,7 @@ internal class AndroidRumConfigurationBuilderTest {
     companion object {
         private val NativeTimeseriesConfiguration.enabledTypes: Set<*>
             get() = checkNotNull(
-                NativeTimeseriesConfiguration::class.java.getDeclaredField("enabledTypes")
+                NativeTimeseriesConfiguration::class.java.getDeclaredField("collectTypes")
                     .apply { isAccessible = true }
                     .get(this)
             ) as Set<*>

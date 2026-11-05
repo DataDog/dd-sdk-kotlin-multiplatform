@@ -13,7 +13,7 @@
 * [MAINTENANCE] Bump `ktlint` to 1.8.0. See [#354](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/354)
 * [MAINTENANCE] Bump Kubernetes CPU and memory limits for Gradle CI jobs. See [#355](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/355)
 * [MAINTENANCE] Update test tooling. See [#307](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/307)
-* [MAINTENANCE] Update Datadog iOS SDK to 3.21.0, Datadog Android SDK to 3.16.0.
+* [MAINTENANCE] Update Datadog Android SDK to 3.16.0. See [#357](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/357)
 
 # 1.8.0 / 2026-08-10
 
