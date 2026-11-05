@@ -135,7 +135,7 @@ private fun Project.applyKotlinMultiplatformConfig(configExtension: DatadogBuild
                                     // aligned with what is in CI file.
                                     deviceId = when (konanTarget.family) {
                                         Family.IOS -> {
-                                            "iPhone 15 Pro Max"
+                                            "iPhone 17 Pro"
                                         }
 
                                         Family.TVOS -> {
