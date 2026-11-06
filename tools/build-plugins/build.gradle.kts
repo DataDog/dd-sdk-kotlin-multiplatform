@@ -79,7 +79,7 @@ tasks.withType<Detekt>().configureEach {
     }
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 

@@ -51,16 +51,16 @@ class GenerateJsonSchemaPlugin : Plugin<Project> {
 
                 val modelsGenerationTask = registerModelsGenerationTask(target, name, schema)
 
-                target.tasks.withType<KotlinCompile> {
+                target.tasks.withType<KotlinCompile>().configureEach {
                     dependsOn(modelsGenerationTask)
                 }
-                target.tasks.withType<KotlinNativeCompile> {
+                target.tasks.withType<KotlinNativeCompile>().configureEach {
                     dependsOn(modelsGenerationTask)
                 }
-                target.tasks.withType<Jar> {
+                target.tasks.withType<Jar>().configureEach {
                     dependsOn(modelsGenerationTask)
                 }
-                target.tasks.withType<KotlinCompileCommon> {
+                target.tasks.withType<KotlinCompileCommon>().configureEach {
                     dependsOn(modelsGenerationTask)
                 }
             }
