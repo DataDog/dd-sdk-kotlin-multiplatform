@@ -7,6 +7,7 @@
 package com.datadog.build.plugin.config
 
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -16,8 +17,11 @@ interface DatadogBuildConfigExtension {
     val pomDescription: Property<String>
 }
 
+internal val DatadogBuildConfigExtension.jvmTargetOrDefaultProvider: Provider<JvmTarget>
+    get() = jvmTarget.orElse(JvmTarget.JVM_17)
+
 internal val DatadogBuildConfigExtension.jvmTargetOrDefault
-    get() = jvmTarget.getOrElse(JvmTarget.JVM_17)
+    get() = jvmTargetOrDefaultProvider.get()
 
 internal val DatadogBuildConfigExtension.kotlinVersionOrDefault
     get() = kotlinVersion.getOrElse(KotlinVersion.KOTLIN_2_2)
