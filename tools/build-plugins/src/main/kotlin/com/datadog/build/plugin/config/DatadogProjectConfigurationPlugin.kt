@@ -293,7 +293,7 @@ private fun Packaging.datadogConfigure() {
 private fun Project.applyPublishingConfig(buildConfigExtension: DatadogBuildConfigExtension) {
     val publishingExtension = extensions.getByType<PublishingExtension>()
         .apply {
-            publications.withType<MavenPublication> {
+            publications.withType<MavenPublication>().configureEach {
                 groupId = ProjectConfig.GROUP_ID
                 version = ProjectConfig.VERSION.name
 
