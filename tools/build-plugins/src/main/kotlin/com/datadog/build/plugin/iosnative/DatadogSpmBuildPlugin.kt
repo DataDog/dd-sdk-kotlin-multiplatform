@@ -20,13 +20,14 @@ class DatadogSpmBuildPlugin : Plugin<Project> {
         val extension = target.extensions.create<DatadogSpmBuildExtension>("datadogSpmBuild")
 
         val syntheticPackageDir = target.layout.buildDirectory.dir("datadog-spm")
+        val packageDir = syntheticPackageDir.map { it.dir("package") }
         val clonedSourcePackagesDir = syntheticPackageDir.map { it.dir("SourcePackages") }
         val frameworksBuildDir = target.layout.buildDirectory.dir(FRAMEWORKS_BUILD_DIRECTORY)
 
         val generateSyntheticDatadogPackage = target.tasks.register<GenerateSyntheticDatadogPackageTask>(
             "generateSyntheticDatadogPackage"
         ) {
-            outputDirectory.set(syntheticPackageDir.map { it.dir("package") })
+            outputDirectory.set(packageDir)
             sdkVersion.set(extension.sdkVersion)
             packageUrl.set(extension.packageUrl)
             iosDeploymentTarget.set(extension.iosDeploymentTarget)
@@ -34,7 +35,6 @@ class DatadogSpmBuildPlugin : Plugin<Project> {
             iosProducts.set(extension.iosProducts)
             tvosProducts.set(extension.tvosProducts)
         }
-        val packageDir = generateSyntheticDatadogPackage.flatMap { it.outputDirectory }
 
         // Resolving once upfront lets the per-slice builds share the checkouts and run without resolution
         val resolveDatadogPackage = target.tasks.register<Exec>("resolveDatadogPackage") {
