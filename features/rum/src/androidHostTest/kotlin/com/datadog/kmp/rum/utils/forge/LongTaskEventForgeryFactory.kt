@@ -71,7 +71,9 @@ internal class LongTaskEventForgeryFactory :
             session = LongTaskEvent.LongTaskEventSession(
                 id = forge.getForgery<UUID>().toString(),
                 type = LongTaskEvent.LongTaskEventSessionType.USER,
-                hasReplay = forge.aNullable { aBool() }
+                hasReplay = forge.aNullable { aBool() },
+                hasTimeseries = forge.aNullable { aBool() },
+                isMainProcess = forge.aNullable { aBool() }
             ),
             source = forge.aNullable { aValueFrom(LongTaskEvent.LongTaskEventSource::class.java) },
             ciTest = forge.aNullable {

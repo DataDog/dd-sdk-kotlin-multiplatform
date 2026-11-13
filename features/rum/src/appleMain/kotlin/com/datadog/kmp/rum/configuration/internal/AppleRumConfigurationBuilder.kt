@@ -209,6 +209,8 @@ internal abstract class AppleRumConfigurationBuilder : PlatformRumConfigurationB
 
             mapped.error.resource?.let {
                 error.error().resource()?.setUrl(it.url)
+                error.error().resource()?.graphql()?.setPayload(it.graphql?.payload)
+                error.error().resource()?.graphql()?.setVariables(it.graphql?.variables)
             }
 
             mapped.usr?.additionalProperties?.let {

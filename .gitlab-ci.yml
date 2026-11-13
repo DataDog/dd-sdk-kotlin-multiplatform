@@ -1,7 +1,7 @@
 # SETUP
 
 variables:
-  CURRENT_CI_IMAGE: "9"
+  CURRENT_CI_IMAGE: "11"
   CI_IMAGE_DOCKER: registry.ddbuild.io/ci/dd-sdk-kotlin-multiplatform:$CURRENT_CI_IMAGE
   SLACK_NOTIFIER_IMAGE: registry.ddbuild.io/slack-notifier:latest
   GIT_DEPTH: 6
@@ -14,7 +14,7 @@ variables:
   DD_CIVISIBILITY_ENABLED: "true"
   DD_INSIDE_CI: "true"
   DD_COMMON_AGENT_CONFIG: "dd.env=ci,dd.trace.enabled=false,dd.jmx.fetch.enabled=false"
-  DD_JAVA_AGENT_FILE: "dd-java-agent-1.50.0.jar"
+  DD_JAVA_AGENT_FILE: "dd-java-agent-1.68.1.jar"
 
 stages:
   - ci-image
@@ -66,7 +66,7 @@ ci-image:
 env-info:
   stage: info
   when: manual
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   allow_failure: true # do not block GH PRs
   script:
     - system_profiler SPSoftwareDataType # system info
@@ -88,7 +88,7 @@ env-info:
 
 static-analysis-ios:
   stage: analysis
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   timeout: 1h
   script:
 #    - ./tools/lint/run-linter.sh
@@ -98,7 +98,7 @@ static-analysis-ios:
 # where Apple targets are not available, so KLIB compiler metadata needs a dedicated check on macOS.
 analysis:apple-compiler-metadata:
   stage: analysis
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   timeout: 1h
   script:
     - ./gradlew checkKlibCompilerMetadataChangesAll --stacktrace --no-daemon
@@ -170,7 +170,7 @@ jvm-unit-test:
 
 ios-unit-test:
   stage: test
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   timeout: 1h
   script:
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
@@ -184,7 +184,7 @@ ios-unit-test:
 
 tvos-unit-test:
   stage: test
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   timeout: 1h
   script:
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
@@ -198,10 +198,10 @@ tvos-unit-test:
 
 sample-app-build-ios:
   stage: test
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   timeout: 1h
   variables:
-    BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5"
+    BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 17 Pro Max,OS=27.0"
   script:
     # by some reason if we build Datadog frameworks from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
     - ./gradlew :buildDatadogFrameworks
@@ -209,10 +209,10 @@ sample-app-build-ios:
 
 sample-app-build-tvos:
   stage: test
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   timeout: 1h
   variables:
-    BUILD_DESTINATION: "platform=tvOS Simulator,name=Apple TV,OS=17.5"
+    BUILD_DESTINATION: "platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=27.0"
   script:
     # by some reason if we build Datadog frameworks from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
     - ./gradlew :buildDatadogFrameworks
@@ -233,7 +233,7 @@ sample-app-build-android:
 # PUBLISH ARTIFACTS ON MAVEN
 
 publish:release-core:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -243,7 +243,7 @@ publish:release-core:
     - ./gradlew :core:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-logs:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -253,7 +253,7 @@ publish:release-logs:
     - ./gradlew :features:logs:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-rum:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -263,7 +263,7 @@ publish:release-rum:
     - ./gradlew :features:rum:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-webview:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -273,7 +273,7 @@ publish:release-webview:
     - ./gradlew :features:webview:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-session-replay:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -283,7 +283,7 @@ publish:release-session-replay:
     - ./gradlew :features:session-replay:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-ktor:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -293,7 +293,7 @@ publish:release-ktor:
     - ./gradlew :integrations:ktor:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-ktor3:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   only:
     - tags
   stage: publish
@@ -303,7 +303,7 @@ publish:release-ktor3:
     - ./gradlew :integrations:ktor3:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
 
 publish:release-coil3:
-  tags: [ "macos:sequoia-arm64, specific:true" ]
+  tags: [ "macos:tahoe-arm64, specific:true" ]
   only:
     - tags
   stage: publish

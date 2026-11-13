@@ -123,7 +123,7 @@ data class com.datadog.kmp.rum.model.ActionEvent
   data class Application
     constructor(kotlin.String)
   data class ActionEventSession
-    constructor(kotlin.String, ActionEventSessionType, kotlin.Boolean? = null)
+    constructor(kotlin.String, ActionEventSessionType, kotlin.Boolean? = null, kotlin.Boolean? = null, kotlin.Boolean? = null)
   data class ActionEventView
     constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null, kotlin.Boolean? = null)
   data class Usr
@@ -240,7 +240,7 @@ data class com.datadog.kmp.rum.model.ErrorEvent
   data class Application
     constructor(kotlin.String)
   data class ErrorEventSession
-    constructor(kotlin.String, ErrorEventSessionType, kotlin.Boolean? = null)
+    constructor(kotlin.String, ErrorEventSessionType, kotlin.Boolean? = null, kotlin.Boolean? = null, kotlin.Boolean? = null)
   data class ErrorEventView
     constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null, kotlin.Boolean? = null)
   data class Usr
@@ -285,7 +285,7 @@ data class com.datadog.kmp.rum.model.ErrorEvent
   data class Cause
     constructor(kotlin.String, kotlin.String? = null, kotlin.String? = null, ErrorSource)
   data class Resource
-    constructor(Method, kotlin.Long, kotlin.String, Provider? = null)
+    constructor(Method, kotlin.Long, kotlin.String, Provider? = null, Graphql? = null)
   data class Thread
     constructor(kotlin.String, kotlin.Boolean, kotlin.String, kotlin.String? = null)
   data class BinaryImage
@@ -294,6 +294,8 @@ data class com.datadog.kmp.rum.model.ErrorEvent
     constructor(kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
   data class Provider
     constructor(kotlin.String? = null, kotlin.String? = null, ProviderType? = null)
+  data class Graphql
+    constructor(OperationType? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null)
   enum ErrorEventSource
     constructor(kotlin.String)
     - ANDROID
@@ -411,13 +413,18 @@ data class com.datadog.kmp.rum.model.ErrorEvent
     - TAG_MANAGER
     - UTILITY
     - VIDEO
+  enum OperationType
+    constructor(kotlin.String)
+    - QUERY
+    - MUTATION
+    - SUBSCRIPTION
 data class com.datadog.kmp.rum.model.LongTaskEvent
   constructor(kotlin.Long, Application, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, kotlin.String? = null, LongTaskEventSession, LongTaskEventSource? = null, LongTaskEventView, Usr? = null, Account? = null, Connectivity? = null, Display? = null, Synthetics? = null, CiTest? = null, Os? = null, Device? = null, Dd, Context? = null, Action? = null, Container? = null, LongTask)
   val type: kotlin.String
   data class Application
     constructor(kotlin.String)
   data class LongTaskEventSession
-    constructor(kotlin.String, LongTaskEventSessionType, kotlin.Boolean? = null)
+    constructor(kotlin.String, LongTaskEventSessionType, kotlin.Boolean? = null, kotlin.Boolean? = null, kotlin.Boolean? = null)
   data class LongTaskEventView
     constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null)
   data class Usr
@@ -525,7 +532,7 @@ data class com.datadog.kmp.rum.model.ResourceEvent
   data class Application
     constructor(kotlin.String)
   data class ResourceEventSession
-    constructor(kotlin.String, ResourceEventSessionType, kotlin.Boolean? = null)
+    constructor(kotlin.String, ResourceEventSessionType, kotlin.Boolean? = null, kotlin.Boolean? = null, kotlin.Boolean? = null)
   data class ResourceEventView
     constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null)
   data class Usr
@@ -680,7 +687,7 @@ data class com.datadog.kmp.rum.model.ViewEvent
   data class Application
     constructor(kotlin.String)
   data class ViewEventSession
-    constructor(kotlin.String, ViewEventSessionType, kotlin.Boolean? = null, kotlin.Boolean? = true, kotlin.Boolean? = null)
+    constructor(kotlin.String, ViewEventSessionType, kotlin.Boolean? = null, kotlin.Boolean? = null, kotlin.Boolean? = null, kotlin.Boolean? = true, kotlin.Boolean? = null)
   data class ViewEventView
     constructor(kotlin.String, kotlin.String? = null, kotlin.String, kotlin.String? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, LoadingType? = null, kotlin.Long, kotlin.Long? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.String? = null, kotlin.Number? = null, kotlin.String? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, kotlin.Long? = null, CustomTimings? = null, kotlin.Boolean? = null, kotlin.Boolean? = null, Action, Error, Crash? = null, LongTask? = null, FrozenFrame? = null, kotlin.collections.List<SlowFrame>? = null, Resource, Frustration? = null, kotlin.collections.List<InForegroundPeriod>? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, kotlin.Number? = null, FlutterBuildTime? = null, FlutterBuildTime? = null, FlutterBuildTime? = null)
   data class Usr
