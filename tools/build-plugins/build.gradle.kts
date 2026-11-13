@@ -5,13 +5,6 @@
  */
 
 import dev.detekt.gradle.Detekt
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
-/*
- * Unless explicitly stated otherwise all files in this repository are licensed under the Apache License Version 2.0.
- * This product includes software developed at Datadog (https://www.datadoghq.com/).
- * Copyright 2016-Present Datadog, Inc.
- */
 
 plugins {
     `kotlin-dsl`
@@ -47,7 +40,7 @@ dependencies {
 }
 
 ktlint {
-    version = provider { libs.versions.ktlint.get() }
+    version = libs.versions.ktlint
     filter {
         exclude { it.file.invariantSeparatorsPath.contains("/build/generated") }
     }
@@ -75,7 +68,7 @@ tasks.named("detekt") {
 }
 
 tasks.withType<Detekt>().configureEach {
-    jvmTarget = "17"
+    jvmTarget = libs.versions.jdk
     val buildDir = layout.buildDirectory.get().asFile
     exclude { it.file.startsWith(buildDir) }
     reports {
@@ -86,7 +79,7 @@ tasks.withType<Detekt>().configureEach {
     }
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 
@@ -94,15 +87,8 @@ tasks.validatePlugins {
     enableStricterValidation.set(true)
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
-
 kotlin {
-    compilerOptions {
-        jvmTarget = JvmTarget.JVM_17
-    }
+    jvmToolchain(libs.versions.jdk.get().toInt())
 }
 
 gradlePlugin {

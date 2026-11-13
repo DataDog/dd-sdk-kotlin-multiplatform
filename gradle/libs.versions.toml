@@ -1,4 +1,9 @@
 [versions]
+# JDK used to run Gradle and to compile/test all modules (Java toolchain). Bytecode targets are set
+# separately. Must be kept in sync with the JDK installed in Dockerfile.gitlab,
+# with gradle/gradle-daemon-jvm.properties and with .github/workflows/codeql-analysis.yml.
+jdk = "21"
+
 agp = "9.2.1"
 # Keep in mind that Kotlin version used restricts which Xcode toolchain can be used: Xcode toolchain
 # version may be too recent for the Kotlin version used, so Kotlin Native tooling may fail to at
@@ -13,8 +18,8 @@ androidx-fragment = "1.5.1"
 androidx-navigation-forSdk = "2.3.0"
 androidx-navigation-forApp = "2.7.7"
 androidx-activityCompose = "1.13.0"
-datadog-android = "3.14.1"
-datadog-ios = "3.18.0"
+datadog-android = "3.16.0"
+datadog-ios = "3.21.0"
 dependencyLicense = "0.4.0"
 nexusPublish = "2.0.0"
 kotlinGrammarParser = "0.1.0"
