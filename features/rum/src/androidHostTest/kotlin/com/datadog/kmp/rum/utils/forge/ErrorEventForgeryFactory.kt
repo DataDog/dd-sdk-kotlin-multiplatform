@@ -37,6 +37,14 @@ internal class ErrorEventForgeryFactory : ForgeryFactory<ErrorEvent> {
                                 name = aNullable { anAlphabeticalString() },
                                 type = aNullable()
                             )
+                        },
+                        graphql = aNullable {
+                            ErrorEvent.Graphql(
+                                operationType = aValueFrom(ErrorEvent.OperationType::class.java),
+                                operationName = aNullable { aString() },
+                                payload = aNullable { aString() },
+                                variables = aNullable { aString() }
+                            )
                         }
                     )
                 },
@@ -104,7 +112,9 @@ internal class ErrorEventForgeryFactory : ForgeryFactory<ErrorEvent> {
             session = ErrorEvent.ErrorEventSession(
                 id = forge.getForgery<UUID>().toString(),
                 type = ErrorEvent.ErrorEventSessionType.USER,
-                hasReplay = forge.aNullable { aBool() }
+                hasReplay = forge.aNullable { aBool() },
+                hasTimeseries = forge.aNullable { aBool() },
+                isMainProcess = forge.aNullable { aBool() }
             ),
             source = forge.aNullable { aValueFrom(ErrorEvent.ErrorEventSource::class.java) },
             ciTest = forge.aNullable {

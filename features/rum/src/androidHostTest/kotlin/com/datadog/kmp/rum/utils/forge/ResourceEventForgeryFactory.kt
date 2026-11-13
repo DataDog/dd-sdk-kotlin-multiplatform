@@ -146,7 +146,9 @@ internal class ResourceEventForgeryFactory :
             session = ResourceEvent.ResourceEventSession(
                 id = forge.getForgery<UUID>().toString(),
                 type = ResourceEvent.ResourceEventSessionType.USER,
-                hasReplay = forge.aNullable { aBool() }
+                hasReplay = forge.aNullable { aBool() },
+                hasTimeseries = forge.aNullable { aBool() },
+                isMainProcess = forge.aNullable { aBool() }
             ),
             source = forge.aNullable { aValueFrom(ResourceEvent.ResourceEventSource::class.java) },
             ciTest = forge.aNullable {
