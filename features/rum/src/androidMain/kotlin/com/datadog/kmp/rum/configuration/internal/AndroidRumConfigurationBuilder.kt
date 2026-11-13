@@ -162,6 +162,8 @@ internal class AndroidRumConfigurationBuilder : PlatformRumConfigurationBuilder<
 
             mapped.error.resource?.let {
                 error.error.resource?.url = it.url
+                error.error.resource?.graphql?.payload = it.graphql?.payload
+                error.error.resource?.graphql?.variables = it.graphql?.variables
             }
 
             // usr and context additional properties are exposed as a reference, so no need to copy things back

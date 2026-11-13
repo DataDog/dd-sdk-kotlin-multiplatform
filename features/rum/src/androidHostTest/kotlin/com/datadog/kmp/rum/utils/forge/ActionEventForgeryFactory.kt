@@ -83,7 +83,9 @@ internal class ActionEventForgeryFactory :
             session = ActionEvent.ActionEventSession(
                 id = forge.getForgery<UUID>().toString(),
                 type = ActionEvent.ActionEventSessionType.USER,
-                hasReplay = forge.aNullable { aBool() }
+                hasReplay = forge.aNullable { aBool() },
+                hasTimeseries = forge.aNullable { aBool() },
+                isMainProcess = forge.aNullable { aBool() }
             ),
             source = forge.aNullable { aValueFrom(ActionEvent.ActionEventSource::class.java) },
             ciTest = forge.aNullable {
