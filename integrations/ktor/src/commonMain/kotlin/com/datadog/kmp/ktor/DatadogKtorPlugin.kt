@@ -17,14 +17,15 @@ import com.datadog.kmp.rum.configuration.RumSessionProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.api.ClientPlugin
 
-internal const val DEFAULT_TRACE_SAMPLE_RATE: Float = 20f
+internal const val DEFAULT_TRACE_SAMPLE_RATE: Float = 100f
 
 /**
  * Create a Datadog plugin for a Ktor [HttpClient].
  * @param tracedHosts the map of all the hosts to track, and the header types that you want
  * to use to handle distributed traces. For a default setup, we recommend using the DATADOG + TRACECONTEXT header types
  * for the hosts you own.
- * @param traceSampleRate the sample rate for the tracing (between 0 and 100).
+ * @param traceSampleRate the sample rate for the tracing (between 0 and 100). Defaults to 100, meaning all
+ * requests to the [tracedHosts] are traced.
  * @param traceContextInjection the trace context injection behavior for this interceptor in the intercepted
  * requests. By default this is set to [TraceContextInjection.All] meaning that all the trace context will be
  * propagated in the intercepted requests no matter if the span created around the request is sampled or not. In case
@@ -55,7 +56,8 @@ fun datadogKtorPlugin(
  * Create a Datadog plugin for a Ktor [HttpClient].
  * @param tracedHosts the list of all the hosts to track. For a default setup, DATADOG + TRACECONTEXT header types
  * will be used.
- * @param traceSampleRate the sample rate for the tracing (between 0 and 100).
+ * @param traceSampleRate the sample rate for the tracing (between 0 and 100). Defaults to 100, meaning all
+ * requests to the [tracedHosts] are traced.
  * @param traceContextInjection the trace context injection behavior for this interceptor in the intercepted
  * requests. By default this is set to [TraceContextInjection.All] meaning that all the trace context will be
  * propagated in the intercepted requests no matter if the span created around the request is sampled or not. In case
