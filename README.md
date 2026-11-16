@@ -7,7 +7,7 @@
 | Platform             | Version |
 |----------------------|---------|
 | Android / Android TV | API 23+ |
-| iOS / iPadOS / tvOS  | 12+     |
+| iOS / iPadOS / tvOS  | 15+     |
 
 **Note**: Session Replay and WebView tracking are not supported on `tvOS`.
 
