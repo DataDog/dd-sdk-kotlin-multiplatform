@@ -1,3 +1,26 @@
+# 1.9.0 / 2026-11-16
+
+**Note**: This version bumps the minimum supported iOS and tvOS version from 12.0 to 15.0.
+
+* [FEATURE] RUM: Add timeseries collection support with `RumConfiguration.Builder#setTimeseriesConfiguration` API. See [#329](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/329)
+* [FEATURE] Add Coil 3 integration. See [#353](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/353)
+* [FEATURE] Session Replay: Add Android heatmaps support with `SessionReplayConfiguration.Builder#setHeatmapsEnabled` API. See [#306](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/306)
+* [IMPROVEMENT] RUM: Add `session.hasTimeseries`, `session.isMainProcess` and `error.resource.graphql` properties to RUM event models. See [#366](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/366)
+* [MAINTENANCE] Bump minimum iOS/tvOS deployment target to 15.0. See [#328](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/328)
+* [MAINTENANCE] Replace CocoaPods with Swift Package Manager for managing iOS dependencies. See [#337](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/337)
+* [MAINTENANCE] Use Kotlin 2.2 language level by default. See [#344](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/344)
+* [MAINTENANCE] Run KLIB compiler metadata check for Apple targets on CI. See [#345](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/345)
+* [MAINTENANCE] Migrate static analysis to Gradle-native `ktlint` and `detekt`. See [#352](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/352)
+* [MAINTENANCE] Bump `ktlint` to 1.8.0. See [#354](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/354)
+* [MAINTENANCE] Bump Kubernetes CPU and memory limits for Gradle CI jobs. See [#355](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/355)
+* [MAINTENANCE] Update test tooling. See [#307](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/307)
+* [MAINTENANCE] Migrate macOS CI runners to Tahoe. See [#356](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/356)
+* [MAINTENANCE] Fix SPM task outputs queried before completion from IDE. See [#360](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/360)
+* [MAINTENANCE] Use JDK 21 toolchain. See [#351](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/351)
+* [MAINTENANCE] Use lazy task configuration in build logic. See [#361](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/361)
+* [MAINTENANCE] Update `dd-trace-java` to 1.68.1. See [#362](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/362)
+* [MAINTENANCE] Update Datadog iOS SDK to 3.21.0, Datadog Android SDK to 3.16.0. See [#359](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/359)
+
 # 1.8.0 / 2026-08-10
 
 * [IMPROVEMENT] Add `Configuration#setVersion` API. See [#300](https://github.com/DataDog/dd-sdk-kotlin-multiplatform/pull/300)
