@@ -130,6 +130,8 @@ analysis:android-lint:
   script:
     - ./gradlew lintRelease --stacktrace --no-daemon
 
+# ktlint-gradle runs each ktlint task in its own forked worker JVM (Worker API process isolation), and Gradle runs
+# up to max-workers (CPU count by default) of them at once, which can get the job OOMKilled. Cap the number of workers.
 analysis:ktlint:
   extends: .cpu-memory-intensive-job
   tags: [ "arch:amd64" ]
@@ -137,7 +139,7 @@ analysis:ktlint:
   stage: analysis
   timeout: 30m
   script:
-    - ./gradlew ktlintCheckAll --stacktrace --no-daemon
+    - ./gradlew ktlintCheckAll --max-workers=4 --stacktrace --no-daemon
 
 analysis:licenses:
   extends: .cpu-memory-intensive-job
