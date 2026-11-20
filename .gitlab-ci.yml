@@ -13,8 +13,20 @@ variables:
   DD_ENV_TESTS: "ci"
   DD_CIVISIBILITY_ENABLED: "true"
   DD_INSIDE_CI: "true"
-  DD_COMMON_AGENT_CONFIG: "dd.env=ci,dd.trace.enabled=false,dd.jmx.fetch.enabled=false"
+  # Disable the DD Javac compiler plugin auto-config: it adds a `dd-javac-plugin` dependency to every Java compilation,
+  # which tools/settings-plugin (no repositories by design) cannot resolve. Same setting as dd-sdk-android.
+  DD_COMMON_AGENT_CONFIG: "dd.env=ci,dd.trace.enabled=false,dd.jmx.fetch.enabled=false,dd.civisibility.compiler.plugin.auto.configuration.enabled=false"
   DD_JAVA_AGENT_FILE: "dd-java-agent-1.68.1.jar"
+
+  # Magic Mirror Depot proxy URLs. The depot proxies both Maven Central and the Gradle
+  # Plugin Portal for the Java ecosystem from the same endpoint. Setting these routes
+  # dependency/plugin resolution through Datadog's internal mirror to avoid HTTP 429
+  # rate-limits from upstream registries.
+  # Declared as ORG_GRADLE_PROJECT_* so Gradle reads them as `providers.gradleProperty("<name>")`.
+  ORG_GRADLE_PROJECT_mavenRepositoryProxy: "https://depot-read-api-java.us1.ddbuild.io/magicmirror/magicmirror/@current/"
+  ORG_GRADLE_PROJECT_gradlePluginProxy: "https://depot-read-api-java.us1.ddbuild.io/magicmirror/magicmirror/@current/"
+
+  GRADLE_DISTRIBUTION_MIRROR: "https://depot-read-api-github-releases.us1.ddbuild.io/internal/mirror/github-releases/gradle/gradle-distributions/releases/download"
 
 stages:
   - ci-image
@@ -25,6 +37,12 @@ stages:
   - notify
 
 .snippets:
+  setup-gradle:
+    # Download the Gradle distribution through Depot. Rewrite only the CI checkout; retain the wrapper's version and
+    # distribution type. `-i.bak` works with both GNU (Linux) and BSD (macOS) sed.
+    - |
+      sed -i.bak -E "s#^distributionUrl=.*services\.gradle\.org/distributions/gradle-(.*)-(all|bin)\.zip\$#distributionUrl=${GRADLE_DISTRIBUTION_MIRROR}/v\1/gradle-\1-\2.zip#" gradle/wrapper/gradle-wrapper.properties
+      rm gradle/wrapper/gradle-wrapper.properties.bak
   set-publishing-credentials:
     - export GPG_PRIVATE_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_private_key --with-decryption --query "Parameter.Value" --out text)
     - export GPG_PASSWORD=$(aws ssm get-parameter --region us-east-1 --name ci.dd-sdk-kotlin-multiplatform.signing.gpg_passphrase --with-decryption --query "Parameter.Value" --out text)
@@ -100,6 +118,8 @@ analysis:apple-compiler-metadata:
   stage: analysis
   tags: [ "macos:tahoe-arm64, specific:true" ]
   timeout: 1h
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - ./gradlew checkKlibCompilerMetadataChangesAll --stacktrace --no-daemon
 
@@ -109,6 +129,8 @@ analysis:generated-files-check:
   image: $CI_IMAGE_DOCKER
   stage: analysis
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - ./gradlew checkGeneratedFiles --stacktrace --no-daemon
 
@@ -118,6 +140,8 @@ analysis:detekt:
   image: $CI_IMAGE_DOCKER
   stage: analysis
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - ./gradlew detektAll --continue --stacktrace --no-daemon
 
@@ -127,6 +151,8 @@ analysis:android-lint:
   image: $CI_IMAGE_DOCKER
   stage: analysis
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - ./gradlew lintRelease --stacktrace --no-daemon
 
@@ -138,6 +164,8 @@ analysis:ktlint:
   image: $CI_IMAGE_DOCKER
   stage: analysis
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - ./gradlew ktlintCheckAll --max-workers=4 --stacktrace --no-daemon
 
@@ -147,6 +175,8 @@ analysis:licenses:
   image: $CI_IMAGE_DOCKER
   stage: analysis
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - ./gradlew checkDependencyLicenses --stacktrace --no-daemon
 
@@ -158,6 +188,8 @@ jvm-unit-test:
   tags: [ "arch:amd64" ]
   image: $CI_IMAGE_DOCKER
   timeout: 1h
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - rm -rf ~/.gradle/daemon/
     - export DD_AGENT_HOST="$BUILDENV_HOST_IP"
@@ -174,6 +206,8 @@ ios-unit-test:
   stage: test
   tags: [ "macos:tahoe-arm64, specific:true" ]
   timeout: 1h
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
     - ./gradlew iosUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
@@ -188,6 +222,8 @@ tvos-unit-test:
   stage: test
   tags: [ "macos:tahoe-arm64, specific:true" ]
   timeout: 1h
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - export DD_AGENT_PATH="$(pwd)/$DD_JAVA_AGENT_FILE"
     - ./gradlew tvosUnitTestAll --no-daemon -Dorg.gradle.jvmargs=-javaagent:$DD_AGENT_PATH=$DD_COMMON_AGENT_CONFIG
@@ -204,6 +240,8 @@ sample-app-build-ios:
   timeout: 1h
   variables:
     BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 17 Pro Max,OS=27.0"
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     # by some reason if we build Datadog frameworks from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
     - ./gradlew :buildDatadogFrameworks
@@ -215,6 +253,8 @@ sample-app-build-tvos:
   timeout: 1h
   variables:
     BUILD_DESTINATION: "platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=27.0"
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     # by some reason if we build Datadog frameworks from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
     - ./gradlew :buildDatadogFrameworks
@@ -226,6 +266,8 @@ sample-app-build-android:
   tags: [ "arch:amd64" ]
   image: $CI_IMAGE_DOCKER
   timeout: 1h
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - rm -rf ~/.gradle/daemon/
     - export DD_AGENT_HOST="$BUILDENV_HOST_IP"
@@ -240,6 +282,8 @@ publish:release-core:
     - tags
   stage: publish
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :core:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
@@ -250,6 +294,8 @@ publish:release-logs:
     - tags
   stage: publish
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:logs:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
@@ -260,6 +306,8 @@ publish:release-rum:
     - tags
   stage: publish
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:rum:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
@@ -270,6 +318,8 @@ publish:release-webview:
     - tags
   stage: publish
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:webview:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
@@ -280,6 +330,8 @@ publish:release-session-replay:
     - tags
   stage: publish
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :features:session-replay:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
@@ -290,6 +342,8 @@ publish:release-ktor:
     - tags
   stage: publish
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :integrations:ktor:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
@@ -300,6 +354,8 @@ publish:release-ktor3:
     - tags
   stage: publish
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :integrations:ktor3:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon
@@ -310,6 +366,8 @@ publish:release-coil3:
     - tags
   stage: publish
   timeout: 30m
+  before_script:
+    - !reference [ .snippets, setup-gradle ]
   script:
     - !reference [.snippets, set-publishing-credentials]
     - ./gradlew :integrations:coil3:publishToSonatype closeSonatypeStagingRepository --stacktrace --no-daemon

@@ -1,17 +1,24 @@
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+import com.datadog.gradle.repositories.DatadogRepositories
+
 pluginManagement {
-    repositories {
-        google()
-        gradlePluginPortal()
-        mavenCentral()
-        maven {
-            setUrl("https://jitpack.io")
-            mavenContent {
-                includeGroupByRegex("com\\.github\\..*")
-            }
-        }
-    }
+    // Repository definitions shared with tools/build-plugins.
+    includeBuild("./tools/settings-plugin")
     includeBuild("./tools/build-plugins")
+}
+
+plugins {
+    id("com.datadog.gradle.repositories")
+}
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+val datadogRepositories = DatadogRepositories(providers)
+
+pluginManagement.repositories {
+    datadogRepositories.googleDepotProxied(this)
+    datadogRepositories.gradlePluginPortalDepotProxied(this)
+    datadogRepositories.mavenCentralDepotProxied(this)
+    datadogRepositories.jitpackConstrained(this)
 }
 
 rootProject.name = "dd-sdk-kotlin-multiplatform"
@@ -19,8 +26,8 @@ rootProject.name = "dd-sdk-kotlin-multiplatform"
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
     repositories {
-        google()
-        mavenCentral()
+        datadogRepositories.googleDepotProxied(this)
+        datadogRepositories.mavenCentralDepotProxied(this)
     }
 }
 
