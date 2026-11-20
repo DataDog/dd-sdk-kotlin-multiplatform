@@ -23,8 +23,10 @@ import com.datadog.kmp.sessionreplay.configuration.addExtensionSupport
 import com.datadog.kmp.sessionreplay.configuration.setHeatmapsEnabled
 import com.datadog.kmp.webview.WebViewTracking
 
-internal actual fun RumConfiguration.Builder.platformSpecificSetup(): RumConfiguration.Builder = apply {
-    // going to use NavigationViewTrackingEffect
+internal actual fun RumConfiguration.Builder.platformSpecificSetup(
+    trackNativeViews: Boolean
+): RumConfiguration.Builder = apply {
+    // both the native and the Compose Multiplatform apps are going to use NavigationViewTrackingEffect
     useViewTrackingStrategy(null)
     trackUserInteractions()
     trackNonFatalAnrs(true)

@@ -31,9 +31,13 @@ This project hosts the following modules:
     - `tools/lint`: Linter for Swift code based on [SwiftLint](https://github.com/realm/SwiftLint);
     - `tools/unit`: Utility library with code to help writing unit tests;
   - `sample/***`: Sample applications showcasing how to use the library features in production code;
-    - `sample/android`: Sample mobile application for Android;
-    - `sample/iosAp`: Sample mobile application for iOS;
-    - `sample/shared`: Kotlin Multiplatform module containing shared logic for the sample apps above;
+    - `sample/androidApp`: Sample mobile application for Android, hosting the Compose Multiplatform UI from `sample/shared-ui`;
+    - `sample/appleApp`: Sample mobile application for iOS and tvOS, with a native (SwiftUI) UI;
+    - `sample/iosComposeMultiplatformApp`: Sample mobile application for iOS, hosting the Compose Multiplatform UI from
+      `sample/shared-ui`;
+    - `sample/shared`: Kotlin Multiplatform module containing shared logic (no UI) for all the sample apps;
+    - `sample/shared-ui`: Kotlin Multiplatform module containing the Compose Multiplatform UI shared by the Android and
+      iOS Compose Multiplatform sample apps;
 
 ### Building the SDK
 

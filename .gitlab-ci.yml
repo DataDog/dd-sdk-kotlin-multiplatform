@@ -220,6 +220,17 @@ sample-app-build-tvos:
     - ./gradlew :buildDatadogFrameworks
     - xcodebuild -project sample/appleApp/appleApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Sample tvOS" build | xcbeautify --preserve-unbeautified
 
+sample-app-build-compose-ios:
+  stage: test
+  tags: [ "macos:tahoe-arm64, specific:true" ]
+  timeout: 1h
+  variables:
+    BUILD_DESTINATION: "platform=iOS Simulator,name=iPhone 17 Pro Max,OS=27.0"
+  script:
+    # by some reason if we build Datadog frameworks from inside xcodebuild invocation, xcodebuild will crash (only on CI, not in local)
+    - ./gradlew :buildDatadogFrameworks
+    - xcodebuild -project sample/iosComposeMultiplatformApp/iosApp.xcodeproj -destination "$BUILD_DESTINATION" -scheme "Compose Sample iOS" build | xcbeautify --preserve-unbeautified
+
 sample-app-build-android:
   extends: .cpu-memory-intensive-job
   stage: test

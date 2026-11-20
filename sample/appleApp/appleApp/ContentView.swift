@@ -12,18 +12,6 @@ import WebKit
 #endif
 
 internal struct ContentView: View {
-    static let LOG_INFO_LABEL = "Log info"
-    static let LOG_ERROR_WITH_THROWABLE_LABEL = "Log error with Throwable"
-    static let LOG_ERROR_WITH_ERROR_LABEL = "Log error with Error"
-    static let LOGS_CHECKED_KMP_ERROR_LABEL = "Log checked KMP exception"
-    static let RUM_CHECKED_KMP_ERROR_LABEL = "Add error: checked KMP exception"
-    static let NATIVE_CRASH_LABEL = "Native crash"
-    static let CRASH_VIA_UNCHECKED_KMP_LABEL = "Crash: unchecked KMP exception"
-    static let GET_REQUEST_LABEL = "Start GET request"
-    static let POST_REQUEST_LABEL = "Start POST request"
-    static let SERVER_ERROR_REQUEST_LABEL = "Start server error request"
-    static let NETWORK_REQUEST_LABEL = "Start network request"
-
     var body: some View {
         NavigationView {
             VStack {
@@ -73,86 +61,40 @@ internal struct ContentView: View {
 
 internal struct LoggingView: View {
     var body: some View {
-        VStack {
-            Button(action: {
-                UtilsKt.trackAction(actionName: ContentView.LOG_INFO_LABEL)
-                UtilsKt.logInfo()
-            }) {
-                Text(ContentView.LOG_INFO_LABEL)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-
-            Button(action: {
-                UtilsKt.trackAction(actionName: ContentView.LOG_ERROR_WITH_THROWABLE_LABEL)
-                UtilsKt.logErrorWithThrowable()
-            }) {
-                Text(ContentView.LOG_ERROR_WITH_THROWABLE_LABEL)
-                    .padding()
-                    .background(Color.red)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-
-            Button(action: {
-                UtilsKt.trackAction(actionName: ContentView.LOG_ERROR_WITH_ERROR_LABEL)
-                logErrorWithError()
-            }) {
-                Text(ContentView.LOG_ERROR_WITH_ERROR_LABEL)
-                    .padding()
-                    .background(Color.brown)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-
-            Button(action: {
-                UtilsKt.trackAction(actionName: ContentView.LOGS_CHECKED_KMP_ERROR_LABEL)
-                do {
-                    try UtilsKt.triggerCheckedException()
-                } catch {
-                    UtilsKt.applicationLogger.error(message: "Caught KMP boundary error", error: error)
-                }
-            }) {
-                Text(ContentView.LOGS_CHECKED_KMP_ERROR_LABEL)
-                    .padding()
-                    .background(Color.orange)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-        }
-        .padding()
-        .onAppear {
-            UtilsKt.addViewOpenedAtAttribute()
-        }
+        ActionsView(actions: SampleActions.shared.logs + NativeActions.logs)
     }
 }
 
 internal struct CrashView: View {
     var body: some View {
-        VStack {
-            Button(action: {
-                UtilsKt.trackAction(actionName: ContentView.NATIVE_CRASH_LABEL)
-                fatalError()
-            }) {
-                Text(ContentView.NATIVE_CRASH_LABEL)
-                    .padding()
-                    .background(Color.black)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
+        ActionsView(actions: SampleActions.shared.crash + NativeActions.crash)
+    }
+}
 
-            Button(action: {
-                UtilsKt.trackAction(actionName: ContentView.CRASH_VIA_UNCHECKED_KMP_LABEL)
-                UtilsKt.triggerUncheckedException()
-            }) {
-                Text(ContentView.CRASH_VIA_UNCHECKED_KMP_LABEL)
+internal struct RumView: View {
+    var body: some View {
+        ActionsView(
+            actions: SampleActions.shared.rumNetwork + NativeActions.rum,
+            sectionTitle: SampleActions.shared.RUM_FEATURE_OPERATIONS_TITLE,
+            sectionActions: SampleActions.shared.rumFeatureOperations
+        )
+    }
+}
+
+/// Buttons for the given scenarios. A RUM action is tracked for each of them by `SampleAction.perform()`.
+internal struct ActionsView: View {
+    let actions: [SampleAction]
+    var sectionTitle: String? = nil
+    var sectionActions: [SampleAction] = []
+
+    var body: some View {
+        VStack {
+            ForEach(actions, id: \.actionName) { ActionButton(action: $0) }
+            if let sectionTitle {
+                Text(sectionTitle)
                     .padding()
-                    .background(Color.purple)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
             }
+            ForEach(sectionActions, id: \.actionName) { ActionButton(action: $0) }
         }
         .padding()
         .onAppear {
@@ -161,115 +103,36 @@ internal struct CrashView: View {
     }
 }
 
-internal struct RumView: View {
+private struct ActionButton: View {
+    let action: SampleAction
+
     var body: some View {
-        VStack {
-            Button(action: {
-                UtilsKt.trackAction(actionName: ContentView.RUM_CHECKED_KMP_ERROR_LABEL)
-                do {
-                    try UtilsKt.triggerCheckedException()
-                } catch {
-                    RUMMonitor.shared().addError(error: error, source: RUMErrorSource.source)
-                }
-            }) {
-                Text(ContentView.RUM_CHECKED_KMP_ERROR_LABEL)
-                    .padding()
-                    .background(Color.orange)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-
-            Button(action: {
-                let url = if (Bool.random()) {
-                    "https://httpbin.org/get"
-                } else {
-                    "https://httpbin.org/redirect-to?url=get"
-                }
-                UtilsKt.trackAction(actionName: ContentView.GET_REQUEST_LABEL)
-                NetworkUtilsKt.startGetRequest(url: url)
-            }) {
-                Text(ContentView.GET_REQUEST_LABEL)
-                    .padding()
-                    .background(Color.orange)
-                    .foregroundColor(Color.black)
-                    .cornerRadius(8)
-            }
-
-            Button(action: {
-                UtilsKt.trackAction(actionName: ContentView.POST_REQUEST_LABEL)
-                NetworkUtilsKt.startPostRequest(url: "https://httpbin.org/post", payload: "This is a payload")
-            }) {
-                Text(ContentView.POST_REQUEST_LABEL)
-                    .padding()
-                    .background(Color.orange)
-                    .foregroundColor(Color.black)
-                    .cornerRadius(8)
-            }
-
-            Button(action: {
-                UtilsKt.trackAction(actionName: ContentView.SERVER_ERROR_REQUEST_LABEL)
-                NetworkUtilsKt.startGetRequest(url: "https://httpbin.org/status/500")
-            }) {
-                Text(ContentView.SERVER_ERROR_REQUEST_LABEL)
-                    .padding()
-                    .background(Color.orange)
-                    .foregroundColor(Color.black)
-                    .cornerRadius(8)
-            }
-
-            Button(action: {
-                UtilsKt.trackAction(actionName: ContentView.NETWORK_REQUEST_LABEL)
-                NetworkUtilsKt.startGetRequest(url: "https://some-domain.in-non-existing-zone")
-            }) {
-                Text(ContentView.NETWORK_REQUEST_LABEL)
-                    .padding()
-                    .background(Color.orange)
-                    .foregroundColor(Color.black)
-                    .cornerRadius(8)
-            }
-
-            Text("Feature Operations")
+        Button(action: { action.perform() }) {
+            Text(action.title)
                 .padding()
-
-
-            Button(action: {
-                UtilsKt.trackAction(actionName: "Start Feature Operation")
-                UtilsKt.startFeatureOperation()
-            }) {
-                Text("Start")
-                    .padding()
-                    .background(Color.magenta)
-                    .foregroundColor(Color.white)
-                    .cornerRadius(8)
-            }
-
-            Button(action: {
-                UtilsKt.trackAction(actionName: "Stop Feature Operation successfully")
-                UtilsKt.stopFeatureOperation()
-            }) {
-                Text("Stop successfully")
-                    .padding()
-                    .background(Color.teal)
-                    .foregroundColor(Color.white)
-                    .cornerRadius(8)
-            }
-
-            Button(action: {
-                UtilsKt.trackAction(actionName: "Stop Feature Operation unsuccessfully")
-                UtilsKt.failFeatureOperation()
-            }) {
-                Text("Stop unsuccessfully")
-                    .padding()
-                    .background(Color.red)
-                    .foregroundColor(Color.white)
-                    .cornerRadius(8)
-            }
-        }
-        .padding()
-        .onAppear {
-            UtilsKt.addViewOpenedAtAttribute()
+                .background(action.color.background)
+                .foregroundColor(action.color.foreground)
+                .cornerRadius(8)
         }
     }
+}
+
+/// Scenarios which can only be implemented in Swift, displayed after the ones from `SampleActions`.
+private enum NativeActions {
+    static let logs = [
+        SampleAction(actionName: "Log error with Error", color: .brown, block: logErrorWithError),
+        SampleAction(actionName: "Log checked KMP exception", color: .orange, block: logCheckedKmpException)
+    ]
+    static let crash = [
+        SampleAction(actionName: "Native crash", color: .black, block: { fatalError() })
+    ]
+    static let rum = [
+        SampleAction(
+            actionName: "Add error: checked KMP exception",
+            color: .orange,
+            block: addCheckedKmpExceptionAsRumError
+        )
+    ]
 }
 
 #if !os(tvOS)
@@ -318,6 +181,22 @@ private func logErrorWithError() {
     }
 }
 
+private func logCheckedKmpException() {
+    do {
+        try UtilsKt.triggerCheckedException()
+    } catch {
+        UtilsKt.applicationLogger.error(message: "Caught KMP boundary error", error: error)
+    }
+}
+
+private func addCheckedKmpExceptionAsRumError() {
+    do {
+        try UtilsKt.triggerCheckedException()
+    } catch {
+        RUMMonitor.shared().addError(error: error, source: RUMErrorSource.source)
+    }
+}
+
 internal struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
@@ -336,4 +215,23 @@ extension Color {
 
     static let magenta: Color = .init(hex: 0xFFFF00FF)
     static let teal: Color = .init(hex: 0xFF03DAC5)
+}
+
+extension SampleActionColor {
+    var background: Color {
+        switch self {
+        case .blue: return .blue
+        case .red: return .red
+        case .brown: return .brown
+        case .orange: return .orange
+        case .magenta: return .magenta
+        case .teal: return .teal
+        case .black: return .black
+        default: return .gray
+        }
+    }
+
+    var foreground: Color {
+        return self == .orange ? .black : .white
+    }
 }
