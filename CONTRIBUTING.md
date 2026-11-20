@@ -9,6 +9,7 @@ To propose improvements, feel free to submit a PR or open an issue.
 ## Setup your developer Environment
 
 To setup your environment, make sure you installed [Android Studio](https://developer.android.com/studio).
+Building and testing the iOS and tvOS targets also requires macOS with Xcode.
 
 **Note**: You can also compile and develop using only an IDE of choice, e.g.: IntelliJ Idea, Vim, etc.
 
@@ -25,14 +26,15 @@ This project hosts the following modules:
   - `integrations/***`: Set of libraries integrating Datadog products in third party libraries:
     - `integrations/ktor`: Lightweight library providing a bridge integration between Datadog SDK and [Ktor v2 client](https://ktor.io/);
     - `integrations/ktor3`: Lightweight library providing a bridge integration between Datadog SDK and [Ktor v3 client](https://ktor.io/);
+    - `integrations/coil3`: Lightweight library providing a bridge integration between Datadog SDK and [Coil 3](https://coil-kt.github.io/coil/);
   - `tools/*`: Set of modules used to extend the tools we use in our workflow:
     - `tools/build-plugins`: Convention plugins to ease build configuration;
     - `tools/license`: Script to check the license header in all project source files;
     - `tools/lint`: Linter for Swift code based on [SwiftLint](https://github.com/realm/SwiftLint);
     - `tools/unit`: Utility library with code to help writing unit tests;
   - `sample/***`: Sample applications showcasing how to use the library features in production code;
-    - `sample/android`: Sample mobile application for Android;
-    - `sample/iosAp`: Sample mobile application for iOS;
+    - `sample/androidApp`: Sample mobile application for Android;
+    - `sample/appleApp`: Sample mobile applications for iOS and tvOS;
     - `sample/shared`: Kotlin Multiplatform module containing shared logic for the sample apps above;
 
 ### Building the SDK
@@ -46,7 +48,7 @@ You can build the SDK using the following Gradle command:
 This command may take a long time, so you can also run the following to make the build faster:
 
 ```shell
-./gradlew assembleDebug linkPodDebugFrameworkIosArm64
+./gradlew assembleDebug linkDebugFrameworkIosArm64
 ```
 
 This command builds a debug variant for Android and debug variant of the framework for iOS arm64 target.
@@ -125,7 +127,7 @@ already exist.
 
 To create a pull request:
 
-1. **Fork the repository** from https://github.com/DataDog/dd-sdk-kotlin-multuplatform.
+1. **Fork the repository** from https://github.com/DataDog/dd-sdk-kotlin-multiplatform.
 2. **Make any changes** for your patch.
 3. **Write tests** that demonstrate how the feature works or how the bug is fixed.
 4. **Update any documentation**, especially for new features. It can be found either in the `docs` folder of this repository, or in [documentation repository](https://github.com/DataDog/documentation).
@@ -142,6 +144,33 @@ review the changes with you. For a pull request to be accepted and merged, it mu
 
 Make sure that your code is clean and readable and that your commits are small and
 atomic, with a proper commit message.
+
+### Handoff to human review
+
+Before applying the `ready-for-human-review` label, verify that at least one
+agentic or bot review has completed against the current PR head and that no
+agentic reviews remain queued or running. No feedback does not prove that a
+review occurred, and a review of an older revision does not qualify. If an
+expected review has not appeared, eligibility remains unconfirmed.
+
+Address all agentic review feedback or explain with evidence why a suggestion
+does not apply. Reply to each feedback item and resolve its associated review
+thread, including outdated threads.
+Check the latest PR revision, feedback, and thread status before applying the label;
+local fixes, draft replies, or a clean bot summary alone are not sufficient.
+
+Apply the existing label once these conditions are met so reviewers know it is
+their turn. If you do not have permission to label the PR, ask a maintainer to
+apply it. Do not resolve un-addressed feedback solely to qualify for the label.
+
+The label indicates that agentic feedback has been addressed. It does not replace
+human approval or required CI and merge checks.
+
+### AI agents
+
+Instructions for AI coding agents live in [AGENTS.md](AGENTS.md) (`CLAUDE.md` is a symlink to it),
+with task-specific skills in `ai/skills/` (exposed to Claude Code through `.claude/skills/`).
+Keep them up to date when you change build tasks, module layout or conventions.
 
 ## Coding Conventions
 
