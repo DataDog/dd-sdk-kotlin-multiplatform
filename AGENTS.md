@@ -92,7 +92,7 @@ The root `build.gradle.kts` registers aggregate tasks:
 ./gradlew ktlintCheckAll        # ktlint, including the build-plugins included build
 ./gradlew ktlintFormatAll       # ktlint format, including the build-plugins included build
 ./gradlew detektAll             # detekt, including the build-plugins included build
-./gradlew checkGeneratedFiles   # API surface, Android compiler metadata, transitive dependencies
+./gradlew checkGeneratedFiles   # API surface, compiler metadata (Apple only on macOS), transitive dependencies
 ```
 
 `lintCheckAll` currently fails (the KMP Android library plugin creates no `lint` task in library modules);
@@ -131,7 +131,7 @@ Run these for every module you changed before considering the work done:
 ./gradlew :<module>:detekt
 ./gradlew :<module>:testAndroidHostTest      # Android host and commonTest tests
 ./gradlew :<module>:iosSimulatorArm64Test    # if common or Apple code changed (macOS only); add :<module>:tvosSimulatorArm64Test for modules with tvOS targets
-./gradlew checkGeneratedFiles                # if public API, dependencies or compiler metadata may have changed
+./gradlew checkGeneratedFiles                # if public API, dependencies or compiler metadata may have changed; passes only after committing them (see below)
 ```
 
 The test tasks above exist in the library modules (`core`, `features/*`, `integrations/*`). For other modules:
@@ -154,7 +154,9 @@ Publishable modules have generated files checked into git. **CI fails if they ar
 
 Root aggregates: `generateApiSurfaceAll`, `generateCompilerMetadataAll`, `listTransitiveDependenciesAll`.
 API surface and transitive dependencies files are also regenerated after each Kotlin compilation, so a build may
-leave changes in them: review and commit those diffs. CI runs `checkGeneratedFiles` on Linux, where the Apple
+leave changes in them: review and commit those diffs. The check tasks compare the files with `HEAD`, so intended
+changes pass only after they are committed; if you leave the work uncommitted, failures limited to the intended
+generated diffs are expected (review those diffs instead). CI runs `checkGeneratedFiles` on Linux, where the Apple
 compiler metadata tasks are not registered; that metadata is checked by `checkKlibCompilerMetadataChangesAll`
 in a separate macOS job.
 

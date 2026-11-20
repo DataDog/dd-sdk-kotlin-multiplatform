@@ -16,9 +16,9 @@ Arguments are **combinable** — the user may pass several at once (e.g. `/sdk-p
 
 - `compile` — run Step 2 only.
 - `test` — run formatting (Step 2) first, then Step 3's test part only, with error fixing and restart on failure.
-- `lint` — run formatting (Step 2) first, then Step 3's lint part only, then generated files validation.
-- `api` — run Step 4's API surface and compiler metadata part only (regeneration + validation).
-- `dep` — run Step 4's transitive dependencies part only (regeneration + validation).
+- `lint` — run formatting (Step 2) first, then Step 3's static analysis part, then the generated files regeneration (Step 4), the commit (Step 6) and the generated files validation after that commit.
+- `api` — run Step 4's API surface and compiler metadata part only, then the commit and validation (Step 6).
+- `dep` — run Step 4's transitive dependencies part only, then the commit and validation (Step 6).
 - `local` — local-only mode. **Skip Step 7 (push) and Step 8 (create draft PR)** regardless of which checks run. Use when the user invokes `/sdk-pr-prepare local` or otherwise passes `local` in the arguments. In this mode, Step 9 reports that push/PR were intentionally skipped. `local` is a modifier, not a check selector: ignore it when deciding which checks to run. If no check arguments remain, run the full default flow.
 
 **No arguments** — run the full default flow (Steps 2–4): first format and compile (Step 2), then the tests and static analysis (Step 3, with error fixing and restart as needed), then the generated files regeneration (Step 4), and validation after the commit (Step 6).
@@ -92,12 +92,7 @@ Analyze each result independently. On `FAILED`, inspect the error output, fix th
 
 - If **all requested parts pass** → proceed to Step 4.
 
-**When the `lint` argument is given**, run the static analysis part as a single sequence:
-
-1. The static analysis commands above
-2. Generated files validation (the validate commands from Step 6)
-
-On any failure, fix the issues and re-run the failed part. When `lint` is combined with `test`, run the tests after this sequence.
+**When the `lint` argument is given**, run the static analysis commands above; when it is combined with `test`, run the tests next. Then continue with the regeneration in Step 4 and the commit in Step 6, like the default flow. Don't validate generated files in this step: the checks compare them with `HEAD`, so intended changes only pass after the Step 6 commit.
 
 **Never suppress Detekt issues** with `@Suppress(...)` just to make the check pass. Fix the code; suppress only where the rule is a known false positive for that call site (narrowest scope, see `AGENTS.md`). If `checkDependencyLicenses` fails, add the missing dependency to `LICENSE-3rdparty.csv` (alphabetical order).
 
@@ -112,7 +107,7 @@ Common issues to fix directly:
 
 ## Step 4 — Regenerate generated files
 
-Only start these after Step 3 passes (with all fixes and retries if needed). **When `api` and/or `dep` arguments are given**, run only the corresponding part(s). When `lint` was given, its validation steps already covered these; skip regeneration unless it failed.
+Only start these after Step 3 passes (with all fixes and retries if needed). **When `api` and/or `dep` arguments are given**, run only the corresponding part(s).
 
 **API surface and compiler metadata:**
 ```bash
@@ -145,9 +140,15 @@ If the working tree is clean, skip to the validation at the end of this step.
 Otherwise:
 
 1. **Load the sibling [sdk-commit](../sdk-commit/SKILL.md) skill** via the `Skill` tool or read its SKILL.md. All commit messages MUST follow its rules.
-2. Stage only files touched by the prepare-pr flow (typically `**/api/**`, `**/android-transitiveDependencies`, `LICENSE-3rdparty.csv`, and any source edits you made to fix linter issues). Do not blind `git add -A` — other unrelated changes may still be in the tree.
+2. Before staging anything, check that the index is empty, because `git commit` commits everything that is staged:
+   ```bash
+   git diff --cached --quiet
+   ```
+   - Exit status 1: changes are already staged. Stop without changing the index and ask the user to commit them or unstage them (`git restore --staged <paths>`, or `git stash push --staged` to keep them aside) before retrying. A plain `git stash` would also stash the files this flow regenerated or fixed.
+   - Any other nonzero status: report the error and stop.
+   - Exit status 0: stage only files touched by the prepare-pr flow (typically `**/api/**`, `**/android-transitiveDependencies`, `LICENSE-3rdparty.csv`, and any source edits you made to fix linter issues). Do not blind `git add -A` — other unrelated changes may still be in the tree.
 3. Draft a commit message per the `sdk-commit` skill. The subject is imperative, English, ≤72 chars, and follows `<TICKET-ID>: <description>` (e.g. `RUM-1234: Regenerate apiSurface and fix detekt warnings`). If the ticket cannot be determined, ask the user before committing. The body lists what was regenerated / fixed and why.
-4. Show the drafted message to the user via `AskUserQuestion` (Approve / Edit / Abort commit) before running `git commit`.
+4. Show the drafted message together with the output of `git diff --cached --stat` to the user via `AskUserQuestion` (Approve / Edit / Abort commit) before running `git commit`. On **Abort**, unstage the paths you staged (`git restore --staged <paths>`) and stop without running the validation below.
 5. Commit with HEREDOC so formatting survives:
    ```bash
    git commit -m "$(cat <<'EOF'
@@ -158,13 +159,14 @@ Otherwise:
    )"
    ```
 
-Then validate the generated files against the commit (also when there was nothing to commit):
+Then validate the generated files against the commit (also when there was nothing to commit). Run this for the default flow and for `lint`, `api` and `dep`; skip it for runs with only `compile` and/or `test`:
 ```bash
-./gradlew --stacktrace checkGeneratedFiles
-./gradlew --stacktrace checkKlibCompilerMetadataChangesAll   # macOS only
+./gradlew --stacktrace checkGeneratedFiles                                          # default flow and `lint`
+./gradlew --stacktrace checkApiSurfaceChangesAll checkCompilerMetadataChangesAll   # `api` only
+./gradlew --stacktrace checkTransitiveDependenciesListAll                          # `dep` only
 ```
 
-`checkGeneratedFiles` covers the API surfaces, the Android compiler metadata and the transitive dependencies; `checkKlibCompilerMetadataChangesAll` covers the Apple compiler metadata (CI runs it in a separate macOS job). The checks compare the regenerated files with the committed ones, so they only pass once the regenerated files are committed. On failure, regenerate (Step 4), commit, and re-run.
+`checkGeneratedFiles` covers the API surfaces, the compiler metadata and the transitive dependencies. On macOS the compiler metadata check includes the Apple (KLIB) metadata; elsewhere the Apple tasks are not registered (CI checks them with `checkKlibCompilerMetadataChangesAll` in a separate macOS job). The checks diff the regenerated files against `HEAD`, so they only pass once the regenerated files are committed. On failure, regenerate (Step 4), commit, and re-run. If the remaining failure comes only from uncommitted changes outside this flow (e.g. work in progress the user left unstaged), don't commit them: report the failure and its cause to the user.
 
 ## Step 7 — Push the branch
 
