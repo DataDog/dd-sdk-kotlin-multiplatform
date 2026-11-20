@@ -84,7 +84,7 @@ if [[ $COMPILE == 1 ]]; then
   ./gradlew assembleDebugUnitTest
 
   echo "---- Assemble iOS debug arm64 target"
-  ./gradlew linkPodDebugFrameworkIosArm64
+  ./gradlew linkDebugFrameworkIosArm64
 
   echo "---- Assemble iOS arm64 test binaries"
   ./gradlew iosArm64TestBinaries
