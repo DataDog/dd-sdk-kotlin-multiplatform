@@ -12,9 +12,11 @@ import,androidx.compose.ui,Apache-2.0,Copyright 2018 The Android Open Source Pro
 import,androidx.core,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.customview,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.fragment,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.graphics,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.lifecycle,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.loader,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.navigation,Apache-2.0,Copyright 2018 The Android Open Source Project
+import,androidx.navigationevent,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.savedstate,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.versionedparcelable,Apache-2.0,Copyright 2018 The Android Open Source Project
 import,androidx.viewpager,Apache-2.0,Copyright 2018 The Android Open Source Project
@@ -26,6 +28,17 @@ import,com.squareup.okio,Apache-2.0,"Copyright 2013 Square, Inc"
 import,io.coil-kt.coil3,Apache-2.0,Copyright 2019 Coil Contributors
 import,io.ktor,Apache-2.0,Copyright 2000-2023 JetBrains s.r.o.
 import,org.jetbrains,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors
+import,org.jetbrains.androidx.lifecycle,Apache-2.0,Copyright 2020-2025 JetBrains s.r.o. and respective authors and developers
+import,org.jetbrains.androidx.navigation,Apache-2.0,Copyright 2020-2025 JetBrains s.r.o. and respective authors and developers
+import,org.jetbrains.androidx.savedstate,Apache-2.0,Copyright 2020-2025 JetBrains s.r.o. and respective authors and developers
+import,org.jetbrains.compose.animation,Apache-2.0,Copyright 2020-2025 JetBrains s.r.o. and respective authors and developers
+import,org.jetbrains.compose.annotation-internal,Apache-2.0,Copyright 2020-2025 JetBrains s.r.o. and respective authors and developers
+import,org.jetbrains.compose.collection-internal,Apache-2.0,Copyright 2020-2025 JetBrains s.r.o. and respective authors and developers
+import,org.jetbrains.compose.foundation,Apache-2.0,Copyright 2020-2025 JetBrains s.r.o. and respective authors and developers
+import,org.jetbrains.compose.material,Apache-2.0,Copyright 2020-2025 JetBrains s.r.o. and respective authors and developers
+import,org.jetbrains.compose.material3,Apache-2.0,Copyright 2020-2025 JetBrains s.r.o. and respective authors and developers
+import,org.jetbrains.compose.runtime,Apache-2.0,Copyright 2020-2025 JetBrains s.r.o. and respective authors and developers
+import,org.jetbrains.compose.ui,Apache-2.0,Copyright 2020-2025 JetBrains s.r.o. and respective authors and developers
 import,org.jetbrains.kotlin,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors
 import,org.jetbrains.kotlinx,Apache-2.0,Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors
 import,org.jspecify,Apache-2.0,Copyright 2025 The JSpecify Authors
