@@ -83,6 +83,14 @@ kotlin {
     }
 }
 
+// Sources are shared with `:integrations:ktor`, which already lints them. Exclude them here, otherwise in parallel
+// mode `ktlintFormat` tasks of both projects would rewrite the same files concurrently.
+ktlint {
+    filter {
+        exclude { it.file.invariantSeparatorsPath.contains("/integrations/ktor/src/") }
+    }
+}
+
 mokkery {
     defaultMockMode = MockMode.autofill
     ignoreFinalMembers = true
