@@ -4,6 +4,22 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
+import com.datadog.gradle.repositories.DatadogRepositories
+
+pluginManagement {
+    includeBuild("../settings-plugin")
+}
+
+plugins {
+    id("com.datadog.gradle.repositories")
+}
+
+val datadogRepositories = DatadogRepositories(providers)
+
+pluginManagement.repositories {
+    datadogRepositories.gradlePluginPortalDepotProxied(this)
+}
+
 rootProject.name = "build-plugins"
 
 dependencyResolutionManagement {
@@ -11,5 +27,12 @@ dependencyResolutionManagement {
         create("libs") {
             from(files("../../gradle/libs.versions.toml"))
         }
+    }
+    @Suppress("UnstableApiUsage")
+    repositories {
+        datadogRepositories.googleDepotProxied(this)
+        datadogRepositories.mavenCentralDepotProxied(this)
+        datadogRepositories.gradlePluginPortalDepotProxied(this)
+        datadogRepositories.jitpackConstrained(this)
     }
 }

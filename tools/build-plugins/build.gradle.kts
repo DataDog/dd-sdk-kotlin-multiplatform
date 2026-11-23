@@ -12,18 +12,6 @@ plugins {
     alias(libs.plugins.detektGradlePlugin)
 }
 
-repositories {
-    google()
-    mavenCentral()
-    gradlePluginPortal()
-    maven {
-        setUrl("https://jitpack.io")
-        mavenContent {
-            includeGroupByRegex("com\\.github\\..*")
-        }
-    }
-}
-
 dependencies {
     compileOnly(gradleApi())
     compileOnly(libs.android.tools)

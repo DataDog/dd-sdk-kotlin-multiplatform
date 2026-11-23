@@ -29,6 +29,7 @@ This project hosts the following modules:
     - `integrations/coil3`: Lightweight library providing a bridge integration between Datadog SDK and [Coil 3](https://coil-kt.github.io/coil/);
   - `tools/*`: Set of modules used to extend the tools we use in our workflow:
     - `tools/build-plugins`: Convention plugins to ease build configuration;
+    - `tools/settings-plugin`: Settings plugin sharing the repository definitions (with the CI Depot proxy) between the Gradle builds;
     - `tools/license`: Script to check the license header in all project source files;
     - `tools/lint`: Linter for Swift code based on [SwiftLint](https://github.com/realm/SwiftLint);
     - `tools/unit`: Utility library with code to help writing unit tests;
