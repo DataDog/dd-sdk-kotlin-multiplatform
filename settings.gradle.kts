@@ -33,6 +33,7 @@ dependencyResolutionManagement {
 
 include(":sample:androidApp")
 include(":sample:shared")
+include(":sample:shared-ui")
 include(":core")
 include(":features:logs")
 include(":features:rum")

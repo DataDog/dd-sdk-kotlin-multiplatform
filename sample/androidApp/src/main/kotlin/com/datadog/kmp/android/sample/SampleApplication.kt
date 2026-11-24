@@ -7,12 +7,12 @@
 package com.datadog.kmp.android.sample
 
 import android.app.Application
-import com.datadog.kmp.sample.initDatadog
+import com.datadog.kmp.sample.initDatadogForComposeUi
 
 class SampleApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initDatadog(this)
+        initDatadogForComposeUi(this)
     }
 }

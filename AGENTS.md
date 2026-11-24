@@ -31,11 +31,19 @@ and the Apple targets (iOS, tvOS) delegate to [`dd-sdk-ios`](https://github.com/
 - `tools/build-plugins` — included build with the convention plugins (`datadog-build-config`, `api-surface`,
   `transitive-dependencies`, `json-schema-generator`, `datadog-ios-build-spm`, `datadog-ios-frameworks`,
   `detekt-conventions`, `ktlint`).
+- `tools/settings-plugin` — included build with the settings plugin (`com.datadog.gradle.repositories`) sharing the
+  repository definitions, including the CI Depot proxy, between the root build and `tools/build-plugins`.
 - `tools/unit` — shared unit test utilities (Elmyr forge factories for JVM tests, random-data helpers for
   common and Apple tests).
 - `tools/license`, `tools/lint`, `tools/release` — license header check, SwiftLint configuration, release scripts.
-- `sample/shared` — KMP module shared by the sample apps; `sample/androidApp` — Android sample app;
-  `sample/appleApp` — Xcode project with the iOS and tvOS sample apps.
+- `sample/shared` — KMP module with the non-UI code shared by all the sample apps (Android, iOS, tvOS).
+- `sample/shared-ui` — Compose Multiplatform UI of the samples (Android and iOS only: Compose Multiplatform has no
+  tvOS support).
+- `sample/androidApp` — Android sample app, hosting the UI from `sample/shared-ui`.
+- `sample/appleApp` — Xcode project with the native SwiftUI sample apps for iOS and tvOS. It links only
+  `sample/shared` and must not depend on Compose.
+- `sample/iosComposeMultiplatformApp` — Xcode project with the iOS sample app hosting the UI from
+  `sample/shared-ui`.
 
 New modules must be registered in `settings.gradle.kts`. A new publishable module must also be added to
 `publishableProjects` in the root `build.gradle.kts` (used by the aggregate test tasks) and get its own
@@ -64,7 +72,8 @@ Apple interop:
   The package prefix is historical; dependencies are no longer managed with CocoaPods.
 - Apple targets compile and test only on macOS with Xcode installed.
 - Public `commonMain` / `appleMain` declarations are visible from Swift through the framework that an app
-  exports (see `sample/shared/build.gradle.kts`). Check how new API looks from Swift; the sample apps in
+  exports (`sharedLib` from `sample/shared/build.gradle.kts`, `composeSampleLib` from
+  `sample/shared-ui/build.gradle.kts`). Check how new API looks from Swift; the SwiftUI sample apps in
   `sample/appleApp` consume it.
 
 # Agent Skills
@@ -116,7 +125,9 @@ Sample apps:
 
 ```bash
 ./gradlew :sample:androidApp:assembleDebug
-./gradlew :buildDatadogFrameworks   # then build sample/appleApp/appleApp.xcodeproj (schemes "Sample iOS", "Sample tvOS")
+./gradlew :buildDatadogFrameworks   # then build the Xcode projects:
+#   sample/appleApp/appleApp.xcodeproj (schemes "Sample iOS", "Sample tvOS")
+#   sample/iosComposeMultiplatformApp/iosApp.xcodeproj (scheme "Compose Sample iOS")
 ```
 
 The sample apps read credentials from the gitignored `config/us1.json` (`token`, `rumApplicationId`). Without it
@@ -135,8 +146,9 @@ Run these for every module you changed before considering the work done:
 ```
 
 The test tasks above exist in the library modules (`core`, `features/*`, `integrations/*`). For other modules:
-`tools/unit` uses `:tools:unit:jvmTest` and `:tools:unit:iosSimulatorArm64Test`; `sample/androidApp` uses
-`:sample:androidApp:assembleDebug`; for changes in `tools/build-plugins`, use `:build-plugins:ktlintFormat`,
+`tools/unit` uses `:tools:unit:jvmTest` and `:tools:unit:iosSimulatorArm64Test`; `sample/*` modules use
+`:sample:androidApp:assembleDebug` plus `:sample:shared:compileKotlinIosSimulatorArm64`,
+`:sample:shared:compileKotlinTvosSimulatorArm64` and `:sample:shared-ui:compileKotlinIosSimulatorArm64` (macOS only); for changes in `tools/build-plugins`, use `:build-plugins:ktlintFormat`,
 `:build-plugins:detekt` and `:build-plugins:test`.
 
 Kotlin warnings are errors (`allWarningsAsErrors`) in library modules, so a new warning fails the build.
@@ -237,7 +249,13 @@ and flag violations of them when reviewing a PR.
 - Dependencies go in `gradle/libs.versions.toml`. Prefer `implementation` over `api`. Declare dependencies in
   the matching `kotlin { sourceSets { … } }` block (`commonMain`, `androidMain`, `appleMain`, test source sets).
 - Bump native SDKs only through `datadog-android` / `datadog-ios` in `gradle/libs.versions.toml`; don't edit
-  `NATIVE_SDK_VERSIONS.md` by hand.
+  `NATIVE_SDK_VERSIONS.md` by hand. When bumping `datadog-ios`, also update the `dd-sdk-ios` package version
+  (`exactVersion`) in both sample Xcode projects, `sample/appleApp/appleApp.xcodeproj` and
+  `sample/iosComposeMultiplatformApp/iosApp.xcodeproj`. The Kotlin code is compiled against the version in the
+  catalog, so an older SDK linked by an app compiles fine but crashes at runtime with unrecognized selectors.
+- Kotlin/Native can't read libraries built by a newer Kotlin compiler, so `composeMultiplatform` in
+  `gradle/libs.versions.toml` must be a release built with the project's `kotlin` version or older. Check this
+  when bumping either of them.
 
 ## Code Style
 

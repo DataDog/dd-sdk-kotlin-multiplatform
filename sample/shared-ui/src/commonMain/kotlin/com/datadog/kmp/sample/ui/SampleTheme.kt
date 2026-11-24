@@ -4,7 +4,7 @@
  * Copyright 2016-Present Datadog, Inc.
  */
 
-package com.datadog.kmp.android.sample
+package com.datadog.kmp.sample.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 
 @Suppress("MagicNumber")
 @Composable
-fun SampleApplicationTheme(
+internal fun SampleTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {

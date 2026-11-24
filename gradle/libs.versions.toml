@@ -11,15 +11,21 @@ agp = "9.2.1"
 # this doesn't limit Xcode app version that can be used, e.g. Xcode 26 app can be used when
 # backed by the Xcode 16.4 toolchain.
 kotlin = "2.2.21"
-compose = "1.11.2"
-compose-material3 = "1.4.0"
 coil3 = "3.0.4"
 androidx-fragment = "1.5.1"
 androidx-navigation-forSdk = "2.3.0"
-androidx-navigation-forApp = "2.7.7"
 androidx-activityCompose = "1.13.0"
 datadog-android = "3.16.0"
 datadog-ios = "3.21.0"
+# Compose Multiplatform, used by the Compose sample apps. Kotlin/Native libraries can't be consumed by an older compiler
+# than the one they were built with, so it must be built with the Kotlin version above or older (1.11+ uses 2.3).
+composeMultiplatform = "1.10.3"
+# Material3 is versioned separately from the rest of Compose Multiplatform
+composeMultiplatform-material3 = "1.10.0-alpha05"
+# 2.10+ requires compileSdk 37
+composeMultiplatform-navigation = "2.9.2"
+# must match the version used by the navigation above
+composeMultiplatform-lifecycle = "2.9.6"
 dependencyLicense = "0.4.0"
 nexusPublish = "2.0.0"
 kotlinGrammarParser = "0.1.0"
@@ -56,12 +62,14 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "androidx-fragment" }
 androidx-navigation-runtime-forSdk = { module = "androidx.navigation:navigation-runtime", version.ref = "androidx-navigation-forSdk" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation-forApp" }
-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
+cmp-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
+cmp-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
+cmp-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
+cmp-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
+cmp-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
+cmp-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatform-material3" }
+cmp-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "composeMultiplatform-lifecycle" }
+cmp-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "composeMultiplatform-navigation" }
 android-tools = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 detektGradlePlugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
@@ -123,6 +131,7 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 dependencyLicense = { id = "com.datadoghq.dependency-license", version.ref = "dependencyLicense" }
 mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexusPublish" }
 detektGradlePlugin = { id = "dev.detekt", version.ref = "detekt" }
 ktlintGradlePlugin = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintGradlePlugin" }

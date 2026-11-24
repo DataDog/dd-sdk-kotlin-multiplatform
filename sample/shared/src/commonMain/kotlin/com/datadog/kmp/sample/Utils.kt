@@ -29,12 +29,6 @@ import com.datadog.kmp.rum.operations.FailureReason
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-const val HOME_SCREEN_NAME = "Home"
-const val LOGS_SCREEN_NAME = "Logs"
-const val CRASH_SCREEN_NAME = "Crash"
-const val RUM_SCREEN_NAME = "RUM"
-const val WEBVIEW_SCREEN_NAME = "WebView"
-
 private const val FEATURE_OPERATION_NAME = "Checkout"
 private val activeFeatureOperationKeys = ArrayDeque<String>()
 
@@ -44,9 +38,24 @@ const val WEB_VIEW_TRACKING_LOAD_URL = "https://datadoghq.dev/browser-sdk-test-p
     "&application_id=${LibraryConfig.DD_APPLICATION_ID}" +
     "&site=datadoghq.com"
 
+/**
+ * Initializes the SDK for an app with a native UI (Android Views/Jetpack Compose, SwiftUI or UIKit).
+ */
+fun initDatadog(context: Any? = null) {
+    initDatadog(context, trackNativeViews = true)
+}
+
+/**
+ * Initializes the SDK for an app with a Compose Multiplatform UI. Automatic tracking of native views is disabled,
+ * because screens are tracked from Compose navigation instead.
+ */
+fun initDatadogForComposeUi(context: Any? = null) {
+    initDatadog(context, trackNativeViews = false)
+}
+
 @OptIn(ExperimentalRumApi::class)
 @Suppress("MagicNumber", "LongMethod", "StringLiteralDuplication")
-fun initDatadog(context: Any? = null) {
+private fun initDatadog(context: Any?, trackNativeViews: Boolean) {
     Datadog.verbosity = SdkLogVerbosity.DEBUG
 
     val configuration = Configuration.Builder(
@@ -85,7 +94,7 @@ fun initDatadog(context: Any? = null) {
         .collectAccessibility(true)
         .setTimeseriesConfiguration(TimeseriesConfiguration.DEFAULT)
         .setupRumMappers()
-        .platformSpecificSetup()
+        .platformSpecificSetup(trackNativeViews)
         .build()
     Rum.enable(rumConfiguration)
 
@@ -157,7 +166,7 @@ fun triggerCheckedException() {
     triggerUncheckedException()
 }
 
-@Suppress("unused", "TooGenericExceptionThrown")
+@Suppress("TooGenericExceptionThrown")
 fun triggerUncheckedException() {
     val cause = IllegalStateException("sample crash")
     throw RuntimeException(cause)
@@ -189,8 +198,16 @@ fun failFeatureOperation() {
     }
 }
 
+private var isAppFullyDisplayedReported = false
+
+/**
+ * Reports that the app is fully displayed. Only the first call has an effect, so it is safe to call it every time the
+ * home screen appears (for example, when navigating back to it).
+ */
 @OptIn(ExperimentalRumApi::class)
 fun reportAppFullyDisplayed() {
+    if (isAppFullyDisplayedReported) return
+    isAppFullyDisplayedReported = true
     RumMonitor.get().reportAppFullyDisplayed()
 }
 
@@ -246,5 +263,7 @@ private data class SampleClassAttributeProperty(
 expect fun startWebViewTracking(webView: Any)
 expect fun stopWebViewTracking(webView: Any)
 internal expect fun initSessionReplay()
-internal expect fun RumConfiguration.Builder.platformSpecificSetup(): RumConfiguration.Builder
+internal expect fun RumConfiguration.Builder.platformSpecificSetup(
+    trackNativeViews: Boolean
+): RumConfiguration.Builder
 internal expect fun Configuration.Builder.platformSpecificSetup(): Configuration.Builder
