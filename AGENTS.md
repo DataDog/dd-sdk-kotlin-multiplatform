@@ -88,6 +88,7 @@ same sources to Claude Code.
 - External references and example prompts for feature work: [`sdk-feature-knowledge`](ai/skills/sdk-feature-knowledge/SKILL.md).
 - Running pre-PR checks and regenerating generated files: [`sdk-pr-prepare`](ai/skills/sdk-pr-prepare/SKILL.md).
 - Creating or updating stacked PRs with Graphite: [`sdk-pr-stack`](ai/skills/sdk-pr-stack/SKILL.md).
+- Updating the native SDKs and analyzing their API changes: [`sdk-native-update`](ai/skills/sdk-native-update/SKILL.md).
 
 # Build Commands
 
