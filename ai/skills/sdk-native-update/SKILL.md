@@ -54,7 +54,7 @@ touches a working tree.
 The report is printed and written to `build/native-sdk-update/api-diff.md`:
 
 1. **dd-sdk-android** — added, removed and changed declarations of every `**/api/apiSurface`, per module, split
-   into API and event models. Modules are labelled with the KMP modules that wrap them (read from the library
+   into API and event models (parameter names from 3.17.0 on, see Gotchas). Modules are labelled with the KMP modules that wrap them (read from the library
    build files); wrapped modules come first.
 2. **dd-sdk-ios** — the same for `api-surface-objc`, per framework section.
 3. **RUM schema gaps** — per KMP RUM event, properties present in both the dd-sdk-android vendored schema and
@@ -154,8 +154,14 @@ minimum Xcode version.
 
 ## Gotchas
 
-- Android `apiSurface` lists model constructors by type only, without property names. Section 1 shows them as
-  "N → M params; added: `kotlin.Boolean? = null`". Use section 3 to name the new properties.
+- Android `apiSurface` lists parameter names only from dd-sdk-android 3.17.0 on (dd-sdk-android#4225). Up to
+  3.16.0, constructors and functions list types only, so a changed model constructor shows as "N → M params;
+  added: `kotlin.Boolean? = null`" and section 3 is the only way to name the new properties. From 3.17.0 on,
+  section 1 shows the names too (`added: hasTimeseries: kotlin.Boolean? = null`).
+- When the range crosses 3.17.0 (e.g. 3.16.0 → 3.17.0), the script ignores the format change: it compares
+  signatures without parameter names and skips the enum constructors that 3.17.0 no longer lists. Only real
+  changes are reported, shown with the names of the newer version. A raw `git diff` of that range shows almost
+  every line as changed.
 - Native behavior changes don't show up in any API surface. #359 had to fix a test because native
   `TimeseriesConfiguration` started storing the types in `collectTypes`: always build and run the tests.
 - iOS `api-surface-objc` has no nesting: members are indented under the last unindented declaration, and nested

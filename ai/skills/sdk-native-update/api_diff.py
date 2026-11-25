@@ -128,17 +128,38 @@ def normalize(identifier):
     return re.sub(r"[^a-z0-9]", "", identifier.lower()) if identifier else None
 
 
+def bracket_delta(text, i):
+    """+1 / -1 for an opening / closing bracket at text[i]; the `>` of `->` is not a bracket."""
+    ch = text[i]
+    if ch in "<([":
+        return 1
+    if ch in ")]" or (ch == ">" and (i == 0 or text[i - 1] != "-")):
+        return -1
+    return 0
+
+
+def param_list_bounds(line):
+    """Indices of the parentheses around the first parameter list of a declaration, or None."""
+    start = line.find("(")
+    if start < 0:
+        return None
+    depth = 0
+    for end in range(start, len(line)):
+        depth += bracket_delta(line, end)
+        if depth == 0:
+            return start, end
+    return None
+
+
 def split_params(signature):
     """Splits `name(a, b<c, d>)` into its top-level parameters."""
-    start, end = signature.find("("), signature.rfind(")")
-    if start < 0 or end < start:
+    bounds = param_list_bounds(signature)
+    if not bounds:
         return []
+    body = signature[bounds[0] + 1:bounds[1]]
     params, depth, current = [], 0, ""
-    for ch in signature[start + 1:end]:
-        if ch in "<([":
-            depth += 1
-        elif ch in ">)]":
-            depth -= 1
+    for i, ch in enumerate(body):
+        depth += bracket_delta(body, i)
         if ch == "," and depth == 0:
             params.append(current.strip())
             current = ""
@@ -150,16 +171,54 @@ def split_params(signature):
 
 
 def describe_param_change(old, new):
-    before, after = Counter(split_params(old)), Counter(split_params(new))
-    parts = [f"{sum(before.values())} → {sum(after.values())} params"]
-    if after - before:
-        parts.append("added: " + ", ".join(f"`{p}`" for p in (after - before).elements()))
-    if before - after:
-        parts.append("removed: " + ", ".join(f"`{p}`" for p in (before - after).elements()))
+    """Parameter count and added/removed parameters; names are ignored when only one side has them."""
+    old_params, new_params = split_params(old), split_params(new)
+    if any(NAMED_PARAM.match(p) for p in old_params) != any(NAMED_PARAM.match(p) for p in new_params):
+        def key(p):
+            return NAMED_PARAM.sub("", p)
+    else:
+        def key(p):
+            return p
+    before, after = Counter(map(key, old_params)), Counter(map(key, new_params))
+    added, removed = after - before, before - after
+
+    def pick(params, wanted):
+        picked = []
+        for p in params:
+            if wanted[key(p)] > 0:
+                wanted[key(p)] -= 1
+                picked.append(p)
+        return picked
+
+    parts = [f"{len(old_params)} → {len(new_params)} params"]
+    if added:
+        parts.append("added: " + ", ".join(f"`{p}`" for p in pick(new_params, Counter(added))))
+    if removed:
+        parts.append("removed: " + ", ".join(f"`{p}`" for p in pick(old_params, Counter(removed))))
     return "; ".join(parts)
 
 
 # ---------------------------------------------------------------- dd-sdk-android apiSurface
+
+
+NAMED_PARAM = re.compile(r"^(?:vararg\s+)?`?\w+`?: ")
+HAS_PARAM_NAMES = re.compile(r"\((?:vararg\s+)?`?\w+`?: ", re.M)
+
+
+def strip_param_names(line):
+    """`constructor(id: String, name: String?)` -> `constructor(String, String?)`, the format before 3.17.0."""
+    bounds = param_list_bounds(line)
+    if not bounds:
+        return line
+    start, end = bounds
+    params = split_params(line[start:end + 1])
+    stripped = ", ".join(NAMED_PARAM.sub(lambda m: "vararg " if m.group(0).startswith("vararg") else "", p)
+                         for p in params)
+    return f"{line[:start]}({stripped}){line[end + 1:]}"
+
+
+def is_enum_constructor(entry):
+    return len(entry) > 1 and entry[-1].startswith("constructor(") and re.match(r"enum\b", entry[-2]) is not None
 
 
 def android_entries(text):
@@ -225,9 +284,20 @@ def android_surface(repo, old, new):
     for path in paths:
         module = path.split("/")[-3]
         if path in changed_paths:
-            after = android_entries(show(repo, new, path))
-            before = android_entries(show(repo, old, path))
-            added, removed = collapse(sorted(after - before)), collapse(sorted(before - after))
+            new_text, old_text = show(repo, new, path), show(repo, old, path)
+            after, before = android_entries(new_text), android_entries(old_text)
+            if bool(HAS_PARAM_NAMES.search(new_text)) != bool(HAS_PARAM_NAMES.search(old_text)):
+                # dd-sdk-android lists parameter names, and no longer lists enum constructors, from 3.17.0 on.
+                # Across that change, compare without names so that the format change alone isn't reported, and
+                # show the named side where there is one.
+                def by_stripped(entries):
+                    return {tuple(strip_param_names(line) for line in e): e for e in entries}
+                after_map, before_map = by_stripped(after), by_stripped(before)
+                added = collapse(sorted(after_map[k] for k in after_map.keys() - before_map.keys()))
+                removed = collapse(sorted(before_map[k] for k in before_map.keys() - after_map.keys()
+                                          if not is_enum_constructor(before_map[k])))
+            else:
+                added, removed = collapse(sorted(after - before)), collapse(sorted(before - after))
             changes[module] = pair_changes(added, removed, lambda e: e[:-1], lambda e: android_key(e[-1]))
     for path in changed_paths - set(paths):
         changes[path.split("/")[-3] + " (module removed)"] = ([], [], [])
@@ -420,6 +490,10 @@ def wrapped_label(module, wrapped):
 
 def render_platform(out, title, changes, wrapped, fmt, line_of, event_of):
     out.append(f"# {title}\n")
+    if not changes:
+        out.append("No changes.\n")
+        return
+    changes = {m: c for m, c in changes.items() if any(c) or m.endswith("(module removed)")}
     if not changes:
         out.append("No changes.\n")
         return
