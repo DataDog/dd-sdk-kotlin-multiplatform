@@ -72,7 +72,7 @@ API change in a wrapped module, search the other SDK's **whole** surface at its 
 since it may have shipped the counterpart earlier:
 
 ```bash
-git -C ../dd-sdk-ios show 3.23.0:api-surface-objc | grep -n -i "<keyword>"
+git -C ../dd-sdk-ios show 3.21.0:api-surface-objc | grep -n -i "<keyword>"
 git -C ../dd-sdk-android grep -n -i "<keyword>" 3.16.0 -- '*/api/apiSurface'
 ```
 
@@ -168,8 +168,11 @@ Common model properties, as in #366 (RUM-19784):
    native → common mappings then fail to compile.
 2. `readOnly: false` properties (and `additionalProperties`) also need the common → native copy in
    `features/rum/src/androidMain/.../AndroidRumConfigurationBuilder.kt` and
-   `features/rum/src/appleMain/.../AppleRumConfigurationBuilder.kt` (logs: the Apple mapping is hand-written in
-   `features/logs/src/appleMain/.../LogEventMappingExt.kt`).
+   `features/rum/src/appleMain/.../AppleRumConfigurationBuilder.kt`. For logs, the copy-back is in
+   `features/logs/src/androidMain/.../AndroidLogsConfigurationBuilder.kt` and
+   `features/logs/src/appleMain/.../IOSLogsConfigurationBuilder.kt` (some log properties are mutable on Android
+   only, see the `RUM-6088` TODO there). The Apple native → common log mapping is hand-written too, in
+   `features/logs/src/appleMain/.../LogEventMappingExt.kt`, so a new log property also needs to be added there.
 3. Update the forgeries in `features/rum/src/androidHostTest/kotlin/com/datadog/kmp/rum/utils/forge/` (load the
    `sdk-tests` skill).
 4. Regenerate the API surface (`./gradlew :features:rum:generateApiSurface`) and review the diff: new constructor
